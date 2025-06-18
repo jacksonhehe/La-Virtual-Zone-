@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Final 2024",
+    "image": "https://via.placeholder.com/300x200?text=Final+2024",
+    "description": "Celebración del campeón de la Liga Master 2024."
+  },
+  {
+    "id": 2,
+    "title": "Stand en ComicCon",
+    "image": "https://via.placeholder.com/300x200?text=ComicCon",
+    "description": "Nuestro stand en la última edición del evento."
+  },
+  {
+    "id": 3,
+    "title": "Encuentro de la comunidad",
+    "image": "https://via.placeholder.com/300x200?text=Meetup",
+    "description": "Miembros de la comunidad compartiendo estrategias."
+  }
+]
