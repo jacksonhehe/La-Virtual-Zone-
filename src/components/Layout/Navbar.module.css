@@ -1,5 +1,6 @@
 .navbar {
-  background: var(--card);
+  background: linear-gradient(90deg, #111, #1a1a1a, #111);
+  border-bottom: 2px solid var(--primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,6 +25,12 @@
 
 .links a {
   color: var(--text);
+  transition: color .2s;
+}
+
+.links a:hover {
+  color: var(--primary);
+  text-shadow: 0 0 4px var(--primary-glow);
 }
 
 .hamburger {

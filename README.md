@@ -1,6 +1,6 @@
 # La Virtual Zone
 
-Proyecto base para **La Virtual Zone** usando React, Vite y TypeScript.
+Proyecto base para **La Virtual Zone** usando React, Vite y TypeScript. Incluye un diseño oscuro con fuentes gamer para una apariencia profesional.
 
 ## Requisitos
 
