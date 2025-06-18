@@ -11,7 +11,7 @@ interface CardProps {
 export default function Card({ title, image, onClick, children, className }: CardProps) {
   return (
     <div
-      className={`bg-gray-800 rounded shadow hover:shadow-lg overflow-hidden cursor-pointer ${className ?? ''}`}
+      className={`bg-zinc-800 rounded shadow hover:shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-105 ${className ?? ''}`}
       onClick={onClick}
     >
       {image && <img src={image} alt={title} className="w-full h-40 object-cover" />}
