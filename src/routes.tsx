@@ -14,7 +14,7 @@ import Blog from './pages/Blog'
 import Tienda from './pages/Tienda'
 import Admin from './pages/Admin'
 import Ayuda from './pages/Ayuda'
-import { ReactElement } from 'react'
+import type { ReactElement } from 'react'
 
 export interface AppRoute {
   path: string
