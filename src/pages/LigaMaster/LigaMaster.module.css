@@ -1,0 +1,30 @@
+.cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--primary-glow);
+  padding: 1rem;
+  text-align: center;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text);
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--primary-glow);
+  padding: 0.5rem;
+}
