@@ -1,0 +1,29 @@
+
+:root {
+  --bg: #0d0d0d;
+  --card: #171717;
+  --text: #eaeaea;
+  --primary: #00e0ff;
+  --primary-glow: rgba(0, 224, 255, 0.35);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-shadow: 0 0 4px var(--primary-glow);
+}

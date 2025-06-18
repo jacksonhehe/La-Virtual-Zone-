@@ -1,19 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import routes from './routes'
-import Navbar from './components/Layout/Navbar'
-import Footer from './components/Layout/Footer'
+import Layout from './components/Layout/Layout'
 import './App.css'
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
-        {routes.map(({ path, element }) => (
-          <Route key={path} path={path} element={element} />
+        {routes.map((r) => (
+          <Route key={r.path} path={r.path} element={<Layout>{r.element}</Layout>} />
         ))}
       </Routes>
-      <Footer />
     </BrowserRouter>
   )
 }
