@@ -15,7 +15,7 @@ export default function Navbar() {
       </button>
       <ul className={`${styles.links} ${open ? styles.open : ''}`}>
         <li><Link to="/" onClick={() => setOpen(false)}>Inicio</Link></li>
-        <li><Link to="/ligamaster" onClick={() => setOpen(false)}>Liga Master</Link></li>
+        <li><Link to="/liga-master" onClick={() => setOpen(false)}>Liga Master</Link></li>
         <li><Link to="/torneos" onClick={() => setOpen(false)}>Torneos</Link></li>
         <li><Link to="/galeria" onClick={() => setOpen(false)}>Galería</Link></li>
         <li><Link to="/blog" onClick={() => setOpen(false)}>Blog</Link></li>
