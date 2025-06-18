@@ -9,6 +9,7 @@ import Fixture from './pages/LigaMaster/Fixture'
 import Rankings from './pages/LigaMaster/Rankings'
 import HallOfFame from './pages/LigaMaster/HallOfFame'
 import Torneos from './pages/Torneos'
+import Torneo from './pages/Torneos/Torneo'
 import Galeria from './pages/Galeria'
 import Blog from './pages/Blog'
 import Tienda from './pages/Tienda'
@@ -33,6 +34,7 @@ const routes: AppRoute[] = [
   { path: '/liga-master/rankings', element: <Rankings /> },
   { path: '/liga-master/halloffame', element: <HallOfFame /> },
   { path: '/torneos', element: <Torneos /> },
+  { path: '/torneos/:slug', element: <Torneo /> },
   { path: '/galeria', element: <Galeria /> },
   { path: '/blog', element: <Blog /> },
   { path: '/tienda', element: <Tienda /> },
