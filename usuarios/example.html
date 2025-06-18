@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil de ejemplo - La Virtual Zone</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header>
+  <h1>Perfil de ejemplo</h1>
+  <nav>
+    <a href="../index.html">Inicio</a>
+    <a href="../usuario.html">Panel</a>
+  </nav>
+</header>
+<main id="profileInfo">
+  <!-- info user via JS -->
+</main>
+<script>
+  const users = JSON.parse(localStorage.getItem('vz_users') || '[]');
+  const name = 'example';
+  const user = users.find(u => u.user === name);
+  const container = document.getElementById('profileInfo');
+  if(user){
+    container.innerHTML = `<h2>${user.user}</h2><p>Rol: ${user.role}</p><p>XP: ${user.xp || 0}</p>`;
+  } else {
+    container.textContent = 'Usuario no encontrado';
+  }
+</script>
+</body>
+</html>
