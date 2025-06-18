@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 
 export default function HeroSection() {
   return (
-    <section className="relative h-[60vh] flex items-center justify-center bg-gradient-to-br from-zinc-800 via-black to-zinc-900">
+    <section className="relative h-[70vh] flex items-center justify-center bg-gradient-to-br from-[#1a0033] via-black to-[#00040a]">
       <div className="absolute inset-0 bg-black/50" />
       <div className="relative z-10 text-center space-y-4">
-        <h1 className="text-4xl md:text-6xl font-bold text-[var(--primary)] drop-shadow-[0_0_6px_var(--primary-glow)]">
+        <h1 className="text-5xl md:text-7xl font-bold text-[var(--primary)] drop-shadow-[0_0_8px_var(--primary-glow)]">
           La Virtual Zone
         </h1>
         <Link

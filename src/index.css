@@ -17,6 +17,11 @@
   font-family: "Montserrat", sans-serif;
 }
 
+h1, h2, h3, .logo {
+  font-family: "Orbitron", sans-serif;
+  letter-spacing: 1px;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
