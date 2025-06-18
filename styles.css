@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #222;
+  padding: 1rem;
+  text-align: center;
+}
+nav a {
+  color: #0af;
+  margin: 0 0.5rem;
+  text-decoration: none;
+}
+main {
+  padding: 1rem;
+}
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+button {
+  padding: 0.5rem 1rem;
+  background: #0af;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}

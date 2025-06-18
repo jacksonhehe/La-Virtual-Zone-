@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro - La Virtual Zone</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Registro</h1>
+</header>
+<main>
+  <form id="registerForm">
+    <label>Usuario: <input type="text" id="regUser" required></label>
+    <label>Contraseña: <input type="password" id="regPass" required></label>
+    <select id="regRole">
+      <option value="user">Usuario estándar</option>
+      <option value="dt">DT</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button type="submit">Crear cuenta</button>
+  </form>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
