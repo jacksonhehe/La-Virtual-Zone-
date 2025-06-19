@@ -161,6 +161,19 @@ export interface NewsItem {
   featured: boolean;
 }
 
+// Blog post type
+export interface Post {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  category: string;
+  author: string;
+  date: string;
+  content: string;
+}
+
 // Media types
 export interface MediaItem {
   id: string;
