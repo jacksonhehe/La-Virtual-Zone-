@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
-import { useAuthStore } from '../store/authStore';
+import { Player } from '../types';
 import PageHeader from '../components/common/PageHeader';
 import OfferModal from '../components/market/OfferModal';
 import OffersPanel from '../components/market/OffersPanel';
@@ -13,11 +13,10 @@ const Market = () => {
   const [priceSort, setPriceSort] = useState<'asc' | 'desc' | null>(null);
   const [ratingSort, setRatingSort] = useState<'asc' | 'desc' | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [activeTab, setActiveTab] = useState<'players' | 'offers'>('players');
   
   const { players, clubs, marketStatus } = useDataStore();
-  const { user } = useAuthStore();
   
   // Filter players
   const transferListedPlayers = players.filter(p => p.transferListed);
@@ -50,7 +49,7 @@ const Market = () => {
   });
   
   // Sort players
-  let sortedPlayers = [...filteredPlayers];
+  const sortedPlayers = [...filteredPlayers];
   
   if (priceSort) {
     sortedPlayers.sort((a, b) => {

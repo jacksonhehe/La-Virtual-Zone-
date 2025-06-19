@@ -29,7 +29,7 @@ const RegisterForm = () => {
     try {
       register(email, username, password);
       navigate('/usuario');
-    } catch (err) {
+    } catch {
       setError('Error al registrarse');
     }
   };

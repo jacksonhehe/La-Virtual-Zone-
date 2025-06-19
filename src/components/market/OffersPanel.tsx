@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
 import { processTransfer } from '../../utils/transferService';
+import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 
 const OffersPanel = () => {
@@ -57,7 +58,7 @@ const OffersPanel = () => {
   };
   
   // Check if user can respond to offer
-  const canRespondToOffer = (offer: any) => {
+  const canRespondToOffer = (offer: TransferOffer) => {
     if (!user) return false;
     
     // Admins can always respond

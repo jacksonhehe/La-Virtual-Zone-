@@ -1,5 +1,5 @@
 import  { useParams, Link } from 'react-router-dom';
-import { users, Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp } from 'lucide-react';
+import { Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { clubs, players } from '../data/mockData';
 import { formatCurrency } from '../utils/helpers';

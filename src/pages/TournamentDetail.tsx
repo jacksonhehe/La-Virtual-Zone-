@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
-import { Trophy, Calendar, Users, Shield, ChevronLeft, FileText, Image, ArrowRight, Star } from 'lucide-react';
+import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';
 import { tournaments, clubs } from '../data/mockData';
 import { Match } from '../types';
 import { formatDate } from '../utils/helpers';

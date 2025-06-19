@@ -1,5 +1,5 @@
 import  { useParams, Link } from 'react-router-dom';
-import { Calendar, User, Tag, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
+import { Calendar, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
 import { posts } from '../data/mockData';
 
 const BlogPost = () => {

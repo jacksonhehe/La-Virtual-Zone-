@@ -1,3 +1,5 @@
+import { Match } from '../types';
+
 //  Format currency
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('es-ES', {
@@ -72,7 +74,7 @@ export const getFormIcon = (form: number): string => {
 };
 
 // Get match result from perspective of a team
-export const getMatchResult = (match: any, teamName: string): 'win' | 'loss' | 'draw' | null => {
+export const getMatchResult = (match: Match, teamName: string): 'win' | 'loss' | 'draw' | null => {
   if (match.status !== 'finished' || match.homeScore === undefined || match.awayScore === undefined) {
     return null;
   }
