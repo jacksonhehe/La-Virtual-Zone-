@@ -1,13 +1,81 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import {
+  Settings,
+  Users,
+  Trophy,
+  ShoppingCart,
+  Calendar,
+  FileText,
+  Clipboard,
+  BarChart,
+  Edit,
+  Plus,
+  Trash,
+  Check,
+  X
+} from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useDataStore } from '../store/dataStore';
+import { processTransfer } from '../utils/transferService';
+import { formatCurrency, getStatusBadge } from '../utils/helpers';
 import { clubs, players } from '../data/mockData';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const {
+    offers,
+    marketStatus,
+    updateMarketStatus,
+    updateOfferStatus,
+    tournaments,
+    addTournament,
+    updateTournaments
+  } = useDataStore();
+
+  const [newTournamentName, setNewTournamentName] = useState('');
+  const [newTournamentType, setNewTournamentType] = useState<'league' | 'cup' | 'friendly'>('league');
+  const [newStartDate, setNewStartDate] = useState('');
+  const [newEndDate, setNewEndDate] = useState('');
+
+  const handleAddTournament = (e: React.FormEvent) => {
+    e.preventDefault();
+    const tournament = {
+      id: `tournament${Date.now()}`,
+      name: newTournamentName,
+      type: newTournamentType,
+      logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(newTournamentName)}&background=4f46e5&color=fff&size=128&bold=true`,
+      startDate: newStartDate,
+      endDate: newEndDate,
+      status: 'upcoming' as const,
+      teams: [],
+      rounds: 0,
+      matches: [],
+      description: ''
+    };
+    addTournament(tournament);
+    setNewTournamentName('');
+    setNewTournamentType('league');
+    setNewStartDate('');
+    setNewEndDate('');
+  };
+
+  const handleEditTournament = (id: string) => {
+    const t = tournaments.find(tour => tour.id === id);
+    if (!t) return;
+    const name = prompt('Nombre del torneo', t.name);
+    if (!name) return;
+    const updated = tournaments.map(tour =>
+      tour.id === id ? { ...tour, name } : tour
+    );
+    updateTournaments(updated);
+  };
+
+  const handleDeleteTournament = (id: string) => {
+    updateTournaments(tournaments.filter(tour => tour.id !== id));
+  };
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -572,8 +640,69 @@ const Admin = () => {
           {activeTab === 'market' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Gestión de Mercado</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración del mercado de fichajes.
+
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-gray-300">Estado:</span>
+                  <span className={marketStatus ? 'text-green-400' : 'text-red-400'}>
+                    {marketStatus ? 'Abierto' : 'Cerrado'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => updateMarketStatus(!marketStatus)}
+                  className="btn-primary"
+                >
+                  {marketStatus ? 'Cerrar mercado' : 'Abrir mercado'}
+                </button>
+              </div>
+
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-dark-lighter text-xs uppercase text-gray-400 border-b border-gray-800">
+                      <th className="px-4 py-3 text-left">Jugador</th>
+                      <th className="px-4 py-3 text-center">Vendedor</th>
+                      <th className="px-4 py-3 text-center">Comprador</th>
+                      <th className="px-4 py-3 text-center">Cantidad</th>
+                      <th className="px-4 py-3 text-center">Estado</th>
+                      <th className="px-4 py-3 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {offers.map(offer => (
+                      <tr key={offer.id} className="border-b border-gray-800 hover:bg-dark-lighter">
+                        <td className="px-4 py-3">{offer.playerName}</td>
+                        <td className="px-4 py-3 text-center">{offer.fromClub}</td>
+                        <td className="px-4 py-3 text-center">{offer.toClub}</td>
+                        <td className="px-4 py-3 text-center">{formatCurrency(offer.amount)}</td>
+                        <td className="px-4 py-3 text-center">
+                          <span className={getStatusBadge(offer.status)}>{offer.status}</span>
+                        </td>
+                        <td className="px-4 py-3 text-center space-x-2">
+                          {offer.status === 'pending' && (
+                            <>
+                              <button
+                                className="btn-primary btn-sm"
+                                onClick={() => {
+                                  const res = processTransfer(offer.id);
+                                  if (res) alert(res);
+                                }}
+                              >
+                                <Check size={14} className="inline" />
+                              </button>
+                              <button
+                                className="btn-secondary btn-sm"
+                                onClick={() => updateOfferStatus(offer.id, 'rejected')}
+                              >
+                                <X size={14} className="inline" />
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -581,8 +710,78 @@ const Admin = () => {
           {activeTab === 'tournaments' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Gestión de Torneos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración de torneos y competiciones.
+
+              <form onSubmit={handleAddTournament} className="mb-6 grid md:grid-cols-4 gap-4">
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Nombre"
+                  value={newTournamentName}
+                  onChange={(e) => setNewTournamentName(e.target.value)}
+                  required
+                />
+                <select
+                  className="input"
+                  value={newTournamentType}
+                  onChange={(e) => setNewTournamentType(e.target.value as 'league' | 'cup' | 'friendly')}
+                >
+                  <option value="league">Liga</option>
+                  <option value="cup">Copa</option>
+                  <option value="friendly">Amistoso</option>
+                </select>
+                <input
+                  type="date"
+                  className="input"
+                  value={newStartDate}
+                  onChange={(e) => setNewStartDate(e.target.value)}
+                  required
+                />
+                <input
+                  type="date"
+                  className="input"
+                  value={newEndDate}
+                  onChange={(e) => setNewEndDate(e.target.value)}
+                  required
+                />
+                <button type="submit" className="btn-primary md:col-span-4">Crear Torneo</button>
+              </form>
+
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-dark-lighter text-xs uppercase text-gray-400 border-b border-gray-800">
+                      <th className="px-4 py-3 text-left">Nombre</th>
+                      <th className="px-4 py-3 text-center">Tipo</th>
+                      <th className="px-4 py-3 text-center">Inicio</th>
+                      <th className="px-4 py-3 text-center">Fin</th>
+                      <th className="px-4 py-3 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tournaments.map(t => (
+                      <tr key={t.id} className="border-b border-gray-800 hover:bg-dark-lighter">
+                        <td className="px-4 py-3">{t.name}</td>
+                        <td className="px-4 py-3 text-center capitalize">{t.type}</td>
+                        <td className="px-4 py-3 text-center">{t.startDate}</td>
+                        <td className="px-4 py-3 text-center">{t.endDate}</td>
+                        <td className="px-4 py-3 text-center space-x-2">
+                          <button
+                            className="p-1 text-gray-400 hover:text-primary"
+                            onClick={() => handleEditTournament(t.id)}
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            className="p-1 text-gray-400 hover:text-red-500"
+                            onClick={() => handleDeleteTournament(t.id)}
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

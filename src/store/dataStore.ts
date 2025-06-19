@@ -41,6 +41,7 @@ interface DataState {
   updateClubs: (newClubs: Club[]) => void;
   updatePlayers: (newPlayers: Player[]) => void;
   updateTournaments: (newTournaments: Tournament[]) => void;
+  addTournament: (tournament: Tournament) => void;
   updateTransfers: (newTransfers: Transfer[]) => void;
   updateOffers: (newOffers: TransferOffer[]) => void;
   updateMarketStatus: (status: boolean) => void;
@@ -67,6 +68,10 @@ export const useDataStore = create<DataState>((set) => ({
   updatePlayers: (newPlayers) => set({ players: newPlayers }),
   
   updateTournaments: (newTournaments) => set({ tournaments: newTournaments }),
+
+  addTournament: (tournament) => set((state) => ({
+    tournaments: [...state.tournaments, tournament]
+  })),
   
   updateTransfers: (newTransfers) => set({ transfers: newTransfers }),
   
