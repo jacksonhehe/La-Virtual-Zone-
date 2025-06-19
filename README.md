@@ -41,7 +41,7 @@ npm run preview
 To access the administrator interface:
 
 1. Start the development server with `npm run dev`.
-2. Open the app in your browser and log in using the demo admin account (`admin` / any password).
+2. Open the app in your browser and log in using the demo admin account (`admin` / `password`).
 3. Click on your avatar in the navigation bar and choose **Panel Admin** or navigate directly to `/admin`.
 
 Within the admin panel you will find management sections for:

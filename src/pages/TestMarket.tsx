@@ -18,7 +18,7 @@ const TestMarket = () => {
     }
     
     try {
-      await login(username, password || 'password'); // Any password works for test accounts
+  await login(username, password || 'password'); // The password for test accounts is fixed
       setError(null);
       setLoginSuccess(true);
       
@@ -140,7 +140,7 @@ const TestMarket = () => {
                     className="input w-full"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Cualquier contraseña funciona para las cuentas de prueba"
+                    placeholder="La contraseña es 'password' para las cuentas de prueba"
                   />
                 </div>
                 
@@ -161,7 +161,7 @@ const TestMarket = () => {
                   <li><span className="text-primary">usuario</span> - Usuario estándar sin club</li>
                   <li><span className="text-primary">admin</span> - Usuario con rol de administrador</li>
                 </ul>
-                <p className="text-sm text-gray-500 mt-2">Nota: Para los usuarios de prueba, cualquier contraseña funcionará.</p>
+                <p className="text-sm text-gray-500 mt-2">Nota: Para los usuarios de prueba, la contraseña es 'password'.</p>
               </div>
             </div>
           )}
@@ -173,9 +173,9 @@ const TestMarket = () => {
           <div className="space-y-6">
             <div>
               <h4 className="font-bold text-primary mb-2">1. Inicia sesión con un DT</h4>
-              <p className="text-gray-300 text-sm">
-                Usa el usuario <span className="text-primary">entrenador</span> con cualquier contraseña para iniciar sesión como DT de Neón FC.
-              </p>
+                <p className="text-gray-300 text-sm">
+                  Usa el usuario <span className="text-primary">entrenador</span> con la contraseña <span className="text-primary">password</span> para iniciar sesión como DT de Neón FC.
+                </p>
             </div>
             
             <div>
