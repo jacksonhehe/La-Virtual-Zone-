@@ -4,7 +4,7 @@ export default function Login() {
   return (
     <div className="max-w-sm mx-auto space-y-4">
       <h1 className="text-2xl font-bold text-center">Iniciar Sesión</h1>
-      <form className="space-y-3 bg-zinc-800 p-4 rounded">
+      <form className="space-y-3 glass p-4 rounded">
         <input
           type="email"
           placeholder="Correo electrónico"

@@ -39,3 +39,23 @@ a:hover {
   color: var(--accent);
   text-shadow: 0 0 6px var(--accent-glow);
 }
+
+/* Simple glassmorphism card style */
+.glass {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--primary-glow);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 0 6px var(--primary-glow);
+  }
+  50% {
+    text-shadow: 0 0 12px var(--accent-glow);
+  }
+}
+
+.neon {
+  animation: pulse-glow 2s infinite;
+}
