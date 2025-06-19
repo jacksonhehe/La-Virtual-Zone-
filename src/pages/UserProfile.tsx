@@ -153,7 +153,7 @@ const UserProfile = () => {
                 
                 <div className="flex items-center mb-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden mr-3">
-                    <img src={club.shield} alt={club.name} className="w-full h-full object-cover" />
+                    <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold">{club.name}</h4>

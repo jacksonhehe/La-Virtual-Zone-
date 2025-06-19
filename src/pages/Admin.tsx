@@ -468,7 +468,7 @@ const Admin = () => {
                           <td className="px-4 py-3">
                             <div className="flex items-center">
                               <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                                <img src={club.shield} alt={club.name} />
+                                <img src={club.logo} alt={club.name} />
                               </div>
                               <span className="font-medium">{club.name}</span>
                             </div>
