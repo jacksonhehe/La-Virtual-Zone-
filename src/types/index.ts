@@ -90,6 +90,7 @@ export interface Tournament {
   teams: string[];
   rounds: number;
   matches: Match[];
+  results?: Match[];
   winner?: string;
   topScorer?: TopScorer;
   description: string;

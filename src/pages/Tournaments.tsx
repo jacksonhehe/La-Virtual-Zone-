@@ -136,12 +136,29 @@ const Tournaments = () => {
                 <p>No se encontraron torneos con los filtros seleccionados.</p>
               </div>
             )}
-          </div>
         </div>
-        
+      </div>
+
+      {/* Finished tournaments */}
+      {tournaments.filter(t => t.status === 'finished').length > 0 && (
         <div className="mt-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Cómo participar</h2>
+          <h2 className="text-2xl font-bold mb-6">Finalizados</h2>
+          <ul className="space-y-2">
+            {tournaments.filter(t => t.status === 'finished').map(t => (
+              <li key={t.id} className="flex items-center justify-between bg-dark-light rounded p-3">
+                <Link to={`/torneos/${t.id}`} className="hover:text-primary font-medium">
+                  {t.name}
+                </Link>
+                {t.winner && <span className="text-gray-400 text-sm">{t.winner}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="mt-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Cómo participar</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
