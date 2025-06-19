@@ -21,16 +21,20 @@ export default function Torneos() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Torneos</h1>
-      <select
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-        className="bg-zinc-900 border border-[var(--primary)] rounded px-2 py-1"
-      >
-        <option value="Todos">Todos</option>
-        <option value="Inscripciones">Inscripciones</option>
-        <option value="En curso">En curso</option>
-        <option value="Finalizado">Finalizado</option>
-      </select>
+      <label htmlFor="filtro-torneos" className="block space-y-1">
+        <span className="text-sm">Filtrar torneos</span>
+        <select
+          id="filtro-torneos"
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          className="bg-zinc-900 border border-[var(--primary)] rounded px-2 py-1"
+        >
+          <option value="Todos">Todos</option>
+          <option value="Inscripciones">Inscripciones</option>
+          <option value="En curso">En curso</option>
+          <option value="Finalizado">Finalizado</option>
+        </select>
+      </label>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {lista.map((t) => (
           <Card
