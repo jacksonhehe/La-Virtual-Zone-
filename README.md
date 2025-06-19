@@ -1,10 +1,14 @@
 # La Virtual Zone
 
-Proyecto base para **La Virtual Zone** usando React, Vite y TypeScript. Incluye un diseño oscuro con fuentes gamer para una apariencia profesional.
+Proyecto base para **La Virtual Zone** usando React, Vite, TypeScript y **Tailwind CSS**. Incluye un diseño oscuro con fuentes gamer para una apariencia profesional.
 
 ## Requisitos
 
 - Node.js 18 o superior.
+
+## Estilos
+
+La aplicación utiliza **Tailwind CSS** como sistema principal de estilos.
 
 ## Desarrollo
 
