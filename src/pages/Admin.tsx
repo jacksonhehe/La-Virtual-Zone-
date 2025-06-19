@@ -1,6 +1,6 @@
 import  { useState, useMemo } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, Search, ExternalLink } from 'lucide-react';
+import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, Search, ExternalLink, MessageSquare } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
