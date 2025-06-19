@@ -9,13 +9,30 @@ interface Props {
 }
 
 const EditClubModal = ({ club, onClose }: Props) => {
-  const { updateClubEntry } = useDataStore();
+  const { users, updateClubEntry, updateUserEntry } = useDataStore();
+  const [logo, setLogo] = useState(club.logo);
   const [name, setName] = useState(club.name);
-  const [manager, setManager] = useState(club.manager);
+  const [budget, setBudget] = useState(club.budget);
+  const [managerId, setManagerId] = useState(
+    users.find(u => u.username === club.manager)?.id || ''
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateClubEntry({ ...club, name, manager });
+
+    const selectedUser = users.find(u => u.id === managerId);
+    if (selectedUser) {
+      updateUserEntry({ ...selectedUser, clubId: club.id });
+    }
+
+    updateClubEntry({
+      ...club,
+      logo,
+      name,
+      budget,
+      manager: selectedUser ? selectedUser.username : club.manager
+    });
+
     onClose();
   };
 
@@ -29,12 +46,46 @@ const EditClubModal = ({ club, onClose }: Props) => {
         <h3 className="text-xl font-bold mb-4">Editar Club</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label className="block text-sm text-gray-400 mb-1">Logo URL</label>
+            <input
+              className="input w-full"
+              value={logo}
+              onChange={e => setLogo(e.target.value)}
+            />
+          </div>
+          <div>
             <label className="block text-sm text-gray-400 mb-1">Nombre</label>
-            <input className="input w-full" value={name} onChange={e => setName(e.target.value)} />
+            <input
+              className="input w-full"
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Presupuesto</label>
+            <input
+              type="number"
+              className="input w-full"
+              value={budget}
+              onChange={e => setBudget(Number(e.target.value))}
+            />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Entrenador</label>
-            <input className="input w-full" value={manager} onChange={e => setManager(e.target.value)} />
+            <select
+              className="input w-full"
+              value={managerId}
+              onChange={e => setManagerId(e.target.value)}
+            >
+              <option value="">Sin DT</option>
+              {users
+                .filter(u => u.role === 'dt')
+                .map(u => (
+                  <option key={u.id} value={u.id}>
+                    {u.username}
+                  </option>
+                ))}
+            </select>
           </div>
           <button type="submit" className="btn-primary w-full">Guardar</button>
         </form>
