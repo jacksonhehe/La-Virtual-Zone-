@@ -122,9 +122,22 @@ const Navbar = () => {
                       >
                         <div className="flex items-center">
                           <User size={16} className="mr-2" />
-                          <span>Mi Perfil</span>
-                        </div>
-                      </Link>
+                      <span>Mi Perfil</span>
+                    </div>
+                  </Link>
+
+                  {user?.role === 'dt' && (
+                    <Link
+                      to="/dt-dashboard"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-4 py-2 text-sm"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <div className="flex items-center">
+                        <Trophy size={16} className="mr-2" />
+                        <span>Mi Club</span>
+                      </div>
+                    </Link>
+                  )}
                       
                       {user?.role === 'admin' && (
                         <Link
@@ -267,6 +280,16 @@ const Navbar = () => {
                 >
                   Mi Perfil
                 </Link>
+
+                {user?.role === 'dt' && (
+                  <Link
+                    to="/dt-dashboard"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Mi Club
+                  </Link>
+                )}
                 
                 {user?.role === 'admin' && (
                   <Link

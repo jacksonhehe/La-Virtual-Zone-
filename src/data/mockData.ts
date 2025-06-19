@@ -42,7 +42,8 @@ export const clubs: Club[] = [
       }
     ],
     reputation: 85,
-    fanBase: 10000
+    fanBase: 10000,
+    morale: 75
   },
   {
     id: 'club2',
@@ -65,7 +66,8 @@ export const clubs: Club[] = [
       }
     ],
     reputation: 80,
-    fanBase: 8500
+    fanBase: 8500,
+    morale: 70
   },
   {
     id: 'club3',
@@ -81,7 +83,8 @@ export const clubs: Club[] = [
     description: 'Conocido por su sólida defensa y juego táctico. Difícil de vencer en casa.',
     titles: [],
     reputation: 75,
-    fanBase: 7200
+    fanBase: 7200,
+    morale: 65
   },
   {
     id: 'club4',
@@ -104,7 +107,8 @@ export const clubs: Club[] = [
       }
     ],
     reputation: 83,
-    fanBase: 9500
+    fanBase: 9500,
+    morale: 80
   },
   {
     id: 'club5',
@@ -120,7 +124,8 @@ export const clubs: Club[] = [
     description: 'Club que combina tradición y modernidad. Juego equilibrado y sólido en todas las líneas.',
     titles: [],
     reputation: 77,
-    fanBase: 8000
+    fanBase: 8000,
+    morale: 68
   },
   {
     id: 'club6',
@@ -143,7 +148,8 @@ export const clubs: Club[] = [
       }
     ],
     reputation: 76,
-    fanBase: 7500
+    fanBase: 7500,
+    morale: 72
   },
   {
     id: 'club7',
@@ -159,7 +165,8 @@ export const clubs: Club[] = [
     description: 'Club con filosofía de toque y posesión extrema. Especialistas en dominar el centro del campo.',
     titles: [],
     reputation: 78,
-    fanBase: 7800
+    fanBase: 7800,
+    morale: 77
   },
   {
     id: 'club8',
@@ -175,7 +182,8 @@ export const clubs: Club[] = [
     description: 'Equipo de juego vertical y directo. Especializado en transiciones rápidas y ataques por banda.',
     titles: [],
     reputation: 79,
-    fanBase: 8200
+    fanBase: 8200,
+    morale: 74
   },
   {
     id: 'club9',
@@ -191,7 +199,8 @@ export const clubs: Club[] = [
     description: 'Club que espera al rival y aprovecha los espacios. Especialista en contragolpes letales.',
     titles: [],
     reputation: 74,
-    fanBase: 7000
+    fanBase: 7000,
+    morale: 60
   },
   {
     id: 'club10',
@@ -214,7 +223,8 @@ export const clubs: Club[] = [
       }
     ],
     reputation: 82,
-    fanBase: 9000
+    fanBase: 9000,
+    morale: 85
   }
 ];
 

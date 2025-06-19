@@ -256,12 +256,21 @@ const ClubProfile = () => {
                             <span className="text-gray-400">Reputación</span>
                             <div className="flex">
                               {Array.from({ length: 5 }).map((_, i) => (
-                                <Star 
+                                <Star
                                   key={i}
                                   size={16}
                                   className={i < Math.round(club.reputation / 20) ? "text-yellow-400" : "text-gray-700"}
                                 />
                               ))}
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-400">Moral</span>
+                            <div className="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-green-500"
+                                style={{ width: `${club.morale ?? 0}%` }}
+                              ></div>
                             </div>
                           </div>
                         </div>
