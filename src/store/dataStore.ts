@@ -126,9 +126,10 @@ export const useDataStore = create<DataState>((set) => ({
   })),
 
   updateUserEntry: (user) => set((state) => {
-    persistUser(user);
+    const updatedUser = { ...user };
+    persistUser(updatedUser);
     return {
-      users: state.users.map(u => (u.id === user.id ? user : u))
+      users: state.users.map(u => (u.id === updatedUser.id ? updatedUser : u))
     };
   }),
 

@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Search } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -28,6 +28,8 @@ const Admin = () => {
   const [userToDelete, setUserToDelete] = useState(null as User | null);
   const [clubToDelete, setClubToDelete] = useState(null as Club | null);
   const [playerToDelete, setPlayerToDelete] = useState(null as Player | null);
+  const [searchText, setSearchText] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | User['role']>('all');
   const {
     clubs,
     players,
@@ -59,6 +61,16 @@ const Admin = () => {
     t => t.date === now.toISOString().slice(0, 10)
   ).length;
   const activeTournamentsCount = tournaments.filter(t => t.status === 'active').length;
+
+  const filteredUsers = users.filter(u => {
+    if (searchText && !u.username.toLowerCase().includes(searchText.toLowerCase())) {
+      return false;
+    }
+    if (roleFilter !== 'all' && u.role !== roleFilter) {
+      return false;
+    }
+    return true;
+  });
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -373,6 +385,31 @@ const Admin = () => {
                   Nuevo usuario
                 </button>
               </div>
+
+              <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
+                <div className="relative w-full md:w-1/2">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search size={16} className="text-gray-500" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Buscar usuario..."
+                    className="input pl-10 w-full"
+                    value={searchText}
+                    onChange={e => setSearchText(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="input md:w-40 w-full"
+                  value={roleFilter}
+                  onChange={e => setRoleFilter(e.target.value as 'all' | User['role'])}
+                >
+                  <option value="all">Todos</option>
+                  <option value="admin">Admin</option>
+                  <option value="dt">DT</option>
+                  <option value="user">Usuario</option>
+                </select>
+              </div>
               
               <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -388,7 +425,7 @@ const Admin = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map((u) => {
+                      {filteredUsers.map((u) => {
                         const roleClasses =
                           u.role === 'admin'
                             ? 'bg-neon-red/20 text-neon-red'
@@ -429,9 +466,29 @@ const Admin = () => {
                             </td>
                             <td className="px-4 py-3 text-center">{clubName}</td>
                             <td className="px-4 py-3 text-center">
-                              <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                                Activo
+                              <span
+                                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${
+                                  u.status === 'active'
+                                    ? 'bg-green-500/20 text-green-500'
+                                    : u.status === 'suspended'
+                                    ? 'bg-yellow-500/20 text-yellow-500'
+                                    : 'bg-red-500/20 text-red-500'
+                                }`}
+                              >
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full mr-1 ${
+                                    u.status === 'active'
+                                      ? 'bg-green-500'
+                                      : u.status === 'suspended'
+                                      ? 'bg-yellow-500'
+                                      : 'bg-red-500'
+                                  }`}
+                                ></span>
+                                {u.status === 'active'
+                                  ? 'Activo'
+                                  : u.status === 'suspended'
+                                  ? 'Suspendido'
+                                  : 'Baneado'}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-center">
