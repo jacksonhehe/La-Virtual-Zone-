@@ -1,70 +1,104 @@
-@tailwind base;
+@tailwind  base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #0d0d0d;
-  --card: #171717;
-  --text: #eaeaea;
-  --primary: #00e0ff;
-  --primary-glow: rgba(0, 224, 255, 0.35);
-  --accent: #9f7aea;
-  --accent-glow: rgba(159, 122, 234, 0.4);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
-}
-
-h1, h2, h3, .logo {
-  font-family: "Orbitron", sans-serif;
-  letter-spacing: 1px;
+  --primary: #7f39fb;
+  --primary-light: #9f65fd;
+  --primary-dark: #5f2cb8;
+  --neon-red: #ff003c;
+  --neon-blue: #00b3ff;
+  --neon-green: #00ff8f;
+  --neon-yellow: #ffe600;
 }
 
 body {
-  background: linear-gradient(to bottom, var(--bg), #050505);
-  color: var(--text);
+  @apply bg-gray-900 text-white font-sans;
 }
 
-a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--accent);
-  text-shadow: 0 0 4px var(--primary-glow), 0 0 6px var(--accent-glow);
-}
-
-/* Simple glassmorphism card style */
-.glass {
-  background: rgba(23, 23, 23, 0.6);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--primary-glow);
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    text-shadow: 0 0 6px var(--primary-glow);
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto;
   }
-  50% {
-    text-shadow: 0 0 12px var(--accent-glow);
+  
+  .card {
+    @apply bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition-all;
+  }
+  
+  .card-hover {
+    @apply hover:border-gray-600 hover:shadow-lg;
+  }
+  
+  .input {
+    @apply bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-600 transition-all;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center border border-gray-700;
+  }
+  
+  .badge {
+    @apply px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  /* Special animation for loader */
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Neon text effects */
+  .neon-text-red {
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--neon-red), 0 0 20px var(--neon-red);
+  }
+  
+  .neon-text-blue {
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--neon-blue), 0 0 20px var(--neon-blue);
+  }
+  
+  .neon-text-green {
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--neon-green), 0 0 20px var(--neon-green);
+  }
+  
+  .neon-text-yellow {
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--neon-yellow), 0 0 20px var(--neon-yellow);
+  }
+  
+  /* Animated background */
+  .animated-bg {
+    background: linear-gradient(45deg, #00000088, #1f1f2f88);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 }
-
-.neon {
-  animation: pulse-glow 2s infinite;
-}
-
-body.light {
-  --bg: #f5f5f5;
-  --card: #ffffff;
-  --text: #0d0d0d;
-  --primary: #0077ff;
-  --primary-glow: rgba(0, 119, 255, 0.35);
-  --accent: #7c3aed;
-  --accent-glow: rgba(124, 58, 237, 0.4);
-}
+ 

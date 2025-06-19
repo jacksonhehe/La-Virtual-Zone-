@@ -1,14 +1,20 @@
-import Navbar from './Navbar'
-import Footer from './Footer'
-import styles from './Layout.module.css'
+import  { Outlet } from 'react-router-dom';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+const Layout = () => {
   return (
-    <div className={styles.container}>
-      <a href="#contenido" className="skip-link">Saltar al contenido</a>
+    <div className="flex flex-col min-h-screen bg-gray-900">
       <Navbar />
-      <main id="contenido" className={styles.main}>{children}</main>
+      
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+      
       <Footer />
     </div>
-  )
-}
+  );
+};
+
+export default Layout;
+ 
