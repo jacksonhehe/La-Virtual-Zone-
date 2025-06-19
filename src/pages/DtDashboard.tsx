@@ -57,7 +57,8 @@ const DtDashboard = () => {
     .slice(0, 3);
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <>
+      <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center">
           <img src={club.logo} alt={club.name} className="w-14 h-14 mr-3" />
@@ -187,25 +188,14 @@ const DtDashboard = () => {
           </ul>
         </div>
       )}
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-        <Link to="/reglamento" className="card card-hover p-4 hover:scale-105">
-          Reglamento
-        </Link>
-        <Link
-          to="/liga-master/hall-of-fame"
-          className="card card-hover p-4 hover:scale-105"
-        >
-          Salón de la Fama
-        </Link>
-        <Link to="/pretemporada" className="card card-hover p-4 hover:scale-105">
-          Pretemporada
-        </Link>
-        <Link to="/ayuda" className="card card-hover p-4 hover:scale-105">
-          Ayuda
-        </Link>
-      </div>
     </div>
+    <footer className="text-gray-400 text-sm flex justify-center gap-4 mt-8">
+      <Link to="/reglamento">Reglamento</Link>
+      <Link to="/liga-master/hall-of-fame">Salón de la Fama</Link>
+      <Link to="/pretemporada">Pretemporada</Link>
+      <Link to="/ayuda">Ayuda</Link>
+    </footer>
+  </>
   );
 };
 
