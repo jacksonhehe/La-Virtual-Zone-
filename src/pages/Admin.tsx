@@ -4,6 +4,7 @@ import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, B
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
+import NewTournamentModal from '../components/admin/NewTournamentModal';
 import { useAuthStore } from '../store/authStore';
 import { clubs, players } from '../data/mockData';
 
@@ -12,6 +13,7 @@ const Admin = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
+  const [showTournamentModal, setShowTournamentModal] = useState(false);
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -242,31 +244,40 @@ const Admin = () => {
                   <h3 className="text-xl font-bold mb-4">Acciones rápidas</h3>
                   <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setShowClubModal(true)}
+                      >
                         <Users size={18} className="mb-1" />
-                        <span className="text-sm">Gestionar usuarios</span>
+                        <span className="text-sm">Nuevo club</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setShowPlayerModal(true)}
+                      >
                         <ShoppingCart size={18} className="mb-1" />
-                        <span className="text-sm">Abrir/cerrar mercado</span>
+                        <span className="text-sm">Nuevo jugador</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setShowTournamentModal(true)}
+                      >
                         <Trophy size={18} className="mb-1" />
-                        <span className="text-sm">Crear torneo</span>
+                        <span className="text-sm">Nuevo torneo</span>
                       </button>
-                      
+
                       <button className="btn-outline py-3 flex flex-col items-center justify-center">
                         <Calendar size={18} className="mb-1" />
                         <span className="text-sm">Registrar resultados</span>
                       </button>
-                      
+
                       <button className="btn-outline py-3 flex flex-col items-center justify-center">
                         <FileText size={18} className="mb-1" />
                         <span className="text-sm">Crear noticia</span>
                       </button>
-                      
+
                       <button className="btn-outline py-3 flex flex-col items-center justify-center">
                         <Settings size={18} className="mb-1" />
                         <span className="text-sm">Configuración</span>
@@ -624,6 +635,7 @@ const Admin = () => {
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
       {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
       {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
+      {showTournamentModal && <NewTournamentModal onClose={() => setShowTournamentModal(false)} />}
     </div>
   );
 };
