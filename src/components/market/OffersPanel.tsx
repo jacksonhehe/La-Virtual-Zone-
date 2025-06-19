@@ -15,15 +15,15 @@ const OffersPanel = () => {
   
   // Filter offers based on user role
   const filteredOffers = user ? 
-    user.role === 'admin' ? 
+    user.role === 'admin' ?
       // Admin sees all offers
-      offers : 
-    user.role === 'dt' && user.clubId ? 
+      offers :
+    user.role === 'dt' && user.club ?
       // DT sees offers for their club
       offers.filter(o => {
-        const userClub = clubs.find(c => c.id === user.clubId);
+        const userClub = clubs.find(c => c.name === user.club);
         return userClub && (o.fromClub === userClub.name || o.toClub === userClub.name);
-      }) : 
+      }) :
       // User made offers
       offers.filter(o => o.userId === user.id) :
     [];
@@ -68,8 +68,8 @@ const OffersPanel = () => {
     if (offer.status !== 'pending') return false;
     
     // Check if user is DT of the selling club
-    if (user.role === 'dt' && user.clubId) {
-      const userClub = clubs.find(c => c.id === user.clubId);
+    if (user.role === 'dt' && user.club) {
+      const userClub = clubs.find(c => c.name === user.club);
       return userClub && userClub.name === offer.fromClub;
     }
     

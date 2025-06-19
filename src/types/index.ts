@@ -6,8 +6,8 @@ export interface User {
   role: 'user' | 'dt' | 'admin';
   avatar: string;
   xp: number;
-  clubId?: string;
-  joinDate: string;
+  club?: string;
+  createdAt: string;
   status: 'active' | 'suspended' | 'banned';
   notifications: boolean;
   lastLogin: string;
