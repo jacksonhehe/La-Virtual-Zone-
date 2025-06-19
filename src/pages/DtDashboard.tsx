@@ -64,8 +64,7 @@ const DtDashboard = () => {
       }
       const days = Math.floor(diff / 86400000);
       const hours = Math.floor((diff % 86400000) / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      setCountdown(`${days}d ${hours}h ${minutes}m`);
+      setCountdown(`Faltan ${days} días y ${hours} horas`);
     };
     updateCountdown();
     const id = setInterval(updateCountdown, 60000);
@@ -99,49 +98,49 @@ const DtDashboard = () => {
           ></div>
         </div>
       ) : (
-        <span className="badge bg-gray-700 text-gray-300">Sin datos aún</span>
+        <span className="badge bg-gray-700 text-gray-300">Sin datos</span>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link
           to={`/liga-master/club/${slug}/plantilla`}
-          className="card card-hover p-6 text-center hover:scale-105 hover:shadow-[0_0_10px_var(--primary)] transition-transform focus:outline-none focus:ring-2 focus:ring-primary"
+          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--primary)] transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <Users className="text-primary mb-3 w-8 h-8 max-[359px]:w-6 max-[359px]:h-6" />
+          <Users className="text-primary mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
           <p className="text-gray-400 text-sm font-medium mb-1">Plantilla</p>
-          <p className="text-xl font-bold mb-2">{clubPlayers.length} jugadores</p>
+          <p className="text-lg font-medium mb-2">{clubPlayers.length} jugadores</p>
           {captain && (
             <img src={captain.image} alt={captain.name} className="w-12 h-12 rounded-full mx-auto" />
           )}
         </Link>
         <Link
           to={`/liga-master/club/${slug}/tacticas`}
-          className="card card-hover p-6 text-center hover:scale-105 hover:shadow-[0_0_10px_var(--primary)] transition-transform focus:outline-none focus:ring-2 focus:ring-primary"
+          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--primary)] transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <Layout className="text-neon-blue mb-3 w-8 h-8 max-[359px]:w-6 max-[359px]:h-6" />
+          <Layout className="text-neon-blue mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
           <p className="text-gray-400 text-sm font-medium mb-1">Táctica</p>
-          <p className="text-xl font-bold">{formation}</p>
+          <p className="text-lg font-medium">{formation}</p>
         </Link>
         <Link
           to={`/liga-master/club/${slug}/finanzas`}
-          className="card card-hover p-6 text-center hover:scale-105 hover:shadow-[0_0_10px_var(--primary)] transition-transform focus:outline-none focus:ring-2 focus:ring-primary"
+          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--primary)] transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <DollarSign className="text-neon-green mb-3 w-8 h-8 max-[359px]:w-6 max-[359px]:h-6" />
+          <DollarSign className="text-neon-green mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
           <p className="text-gray-400 text-sm font-medium mb-1">Finanzas</p>
-          <p className="text-xl font-bold">{formatCurrency(club.budget)}</p>
+          <p className="text-lg font-medium">{formatCurrency(club.budget)}</p>
         </Link>
         <Link
           to="/liga-master/mercado"
-          className="card card-hover p-6 text-center hover:scale-105 hover:shadow-[0_0_10px_var(--primary)] transition-transform focus:outline-none focus:ring-2 focus:ring-primary"
+          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--primary)] transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <TrendingUp className="text-neon-yellow mb-3 w-8 h-8 max-[359px]:w-6 max-[359px]:h-6" />
+          <TrendingUp className="text-neon-yellow mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
           <p className="text-gray-400 text-sm font-medium mb-1">Mercado</p>
-          <p className="text-xl font-bold">{marketStatus ? 'Abierto' : 'Cerrado'}</p>
+          <p className="text-lg font-medium">{marketStatus ? 'Abierto' : 'Cerrado'}</p>
         </Link>
       </div>
 
       {nextMatch && (
-        <div className="card p-6">
+        <div className="card p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Próximo Partido</h2>
             <Link to="/liga-master/fixture" className="text-primary text-sm hover:text-primary-light focus:outline-none focus:ring-2 focus:ring-primary">
@@ -182,7 +181,7 @@ const DtDashboard = () => {
       )}
 
       {standing && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 mt-4">
           <div className="card p-4 text-center">
             <p className="text-gray-400 text-sm">Posición</p>
             <p className="text-xl font-bold">{standings.indexOf(standing) + 1}</p>
@@ -220,8 +219,8 @@ const DtDashboard = () => {
         </div>
       )}
     </div>
-    <footer className="text-gray-300 text-sm mt-8">
-      <div className="flex justify-center gap-4 lg:grid lg:grid-cols-2 lg:w-1/2 lg:mx-auto">
+    <footer className="text-gray-400 text-sm mt-8">
+      <div className="flex justify-center gap-4 sm:grid sm:grid-cols-2 sm:w-1/2 sm:mx-auto lg:grid lg:grid-cols-2 lg:w-1/2 lg:mx-auto">
         <Link to="/reglamento" className="focus:outline-none focus:ring-2 focus:ring-primary">Reglamento</Link>
         <Link to="/liga-master/hall-of-fame" className="focus:outline-none focus:ring-2 focus:ring-primary">Salón de la Fama</Link>
         <Link to="/pretemporada" className="focus:outline-none focus:ring-2 focus:ring-primary">Pretemporada</Link>
