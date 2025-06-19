@@ -135,6 +135,53 @@ export const register = (
   return newUser;
 };
 
+// Add new user (admin)
+export const addUser = (
+  email: string,
+  username: string,
+  role: 'user' | 'dt' | 'admin',
+  clubId?: string
+): User => {
+  const users = getUsers();
+
+  const usernameExists = users.some(
+    u => u.username.toLowerCase() === username.toLowerCase()
+  );
+  if (usernameExists) {
+    throw new Error('El nombre de usuario ya está en uso');
+  }
+
+  const emailExists = users.some(
+    u => u.email.toLowerCase() === email.toLowerCase()
+  );
+  if (emailExists) {
+    throw new Error('El correo electrónico ya está en uso');
+  }
+
+  const newUser: User = {
+    id: `${Date.now()}`,
+    username,
+    email,
+    role,
+    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      username
+    )}&background=111827&color=fff&size=128`,
+    xp: 0,
+    clubId,
+    joinDate: new Date().toISOString(),
+    status: 'active',
+    notifications: true,
+    lastLogin: new Date().toISOString(),
+    followers: 0,
+    following: 0
+  };
+
+  users.push(newUser);
+  saveUsers(users);
+
+  return newUser;
+};
+
 // Login function
 export const login = (username: string): User => {
   // Get users, falling back to test users if none exist

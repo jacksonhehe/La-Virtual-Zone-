@@ -1,11 +1,17 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import NewUserModal from '../components/admin/NewUserModal';
+import NewClubModal from '../components/admin/NewClubModal';
+import NewPlayerModal from '../components/admin/NewPlayerModal';
 import { useAuthStore } from '../store/authStore';
 import { clubs, players } from '../data/mockData';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [showClubModal, setShowClubModal] = useState(false);
+  const [showPlayerModal, setShowPlayerModal] = useState(false);
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -276,7 +282,7 @@ const Admin = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Gestión de Usuarios</h2>
-                <button className="btn-primary flex items-center">
+                <button className="btn-primary flex items-center" onClick={() => setShowUserModal(true)}>
                   <Plus size={16} className="mr-2" />
                   Nuevo usuario
                 </button>
@@ -442,7 +448,7 @@ const Admin = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Gestión de Clubes</h2>
-                <button className="btn-primary flex items-center">
+                <button className="btn-primary flex items-center" onClick={() => setShowClubModal(true)}>
                   <Plus size={16} className="mr-2" />
                   Nuevo club
                 </button>
@@ -505,7 +511,7 @@ const Admin = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Gestión de Jugadores</h2>
-                <button className="btn-primary flex items-center">
+                <button className="btn-primary flex items-center" onClick={() => setShowPlayerModal(true)}>
                   <Plus size={16} className="mr-2" />
                   Nuevo jugador
                 </button>
@@ -615,6 +621,9 @@ const Admin = () => {
           )}
         </div>
       </div>
+      {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
+      {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
+      {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
     </div>
   );
 };
