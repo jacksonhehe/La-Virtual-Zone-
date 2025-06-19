@@ -1,18 +1,22 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import MatchModal from '../components/admin/MatchModal';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import { Match } from '../types';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const [showMatchModal, setShowMatchModal] = useState(false);
+  const [editingMatch, setEditingMatch] = useState<Match | null>(null);
+  const { clubs, players, users, tournaments, standings } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -316,9 +320,10 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const extended = u as User & { clubId?: string };
                         const clubName =
-                          clubs.find((c) => c.id === (u as any).clubId)?.name ||
-                          (u as any).club ||
+                          clubs.find((c) => c.id === extended.clubId)?.name ||
+                          extended.club ||
                           '-';
 
                         return (
@@ -528,10 +533,98 @@ const Admin = () => {
           )}
 
           {activeTab === 'stats' && (
-            <div>
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold mb-4">Estadísticas Generales</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Resumen estadístico de clubes y jugadores.
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-dark-light rounded-lg p-4 border border-gray-800 text-center">
+                  <p className="text-gray-400 text-sm">Clubes</p>
+                  <p className="text-2xl font-bold">{clubs.length}</p>
+                </div>
+                <div className="bg-dark-light rounded-lg p-4 border border-gray-800 text-center">
+                  <p className="text-gray-400 text-sm">Jugadores</p>
+                  <p className="text-2xl font-bold">{players.length}</p>
+                </div>
+                <div className="bg-dark-light rounded-lg p-4 border border-gray-800 text-center">
+                  <p className="text-gray-400 text-sm">Partidos</p>
+                  <p className="text-2xl font-bold">{tournaments.reduce((a,t) => a + t.matches.length, 0)}</p>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="p-4 border-b border-gray-800">
+                  <h3 className="text-lg font-bold">Tabla de Posiciones</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-xs text-gray-400 border-b border-gray-800">
+                        <th className="font-medium p-4 text-left">Pos</th>
+                        <th className="font-medium p-4 text-left">Club</th>
+                        <th className="font-medium p-4 text-center">PJ</th>
+                        <th className="font-medium p-4 text-center">G</th>
+                        <th className="font-medium p-4 text-center">E</th>
+                        <th className="font-medium p-4 text-center">P</th>
+                        <th className="font-medium p-4 text-center">Pts</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-800">
+                      {standings.map((team, index) => {
+                        const club = clubs.find(c => c.id === team.clubId);
+                        return (
+                          <tr key={team.clubId} className="hover:bg-gray-800/50">
+                            <td className="p-4 text-center">{index + 1}</td>
+                            <td className="p-4">
+                              <div className="flex items-center">
+                                <img src={club?.logo} alt={club?.name} className="w-6 h-6 mr-2" />
+                                <span>{club?.name}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-center text-gray-400">{team.played}</td>
+                            <td className="p-4 text-center text-gray-400">{team.won}</td>
+                            <td className="p-4 text-center text-gray-400">{team.drawn}</td>
+                            <td className="p-4 text-center text-gray-400">{team.lost}</td>
+                            <td className="p-4 text-center font-bold">{team.points}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="p-4 border-b border-gray-800">
+                  <h3 className="text-lg font-bold">Top Goleadores</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-xs text-gray-400 border-b border-gray-800">
+                        <th className="font-medium p-4 text-left">Jugador</th>
+                        <th className="font-medium p-4 text-left">Club</th>
+                        <th className="font-medium p-4 text-center">Goles</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-800">
+                      {[...players].sort((a,b) => b.goals - a.goals).slice(0,5).map(player => {
+                        const club = clubs.find(c => c.id === player.clubId);
+                        return (
+                          <tr key={player.id} className="hover:bg-gray-800/50">
+                            <td className="p-4">{player.name}</td>
+                            <td className="p-4">
+                              <div className="flex items-center">
+                                <img src={club?.logo} alt={club?.name} className="w-5 h-5 mr-2" />
+                                <span>{club?.name}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-center font-bold">{player.goals}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -539,8 +632,42 @@ const Admin = () => {
           {activeTab === 'calendar' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Calendario de Partidos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Gestión del calendario de encuentros y eventos.
+              <div className="mb-4">
+                <button onClick={() => { setEditingMatch(null); setShowMatchModal(true); }} className="btn-primary inline-flex items-center">
+                  <Plus size={16} className="mr-2" /> Nuevo Partido
+                </button>
+              </div>
+              <div className="card overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-xs text-gray-400 border-b border-gray-800">
+                      <th className="font-medium p-4 text-left">Fecha</th>
+                      <th className="font-medium p-4 text-left">Local</th>
+                      <th className="font-medium p-4 text-left">Visitante</th>
+                      <th className="font-medium p-4 text-center">Estado</th>
+                      <th className="font-medium p-4 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-800">
+                    {tournaments[0].matches.map(m => (
+                      <tr key={m.id} className="hover:bg-gray-800/50">
+                        <td className="p-4">{new Date(m.date).toLocaleDateString()}</td>
+                        <td className="p-4">{m.homeTeam}</td>
+                        <td className="p-4">{m.awayTeam}</td>
+                        <td className="p-4 text-center">
+                          {m.status === 'scheduled' && 'Programado'}
+                          {m.status === 'live' && 'En vivo'}
+                          {m.status === 'finished' && 'Finalizado'}
+                        </td>
+                        <td className="p-4 text-center">
+                          <button onClick={() => { setEditingMatch(m); setShowMatchModal(true); }} className="text-primary hover:underline mr-2">
+                            <Edit size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -549,6 +676,13 @@ const Admin = () => {
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
       {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
       {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
+      {showMatchModal && (
+        <MatchModal
+          onClose={() => setShowMatchModal(false)}
+          tournamentId={tournaments[0].id}
+          match={editingMatch || undefined}
+        />
+      )}
     </div>
   );
 };

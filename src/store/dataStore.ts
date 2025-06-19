@@ -24,7 +24,8 @@ import {
   NewsItem,
   MediaItem,
   FAQ,
-  StoreItem
+  StoreItem,
+  Match
 } from '../types';
 
 interface DataState {
@@ -53,6 +54,8 @@ interface DataState {
   addUser: (user: User) => void;
   addClub: (club: Club) => void;
   addPlayer: (player: Player) => void;
+  addMatch: (tournamentId: string, match: Match) => void;
+  updateMatch: (tournamentId: string, match: Match) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -105,6 +108,18 @@ export const useDataStore = create<DataState>((set) => ({
 
   addPlayer: (player) => set((state) => ({
     players: [...state.players, player]
+  })),
+
+  addMatch: (tournamentId, match) => set((state) => ({
+    tournaments: state.tournaments.map(t =>
+      t.id === tournamentId ? { ...t, matches: [...t.matches, match] } : t
+    )
+  })),
+
+  updateMatch: (tournamentId, match) => set((state) => ({
+    tournaments: state.tournaments.map(t =>
+      t.id === tournamentId ? { ...t, matches: t.matches.map(m => m.id === match.id ? match : m) } : t
+    )
   }))
 }));
  
