@@ -51,7 +51,11 @@ const TournamentsAdminPanel = () => {
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">Tipo</label>
-          <select className="input w-full" value={type} onChange={e => setType(e.target.value as any)}>
+          <select
+            className="input w-full"
+            value={type}
+            onChange={e => setType(e.target.value as 'league' | 'cup' | 'friendly')}
+          >
             <option value="league">Liga</option>
             <option value="cup">Copa</option>
             <option value="friendly">Amistoso</option>

@@ -50,6 +50,7 @@ interface DataState {
   addOffer: (offer: TransferOffer) => void;
   updateOfferStatus: (offerId: string, status: 'pending' | 'accepted' | 'rejected') => void;
   addTransfer: (transfer: Transfer) => void;
+  removeTransfer: (id: string) => void;
   addUser: (user: User) => void;
   addClub: (club: Club) => void;
   addPlayer: (player: Player) => void;
@@ -103,6 +104,10 @@ export const useDataStore = create<DataState>((set) => ({
 
   addTransfer: (transfer) => set((state) => ({
     transfers: [transfer, ...state.transfers]
+  })),
+
+  removeTransfer: (id) => set((state) => ({
+    transfers: state.transfers.filter(t => t.id !== id)
   })),
 
   addUser: (user) => set((state) => ({
