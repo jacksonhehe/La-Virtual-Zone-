@@ -3,13 +3,14 @@ import  {
   Player, 
   Tournament, 
   Match, 
-  Transfer, 
-  TransferOffer, 
-  NewsItem, 
-  MediaItem, 
-  Standing, 
-  FAQ, 
-  StoreItem 
+  Transfer,
+  TransferOffer,
+  NewsItem,
+  MediaItem,
+  Post,
+  Standing,
+  FAQ,
+  StoreItem
 } from '../types';
 
 // Mock Clubs Data
@@ -700,6 +701,65 @@ export const newsItems: NewsItem[] = [
     author: 'Admin',
     clubId: 'club6',
     featured: false
+  } 
+];
+
+// Blog posts
+export const posts: Post[] = [
+  {
+    id: 'post1',
+    slug: 'liga-master-2025-arranca',
+    title: 'La Liga Master 2025 arranca con emoción',
+    excerpt: 'El nuevo campeonato de La Virtual Zone ya está en marcha con diez clubes dispuestos a todo por el título.',
+    image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3',
+    category: 'Noticias',
+    author: 'Admin',
+    date: '2025-01-15',
+    content: '<p>La temporada se perfila como una de las más igualadas desde la fundación de la liga. Cada club ha reforzado su plantilla y se esperan partidos vibrantes.</p>'
+  },
+  {
+    id: 'post2',
+    slug: 'analisis-rayo-digital-fc',
+    title: 'Análisis táctico de Rayo Digital FC',
+    excerpt: 'Desgranamos las claves del juego de posesión que caracteriza al vigente campeón.',
+    image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?ixlib=rb-4.0.3',
+    category: 'Análisis',
+    author: 'Editor',
+    date: '2025-01-18',
+    content: '<p>El equipo dirigido por coach apuesta por la circulación rápida y la presión tras pérdida. Sus nuevas incorporaciones encajan a la perfección en este sistema.</p>'
+  },
+  {
+    id: 'post3',
+    slug: 'rumores-mercado-fichajes',
+    title: 'Rumores de fichajes para la temporada',
+    excerpt: 'Los clubes se mueven en el mercado y ya suenan nombres importantes para reforzar las plantillas.',
+    image: 'https://images.unsplash.com/photo-1521412644187-c49fa049e84d?ixlib=rb-4.0.3',
+    category: 'Fichajes',
+    author: 'Admin',
+    date: '2025-01-20',
+    content: '<p>Varias estrellas podrían cambiar de aires antes de que cierre el mercado. Repasamos las operaciones más destacadas que se rumorean en los despachos.</p>'
+  },
+  {
+    id: 'post4',
+    slug: 'crece-la-comunidad-virtual',
+    title: 'La comunidad de La Virtual Zone sigue creciendo',
+    excerpt: 'Cada semana se suman nuevos usuarios que comparten su pasión por el fútbol virtual.',
+    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3',
+    category: 'Comunidad',
+    author: 'Editor',
+    date: '2025-01-22',
+    content: '<p>Foros, torneos y eventos especiales fomentan la participación de los managers. ¡Únete tú también!</p>'
+  },
+  {
+    id: 'post5',
+    slug: 'humor-en-la-virtual-zone',
+    title: 'Los mejores memes de la jornada',
+    excerpt: 'Recopilamos las imágenes más divertidas que dejó la última fecha del campeonato.',
+    image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3',
+    category: 'Humor',
+    author: 'Admin',
+    date: '2025-01-24',
+    content: '<p>Porque también hay espacio para las risas, compartimos los memes que más triunfaron en redes.</p>'
   }
 ];
 
