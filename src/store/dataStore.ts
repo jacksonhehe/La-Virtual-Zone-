@@ -53,6 +53,10 @@ interface DataState {
   addUser: (user: User) => void;
   addClub: (club: Club) => void;
   addPlayer: (player: Player) => void;
+  updateNewsItems: (items: NewsItem[]) => void;
+  addNewsItem: (item: NewsItem) => void;
+  editNewsItem: (item: NewsItem) => void;
+  deleteNewsItem: (id: string) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -105,6 +109,20 @@ export const useDataStore = create<DataState>((set) => ({
 
   addPlayer: (player) => set((state) => ({
     players: [...state.players, player]
+  })),
+
+  updateNewsItems: (items) => set({ newsItems: items }),
+
+  addNewsItem: (item) => set((state) => ({
+    newsItems: [item, ...state.newsItems]
+  })),
+
+  editNewsItem: (item) => set((state) => ({
+    newsItems: state.newsItems.map(n => n.id === item.id ? item : n)
+  })),
+
+  deleteNewsItem: (id) => set((state) => ({
+    newsItems: state.newsItems.filter(n => n.id !== id)
   }))
 }));
  

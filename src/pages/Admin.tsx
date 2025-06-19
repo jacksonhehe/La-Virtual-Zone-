@@ -4,6 +4,7 @@ import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, B
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
+import NewsManager from '../components/admin/NewsManager';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 
@@ -316,9 +317,10 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const userClub = u as User & { clubId?: string };
                         const clubName =
-                          clubs.find((c) => c.id === (u as any).clubId)?.name ||
-                          (u as any).club ||
+                          clubs.find((c) => c.id === userClub.clubId)?.name ||
+                          userClub.club ||
                           '-';
 
                         return (
@@ -518,14 +520,7 @@ const Admin = () => {
             </div>
           )}
 
-          {activeTab === 'news' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Gestión de Noticias</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel para crear y editar noticias de la liga.
-              </div>
-            </div>
-          )}
+          {activeTab === 'news' && <NewsManager />}
 
           {activeTab === 'stats' && (
             <div>
