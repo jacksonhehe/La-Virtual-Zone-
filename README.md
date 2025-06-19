@@ -58,4 +58,4 @@ Within the admin panel you will find management sections for:
 
 ## Data Persistence
 
-User accounts and login state are stored in the browser using `localStorage`. Clearing your browser data resets this information. Other league data (clubs, players, tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
+User accounts and login state are stored in the browser using `localStorage`. League data such as clubs and players is now persisted with **IndexedDB** so edits survive page refreshes. For a discussion of alternatives, see [`docs/persistence-options.md`](docs/persistence-options.md).
