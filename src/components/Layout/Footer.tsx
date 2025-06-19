@@ -10,11 +10,11 @@ export default function Footer() {
         <a href="#">Discord</a>
         <a href="#">Twitter</a>
       </nav>
-      <div className={styles.socials}>
-        <span>🎮</span>
-        <span>💬</span>
-        <span>🐦</span>
-      </div>
-    </footer>
+        <div className={styles.socials}>
+          <a href="https://twitch.tv" aria-label="Twitch">🎮</a>
+          <a href="https://discord.com" aria-label="Discord">💬</a>
+          <a href="https://twitter.com" aria-label="Twitter">🐦</a>
+        </div>
+      </footer>
   )
 }
