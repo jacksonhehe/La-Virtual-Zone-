@@ -1,12 +1,14 @@
 import  { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { Search, AlertCircle } from 'lucide-react';
-import { storeItems } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 import { formatCurrency } from '../utils/helpers';
 
 const Store = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const { storeItems } = useDataStore();
   
   // Filter store items
   const filteredItems = storeItems.filter(product => {

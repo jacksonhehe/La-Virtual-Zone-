@@ -1,11 +1,13 @@
 import  { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
-import { tournaments } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 import { useState } from 'react';
 
 const Tournaments = () => {
   const [filter, setFilter] = useState('all'); // 'all', 'ongoing', 'open', 'finished'
+
+  const { tournaments } = useDataStore();
   
   // Filter tournaments
   const filteredTournaments = filter === 'all' 

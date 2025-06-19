@@ -5,13 +5,14 @@ import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
 import { useAuthStore } from '../store/authStore';
-import { clubs, players } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
+  const { clubs, players } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 

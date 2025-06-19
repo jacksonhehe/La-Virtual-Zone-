@@ -2,13 +2,15 @@ import  { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';
-import { tournaments, clubs } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 import { Match } from '../types';
 import { formatDate } from '../utils/helpers';
 
 const TournamentDetail = () => {
   const { tournamentName } = useParams<{ tournamentName: string }>();
   const [activeTab, setActiveTab] = useState('overview');
+
+  const { tournaments, clubs } = useDataStore();
   
   // Find tournament by slug
   const tournament = tournaments.find(t => t.slug === tournamentName);
