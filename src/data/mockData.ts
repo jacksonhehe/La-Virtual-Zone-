@@ -386,6 +386,7 @@ export const tournaments: Tournament[] = [
     teams: clubs.map(club => club.name),
     rounds: 18,
     matches: [],
+    results: [],
     description: 'La competición principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 10 equipos participantes.'
   },
   {
@@ -399,6 +400,7 @@ export const tournaments: Tournament[] = [
     teams: clubs.map(club => club.name),
     rounds: 4,
     matches: [],
+    results: [],
     description: 'Torneo eliminatorio con emparejamientos por sorteo. El ganador obtiene plaza para la Supercopa Digital.'
   },
   {
@@ -412,6 +414,7 @@ export const tournaments: Tournament[] = [
     teams: ['Rayo Digital FC', 'Neón FC'],
     rounds: 1,
     matches: [],
+    results: [],
     description: 'Partido único entre el campeón de Liga y el campeón de Copa. El evento más prestigioso de la temporada.'
   },
   {
@@ -425,6 +428,7 @@ export const tournaments: Tournament[] = [
     teams: clubs.slice(0, 8).map(club => club.name),
     rounds: 3,
     matches: [],
+    results: [],
     winner: 'Rayo Digital FC',
     topScorer: {
       id: 'topscorer1',
