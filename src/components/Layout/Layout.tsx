@@ -1,14 +1,13 @@
 import Navbar from './Navbar'
 import Footer from './Footer'
+import styles from './Layout.module.css'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className={styles.container}>
       <Navbar />
-      <main style={{ paddingInline: '1rem', minHeight: 'calc(100vh - 160px)' }}>
-        {children}
-      </main>
+      <main className={styles.main}>{children}</main>
       <Footer />
-    </>
+    </div>
   )
 }
