@@ -228,4 +228,13 @@ export interface Standing {
   points: number;
   form: string[];
 }
+
+// Activity log entry type
+export interface ActivityLogEntry {
+  id: string;
+  action: string;
+  userId: string;
+  date: string;
+  details?: string;
+}
  

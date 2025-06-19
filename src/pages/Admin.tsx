@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, History } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -13,9 +13,11 @@ import TournamentsAdminPanel from '../components/admin/TournamentsAdminPanel';
 import NewsAdminPanel from '../components/admin/NewsAdminPanel';
 import StatsAdminPanel from '../components/admin/StatsAdminPanel';
 import CalendarAdminPanel from '../components/admin/CalendarAdminPanel';
+import ActivityLogPanel from '../components/admin/ActivityLogPanel';
 import { User, Club, Player } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import { useActivityLogStore } from '../store/activityLogStore';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -38,6 +40,7 @@ const Admin = () => {
     marketStatus,
     updateMarketStatus
   } = useDataStore();
+  const { logs } = useActivityLogStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -133,6 +136,14 @@ const Admin = () => {
               <Calendar size={18} className="mr-3" />
               <span>Calendario</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('activity')}
+              className={`w-full flex items-center p-3 rounded-md text-left transition-colors mb-1 ${activeTab === 'activity' ? 'bg-primary text-white' : 'hover:bg-dark-lighter text-gray-300'}`}
+            >
+              <History size={18} className="mr-3" />
+              <span>Actividad</span>
+            </button>
             
             <div className="border-t border-gray-800 my-2 pt-2">
               <button
@@ -180,50 +191,18 @@ const Admin = () => {
               <div className="mb-8">
                 <h3 className="text-xl font-bold mb-4">Actividad reciente</h3>
                 <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
-                  <div className="p-4 border-b border-gray-800">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                          <Users size={18} className="text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Nuevo usuario registrado</p>
-                          <p className="text-sm text-gray-400">user2024 se ha registrado</p>
-                        </div>
+                  {logs.slice(0,3).map(entry => (
+                    <div key={entry.id} className="p-4 border-b border-gray-800 flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{entry.action}</p>
+                        <p className="text-sm text-gray-400">{entry.details}</p>
                       </div>
-                      <span className="text-xs text-gray-400">Hace 2 horas</span>
+                      <span className="text-xs text-gray-400">{new Date(entry.date).toLocaleString()}</span>
                     </div>
-                  </div>
-                  
-                  <div className="p-4 border-b border-gray-800">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center mr-3">
-                          <ShoppingCart size={18} className="text-secondary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Fichaje completado</p>
-                          <p className="text-sm text-gray-400">Rayo Digital FC ha fichado a un nuevo jugador</p>
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-400">Hace 5 horas</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 border-b border-gray-800">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
-                          <Trophy size={18} className="text-green-500" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Partido finalizado</p>
-                          <p className="text-sm text-gray-400">Rayo Digital FC 3-1 Neón FC</p>
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-400">Hace 1 día</span>
-                    </div>
-                  </div>
+                  ))}
+                  {logs.length === 0 && (
+                    <div className="p-4 text-center text-gray-400">Sin actividad</div>
+                  )}
                 </div>
               </div>
               
@@ -573,6 +552,8 @@ const Admin = () => {
           {activeTab === 'stats' && <StatsAdminPanel />}
 
           {activeTab === 'calendar' && <CalendarAdminPanel />}
+
+          {activeTab === 'activity' && <ActivityLogPanel />}
         </div>
       </div>
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}

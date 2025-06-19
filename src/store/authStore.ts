@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   logout as authLogout
 } from '../utils/authService';
+import { useActivityLogStore } from './activityLogStore';
 
 interface AuthState {
   user: User | null;
@@ -17,9 +18,10 @@ interface AuthState {
   addXP: (amount: number) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => {
+export const useAuthStore = create<AuthState>((set, get) => {
   // Check for stored auth information
   const initialUser = getCurrentUser();
+  const addLog = useActivityLogStore.getState().addLog;
   
   return {
     user: initialUser,
@@ -29,6 +31,12 @@ export const useAuthStore = create<AuthState>((set) => {
       try {
         const user = authLogin(username, password);
         set({ user, isAuthenticated: true });
+        addLog({
+          action: 'login',
+          userId: user.id,
+          date: new Date().toISOString(),
+          details: `User ${user.username} logged in`
+        });
         return user;
       } catch (error) {
         console.error("Login failed:", error);
@@ -40,6 +48,12 @@ export const useAuthStore = create<AuthState>((set) => {
       try {
         const user = authRegister(email, username, password);
         set({ user, isAuthenticated: true });
+        addLog({
+          action: 'register',
+          userId: user.id,
+          date: new Date().toISOString(),
+          details: `Registered ${user.username}`
+        });
         return user;
       } catch (error) {
         console.error('Register failed:', error);
@@ -48,6 +62,15 @@ export const useAuthStore = create<AuthState>((set) => {
     },
     
     logout: () => {
+      const current = get().user || getCurrentUser();
+      if (current) {
+        addLog({
+          action: 'logout',
+          userId: current.id,
+          date: new Date().toISOString(),
+          details: `User ${current.username} logged out`
+        });
+      }
       authLogout();
       set({ user: null, isAuthenticated: false });
     },
@@ -55,12 +78,18 @@ export const useAuthStore = create<AuthState>((set) => {
     updateUser: (userData) => {
       set((state) => {
         if (!state.user) return state;
-        
+
         const updatedUser = {
           ...state.user,
           ...userData
         };
-        
+
+        addLog({
+          action: 'update_user',
+          userId: updatedUser.id,
+          date: new Date().toISOString(),
+          details: 'Updated user profile'
+        });
         return { user: updatedUser };
       });
     },
@@ -68,12 +97,18 @@ export const useAuthStore = create<AuthState>((set) => {
     addXP: (amount) => {
       set((state) => {
         if (!state.user) return state;
-        
+
         const updatedUser = {
           ...state.user,
           xp: state.user.xp + amount
         };
-        
+
+        addLog({
+          action: 'add_xp',
+          userId: updatedUser.id,
+          date: new Date().toISOString(),
+          details: `Added ${amount} XP`
+        });
         return { user: updatedUser };
       });
     }
