@@ -67,9 +67,7 @@ const ClubProfile = () => {
     stats.played++;
     
     const result = getMatchResult(match, club.name);
-    if (result === 'Here's the continuation of the ClubProfile.tsx file:
-
-if (result === 'win') {
+    if (result === 'win') {
       stats.wins++;
       stats.points += 3;
     } else if (result === 'draw') {
