@@ -212,7 +212,7 @@ const UserPanel = () => {
                       <div>
                         <label className="block text-sm text-gray-400 mb-1">Fecha de registro</label>
                         <div className="font-medium">
-                          {new Date(user.createdAt).toLocaleDateString('es-ES')}
+                          {user.joinDate ? new Date(user.joinDate).toLocaleDateString('es-ES') : '-'}
                         </div>
                       </div>
                     </div>
