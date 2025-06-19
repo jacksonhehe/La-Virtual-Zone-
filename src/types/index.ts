@@ -159,8 +159,8 @@ export interface NewsItem {
   title: string;
   content: string;
   type: 'transfer' | 'rumor' | 'result' | 'announcement' | 'statement';
-  image?: string;
-  date: string;
+  imageUrl?: string;
+  publishDate: string;
   author: string;
   clubId?: string;
   playerId?: string;

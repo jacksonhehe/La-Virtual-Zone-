@@ -6,6 +6,8 @@ const NewsAdminPanel = () => {
   const { newsItems, addNewsItem, removeNewsItem } = useDataStore();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [publishDate, setPublishDate] = useState('');
   const [type, setType] = useState<'transfer' | 'rumor' | 'result' | 'announcement' | 'statement'>('announcement');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -16,13 +18,16 @@ const NewsAdminPanel = () => {
       title,
       content,
       type,
-      date: new Date().toISOString(),
+      imageUrl: imageUrl || undefined,
+      publishDate: publishDate || new Date().toISOString(),
       author: 'Admin',
       featured: false
     };
     addNewsItem(item);
     setTitle('');
     setContent('');
+    setImageUrl('');
+    setPublishDate('');
   };
 
   return (
@@ -55,6 +60,19 @@ const NewsAdminPanel = () => {
             <option value="rumor">Rumor</option>
             <option value="statement">Declaración</option>
           </select>
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">URL de imagen</label>
+          <input className="input w-full" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Fecha y hora de publicación</label>
+          <input
+            type="datetime-local"
+            className="input w-full"
+            value={publishDate}
+            onChange={e => setPublishDate(e.target.value)}
+          />
         </div>
         <button type="submit" className="btn-primary w-full">Publicar</button>
       </form>

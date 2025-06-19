@@ -1,6 +1,6 @@
-import  { useState } from 'react';
+import  { useState, useMemo } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, MessageSquare } from 'lucide-react';
+import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, Search, ExternalLink } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -30,6 +30,8 @@ const Admin = () => {
   const [userToDelete, setUserToDelete] = useState(null as User | null);
   const [clubToDelete, setClubToDelete] = useState(null as Club | null);
   const [playerToDelete, setPlayerToDelete] = useState(null as Player | null);
+  const [userSearch, setUserSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | User['role']>('all');
   const {
     clubs,
     players,
@@ -46,21 +48,34 @@ const Admin = () => {
   const navigate = useNavigate();
 
   // Stats for dashboard
-  const now = new Date();
-  const weekAgo = new Date(now);
-  weekAgo.setDate(now.getDate() - 7);
-
-  const newUsersCount = users.filter(u => {
-    const date =
-      u.joinDate || (u as unknown as { createdAt?: string }).createdAt;
-    return date ? new Date(date) >= weekAgo : false;
-  }).length;
+  const newUsersCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return users.filter(u => {
+      const date =
+        u.joinDate || (u as unknown as { createdAt?: string }).createdAt;
+      return date ? new Date(date).toDateString() === today : false;
+    }).length;
+  }, [users]);
 
   const activeClubsCount = clubs.length;
-  const transfersTodayCount = transfers.filter(
-    t => t.date === now.toISOString().slice(0, 10)
-  ).length;
+
+  const transfersTodayCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return transfers.filter(t => {
+      const date = new Date(t.date).toDateString();
+      return date === today;
+    }).length;
+  }, [transfers]);
   const activeTournamentsCount = tournaments.filter(t => t.status === 'active').length;
+
+  const filteredUsers = users.filter(u => {
+    const search = userSearch.toLowerCase();
+    const matchSearch =
+      u.username.toLowerCase().includes(search) ||
+      u.email.toLowerCase().includes(search);
+    const matchRole = roleFilter === 'all' || u.role === roleFilter;
+    return matchSearch && matchRole;
+  });
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -391,6 +406,32 @@ const Admin = () => {
                   Nuevo usuario
                 </button>
               </div>
+
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search size={18} className="text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Buscar usuarios..."
+                    className="input pl-10 w-full"
+                    value={userSearch}
+                    onChange={e => setUserSearch(e.target.value)}
+                  />
+                </div>
+
+                <select
+                  className="input w-full md:w-48"
+                  value={roleFilter}
+                  onChange={e => setRoleFilter(e.target.value as 'all' | User['role'])}
+                >
+                  <option value="all">Todos los roles</option>
+                  <option value="user">Usuario</option>
+                  <option value="dt">DT</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
               
               <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -406,7 +447,7 @@ const Admin = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map((u) => {
+                      {filteredUsers.map((u) => {
                         const roleClasses =
                           u.role === 'admin'
                             ? 'bg-neon-red/20 text-neon-red'
@@ -419,6 +460,24 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const statusClasses =
+                          u.status === 'active'
+                            ? 'bg-green-500/20 text-green-500'
+                            : u.status === 'suspended'
+                            ? 'bg-yellow-500/20 text-yellow-400'
+                            : 'bg-red-500/20 text-red-400';
+                        const dotColor =
+                          u.status === 'active'
+                            ? 'bg-green-500'
+                            : u.status === 'suspended'
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500';
+                        const statusLabel =
+                          u.status === 'active'
+                            ? 'Activo'
+                            : u.status === 'suspended'
+                            ? 'Suspendido'
+                            : 'Baneado';
                         const clubName =
                           clubs.find(c => c.id === u.clubId)?.name ||
                           u.club ||
@@ -427,7 +486,8 @@ const Admin = () => {
                         return (
                           <tr
                             key={u.id}
-                            className="border-b border-gray-800 hover:bg-dark-lighter"
+                            className="border-b border-gray-800 hover:bg-dark-lighter cursor-pointer"
+                            onClick={() => setEditingUser(u)}
                           >
                             <td className="px-4 py-3">
                               <div className="flex items-center">
@@ -447,22 +507,37 @@ const Admin = () => {
                             </td>
                             <td className="px-4 py-3 text-center">{clubName}</td>
                             <td className="px-4 py-3 text-center">
-                              <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                                Activo
+                              <span
+                                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${statusClasses}`}
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full mr-1 ${dotColor}`}></span>
+                                {statusLabel}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-center">
                               <div className="flex justify-center space-x-2">
+                                <Link
+                                  to={`/usuarios/${u.username}`}
+                                  onClick={e => e.stopPropagation()}
+                                  className="p-1 text-gray-400 hover:text-primary"
+                                >
+                                  <ExternalLink size={16} />
+                                </Link>
                                 <button
                                   className="p-1 text-gray-400 hover:text-primary"
-                                  onClick={() => setEditingUser(u)}
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    setEditingUser(u);
+                                  }}
                                 >
                                   <Edit size={16} />
                                 </button>
                                 <button
                                   className="p-1 text-gray-400 hover:text-red-500"
-                                  onClick={() => setUserToDelete(u)}
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    setUserToDelete(u);
+                                  }}
                                 >
                                   <Trash size={16} />
                                 </button>
