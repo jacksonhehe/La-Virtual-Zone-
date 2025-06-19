@@ -37,3 +37,23 @@ Y luego visualiza el resultado con:
 npm run preview
 ```
 
+## Personalizar colores
+
+La paleta usada por Tailwind está definida mediante variables CSS en
+`src/index.css`. Puedes cambiarla editando los valores dentro del selector
+`:root`:
+
+```css
+:root {
+  --bg: #0d0d0d;
+  --card: #171717;
+  --text: #eaeaea;
+  --primary: #00e0ff;
+  --accent: #9f7aea;
+  /* ... */
+}
+```
+
+Al modificar estas variables se actualizarán automáticamente las utilidades de
+Tailwind que las usan.
+

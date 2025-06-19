@@ -5,7 +5,17 @@ export default {
     './src/**/*.{ts,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        bg: 'var(--bg)',
+        card: 'var(--card)',
+        text: 'var(--text)',
+        primary: 'var(--primary)',
+        'primary-glow': 'var(--primary-glow)',
+        accent: 'var(--accent)',
+        'accent-glow': 'var(--accent-glow)',
+      },
+    },
   },
   plugins: [],
 }
