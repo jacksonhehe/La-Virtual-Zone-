@@ -184,7 +184,7 @@ export const addUser = (
     )}&background=111827&color=fff&size=128`,
     xp: 0,
     clubId,
-    joinDate: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     status: 'active',
     notifications: true,
     lastLogin: new Date().toISOString(),
