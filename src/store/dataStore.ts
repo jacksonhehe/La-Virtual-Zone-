@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { useActivityLogStore } from './activityLogStore';
+import { useAuthStore } from './authStore';
 import {
   getUsers,
   updateUser as persistUser,
@@ -97,7 +99,18 @@ export const useDataStore = create<DataState>((set) => ({
   
   updateOffers: (newOffers) => set({ offers: newOffers }),
   
-  updateMarketStatus: (status) => set({ marketStatus: status }),
+  updateMarketStatus: (status) =>
+    set(() => {
+      const current = useAuthStore.getState().user?.id || 'system';
+      useActivityLogStore
+        .getState()
+        .addLog(
+          'market_status_change',
+          current,
+          status ? 'Mercado abierto' : 'Mercado cerrado'
+        );
+      return { marketStatus: status };
+    }),
   
   addOffer: (offer) => set((state) => ({
     offers: [...state.offers, offer]
@@ -125,12 +138,24 @@ export const useDataStore = create<DataState>((set) => ({
     players: [...state.players, player]
   })),
 
-  updateUserEntry: (user) => set((state) => {
-    persistUser(user);
-    return {
-      users: state.users.map(u => (u.id === user.id ? user : u))
-    };
-  }),
+  updateUserEntry: (user) =>
+    set((state) => {
+      const prev = state.users.find(u => u.id === user.id);
+      persistUser(user);
+      if (prev && prev.role !== user.role) {
+        const current = useAuthStore.getState().user?.id || 'system';
+        useActivityLogStore
+          .getState()
+          .addLog(
+            'role_change',
+            current,
+            `Rol de ${prev.username} cambiado a ${user.role}`
+          );
+      }
+      return {
+        users: state.users.map(u => (u.id === user.id ? user : u))
+      };
+    }),
 
   removeUser: (id) =>
     set((state) => {
@@ -156,9 +181,14 @@ export const useDataStore = create<DataState>((set) => ({
     players: state.players.filter(p => p.id !== id)
   })),
 
-  addTournament: (tournament) => set((state) => ({
-    tournaments: [...state.tournaments, tournament]
-  })),
+  addTournament: (tournament) =>
+    set((state) => {
+      const current = useAuthStore.getState().user?.id || 'system';
+      useActivityLogStore
+        .getState()
+        .addLog('tournament_create', current, `Torneo ${tournament.name}`);
+      return { tournaments: [...state.tournaments, tournament] };
+    }),
 
   addNewsItem: (item) => set((state) => ({
     newsItems: [item, ...state.newsItems]
