@@ -1,6 +1,20 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import {
+  Settings,
+  Users,
+  Trophy,
+  ShoppingCart,
+  Calendar,
+  FileText,
+  Clipboard,
+  BarChart,
+  Edit,
+  Plus,
+  Trash,
+  Menu,
+  X,
+} from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -19,6 +33,7 @@ import { useDataStore } from '../store/dataStore';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
@@ -47,21 +62,44 @@ const Admin = () => {
   }
   
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="flex flex-col md:flex-row">
-        {/* Sidebar */}
-        <div className="w-full md:w-64 bg-dark-light border-r border-gray-800">
-          <div className="p-4 border-b border-gray-800">
-            <h2 className="text-xl font-bold text-white flex items-center">
-              <Settings size={20} className="text-primary mr-2" />
-              Panel Admin
-            </h2>
-            <p className="text-xs text-gray-400 mt-1">
-              Administración de La Virtual Zone
-            </p>
+    <div className="min-h-screen bg-dark md:flex">
+      {/* Mobile header */}
+      <div className="flex items-center justify-between border-b border-gray-800 p-4 md:hidden w-full">
+        <div className="flex items-center">
+          <Settings size={20} className="text-primary mr-2" />
+          <h2 className="text-xl font-bold">Panel Admin</h2>
+        </div>
+        <button onClick={() => setSidebarOpen(true)} className="text-gray-400">
+          <Menu size={24} />
+        </button>
+      </div>
+
+      {/* Sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark-light border-r border-gray-800 transform transition-transform md:translate-x-0 md:static ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between md:block">
+          <div className="flex items-center">
+            <Settings size={20} className="text-primary mr-2" />
+            <h2 className="text-xl font-bold">Panel Admin</h2>
           </div>
-          
-          <nav className="p-2">
+          <button
+            className="md:hidden text-gray-400"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="p-2">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`w-full flex items-center p-3 rounded-md text-left transition-colors mb-1 ${activeTab === 'dashboard' ? 'bg-primary text-white' : 'hover:bg-dark-lighter text-gray-300'}`}
@@ -146,7 +184,7 @@ const Admin = () => {
         </div>
         
         {/* Main content */}
-        <div className="flex-grow p-6">
+        <div className="flex-1 p-6 md:ml-64">
           {activeTab === 'dashboard' && (
             <div>
               <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
