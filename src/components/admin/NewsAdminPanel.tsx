@@ -6,23 +6,30 @@ const NewsAdminPanel = () => {
   const { newsItems, addNewsItem, removeNewsItem } = useDataStore();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [image, setImage] = useState('');
+  const [publishDate, setPublishDate] = useState('');
   const [type, setType] = useState<'transfer' | 'rumor' | 'result' | 'announcement' | 'statement'>('announcement');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !content) return;
+    const date = publishDate || new Date().toISOString();
     const item: NewsItem = {
       id: `${Date.now()}`,
       title,
       content,
       type,
-      date: new Date().toISOString(),
+      image: image || 'https://via.placeholder.com/300x200.png?text=News',
+      date,
+      publishDate: date,
       author: 'Admin',
       featured: false
     };
     addNewsItem(item);
     setTitle('');
     setContent('');
+    setImage('');
+    setPublishDate('');
   };
 
   return (
@@ -36,6 +43,24 @@ const NewsAdminPanel = () => {
         <div>
           <label className="block text-sm text-gray-400 mb-1">Contenido</label>
           <textarea className="input w-full" rows={3} value={content} onChange={e => setContent(e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Imagen</label>
+          <input
+            className="input w-full"
+            value={image}
+            onChange={e => setImage(e.target.value)}
+            placeholder="URL de la imagen"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Fecha de publicaci\u00f3n</label>
+          <input
+            type="datetime-local"
+            className="input w-full"
+            value={publishDate}
+            onChange={e => setPublishDate(e.target.value)}
+          />
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">Tipo</label>

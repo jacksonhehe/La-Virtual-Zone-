@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, MessageCircle } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -11,6 +11,7 @@ import ConfirmDeleteModal from '../components/admin/ConfirmDeleteModal';
 import MarketAdminPanel from '../components/admin/MarketAdminPanel';
 import TournamentsAdminPanel from '../components/admin/TournamentsAdminPanel';
 import NewsAdminPanel from '../components/admin/NewsAdminPanel';
+import ReportedCommentsPanel from '../components/admin/ReportedCommentsPanel';
 import StatsAdminPanel from '../components/admin/StatsAdminPanel';
 import CalendarAdminPanel from '../components/admin/CalendarAdminPanel';
 import { User, Club, Player } from '../types';
@@ -135,6 +136,14 @@ const Admin = () => {
             >
               <FileText size={18} className="mr-3" />
               <span>Noticias</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('comments')}
+              className={`w-full flex items-center p-3 rounded-md text-left transition-colors mb-1 ${activeTab === 'comments' ? 'bg-primary text-white' : 'hover:bg-dark-lighter text-gray-300'}`}
+            >
+              <MessageCircle size={18} className="mr-3" />
+              <span>Comentarios</span>
             </button>
             
             <button
@@ -614,6 +623,8 @@ const Admin = () => {
           {activeTab === 'tournaments' && <TournamentsAdminPanel />}
 
           {activeTab === 'news' && <NewsAdminPanel />}
+
+          {activeTab === 'comments' && <ReportedCommentsPanel />}
 
           {activeTab === 'stats' && <StatsAdminPanel />}
 

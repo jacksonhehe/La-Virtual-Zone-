@@ -158,8 +158,9 @@ export interface NewsItem {
   title: string;
   content: string;
   type: 'transfer' | 'rumor' | 'result' | 'announcement' | 'statement';
-  image?: string;
+  image: string;
   date: string;
+  publishDate: string;
   author: string;
   clubId?: string;
   playerId?: string;
@@ -204,6 +205,15 @@ export interface FAQ {
   question: string;
   answer: string;
   category: 'account' | 'tournament' | 'league' | 'market' | 'other';
+}
+
+// Comment types
+export interface Comment {
+  id: string;
+  author: string;
+  content: string;
+  date: string;
+  hidden?: boolean;
 }
 
 // Store item types
