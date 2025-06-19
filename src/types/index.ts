@@ -232,3 +232,11 @@ export interface Standing {
   form: string[];
 }
  
+// Activity log types
+export interface ActivityLogEntry {
+  id: string;
+  action: string;
+  userId: string;
+  date: string;
+  details: string;
+}

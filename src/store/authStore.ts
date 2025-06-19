@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { User } from '../types';
+import { useActivityLogStore } from './activityLogStore';
 import {
   login as authLogin,
   register as authRegister,
@@ -29,9 +30,12 @@ export const useAuthStore = create<AuthState>((set) => {
       try {
         const user = authLogin(username, password);
         set({ user, isAuthenticated: true });
+        useActivityLogStore
+          .getState()
+          .addLog('login', user.id, `${user.username} inició sesión`);
         return user;
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error('Login failed:', error);
         throw error;
       }
     },
@@ -40,6 +44,9 @@ export const useAuthStore = create<AuthState>((set) => {
       try {
         const user = authRegister(email, username, password);
         set({ user, isAuthenticated: true });
+        useActivityLogStore
+          .getState()
+          .addLog('register', user.id, `${user.username} se registró`);
         return user;
       } catch (error) {
         console.error('Register failed:', error);
@@ -48,8 +55,14 @@ export const useAuthStore = create<AuthState>((set) => {
     },
     
     logout: () => {
+      const current = getCurrentUser();
       authLogout();
       set({ user: null, isAuthenticated: false });
+      if (current) {
+        useActivityLogStore
+          .getState()
+          .addLog('logout', current.id, `${current.username} cerró sesión`);
+      }
     },
     
     updateUser: (userData) => {
