@@ -8,17 +8,44 @@ export default function Footer() {
       <p>© La Virtual Zone 2025</p>
       <nav className={styles.links}>
         <Link to="/ayuda">Ayuda</Link>
-        <a href="#">Discord</a>
-        <a href="#">Twitter</a>
+        <a
+          href="https://discord.gg/lavirtualzone"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Discord
+        </a>
+        <a
+          href="https://twitter.com/LaVirtualZone"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Twitter
+        </a>
       </nav>
         <div className={styles.socials}>
-          <a href="https://twitch.tv" aria-label="Twitch">
+          <a
+            href="https://twitch.tv"
+            aria-label="Twitch"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaTwitch />
           </a>
-          <a href="https://discord.com" aria-label="Discord">
+          <a
+            href="https://discord.gg/lavirtualzone"
+            aria-label="Discord"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaDiscord />
           </a>
-          <a href="https://twitter.com" aria-label="Twitter">
+          <a
+            href="https://twitter.com/LaVirtualZone"
+            aria-label="Twitter"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaTwitter />
           </a>
         </div>
