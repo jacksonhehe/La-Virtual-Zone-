@@ -155,13 +155,21 @@ export interface NewsItem {
   title: string;
   content: string;
   type: 'transfer' | 'rumor' | 'result' | 'announcement' | 'statement';
-  image?: string;
-  date: string;
+  image: string;
+  publishDate: string;
   author: string;
   clubId?: string;
   playerId?: string;
   tournamentId?: string;
   featured: boolean;
+}
+
+export interface ReportedComment {
+  id: string;
+  author: string;
+  content: string;
+  status: 'pending' | 'approved' | 'hidden';
+  date: string;
 }
 
 // Blog post type

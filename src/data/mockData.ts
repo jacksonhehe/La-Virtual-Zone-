@@ -10,7 +10,8 @@ import  {
   Post,
   Standing,
   FAQ,
-  StoreItem
+  StoreItem,
+  ReportedComment
 } from '../types';
 
 // Mock Clubs Data
@@ -646,7 +647,7 @@ export const newsItems: NewsItem[] = [
     content: 'La temporada 2025 de La Virtual Zone ha arrancado oficialmente. 10 clubes compiten por el título en una liga que promete emociones hasta la última jornada.',
     type: 'announcement',
     image: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
-    date: '2025-01-15',
+    publishDate: '2025-01-15',
     author: 'Admin',
     featured: true
   },
@@ -656,7 +657,7 @@ export const newsItems: NewsItem[] = [
     content: 'Desde hoy los clubes pueden realizar ofertas por jugadores de otros equipos. El mercado permanecerá abierto hasta el 15 de febrero.',
     type: 'announcement',
     image: 'https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
-    date: '2025-01-16',
+    publishDate: '2025-01-16',
     author: 'Admin',
     featured: false
   },
@@ -665,7 +666,8 @@ export const newsItems: NewsItem[] = [
     title: 'Diego López ficha por Rayo Digital FC',
     content: 'El delantero ha firmado un contrato de 3 temporadas tras el pago de 8.5 millones. "Estoy emocionado por este nuevo reto", declaró el jugador.',
     type: 'transfer',
-    date: '2025-01-05',
+    image: 'https://via.placeholder.com/300x200',
+    publishDate: '2025-01-05',
     author: 'Admin',
     clubId: 'club1',
     playerId: 'player21',
@@ -676,7 +678,8 @@ export const newsItems: NewsItem[] = [
     title: 'Rayo Digital vence en el derbi',
     content: 'Los rojiblancos se impusieron 3-1 a Atlético Pixelado en un partido vibrante. Diego López, nuevo fichaje, marcó dos goles.',
     type: 'result',
-    date: '2025-01-20',
+    image: 'https://via.placeholder.com/300x200',
+    publishDate: '2025-01-20',
     author: 'Admin',
     clubId: 'club1',
     tournamentId: 'tournament1',
@@ -687,7 +690,8 @@ export const newsItems: NewsItem[] = [
     title: 'Rumor: Neón FC tras una estrella de Binary Strikers',
     content: 'Según fuentes cercanas al club, los neonistas estarían dispuestos a pagar hasta 15 millones por un centrocampista de los Strikers.',
     type: 'rumor',
-    date: '2025-01-22',
+    image: 'https://via.placeholder.com/300x200',
+    publishDate: '2025-01-22',
     author: 'Admin',
     clubId: 'club4',
     featured: false
@@ -697,11 +701,12 @@ export const newsItems: NewsItem[] = [
     title: 'DT de Glitchers 404: "Vamos a por el título"',
     content: '"Este año tenemos un equipo para luchar arriba. No renunciamos a nada y vamos partido a partido", declaró el técnico tras la victoria 2-0 ante Connection FC.',
     type: 'statement',
-    date: '2025-01-23',
+    image: 'https://via.placeholder.com/300x200',
+    publishDate: '2025-01-23',
     author: 'Admin',
     clubId: 'club6',
     featured: false
-  } 
+  }
 ];
 
 // Blog posts
@@ -977,6 +982,23 @@ export const storeItems: StoreItem[] = [
     image: 'https://ui-avatars.com/api/?name=PF&background=ef4444&color=fff&size=128&bold=true',
     minLevel: 1,
     inStock: true
+  }
+];
+
+export const reportedComments: ReportedComment[] = [
+  {
+    id: 'comment1',
+    author: 'usuario1',
+    content: 'Este es un comentario inapropiado',
+    status: 'pending',
+    date: '2025-01-20'
+  },
+  {
+    id: 'comment2',
+    author: 'usuario2',
+    content: 'Spam en los comentarios',
+    status: 'pending',
+    date: '2025-01-22'
   }
 ];
  

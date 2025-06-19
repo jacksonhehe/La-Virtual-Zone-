@@ -11,7 +11,8 @@ import {
   newsItems,
   mediaItems,
   faqs,
-  storeItems
+  storeItems,
+  reportedComments
 } from '../data/mockData';
 import {
   Club,
@@ -25,6 +26,7 @@ import {
   MediaItem,
   FAQ,
   StoreItem
+  , ReportedComment
 } from '../types';
 
 interface DataState {
@@ -39,6 +41,7 @@ interface DataState {
   mediaItems: MediaItem[];
   faqs: FAQ[];
   storeItems: StoreItem[];
+  reportedComments: ReportedComment[];
   marketStatus: boolean;
   
   updateClubs: (newClubs: Club[]) => void;
@@ -63,6 +66,9 @@ interface DataState {
   addNewsItem: (item: NewsItem) => void;
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
+  approveComment: (id: string) => void;
+  hideComment: (id: string) => void;
+  deleteComment: (id: string) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -76,6 +82,7 @@ export const useDataStore = create<DataState>((set) => ({
   mediaItems,
   faqs,
   storeItems,
+  reportedComments,
   marketStatus,
   users: getUsers(),
   
@@ -156,6 +163,22 @@ export const useDataStore = create<DataState>((set) => ({
     newsItems: state.newsItems.filter(n => n.id !== id)
   })),
 
-  updateStandings: (newStandings) => set({ standings: newStandings })
+  updateStandings: (newStandings) => set({ standings: newStandings }),
+
+  approveComment: (id) => set((state) => ({
+    reportedComments: state.reportedComments.map(c =>
+      c.id === id ? { ...c, status: 'approved' } : c
+    )
+  })),
+
+  hideComment: (id) => set((state) => ({
+    reportedComments: state.reportedComments.map(c =>
+      c.id === id ? { ...c, status: 'hidden' } : c
+    )
+  })),
+
+  deleteComment: (id) => set((state) => ({
+    reportedComments: state.reportedComments.filter(c => c.id !== id)
+  }))
 }));
  

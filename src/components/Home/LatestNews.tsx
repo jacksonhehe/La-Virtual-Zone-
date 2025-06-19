@@ -33,7 +33,7 @@ const LatestNews = () => {
                   {formatNewsType(news.type)}
                 </span>
                 <span className="text-gray-400 text-sm">
-                  {formatDate(news.date)}
+                  {formatDate(news.publishDate)}
                 </span>
               </div>
               
