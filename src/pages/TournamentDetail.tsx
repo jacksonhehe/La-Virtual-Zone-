@@ -2,7 +2,8 @@ import  { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, Shield, ChevronLeft, FileText, Image, ArrowRight, Star } from 'lucide-react';
-import { tournaments, clubs, matches } from '../data/mockData';
+import { tournaments, clubs } from '../data/mockData';
+import { Match } from '../types';
 import { formatDate } from '../utils/helpers';
 
 const TournamentDetail = () => {
@@ -27,11 +28,8 @@ const TournamentDetail = () => {
   // Get tournament clubs
   const tournamentClubs = clubs.filter(c => tournament.participants.includes(c.name));
   
-  // Mock tournament matches
-  const tournamentMatches = matches.slice(0, 3).map(match => ({
-    ...match,
-    tournament: tournament.name
-  }));
+  // Mock tournament matches (no matches data available yet)
+  const tournamentMatches: Match[] = [];
   
   // Mock top scorers
   const topScorers = [
@@ -213,7 +211,7 @@ const TournamentDetail = () => {
                           className="bg-dark-lighter rounded-lg p-4 flex items-center hover:bg-dark transition-colors"
                         >
                           <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-                            <img src={club.shield} alt={club.name} className="w-full h-full object-cover" />
+                            <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
                           </div>
                           <div>
                             <p className="font-medium">{club.name}</p>
@@ -321,7 +319,7 @@ const TournamentDetail = () => {
                                           className="flex items-center hover:text-primary"
                                         >
                                           <div className="w-6 h-6 mr-2">
-                                            <img src={club.shield} alt={club.name} className="w-full h-full rounded-full" />
+                                            <img src={club.logo} alt={club.name} className="w-full h-full rounded-full" />
                                           </div>
                                           <span>{club.name}</span>
                                         </Link>
@@ -515,7 +513,7 @@ const TournamentDetail = () => {
                     className="flex items-center p-2 rounded hover:bg-dark-lighter"
                   >
                     <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                      <img src={club.shield} alt={club.name} className="w-full h-full object-cover" />
+                      <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
                     </div>
                     <span>{club.name}</span>
                   </Link>

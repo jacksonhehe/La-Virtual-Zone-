@@ -67,7 +67,7 @@ const ClubFinances = () => {
         <div className="mb-8">
           <div className="flex items-center mb-6">
             <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-              <img src={club.shield} alt={club.name} className="w-full h-full object-cover" />
+              <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
             </div>
             <div>
               <h2 className="text-2xl font-bold">{club.name}</h2>

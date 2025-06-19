@@ -1,8 +1,8 @@
-import  HeroSection from '../components/home/HeroSection';
-import LeagueStandings from '../components/home/LeagueStandings';
-import FeaturedTournaments from '../components/home/FeaturedTournaments';
-import LatestNews from '../components/home/LatestNews';
-import UpcomingMatches from '../components/home/UpcomingMatches';
+import  HeroSection from '../components/Home/HeroSection';
+import LeagueStandings from '../components/Home/LeagueStandings';
+import FeaturedTournaments from '../components/Home/FeaturedTournaments';
+import LatestNews from '../components/Home/LatestNews';
+import UpcomingMatches from '../components/Home/UpcomingMatches';
 import { Link } from 'react-router-dom';
 import { Users, ShoppingCart, Trophy, HelpCircle } from 'lucide-react';
 
