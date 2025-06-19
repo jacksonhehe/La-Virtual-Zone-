@@ -254,4 +254,16 @@ export const getUserById = (userId: string): User | null => {
   const users = getUsers();
   return users.find(u => u.id === userId) || null;
 };
+
+// Delete a user by ID and update localStorage
+export const deleteUser = (id: string): void => {
+  const users = getUsers();
+  const updatedUsers = users.filter(u => u.id !== id);
+  saveUsers(updatedUsers);
+
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.id === id) {
+    saveCurrentUser(null);
+  }
+};
  
