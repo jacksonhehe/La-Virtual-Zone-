@@ -568,6 +568,51 @@ const Admin = () => {
               </div>
             </div>
           )}
+
+          {activeTab === 'market' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Gestión de Mercado</h2>
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
+                Panel de administración del mercado de fichajes.
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tournaments' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Gestión de Torneos</h2>
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
+                Panel de administración de torneos y competiciones.
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'news' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Gestión de Noticias</h2>
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
+                Panel para crear y editar noticias de la liga.
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'stats' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Estadísticas Generales</h2>
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
+                Resumen estadístico de clubes y jugadores.
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'calendar' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Calendario de Partidos</h2>
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
+                Gestión del calendario de encuentros y eventos.
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
