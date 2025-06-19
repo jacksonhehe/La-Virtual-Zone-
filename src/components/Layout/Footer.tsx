@@ -5,7 +5,7 @@ import styles from './Footer.module.css'
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <p>© La Virtual Zone 2025</p>
+      <p>© La Virtual Zone {new Date().getFullYear()}</p>
       <nav className={styles.links}>
         <Link to="/ayuda">Ayuda</Link>
         <a
