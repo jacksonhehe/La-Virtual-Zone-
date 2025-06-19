@@ -50,11 +50,14 @@ export interface Player {
   age: number;
   position: string;
   nationality: string;
+  dorsal: number;
   clubId: string;
   overall: number;
   potential: number;
   transferListed: boolean;
+  matches: number;
   transferValue: number;
+  value: number;
   image: string;
   attributes: PlayerAttributes;
   contract: PlayerContract;
