@@ -1,5 +1,9 @@
 import { create } from 'zustand';
-import { getUsers, updateUser as persistUser } from '../utils/authService';
+import {
+  getUsers,
+  updateUser as persistUser,
+  deleteUser as persistDeleteUser
+} from '../utils/authService';
 import {
   clubs,
   players,
@@ -128,9 +132,13 @@ export const useDataStore = create<DataState>((set) => ({
     };
   }),
 
-  removeUser: (id) => set((state) => ({
-    users: state.users.filter(u => u.id !== id)
-  })),
+  removeUser: (id) =>
+    set((state) => {
+      persistDeleteUser(id);
+      return {
+        users: state.users.filter(u => u.id !== id)
+      };
+    }),
 
   updateClubEntry: (club) => set((state) => ({
     clubs: state.clubs.map(c => (c.id === club.id ? club : c))
