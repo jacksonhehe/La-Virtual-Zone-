@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { getUsers, updateUser as persistUser } from '../utils/authService';
-import { 
+import {
   clubs,
   players,
   tournaments,
@@ -11,7 +11,8 @@ import {
   newsItems,
   mediaItems,
   faqs,
-  storeItems
+  storeItems,
+  posts,
 } from '../data/mockData';
 import {
   Club,
@@ -24,7 +25,8 @@ import {
   NewsItem,
   MediaItem,
   FAQ,
-  StoreItem
+  StoreItem,
+  Post
 } from '../types';
 
 interface DataState {
@@ -39,6 +41,7 @@ interface DataState {
   mediaItems: MediaItem[];
   faqs: FAQ[];
   storeItems: StoreItem[];
+  posts: Post[];
   marketStatus: boolean;
   
   updateClubs: (newClubs: Club[]) => void;
@@ -76,6 +79,7 @@ export const useDataStore = create<DataState>((set) => ({
   mediaItems,
   faqs,
   storeItems,
+  posts,
   marketStatus,
   users: getUsers(),
   
