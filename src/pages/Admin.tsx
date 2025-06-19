@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import  { useState, useMemo } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
@@ -45,20 +45,24 @@ const Admin = () => {
   const navigate = useNavigate();
 
   // Stats for dashboard
-  const now = new Date();
-  const weekAgo = new Date(now);
-  weekAgo.setDate(now.getDate() - 7);
-
-  const newUsersCount = users.filter(u => {
-    const date =
-      u.joinDate || (u as unknown as { createdAt?: string }).createdAt;
-    return date ? new Date(date) >= weekAgo : false;
-  }).length;
+  const newUsersCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return users.filter(u => {
+      const date =
+        u.joinDate || (u as unknown as { createdAt?: string }).createdAt;
+      return date ? new Date(date).toDateString() === today : false;
+    }).length;
+  }, [users]);
 
   const activeClubsCount = clubs.length;
-  const transfersTodayCount = transfers.filter(
-    t => t.date === now.toISOString().slice(0, 10)
-  ).length;
+
+  const transfersTodayCount = useMemo(() => {
+    const today = new Date().toDateString();
+    return transfers.filter(t => {
+      const date = new Date(t.date).toDateString();
+      return date === today;
+    }).length;
+  }, [transfers]);
   const activeTournamentsCount = tournaments.filter(t => t.status === 'active').length;
 
   // Redirect if not admin

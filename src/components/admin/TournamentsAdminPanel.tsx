@@ -117,7 +117,7 @@ const WinnerModal = ({ tournament, onClose }: WinnerModalProps) => {
 };
 
 const TournamentsAdminPanel = () => {
-  const { tournaments, addTournament, updateTournaments } = useDataStore();
+  const { tournaments, addTournament } = useDataStore();
   const [name, setName] = useState('');
   const [type, setType] = useState<'league' | 'cup' | 'friendly'>('league');
   const [startDate, setStartDate] = useState('');
