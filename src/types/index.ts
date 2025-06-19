@@ -241,3 +241,14 @@ export interface ActivityLogEntry {
   date: string;
   details: string;
 }
+
+// Comment types
+export interface Comment {
+  id: string;
+  postId: string;
+  author: string;
+  content: string;
+  date: string;
+  reported: boolean;
+  hidden: boolean;
+}

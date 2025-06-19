@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity } from 'lucide-react';
+import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, MessageSquare } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -14,6 +14,7 @@ import NewsAdminPanel from '../components/admin/NewsAdminPanel';
 import StatsAdminPanel from '../components/admin/StatsAdminPanel';
 import CalendarAdminPanel from '../components/admin/CalendarAdminPanel';
 import ActivityAdminPanel from '../components/admin/ActivityAdminPanel';
+import CommentsAdminPanel from '../components/admin/CommentsAdminPanel';
 import { User, Club, Player } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -136,6 +137,14 @@ const Admin = () => {
             >
               <FileText size={18} className="mr-3" />
               <span>Noticias</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('comments')}
+              className={`w-full flex items-center p-3 rounded-md text-left transition-colors mb-1 ${activeTab === 'comments' ? 'bg-primary text-white' : 'hover:bg-dark-lighter text-gray-300'}`}
+            >
+              <MessageSquare size={18} className="mr-3" />
+              <span>Comentarios</span>
             </button>
 
             <button
@@ -623,6 +632,8 @@ const Admin = () => {
           {activeTab === 'tournaments' && <TournamentsAdminPanel />}
 
           {activeTab === 'news' && <NewsAdminPanel />}
+
+          {activeTab === 'comments' && <CommentsAdminPanel />}
 
           {activeTab === 'activity' && <ActivityAdminPanel />}
 

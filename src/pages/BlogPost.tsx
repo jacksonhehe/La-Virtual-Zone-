@@ -1,6 +1,7 @@
 import  { useParams, Link } from 'react-router-dom';
 import { Calendar, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
+import Comments from '../components/comments/Comments';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -107,74 +108,7 @@ const BlogPost = () => {
               </div>
             </div>
             
-            <div className="bg-dark-light rounded-lg border border-gray-800 p-6">
-              <h3 className="font-bold text-lg mb-6">Comentarios</h3>
-              
-              <div className="space-y-6">
-                <div className="flex">
-                  <div className="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
-                    <img 
-                      src="https://ui-avatars.com/api/?name=PM&background=10b981&color=fff&size=128" 
-                      alt="usuario1"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <div className="bg-dark rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">pixelmanager</span>
-                        <span className="text-xs text-gray-400">Hace 2 días</span>
-                      </div>
-                      <p className="text-sm text-gray-300">
-                        Gran artículo, muy buen análisis. Espero ver más contenido como este.
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center mt-2 text-xs text-gray-400 space-x-4">
-                      <button className="hover:text-primary transition-colors">Me gusta</button>
-                      <button className="hover:text-primary transition-colors">Responder</button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex">
-                  <div className="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
-                    <img 
-                      src="https://ui-avatars.com/api/?name=NM&background=c026d3&color=fff&size=128" 
-                      alt="usuario2"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <div className="bg-dark rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">neonmanager</span>
-                        <span className="text-xs text-gray-400">Hace 3 días</span>
-                      </div>
-                      <p className="text-sm text-gray-300">
-                        Interesante perspectiva, aunque no estoy de acuerdo con algunos puntos. En mi opinión...
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center mt-2 text-xs text-gray-400 space-x-4">
-                      <button className="hover:text-primary transition-colors">Me gusta</button>
-                      <button className="hover:text-primary transition-colors">Responder</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-8">
-                <h4 className="font-medium mb-3">Deja un comentario</h4>
-                <textarea 
-                  className="input w-full min-h-[100px] mb-3" 
-                  placeholder="Escribe tu comentario aquí..."
-                ></textarea>
-                <button className="btn-primary">
-                  Enviar comentario
-                </button>
-              </div>
-            </div>
+            <Comments postId={post.id} />
           </div>
           
           <div>
