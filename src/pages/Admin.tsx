@@ -410,6 +410,24 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const statusClasses =
+                          u.status === 'active'
+                            ? 'bg-green-500/20 text-green-500'
+                            : u.status === 'suspended'
+                            ? 'bg-yellow-500/20 text-yellow-400'
+                            : 'bg-red-500/20 text-red-400';
+                        const dotColor =
+                          u.status === 'active'
+                            ? 'bg-green-500'
+                            : u.status === 'suspended'
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500';
+                        const statusLabel =
+                          u.status === 'active'
+                            ? 'Activo'
+                            : u.status === 'suspended'
+                            ? 'Suspendido'
+                            : 'Baneado';
                         const clubName =
                           clubs.find(c => c.id === u.clubId)?.name ||
                           u.club ||
@@ -438,9 +456,11 @@ const Admin = () => {
                             </td>
                             <td className="px-4 py-3 text-center">{clubName}</td>
                             <td className="px-4 py-3 text-center">
-                              <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                                Activo
+                              <span
+                                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${statusClasses}`}
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full mr-1 ${dotColor}`}></span>
+                                {statusLabel}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-center">

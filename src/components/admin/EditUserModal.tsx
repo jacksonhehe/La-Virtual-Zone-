@@ -13,10 +13,11 @@ const EditUserModal = ({ user, onClose }: Props) => {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [role, setRole] = useState<User['role']>(user.role);
+  const [status, setStatus] = useState<User['status']>(user.status);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateUserEntry({ ...user, username, email, role });
+    updateUserEntry({ ...user, username, email, role, status });
     onClose();
   };
 
@@ -43,6 +44,18 @@ const EditUserModal = ({ user, onClose }: Props) => {
               <option value="user">Usuario</option>
               <option value="dt">DT</option>
               <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Estado</label>
+            <select
+              className="input w-full"
+              value={status}
+              onChange={e => setStatus(e.target.value as User['status'])}
+            >
+              <option value="active">Activo</option>
+              <option value="suspended">Suspendido</option>
+              <option value="banned">Baneado</option>
             </select>
           </div>
           <button type="submit" className="btn-primary w-full">Guardar</button>
