@@ -1,13 +1,14 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-import { clubs, players } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const { clubs, players, addClub, addPlayer, addTournament } = useDataStore();
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -246,7 +247,26 @@ const Admin = () => {
                         <span className="text-sm">Abrir/cerrar mercado</span>
                       </button>
                       
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => {
+                          const name = prompt('Nombre del torneo');
+                          if (!name) return;
+                          addTournament({
+                            id: `tournament${Date.now()}`,
+                            name,
+                            type: 'friendly',
+                            logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7f39fb&color=fff&size=128`,
+                            startDate: new Date().toISOString().slice(0, 10),
+                            endDate: new Date().toISOString().slice(0, 10),
+                            status: 'upcoming',
+                            teams: clubs.map(c => c.name),
+                            rounds: 1,
+                            matches: [],
+                            description: ''
+                          });
+                        }}
+                      >
                         <Trophy size={18} className="mb-1" />
                         <span className="text-sm">Crear torneo</span>
                       </button>
@@ -442,7 +462,29 @@ const Admin = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Gestión de Clubes</h2>
-                <button className="btn-primary flex items-center">
+                <button
+                  className="btn-primary flex items-center"
+                  onClick={() => {
+                    const name = prompt('Nombre del club');
+                    if (!name) return;
+                    addClub({
+                      id: `club${Date.now()}`,
+                      name,
+                      logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=111827&color=fff&size=128`,
+                      foundedYear: new Date().getFullYear(),
+                      stadium: `${name} Stadium`,
+                      budget: 20000000,
+                      manager: 'DT',
+                      playStyle: 'Equilibrado',
+                      primaryColor: '#ffffff',
+                      secondaryColor: '#000000',
+                      description: '',
+                      titles: [],
+                      reputation: 50,
+                      fanBase: 0
+                    });
+                  }}
+                >
                   <Plus size={16} className="mr-2" />
                   Nuevo club
                 </button>
@@ -505,7 +547,42 @@ const Admin = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Gestión de Jugadores</h2>
-                <button className="btn-primary flex items-center">
+                <button
+                  className="btn-primary flex items-center"
+                  onClick={() => {
+                    const name = prompt('Nombre del jugador');
+                    if (!name) return;
+                    addPlayer({
+                      id: `player${Date.now()}`,
+                      name,
+                      age: 18,
+                      position: 'ST',
+                      nationality: 'Desconocido',
+                      clubId: clubs[0]?.id || '',
+                      overall: 60,
+                      potential: 70,
+                      transferListed: false,
+                      transferValue: 1000000,
+                      image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1e293b&color=fff&size=128`,
+                      attributes: {
+                        pace: 60,
+                        shooting: 60,
+                        passing: 60,
+                        dribbling: 60,
+                        defending: 60,
+                        physical: 60
+                      },
+                      contract: {
+                        expires: `${new Date().getFullYear() + 2}-06-30`,
+                        salary: 1000
+                      },
+                      form: 3,
+                      goals: 0,
+                      assists: 0,
+                      appearances: 0
+                    });
+                  }}
+                >
                   <Plus size={16} className="mr-2" />
                   Nuevo jugador
                 </button>
