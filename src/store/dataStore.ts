@@ -53,6 +53,9 @@ interface DataState {
   addUser: (user: User) => void;
   addClub: (club: Club) => void;
   addPlayer: (player: Player) => void;
+  addTournament: (tournament: Tournament) => void;
+  updateTournament: (tournament: Tournament) => void;
+  deleteTournament: (tournamentId: string) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -105,6 +108,20 @@ export const useDataStore = create<DataState>((set) => ({
 
   addPlayer: (player) => set((state) => ({
     players: [...state.players, player]
+  })),
+
+  addTournament: (tournament) => set((state) => ({
+    tournaments: [...state.tournaments, tournament]
+  })),
+
+  updateTournament: (tournament) => set((state) => ({
+    tournaments: state.tournaments.map(t =>
+      t.id === tournament.id ? tournament : t
+    )
+  })),
+
+  deleteTournament: (tournamentId) => set((state) => ({
+    tournaments: state.tournaments.filter(t => t.id !== tournamentId)
   }))
 }));
  

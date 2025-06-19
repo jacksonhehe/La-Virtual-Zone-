@@ -1,18 +1,22 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
+import NewTournamentModal from '../components/admin/NewTournamentModal';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import { Tournament, User } from '../types';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const [showTournamentModal, setShowTournamentModal] = useState(false);
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const { clubs, players, users, tournaments, deleteTournament } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -316,9 +320,10 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const userWithClub = u as User & { clubId?: string; club?: string };
                         const clubName =
-                          clubs.find((c) => c.id === (u as any).clubId)?.name ||
-                          (u as any).club ||
+                          clubs.find((c) => c.id === userWithClub.clubId)?.name ||
+                          userWithClub.club ||
                           '-';
 
                         return (
@@ -511,9 +516,62 @@ const Admin = () => {
 
           {activeTab === 'tournaments' && (
             <div>
-              <h2 className="text-2xl font-bold mb-4">Gestión de Torneos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración de torneos y competiciones.
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Gestión de Torneos</h2>
+                <button
+                  className="btn-primary flex items-center"
+                  onClick={() => setShowTournamentModal(true)}
+                >
+                  <Plus size={16} className="mr-2" />
+                  Nuevo torneo
+                </button>
+              </div>
+
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-dark-lighter text-xs uppercase text-gray-400 border-b border-gray-800">
+                        <th className="px-4 py-3 text-left">Torneo</th>
+                        <th className="px-4 py-3 text-center">Tipo</th>
+                        <th className="px-4 py-3 text-center">Estado</th>
+                        <th className="px-4 py-3 text-center">Inicio</th>
+                        <th className="px-4 py-3 text-center">Fin</th>
+                        <th className="px-4 py-3 text-center">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tournaments.map((t) => (
+                        <tr key={t.id} className="border-b border-gray-800 hover:bg-dark-lighter">
+                          <td className="px-4 py-3 font-medium">{t.name}</td>
+                          <td className="px-4 py-3 text-center">{t.type}</td>
+                          <td className="px-4 py-3 text-center">{t.status}</td>
+                          <td className="px-4 py-3 text-center">{t.startDate}</td>
+                          <td className="px-4 py-3 text-center">{t.endDate}</td>
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex justify-center space-x-2">
+                              <button
+                                className="p-1 text-gray-400 hover:text-primary"
+                                onClick={() => {
+                                  setEditingTournament(t);
+                                  setShowTournamentModal(true);
+                                }}
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button
+                                className="p-1 text-gray-400 hover:text-red-500"
+                                onClick={() => deleteTournament(t.id)}
+                              >
+                                <Trash size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -549,6 +607,15 @@ const Admin = () => {
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
       {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
       {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
+      {showTournamentModal && (
+        <NewTournamentModal
+          tournament={editingTournament || undefined}
+          onClose={() => {
+            setShowTournamentModal(false);
+            setEditingTournament(null);
+          }}
+        />
+      )}
     </div>
   );
 };
