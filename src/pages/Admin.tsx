@@ -28,6 +28,9 @@ const Admin = () => {
   const [userToDelete, setUserToDelete] = useState(null as User | null);
   const [clubToDelete, setClubToDelete] = useState(null as Club | null);
   const [playerToDelete, setPlayerToDelete] = useState(null as Player | null);
+  const [searchText, setSearchText] = useState('');
+  const [roleFilter, setRoleFilter] =
+    useState<'all' | 'user' | 'dt' | 'admin'>('all');
   const {
     clubs,
     players,
@@ -40,6 +43,14 @@ const Admin = () => {
   } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+
+  const filteredUsers = users.filter(u => {
+    const matchesSearch =
+      u.username.toLowerCase().includes(searchText.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchText.toLowerCase());
+    const matchesRole = roleFilter === 'all' || u.role === roleFilter;
+    return matchesSearch && matchesRole;
+  });
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -335,6 +346,28 @@ const Admin = () => {
                 </button>
               </div>
               
+              <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  className="input w-full md:w-1/3"
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                />
+                <select
+                  className="input md:w-48"
+                  value={roleFilter}
+                  onChange={e =>
+                    setRoleFilter(e.target.value as 'all' | 'user' | 'dt' | 'admin')
+                  }
+                >
+                  <option value="all">Todos</option>
+                  <option value="user">Usuario</option>
+                  <option value="dt">DT</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
               <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -349,7 +382,7 @@ const Admin = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map((u) => {
+                      {filteredUsers.map((u) => {
                         const roleClasses =
                           u.role === 'admin'
                             ? 'bg-neon-red/20 text-neon-red'
@@ -366,6 +399,24 @@ const Admin = () => {
                           clubs.find(c => c.id === u.clubId)?.name ||
                           u.club ||
                           '-';
+                        const statusClasses =
+                          u.status === 'active'
+                            ? 'bg-green-500/20 text-green-500'
+                            : u.status === 'suspended'
+                            ? 'bg-yellow-500/20 text-yellow-500'
+                            : 'bg-red-500/20 text-red-500';
+                        const statusDot =
+                          u.status === 'active'
+                            ? 'bg-green-500'
+                            : u.status === 'suspended'
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500';
+                        const statusLabel =
+                          u.status === 'active'
+                            ? 'Activo'
+                            : u.status === 'suspended'
+                            ? 'Suspendido'
+                            : 'Baneado';
 
                         return (
                           <tr
@@ -390,9 +441,11 @@ const Admin = () => {
                             </td>
                             <td className="px-4 py-3 text-center">{clubName}</td>
                             <td className="px-4 py-3 text-center">
-                              <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                                Activo
+                              <span
+                                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${statusClasses}`}
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full mr-1 ${statusDot}`}></span>
+                                {statusLabel}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-center">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useDataStore } from '../../store/dataStore';
 import { User } from '../../types';
 
@@ -10,13 +11,15 @@ interface Props {
 
 const EditUserModal = ({ user, onClose }: Props) => {
   const { updateUserEntry } = useDataStore();
+  const navigate = useNavigate();
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [role, setRole] = useState<User['role']>(user.role);
+  const [status, setStatus] = useState<User['status']>(user.status);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateUserEntry({ ...user, username, email, role });
+    updateUserEntry({ ...user, username, email, role, status });
     onClose();
   };
 
@@ -45,7 +48,28 @@ const EditUserModal = ({ user, onClose }: Props) => {
               <option value="admin">Admin</option>
             </select>
           </div>
-          <button type="submit" className="btn-primary w-full">Guardar</button>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Estado</label>
+            <select
+              className="input w-full"
+              value={status}
+              onChange={e => setStatus(e.target.value as User['status'])}
+            >
+              <option value="active">Activo</option>
+              <option value="suspended">Suspendido</option>
+              <option value="banned">Baneado</option>
+            </select>
+          </div>
+          <div className="flex space-x-2">
+            <button type="submit" className="btn-primary flex-1">Guardar</button>
+            <button
+              type="button"
+              className="btn-secondary flex-1"
+              onClick={() => navigate(`/usuarios/${user.username}`)}
+            >
+              Ver perfil
+            </button>
+          </div>
         </form>
       </div>
     </div>

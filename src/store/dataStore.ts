@@ -117,12 +117,14 @@ export const useDataStore = create<DataState>((set) => ({
     players: [...state.players, player]
   })),
 
-  updateUserEntry: (user) => set((state) => {
-    persistUser(user);
-    return {
-      users: state.users.map(u => (u.id === user.id ? user : u))
-    };
-  }),
+  updateUserEntry: (user) =>
+    set((state) => {
+      const updatedUsers = state.users.map(u => (u.id === user.id ? user : u));
+      persistUser(user);
+      return {
+        users: updatedUsers
+      };
+    }),
 
   removeUser: (id) => set((state) => ({
     users: state.users.filter(u => u.id !== id)
