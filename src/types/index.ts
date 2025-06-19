@@ -13,6 +13,7 @@ export interface User {
   lastLogin: string;
   followers: number;
   following: number;
+  password?: string;
 }
 
 // Club types

@@ -4,7 +4,17 @@ import { User } from '../types';
 const USERS_KEY = 'virtual_zone_users';
 const CURRENT_USER_KEY = 'virtual_zone_current_user';
 
+// Simple base64 "hash" for demo purposes
+const hashPassword = (pwd: string): string => {
+  if (typeof btoa !== 'undefined') {
+    return btoa(pwd);
+  }
+  return Buffer.from(pwd).toString('base64');
+};
+
 // Mock test users
+const TEST_PASSWORD = hashPassword('password');
+
 const TEST_USERS = [
   {
     id: '1',
@@ -21,7 +31,8 @@ const TEST_USERS = [
       users: [],
       clubs: [],
       players: []
-    }
+    },
+    password: TEST_PASSWORD
   },
   {
     id: '2',
@@ -37,7 +48,8 @@ const TEST_USERS = [
       users: [],
       clubs: [],
       players: []
-    }
+    },
+    password: TEST_PASSWORD
   },
   {
     id: '3',
@@ -55,7 +67,8 @@ const TEST_USERS = [
       users: [],
       clubs: ['Rayo Digital FC'],
       players: []
-    }
+    },
+    password: TEST_PASSWORD
   }
 ];
 
@@ -93,7 +106,8 @@ export const saveCurrentUser = (user: User | null): void => {
 // Register a new user and log them in
 export const register = (
   email: string,
-  username: string
+  username: string,
+  password: string
 ): User => {
   const users = getUsers();
 
@@ -125,7 +139,8 @@ export const register = (
     notifications: true,
     lastLogin: new Date().toISOString(),
     followers: 0,
-    following: 0
+    following: 0,
+    password: hashPassword(password)
   };
 
   users.push(newUser);
@@ -140,7 +155,8 @@ export const addUser = (
   email: string,
   username: string,
   role: 'user' | 'dt' | 'admin',
-  clubId?: string
+  clubId?: string,
+  password = 'password'
 ): User => {
   const users = getUsers();
 
@@ -173,7 +189,8 @@ export const addUser = (
     notifications: true,
     lastLogin: new Date().toISOString(),
     followers: 0,
-    following: 0
+    following: 0,
+    password: hashPassword(password)
   };
 
   users.push(newUser);
@@ -183,7 +200,7 @@ export const addUser = (
 };
 
 // Login function
-export const login = (username: string): User => {
+export const login = (username: string, password: string): User => {
   // Get users, falling back to test users if none exist
   const users = getUsers();
   
@@ -196,6 +213,10 @@ export const login = (username: string): User => {
   
   if (user.status !== 'active') {
     throw new Error('Esta cuenta está suspendida o baneada');
+  }
+
+  if (user.password && user.password !== hashPassword(password)) {
+    throw new Error('Contraseña incorrecta');
   }
   
   // Update last login time
