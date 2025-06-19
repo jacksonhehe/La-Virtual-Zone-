@@ -532,7 +532,7 @@ const Admin = () => {
                           <td className="px-4 py-3">
                             <div className="flex items-center">
                               <div className="w-8 h-8 bg-dark-lighter rounded-full flex items-center justify-center mr-2">
-                                <span className="text-xs font-bold">{player.dorsal}</span>
+                                <span className="text-xs font-bold">{player.id}</span>
                               </div>
                               <div>
                                 <div className="font-medium">{player.name}</div>
@@ -543,13 +543,13 @@ const Admin = () => {
                           <td className="px-4 py-3 text-center">{player.position}</td>
                           <td className="px-4 py-3 text-center font-medium">{player.overall}</td>
                           <td className="px-4 py-3 text-center">{player.age}</td>
-                          <td className="px-4 py-3 text-center">{player.club}</td>
+                          <td className="px-4 py-3 text-center">{clubs.find(c => c.id === player.clubId)?.name}</td>
                           <td className="px-4 py-3 text-center font-medium">
                             {new Intl.NumberFormat('es-ES', {
                               style: 'currency',
                               currency: 'EUR',
                               maximumFractionDigits: 0
-                            }).format(player.value)}
+                            }).format(player.transferValue)}
                           </td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex justify-center space-x-2">
