@@ -114,9 +114,9 @@ const Login = () => {
             <div className="mt-8 pt-6 border-t border-gray-800">
               <div className="text-xs text-gray-500 text-center">
                 <p>Para pruebas, puedes usar:</p>
-                <p className="mt-1">Usuario: <span className="text-primary">usuario</span> / Contraseña: <span className="text-primary">cualquiera</span></p>
-                <p className="mt-1">DT: <span className="text-primary">entrenador</span> / Contraseña: <span className="text-primary">cualquiera</span></p>
-                <p className="mt-1">Admin: <span className="text-primary">admin</span> / Contraseña: <span className="text-primary">cualquiera</span></p>
+                <p className="mt-1">Usuario: <span className="text-primary">usuario</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">DT: <span className="text-primary">entrenador</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">Admin: <span className="text-primary">admin</span> / Contraseña: <span className="text-primary">password</span></p>
               </div>
             </div>
           </div>
