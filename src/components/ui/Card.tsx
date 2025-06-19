@@ -15,7 +15,14 @@ export default function Card({ title, image, onClick, children, className }: Car
 
   const content = (
     <>
-      {image && <img src={image} alt={title} className="w-full h-40 object-cover" />}
+      {image && (
+        <img
+          src={image}
+          alt={title}
+          loading="lazy"
+          className="w-full h-40 object-cover"
+        />
+      )}
       <div className="p-4 space-y-2">
         <h3 className="text-lg font-semibold">{title}</h3>
         {children}
