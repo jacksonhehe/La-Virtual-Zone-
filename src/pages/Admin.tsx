@@ -12,7 +12,7 @@ const Admin = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const { clubs, players, users, marketStatus, updateMarketStatus } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -503,8 +503,26 @@ const Admin = () => {
           {activeTab === 'market' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Gestión de Mercado</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración del mercado de fichajes.
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Estado actual</span>
+                  <span className={marketStatus ? 'text-green-400 font-medium' : 'text-red-400 font-medium'}>
+                    {marketStatus ? 'Abierto' : 'Cerrado'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Abrir / Cerrar mercado</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={marketStatus}
+                      onChange={(e) => updateMarketStatus(e.target.checked)}
+                    />
+                    <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
               </div>
             </div>
           )}
