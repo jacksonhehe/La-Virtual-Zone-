@@ -26,6 +26,7 @@ const ClubFinances = lazy(() => import('./pages/ClubFinances'));
 const HallOfFame = lazy(() => import('./pages/HallOfFame'));
 const Rankings = lazy(() => import('./pages/Rankings'));
 const Fixtures = lazy(() => import('./pages/Fixtures'));
+const DtDashboard = lazy(() => import('./pages/DtDashboard'));
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="registro" element={<Register />} />
           <Route path="usuario" element={<UserPanel />} />
+          <Route path="dt-dashboard" element={<DtDashboard />} />
           
           {/* Liga Master routes */}
           <Route path="liga-master">

@@ -34,6 +34,7 @@ export interface Club {
   titles: Title[];
   reputation: number;
   fanBase: number;
+  morale: number;
 }
 
 export interface Title {

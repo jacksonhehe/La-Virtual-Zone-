@@ -36,7 +36,8 @@ const NewClubModal = ({ onClose }: Props) => {
       description: '',
       titles: [],
       reputation: 50,
-      fanBase: 0
+      fanBase: 0,
+      morale: 50
     };
 
     addClub(newClub);
