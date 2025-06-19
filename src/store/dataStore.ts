@@ -12,9 +12,10 @@ import {
   faqs,
   storeItems
 } from '../data/mockData';
-import { 
-  Club, 
+import {
+  Club,
   Player,
+  User,
   Tournament,
   Transfer,
   TransferOffer,
@@ -28,6 +29,7 @@ import {
 interface DataState {
   clubs: Club[];
   players: Player[];
+  users: User[];
   tournaments: Tournament[];
   transfers: Transfer[];
   offers: TransferOffer[];
@@ -47,6 +49,9 @@ interface DataState {
   addOffer: (offer: TransferOffer) => void;
   updateOfferStatus: (offerId: string, status: 'pending' | 'accepted' | 'rejected') => void;
   addTransfer: (transfer: Transfer) => void;
+  addUser: (user: User) => void;
+  addClub: (club: Club) => void;
+  addPlayer: (player: Player) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -61,6 +66,7 @@ export const useDataStore = create<DataState>((set) => ({
   faqs,
   storeItems,
   marketStatus,
+  users: [],
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
   
@@ -79,13 +85,25 @@ export const useDataStore = create<DataState>((set) => ({
   })),
   
   updateOfferStatus: (offerId, status) => set((state) => ({
-    offers: state.offers.map(offer => 
+    offers: state.offers.map(offer =>
       offer.id === offerId ? { ...offer, status } : offer
     )
   })),
-  
+
   addTransfer: (transfer) => set((state) => ({
     transfers: [transfer, ...state.transfers]
+  })),
+
+  addUser: (user) => set((state) => ({
+    users: [...state.users, user]
+  })),
+
+  addClub: (club) => set((state) => ({
+    clubs: [...state.clubs, club]
+  })),
+
+  addPlayer: (player) => set((state) => ({
+    players: [...state.players, player]
   }))
 }));
  
