@@ -15,6 +15,7 @@ import Blog from './pages/Blog'
 import Tienda from './pages/Tienda'
 import Admin from './pages/Admin'
 import Ayuda from './pages/Ayuda'
+import NotFound from './pages/NotFound'
 import type { ReactElement } from 'react'
 
 export interface AppRoute {
@@ -40,6 +41,7 @@ const routes: AppRoute[] = [
   { path: '/tienda', element: <Tienda /> },
   { path: '/admin', element: <Admin /> },
   { path: '/ayuda', element: <Ayuda /> },
+  { path: '*', element: <NotFound /> },
 ]
 
 export default routes
