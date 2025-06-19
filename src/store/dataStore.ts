@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getUsers } from '../utils/authService';
+import { getUsers, updateUser as persistUser } from '../utils/authService';
 import { 
   clubs,
   players,
@@ -53,6 +53,12 @@ interface DataState {
   addUser: (user: User) => void;
   addClub: (club: Club) => void;
   addPlayer: (player: Player) => void;
+  updateUserEntry: (user: User) => void;
+  removeUser: (id: string) => void;
+  updateClubEntry: (club: Club) => void;
+  removeClub: (id: string) => void;
+  updatePlayerEntry: (player: Player) => void;
+  removePlayer: (id: string) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -105,6 +111,33 @@ export const useDataStore = create<DataState>((set) => ({
 
   addPlayer: (player) => set((state) => ({
     players: [...state.players, player]
+  })),
+
+  updateUserEntry: (user) => set((state) => {
+    persistUser(user);
+    return {
+      users: state.users.map(u => (u.id === user.id ? user : u))
+    };
+  }),
+
+  removeUser: (id) => set((state) => ({
+    users: state.users.filter(u => u.id !== id)
+  })),
+
+  updateClubEntry: (club) => set((state) => ({
+    clubs: state.clubs.map(c => (c.id === club.id ? club : c))
+  })),
+
+  removeClub: (id) => set((state) => ({
+    clubs: state.clubs.filter(c => c.id !== id)
+  })),
+
+  updatePlayerEntry: (player) => set((state) => ({
+    players: state.players.map(p => (p.id === player.id ? player : p))
+  })),
+
+  removePlayer: (id) => set((state) => ({
+    players: state.players.filter(p => p.id !== id)
   }))
 }));
  
