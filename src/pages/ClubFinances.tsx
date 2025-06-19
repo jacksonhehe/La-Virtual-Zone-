@@ -30,11 +30,11 @@ const ClubFinances = () => {
   // Calculate income, expenses and balance
   const income = clubTransfers
     .filter(t => t.fromClub === club.name)
-    .reduce((sum, t) => sum + t.value, 0);
+    .reduce((sum, t) => sum + t.fee, 0);
   
   const expenses = clubTransfers
     .filter(t => t.toClub === club.name)
-    .reduce((sum, t) => sum + t.value, 0);
+    .reduce((sum, t) => sum + t.fee, 0);
   
   
   // Simulate other finances
@@ -227,10 +227,10 @@ const ClubFinances = () => {
                           <div className="flex items-center">
                             <div className="w-8 h-8 bg-dark-lighter rounded-full flex items-center justify-center mr-3">
                               <span className="text-xs font-bold">
-                                {transfer.player.split(' ')[0][0]}{transfer.player.split(' ')[1][0]}
+                                {transfer.playerName.split(' ')[0][0]}{transfer.playerName.split(' ')[1][0]}
                               </span>
                             </div>
-                            <span className="font-medium">{transfer.player}</span>
+                            <span className="font-medium">{transfer.playerName}</span>
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -250,7 +250,7 @@ const ClubFinances = () => {
                         <td className="px-4 py-3 text-center">{transfer.toClub}</td>
                         <td className="px-4 py-3 text-center font-medium">
                           <span className={isIncoming ? 'text-red-500' : 'text-green-500'}>
-                            {isIncoming ? '-' : '+'}{formatCurrency(transfer.value)}
+                            {isIncoming ? '-' : '+'}{formatCurrency(transfer.fee)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-center text-sm">{formatDate(transfer.date)}</td>
