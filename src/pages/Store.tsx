@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
-import { ShoppingBag, Search, Filter, AlertCircle, Tag } from 'lucide-react';
+import { Search, AlertCircle } from 'lucide-react';
 import { storeItems } from '../data/mockData';
 import { formatCurrency } from '../utils/helpers';
 

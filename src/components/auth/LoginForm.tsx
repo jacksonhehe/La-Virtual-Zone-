@@ -22,7 +22,7 @@ const LoginForm = () => {
     try {
       login(username, password);
       navigate('/usuario');
-    } catch (err) {
+    } catch {
       setError('Credenciales incorrectas');
     }
   };

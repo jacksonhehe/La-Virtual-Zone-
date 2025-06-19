@@ -1,5 +1,5 @@
 import  { useParams, Link } from 'react-router-dom';
-import { CreditCard, ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } from 'lucide-react';
+import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { clubs, transfers } from '../data/mockData';
 import { formatCurrency, formatDate } from '../utils/helpers';
@@ -34,7 +34,6 @@ const ClubFinances = () => {
     .filter(t => t.toClub === club.name)
     .reduce((sum, t) => sum + t.value, 0);
   
-  const balance = income - expenses;
   
   // Simulate other finances
   const salaries = Math.round(club.budget * 0.08);

@@ -8,9 +8,9 @@ import {
   Clipboard, 
   Users, 
   ShoppingCart, 
-  Bell, 
+  Bell,
   Star,
-  ChevronLeft
+  
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';

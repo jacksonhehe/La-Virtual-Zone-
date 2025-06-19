@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
-import { HelpCircle, Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, Users, FileText, ArrowRight, Info } from 'lucide-react';
+import { Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, FileText, Info } from 'lucide-react';
 
 const Help = () => {
   const [activeSection, setActiveSection] = useState('account');

@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
-import { Image, Filter, Search, Calendar, User, Tag, Plus } from 'lucide-react';
+import { Image, Search, Calendar, User, Tag, Plus } from 'lucide-react';
 
 const Gallery = () => {
   const [activeFilter, setActiveFilter] = useState('all');

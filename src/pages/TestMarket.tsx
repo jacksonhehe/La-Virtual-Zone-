@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { User, Search, CheckCircle, X, AlertCircle } from 'lucide-react';
+import { User, CheckCircle, X, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 const TestMarket = () => {

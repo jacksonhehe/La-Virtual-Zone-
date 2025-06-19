@@ -1,5 +1,5 @@
 import  { useParams, Link } from 'react-router-dom';
-import { User, Star, Shield, Award, Mail, Calendar, Users, ChevronRight } from 'lucide-react';
+import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { clubs } from '../data/mockData';
 

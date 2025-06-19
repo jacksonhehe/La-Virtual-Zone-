@@ -93,8 +93,7 @@ export const saveCurrentUser = (user: User | null): void => {
 // Register a new user and log them in
 export const register = (
   email: string,
-  username: string,
-  password: string
+  username: string
 ): User => {
   const users = getUsers();
 
@@ -137,7 +136,7 @@ export const register = (
 };
 
 // Login function
-export const login = (username: string, password: string): User => {
+export const login = (username: string): User => {
   // Get users, falling back to test users if none exist
   const users = getUsers();
   

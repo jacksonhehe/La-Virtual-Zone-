@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
-import { Calendar, User, Tag, Search, ChevronRight } from 'lucide-react';
+import { Calendar, Search, ChevronRight, FileText } from 'lucide-react';
 import { posts } from '../data/mockData';
 
 const Blog = () => {
