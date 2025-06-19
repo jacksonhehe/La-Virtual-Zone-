@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
@@ -12,7 +12,7 @@ const Admin = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const { clubs, players, users, marketStatus, updateMarketStatus } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -243,32 +243,50 @@ const Admin = () => {
                   <h3 className="text-xl font-bold mb-4">Acciones rápidas</h3>
                   <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('users')}
+                      >
                         <Users size={18} className="mb-1" />
                         <span className="text-sm">Gestionar usuarios</span>
                       </button>
                       
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => updateMarketStatus(!marketStatus)}
+                      >
                         <ShoppingCart size={18} className="mb-1" />
                         <span className="text-sm">Abrir/cerrar mercado</span>
                       </button>
                       
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('tournaments')}
+                      >
                         <Trophy size={18} className="mb-1" />
                         <span className="text-sm">Crear torneo</span>
                       </button>
                       
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('calendar')}
+                      >
                         <Calendar size={18} className="mb-1" />
                         <span className="text-sm">Registrar resultados</span>
                       </button>
                       
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('news')}
+                      >
                         <FileText size={18} className="mb-1" />
                         <span className="text-sm">Crear noticia</span>
                       </button>
                       
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('dashboard')}
+                      >
                         <Settings size={18} className="mb-1" />
                         <span className="text-sm">Configuración</span>
                       </button>
