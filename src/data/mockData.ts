@@ -533,6 +533,10 @@ export const offers: TransferOffer[] = [
 // Market status
 export const marketStatus = true;
 
+// Current season and matchday
+export const currentSeason = 2025;
+export const currentJornada = 3;
+
 // Generate standings based on past matches
 export function generateStandings(tournamentId: string): Standing[] {
   const tournament = tournaments.find(t => t.id === tournamentId);

@@ -4,6 +4,7 @@ import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, B
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
+import SystemStateModal from '../components/admin/SystemStateModal';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 
@@ -12,7 +13,8 @@ const Admin = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const [showStateModal, setShowStateModal] = useState(false);
+  const { clubs, players, users, marketStatus, season, jornada } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -210,19 +212,21 @@ const Admin = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Mercado de fichajes</span>
                         <div className="flex items-center">
-                          <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                          <span className="font-medium">Abierto</span>
+                          <span
+                            className={`h-2 w-2 rounded-full mr-2 ${marketStatus ? 'bg-green-500' : 'bg-red-500'}`}
+                          ></span>
+                          <span className="font-medium">{marketStatus ? 'Abierto' : 'Cerrado'}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Jornada actual</span>
-                        <span className="font-medium">Jornada 3/38</span>
+                        <span className="font-medium">Jornada {jornada}</span>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Temporada</span>
-                        <span className="font-medium">2025</span>
+                        <span className="font-medium">{season}</span>
                       </div>
                       
                       <div className="flex items-center justify-between">
@@ -231,7 +235,7 @@ const Admin = () => {
                       </div>
                       
                       <div className="mt-4 pt-4 border-t border-gray-800">
-                        <button className="btn-primary w-full">
+                        <button className="btn-primary w-full" onClick={() => setShowStateModal(true)}>
                           Administrar estado del sistema
                         </button>
                       </div>
@@ -316,9 +320,10 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const userClub = u as unknown as { clubId?: string; club?: string };
                         const clubName =
-                          clubs.find((c) => c.id === (u as any).clubId)?.name ||
-                          (u as any).club ||
+                          clubs.find((c) => c.id === userClub.clubId)?.name ||
+                          userClub.club ||
                           '-';
 
                         return (
@@ -549,6 +554,7 @@ const Admin = () => {
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
       {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
       {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
+      {showStateModal && <SystemStateModal onClose={() => setShowStateModal(false)} />}
     </div>
   );
 };

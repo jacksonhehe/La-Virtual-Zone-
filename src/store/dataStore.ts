@@ -7,6 +7,8 @@ import {
   transfers,
   offers,
   marketStatus,
+  currentSeason,
+  currentJornada,
   leagueStandings,
   newsItems,
   mediaItems,
@@ -40,6 +42,8 @@ interface DataState {
   faqs: FAQ[];
   storeItems: StoreItem[];
   marketStatus: boolean;
+  season: number;
+  jornada: number;
   
   updateClubs: (newClubs: Club[]) => void;
   updatePlayers: (newPlayers: Player[]) => void;
@@ -47,6 +51,8 @@ interface DataState {
   updateTransfers: (newTransfers: Transfer[]) => void;
   updateOffers: (newOffers: TransferOffer[]) => void;
   updateMarketStatus: (status: boolean) => void;
+  updateSeason: (season: number) => void;
+  updateJornada: (jornada: number) => void;
   addOffer: (offer: TransferOffer) => void;
   updateOfferStatus: (offerId: string, status: 'pending' | 'accepted' | 'rejected') => void;
   addTransfer: (transfer: Transfer) => void;
@@ -67,6 +73,8 @@ export const useDataStore = create<DataState>((set) => ({
   faqs,
   storeItems,
   marketStatus,
+  season: currentSeason,
+  jornada: currentJornada,
   users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
@@ -80,6 +88,8 @@ export const useDataStore = create<DataState>((set) => ({
   updateOffers: (newOffers) => set({ offers: newOffers }),
   
   updateMarketStatus: (status) => set({ marketStatus: status }),
+  updateSeason: (season) => set({ season }),
+  updateJornada: (jornada) => set({ jornada }),
   
   addOffer: (offer) => set((state) => ({
     offers: [...state.offers, offer]
