@@ -1,16 +1,16 @@
 import  { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { ShoppingBag, Search, Filter, AlertCircle, Tag } from 'lucide-react';
-import { products } from '../data/mockData';
+import { storeItems } from '../data/mockData';
 import { formatCurrency } from '../utils/helpers';
 
 const Store = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Filter products
-  const filteredProducts = products.filter(product => {
-    if (activeCategory !== 'all' && product.type !== activeCategory) {
+  // Filter store items
+  const filteredItems = storeItems.filter(product => {
+    if (activeCategory !== 'all' && product.category !== activeCategory) {
       return false;
     }
     
@@ -81,7 +81,7 @@ const Store = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map(product => (
+          {filteredItems.map(product => (
             <div key={product.id} className="card overflow-hidden group">
               <div className="aspect-square bg-dark-lighter overflow-hidden relative">
                 <img 
@@ -92,19 +92,19 @@ const Store = () => {
                 <div className="absolute top-3 left-3">
                   <span className={`
                     inline-block px-2 py-1 text-xs font-medium rounded-full
-                    ${product.type === 'club' ? 'bg-neon-green/20 text-neon-green' : ''}
-                    ${product.type === 'user' ? 'bg-neon-blue/20 text-neon-blue' : ''}
-                    ${product.type === 'achievement' ? 'bg-neon-purple/20 text-neon-purple' : ''}
-                    ${product.type === 'booster' ? 'bg-neon-red/20 text-neon-red' : ''}
+                    ${product.category === 'club' ? 'bg-neon-green/20 text-neon-green' : ''}
+                    ${product.category === 'user' ? 'bg-neon-blue/20 text-neon-blue' : ''}
+                    ${product.category === 'achievement' ? 'bg-neon-purple/20 text-neon-purple' : ''}
+                    ${product.category === 'booster' ? 'bg-neon-red/20 text-neon-red' : ''}
                   `}>
-                    {product.type === 'club' ? 'Club' : 
-                     product.type === 'user' ? 'Usuario' : 
-                     product.type === 'achievement' ? 'Logro' : 'Potenciador'}
+                    {product.category === 'club' ? 'Club' :
+                     product.category === 'user' ? 'Usuario' :
+                     product.category === 'achievement' ? 'Logro' : 'Potenciador'}
                   </span>
                 </div>
                 <div className="absolute top-3 right-3">
                   <span className="inline-block bg-dark-light px-2 py-1 text-xs font-medium rounded-full">
-                    Nivel {product.requiredLevel}+
+                    Nivel {product.minLevel}+
                   </span>
                 </div>
               </div>
@@ -125,7 +125,7 @@ const Store = () => {
             </div>
           ))}
           
-          {filteredProducts.length === 0 && (
+          {filteredItems.length === 0 && (
             <div className="col-span-full py-12 text-center text-gray-400">
               <AlertCircle size={48} className="mx-auto mb-4 text-gray-600" />
               <h3 className="text-xl font-bold mb-2">No se encontraron productos</h3>
