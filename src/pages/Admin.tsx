@@ -32,6 +32,8 @@ const Admin = () => {
     clubs,
     players,
     users,
+    tournaments,
+    transfers,
     removeUser,
     removeClub,
     removePlayer,
@@ -40,6 +42,23 @@ const Admin = () => {
   } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+
+  // Stats for dashboard
+  const now = new Date();
+  const weekAgo = new Date(now);
+  weekAgo.setDate(now.getDate() - 7);
+
+  const newUsersCount = users.filter(u => {
+    const date =
+      u.joinDate || (u as unknown as { createdAt?: string }).createdAt;
+    return date ? new Date(date) >= weekAgo : false;
+  }).length;
+
+  const activeClubsCount = clubs.length;
+  const transfersTodayCount = transfers.filter(
+    t => t.date === now.toISOString().slice(0, 10)
+  ).length;
+  const activeTournamentsCount = tournaments.filter(t => t.status === 'active').length;
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -152,28 +171,48 @@ const Admin = () => {
               <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-dark-light rounded-lg p-6 border border-gray-800">
-                  <p className="text-gray-400 text-sm mb-1">Usuarios totales</p>
-                  <h3 className="text-2xl font-bold">205</h3>
-                  <p className="text-xs text-green-500 mt-1">+12 esta semana</p>
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
+                  <p className="text-gray-400 text-sm mb-1">Nuevos usuarios</p>
+                  <h3 className="text-2xl font-bold">{newUsersCount}</h3>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('users')}
+                  >
+                    Ver usuarios
+                  </button>
                 </div>
-                
-                <div className="bg-dark-light rounded-lg p-6 border border-gray-800">
+
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
                   <p className="text-gray-400 text-sm mb-1">Clubes activos</p>
-                  <h3 className="text-2xl font-bold">{clubs.length}</h3>
-                  <p className="text-xs text-yellow-500 mt-1">3 sin DT asignado</p>
+                  <h3 className="text-2xl font-bold">{activeClubsCount}</h3>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('clubs')}
+                  >
+                    Ver clubes
+                  </button>
                 </div>
-                
-                <div className="bg-dark-light rounded-lg p-6 border border-gray-800">
-                  <p className="text-gray-400 text-sm mb-1">Transferencias</p>
-                  <h3 className="text-2xl font-bold">27</h3>
-                  <p className="text-xs text-green-500 mt-1">+8 esta semana</p>
+
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
+                  <p className="text-gray-400 text-sm mb-1">Transferencias hoy</p>
+                  <h3 className="text-2xl font-bold">{transfersTodayCount}</h3>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('market')}
+                  >
+                    Ver mercado
+                  </button>
                 </div>
-                
-                <div className="bg-dark-light rounded-lg p-6 border border-gray-800">
-                  <p className="text-gray-400 text-sm mb-1">Partidos jugados</p>
-                  <h3 className="text-2xl font-bold">21</h3>
-                  <p className="text-xs text-gray-400 mt-1">7 por jornada</p>
+
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
+                  <p className="text-gray-400 text-sm mb-1">Torneos activos</p>
+                  <h3 className="text-2xl font-bold">{activeTournamentsCount}</h3>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('tournaments')}
+                  >
+                    Ver torneos
+                  </button>
                 </div>
               </div>
               
