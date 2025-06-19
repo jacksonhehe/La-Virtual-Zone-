@@ -4,6 +4,11 @@ import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, B
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
+import EditUserModal from '../components/admin/EditUserModal';
+import EditClubModal from '../components/admin/EditClubModal';
+import EditPlayerModal from '../components/admin/EditPlayerModal';
+import ConfirmDeleteModal from '../components/admin/ConfirmDeleteModal';
+import { User, Club, Player } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 
@@ -12,7 +17,20 @@ const Admin = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const [editingUser, setEditingUser] = useState(null as User | null);
+  const [editingClub, setEditingClub] = useState(null as Club | null);
+  const [editingPlayer, setEditingPlayer] = useState(null as Player | null);
+  const [userToDelete, setUserToDelete] = useState(null as User | null);
+  const [clubToDelete, setClubToDelete] = useState(null as Club | null);
+  const [playerToDelete, setPlayerToDelete] = useState(null as Player | null);
+  const {
+    clubs,
+    players,
+    users,
+    removeUser,
+    removeClub,
+    removePlayer
+  } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -316,9 +334,13 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
+                        const userWithClub = u as User & {
+                          clubId?: string;
+                          club?: string;
+                        };
                         const clubName =
-                          clubs.find((c) => c.id === (u as any).clubId)?.name ||
-                          (u as any).club ||
+                          clubs.find(c => c.id === userWithClub.clubId)?.name ||
+                          userWithClub.club ||
                           '-';
 
                         return (
@@ -351,10 +373,16 @@ const Admin = () => {
                             </td>
                             <td className="px-4 py-3 text-center">
                               <div className="flex justify-center space-x-2">
-                                <button className="p-1 text-gray-400 hover:text-primary">
+                                <button
+                                  className="p-1 text-gray-400 hover:text-primary"
+                                  onClick={() => setEditingUser(u)}
+                                >
                                   <Edit size={16} />
                                 </button>
-                                <button className="p-1 text-gray-400 hover:text-red-500">
+                                <button
+                                  className="p-1 text-gray-400 hover:text-red-500"
+                                  onClick={() => setUserToDelete(u)}
+                                >
                                   <Trash size={16} />
                                 </button>
                               </div>
@@ -415,10 +443,16 @@ const Admin = () => {
                           <td className="px-4 py-3 text-center">{club.playStyle}</td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex justify-center space-x-2">
-                              <button className="p-1 text-gray-400 hover:text-primary">
+                              <button
+                                className="p-1 text-gray-400 hover:text-primary"
+                                onClick={() => setEditingClub(club)}
+                              >
                                 <Edit size={16} />
                               </button>
-                              <button className="p-1 text-gray-400 hover:text-red-500">
+                              <button
+                                className="p-1 text-gray-400 hover:text-red-500"
+                                onClick={() => setClubToDelete(club)}
+                              >
                                 <Trash size={16} />
                               </button>
                             </div>
@@ -483,10 +517,16 @@ const Admin = () => {
                           </td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex justify-center space-x-2">
-                              <button className="p-1 text-gray-400 hover:text-primary">
+                              <button
+                                className="p-1 text-gray-400 hover:text-primary"
+                                onClick={() => setEditingPlayer(player)}
+                              >
                                 <Edit size={16} />
                               </button>
-                              <button className="p-1 text-gray-400 hover:text-red-500">
+                              <button
+                                className="p-1 text-gray-400 hover:text-red-500"
+                                onClick={() => setPlayerToDelete(player)}
+                              >
                                 <Trash size={16} />
                               </button>
                             </div>
@@ -549,6 +589,39 @@ const Admin = () => {
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
       {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
       {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
+      {editingUser && (
+        <EditUserModal user={editingUser} onClose={() => setEditingUser(null)} />
+      )}
+      {editingClub && (
+        <EditClubModal club={editingClub} onClose={() => setEditingClub(null)} />
+      )}
+      {editingPlayer && (
+        <EditPlayerModal
+          player={editingPlayer}
+          onClose={() => setEditingPlayer(null)}
+        />
+      )}
+      {userToDelete && (
+        <ConfirmDeleteModal
+          message="¿Eliminar este usuario?"
+          onConfirm={() => removeUser(userToDelete.id)}
+          onClose={() => setUserToDelete(null)}
+        />
+      )}
+      {clubToDelete && (
+        <ConfirmDeleteModal
+          message="¿Eliminar este club?"
+          onConfirm={() => removeClub(clubToDelete.id)}
+          onClose={() => setClubToDelete(null)}
+        />
+      )}
+      {playerToDelete && (
+        <ConfirmDeleteModal
+          message="¿Eliminar este jugador?"
+          onConfirm={() => removePlayer(playerToDelete.id)}
+          onClose={() => setPlayerToDelete(null)}
+        />
+      )}
     </div>
   );
 };
