@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { clubs, players } from '../data/mockData';
@@ -8,11 +8,10 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-  
+
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
-    navigate('/login');
-    return null;
+    return <Navigate to="/login" />;
   }
   
   return (
