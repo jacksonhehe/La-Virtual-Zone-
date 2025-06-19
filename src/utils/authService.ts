@@ -24,7 +24,7 @@ const TEST_USERS = [
     level: 10,
     xp: 1000,
     avatar: 'https://ui-avatars.com/api/?name=Admin&background=9f65fd&color=fff&size=128&bold=true',
-    createdAt: new Date().toISOString(),
+    joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['founder'],
     following: {
@@ -41,7 +41,7 @@ const TEST_USERS = [
     role: 'user',
     level: 1,
     xp: 0,
-    createdAt: new Date().toISOString(),
+    joinDate: new Date().toISOString(),
     status: 'active',
     achievements: [],
     following: {
@@ -60,7 +60,7 @@ const TEST_USERS = [
     xp: 500,
     club: 'Neón FC',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    createdAt: new Date().toISOString(),
+    joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
     following: {
@@ -134,7 +134,7 @@ export const register = (
       username
     )}&background=111827&color=fff&size=128`,
     xp: 0,
-    createdAt: new Date().toISOString(),
+    joinDate: new Date().toISOString(),
     status: 'active',
     notifications: true,
     lastLogin: new Date().toISOString(),

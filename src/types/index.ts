@@ -5,9 +5,11 @@ export interface User {
   email: string;
   role: 'user' | 'dt' | 'admin';
   avatar: string;
+  level?: number;
   xp: number;
   club?: string;
-  createdAt: string;
+  clubId?: string;
+  joinDate?: string;
   status: 'active' | 'suspended' | 'banned';
   notifications: boolean;
   lastLogin: string;

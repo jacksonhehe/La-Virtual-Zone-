@@ -21,7 +21,7 @@ const UserProfile = () => {
            username === 'pixelmanager' ? 'Atlético Pixelado' : 
            username === 'lagdefender' ? 'Defensores del Lag' : 
            username === 'neonmanager' ? 'Neón FC' : '',
-    createdAt: '2023-01-15',
+    joinDate: '2023-01-15',
     isActive: true,
     achievements: [
       { id: '1', name: 'Campeón Liga Master 2024', description: 'Ganador de la Liga Master temporada 2024', date: '2024-12-15' },
@@ -113,7 +113,7 @@ const UserProfile = () => {
               <div className="space-y-2 text-sm text-left">
                 <div className="flex items-center">
                   <Calendar size={16} className="text-gray-400 mr-2" />
-                  <span>Miembro desde {new Date(user.createdAt).toLocaleDateString('es-ES', {
+                  <span>Miembro desde {new Date(user.joinDate).toLocaleDateString('es-ES', {
                     day: '2-digit',
                     month: 'long',
                     year: 'numeric'

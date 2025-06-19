@@ -334,13 +334,9 @@ const Admin = () => {
                             : u.role === 'dt'
                             ? 'DT'
                             : 'Usuario';
-                        const userWithClub = u as User & {
-                          clubId?: string;
-                          club?: string;
-                        };
                         const clubName =
-                          clubs.find(c => c.id === userWithClub.clubId)?.name ||
-                          userWithClub.club ||
+                          clubs.find(c => c.id === u.clubId)?.name ||
+                          u.club ||
                           '-';
 
                         return (
