@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { Player } from '../types';

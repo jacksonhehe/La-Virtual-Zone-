@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';

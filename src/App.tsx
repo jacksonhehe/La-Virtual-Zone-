@@ -1,4 +1,4 @@
-import  { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import LoadingScreen from './components/common/LoadingScreen';

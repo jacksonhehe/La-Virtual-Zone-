@@ -1,4 +1,4 @@
-import  { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Users, TrendingUp, Trophy } from 'lucide-react';
 
 const HeroSection = () => {

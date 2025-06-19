@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
@@ -8,6 +8,8 @@ import EditUserModal from '../components/admin/EditUserModal';
 import EditClubModal from '../components/admin/EditClubModal';
 import EditPlayerModal from '../components/admin/EditPlayerModal';
 import ConfirmDeleteModal from '../components/admin/ConfirmDeleteModal';
+import UsersTable from '../components/admin/UsersTable';
+import PlayersTable from '../components/admin/PlayersTable';
 import { User, Club, Player } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -307,93 +309,12 @@ const Admin = () => {
                 </button>
               </div>
               
-              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-dark-lighter text-xs uppercase text-gray-400 border-b border-gray-800">
-                        <th className="px-4 py-3 text-left">Usuario</th>
-                        <th className="px-4 py-3 text-center">Correo</th>
-                        <th className="px-4 py-3 text-center">Rol</th>
-                        <th className="px-4 py-3 text-center">Club</th>
-                        <th className="px-4 py-3 text-center">Estado</th>
-                        <th className="px-4 py-3 text-center">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((u) => {
-                        const roleClasses =
-                          u.role === 'admin'
-                            ? 'bg-neon-red/20 text-neon-red'
-                            : u.role === 'dt'
-                            ? 'bg-neon-green/20 text-neon-green'
-                            : 'bg-secondary/20 text-secondary';
-                        const roleLabel =
-                          u.role === 'admin'
-                            ? 'Admin'
-                            : u.role === 'dt'
-                            ? 'DT'
-                            : 'Usuario';
-                        const userWithClub = u as User & {
-                          clubId?: string;
-                          club?: string;
-                        };
-                        const clubName =
-                          clubs.find(c => c.id === userWithClub.clubId)?.name ||
-                          userWithClub.club ||
-                          '-';
-
-                        return (
-                          <tr
-                            key={u.id}
-                            className="border-b border-gray-800 hover:bg-dark-lighter"
-                          >
-                            <td className="px-4 py-3">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                                  <img src={u.avatar} alt={u.username} />
-                                </div>
-                                <span className="font-medium">{u.username}</span>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-center">{u.email}</td>
-                            <td className="px-4 py-3 text-center">
-                              <span
-                                className={`inline-block px-2 py-1 text-xs rounded-full ${roleClasses}`}
-                              >
-                                {roleLabel}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3 text-center">{clubName}</td>
-                            <td className="px-4 py-3 text-center">
-                              <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                                Activo
-                              </span>
-                            </td>
-                            <td className="px-4 py-3 text-center">
-                              <div className="flex justify-center space-x-2">
-                                <button
-                                  className="p-1 text-gray-400 hover:text-primary"
-                                  onClick={() => setEditingUser(u)}
-                                >
-                                  <Edit size={16} />
-                                </button>
-                                <button
-                                  className="p-1 text-gray-400 hover:text-red-500"
-                                  onClick={() => setUserToDelete(u)}
-                                >
-                                  <Trash size={16} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <UsersTable
+                users={users}
+                clubs={clubs}
+                onEdit={u => setEditingUser(u)}
+                onDelete={u => setUserToDelete(u)}
+              />
             </div>
           )}
           
@@ -476,67 +397,12 @@ const Admin = () => {
                 </button>
               </div>
               
-              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-dark-lighter text-xs uppercase text-gray-400 border-b border-gray-800">
-                        <th className="px-4 py-3 text-left">Jugador</th>
-                        <th className="px-4 py-3 text-center">Pos</th>
-                        <th className="px-4 py-3 text-center">Media</th>
-                        <th className="px-4 py-3 text-center">Edad</th>
-                        <th className="px-4 py-3 text-center">Club</th>
-                        <th className="px-4 py-3 text-center">Valor</th>
-                        <th className="px-4 py-3 text-center">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {players.slice(0, 5).map(player => (
-                        <tr key={player.id} className="border-b border-gray-800 hover:bg-dark-lighter">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center">
-                              <div className="w-8 h-8 bg-dark-lighter rounded-full flex items-center justify-center mr-2">
-                                <span className="text-xs font-bold">{player.id}</span>
-                              </div>
-                              <div>
-                                <div className="font-medium">{player.name}</div>
-                                <div className="text-xs text-gray-400">{player.nationality}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-center">{player.position}</td>
-                          <td className="px-4 py-3 text-center font-medium">{player.overall}</td>
-                          <td className="px-4 py-3 text-center">{player.age}</td>
-                          <td className="px-4 py-3 text-center">{clubs.find(c => c.id === player.clubId)?.name}</td>
-                          <td className="px-4 py-3 text-center font-medium">
-                            {new Intl.NumberFormat('es-ES', {
-                              style: 'currency',
-                              currency: 'EUR',
-                              maximumFractionDigits: 0
-                            }).format(player.transferValue)}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <div className="flex justify-center space-x-2">
-                              <button
-                                className="p-1 text-gray-400 hover:text-primary"
-                                onClick={() => setEditingPlayer(player)}
-                              >
-                                <Edit size={16} />
-                              </button>
-                              <button
-                                className="p-1 text-gray-400 hover:text-red-500"
-                                onClick={() => setPlayerToDelete(player)}
-                              >
-                                <Trash size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <PlayersTable
+                players={players.slice(0, 5)}
+                clubs={clubs}
+                onEdit={p => setEditingPlayer(p)}
+                onDelete={p => setPlayerToDelete(p)}
+              />
             </div>
           )}
 
