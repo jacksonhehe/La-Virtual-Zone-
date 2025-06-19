@@ -13,6 +13,7 @@ export default function Navbar() {
         className={styles.hamburger}
         aria-expanded={open}
         aria-controls={navId}
+        aria-label="Menú"
         onClick={() => setOpen(!open)}
       >
         <span></span>
