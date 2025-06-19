@@ -148,14 +148,23 @@ export const useDataStore = create<DataState>((set) => ({
     set((state) => {
       const prev = state.users.find(u => u.id === user.id);
       persistUser(user);
+      const current = useAuthStore.getState().user?.id || 'system';
       if (prev && prev.role !== user.role) {
-        const current = useAuthStore.getState().user?.id || 'system';
         useActivityLogStore
           .getState()
           .addLog(
             'role_change',
             current,
             `Rol de ${prev.username} cambiado a ${user.role}`
+          );
+      }
+      if (prev && prev.status !== user.status) {
+        useActivityLogStore
+          .getState()
+          .addLog(
+            'status_change',
+            current,
+            `Estado de ${prev.username} cambiado a ${user.status}`
           );
       }
       return {
