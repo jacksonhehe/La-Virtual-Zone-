@@ -35,9 +35,8 @@ a {
 }
 
 a:hover {
-  text-shadow: 0 0 4px var(--primary-glow);
   color: var(--accent);
-  text-shadow: 0 0 6px var(--accent-glow);
+  text-shadow: 0 0 4px var(--primary-glow), 0 0 6px var(--accent-glow);
 }
 
 /* Simple glassmorphism card style */
