@@ -26,19 +26,32 @@ export default function Mercado() {
   return (
     <div>
       <h1>Mercado de Fichajes</h1>
-      <div>
-        <select value={pos} onChange={(e) => setPos(e.target.value)}>
-          <option value="">Todas las posiciones</option>
-          {positions.map((p) => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Buscar"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex flex-wrap gap-4 mb-4">
+        <label htmlFor="mercado-pos" className="block space-y-1">
+          <span className="text-sm">Posición</span>
+          <select
+            id="mercado-pos"
+            value={pos}
+            onChange={(e) => setPos(e.target.value)}
+            className="bg-zinc-900 border border-[var(--primary)] rounded px-2 py-1"
+          >
+            <option value="">Todas las posiciones</option>
+            {positions.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor="mercado-search" className="block space-y-1">
+          <span className="text-sm">Buscar jugador</span>
+          <input
+            id="mercado-search"
+            type="text"
+            placeholder="Buscar"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-zinc-900 border border-[var(--primary)] rounded px-2 py-1"
+          />
+        </label>
       </div>
       <table className={styles.table}>
         <thead>
