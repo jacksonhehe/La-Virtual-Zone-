@@ -1,6 +1,11 @@
-import  { create } from 'zustand';
+import { create } from 'zustand';
 import { User } from '../types';
-import { login as authLogin, getCurrentUser, logout as authLogout } from '../utils/authService';
+import {
+  login as authLogin,
+  register as authRegister,
+  getCurrentUser,
+  logout as authLogout
+} from '../utils/authService';
 
 interface AuthState {
   user: User | null;
@@ -32,8 +37,14 @@ export const useAuthStore = create<AuthState>((set) => {
     },
     
     register: (email, username, password) => {
-      // Implementation remains in authService.ts
-      throw new Error('Not implemented');
+      try {
+        const user = authRegister(email, username, password);
+        set({ user, isAuthenticated: true });
+        return user;
+      } catch (error) {
+        console.error('Register failed:', error);
+        throw error;
+      }
     },
     
     logout: () => {

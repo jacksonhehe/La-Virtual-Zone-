@@ -1,4 +1,4 @@
-import  { User } from '../types';
+import { User } from '../types';
 
 // Simulated backend - using localStorage for persistence
 const USERS_KEY = 'virtual_zone_users';
@@ -88,6 +88,52 @@ export const saveCurrentUser = (user: User | null): void => {
   } else {
     localStorage.removeItem(CURRENT_USER_KEY);
   }
+};
+
+// Register a new user and log them in
+export const register = (
+  email: string,
+  username: string,
+  password: string
+): User => {
+  const users = getUsers();
+
+  const usernameExists = users.some(
+    u => u.username.toLowerCase() === username.toLowerCase()
+  );
+  if (usernameExists) {
+    throw new Error('El nombre de usuario ya está en uso');
+  }
+
+  const emailExists = users.some(
+    u => u.email.toLowerCase() === email.toLowerCase()
+  );
+  if (emailExists) {
+    throw new Error('El correo electrónico ya está en uso');
+  }
+
+  const newUser: User = {
+    id: `${Date.now()}`,
+    username,
+    email,
+    role: 'user',
+    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      username
+    )}&background=111827&color=fff&size=128`,
+    xp: 0,
+    joinDate: new Date().toISOString(),
+    status: 'active',
+    notifications: true,
+    lastLogin: new Date().toISOString(),
+    followers: 0,
+    following: 0
+  };
+
+  users.push(newUser);
+  saveUsers(users);
+  saveCurrentUser(newUser);
+
+  return newUser;
 };
 
 // Login function
