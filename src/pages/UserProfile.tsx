@@ -1,10 +1,12 @@
 import  { useParams, Link } from 'react-router-dom';
 import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
-import { clubs } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
+
+  const { clubs } = useDataStore();
   
   // Mock user for demo
   const user = {

@@ -2,11 +2,13 @@ import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Calendar, Search, ChevronRight, FileText } from 'lucide-react';
-import { posts } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const { posts } = useDataStore();
   
   // Filter posts
   const filteredPosts = posts.filter(post => {

@@ -1,11 +1,13 @@
 import  { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
-import { clubs, transfers } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate } from '../utils/helpers';
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
+
+  const { clubs, transfers } = useDataStore();
   
   // Find club by slug
   const club = clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);

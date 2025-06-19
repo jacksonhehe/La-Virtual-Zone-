@@ -1,9 +1,11 @@
 import  { useParams, Link } from 'react-router-dom';
 import { Calendar, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
-import { posts } from '../data/mockData';
+import { useDataStore } from '../store/dataStore';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
+
+  const { posts } = useDataStore();
   
   // Find post by slug
   const post = posts.find(p => p.slug === slug);
