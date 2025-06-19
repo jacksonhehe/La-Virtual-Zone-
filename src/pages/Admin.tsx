@@ -1,6 +1,20 @@
 import  { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
+import {
+  Settings,
+  Users,
+  Trophy,
+  ShoppingCart,
+  Calendar,
+  FileText,
+  Clipboard,
+  BarChart,
+  Edit,
+  Plus,
+  Trash,
+  Menu,
+  X,
+} from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
@@ -18,6 +32,7 @@ import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 
 const Admin = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
@@ -66,21 +81,39 @@ const Admin = () => {
   }
   
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="flex flex-col md:flex-row">
-        {/* Sidebar */}
-        <div className="w-full md:w-64 bg-dark-light border-r border-gray-800">
-          <div className="p-4 border-b border-gray-800">
-            <h2 className="text-xl font-bold text-white flex items-center">
-              <Settings size={20} className="text-primary mr-2" />
-              Panel Admin
-            </h2>
-            <p className="text-xs text-gray-400 mt-1">
-              Administración de La Virtual Zone
-            </p>
-          </div>
-          
-          <nav className="p-2">
+    <div className="min-h-screen bg-dark relative">
+      {/* Mobile header */}
+      <div className="md:hidden flex items-center p-4 border-b border-gray-800">
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="text-gray-300 hover:text-white"
+        >
+          <Menu size={24} />
+        </button>
+        <h2 className="ml-3 text-xl font-bold text-white flex items-center">
+          <Settings size={20} className="text-primary mr-2" />
+          Panel Admin
+        </h2>
+      </div>
+
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-dark-light border-r border-gray-800 transform transition-transform md:translate-x-0 md:static ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:block`}
+      >
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between md:block">
+          <h2 className="text-xl font-bold text-white flex items-center">
+            <Settings size={20} className="text-primary mr-2" />
+            Panel Admin
+          </h2>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden text-gray-300 hover:text-white"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="p-2">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`w-full flex items-center p-3 rounded-md text-left transition-colors mb-1 ${activeTab === 'dashboard' ? 'bg-primary text-white' : 'hover:bg-dark-lighter text-gray-300'}`}
@@ -163,9 +196,16 @@ const Admin = () => {
             </div>
           </nav>
         </div>
-        
+
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
         {/* Main content */}
-        <div className="flex-grow p-6">
+        <div className="p-6 md:ml-64 transition-all">
           {activeTab === 'dashboard' && (
             <div>
               <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
@@ -619,7 +659,6 @@ const Admin = () => {
 
           {activeTab === 'calendar' && <CalendarAdminPanel />}
         </div>
-      </div>
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
       {showClubModal && <NewClubModal onClose={() => setShowClubModal(false)} />}
       {showPlayerModal && <NewPlayerModal onClose={() => setShowPlayerModal(false)} />}
@@ -661,4 +700,3 @@ const Admin = () => {
 };
 
 export default Admin;
- 
