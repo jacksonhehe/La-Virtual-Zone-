@@ -42,8 +42,9 @@ function App() {
             <Route index element={<LigaMaster />} />
             <Route path="mercado" element={<Market />} />
             <Route path="club/:clubName" element={<ClubProfile />} />
-            <Route path="club/:clubName/plantilla" element={<ClubSquad />} />
-            <Route path="club/:clubName/finanzas" element={<ClubFinances />} />
+          <Route path="club/:clubName/plantilla" element={<ClubSquad />} />
+          <Route path="clubes/:clubId/plantilla" element={<ClubSquad />} />
+          <Route path="club/:clubName/finanzas" element={<ClubFinances />} />
             <Route path="hall-of-fame" element={<HallOfFame />} />
             <Route path="rankings" element={<Rankings />} />
             <Route path="fixture" element={<Fixtures />} />

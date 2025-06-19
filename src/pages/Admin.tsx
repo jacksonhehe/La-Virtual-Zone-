@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
 import NewClubModal from '../components/admin/NewClubModal';
@@ -506,6 +506,12 @@ const Admin = () => {
                           <td className="px-4 py-3 text-center">{club.playStyle}</td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex justify-center space-x-2">
+                              <Link
+                                to={`/clubes/${club.id}/plantilla`}
+                                className="btn-secondary text-xs px-2 py-1"
+                              >
+                                Ver plantilla
+                              </Link>
                               <button
                                 className="p-1 text-gray-400 hover:text-primary"
                                 onClick={() => setEditingClub(club)}

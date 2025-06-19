@@ -6,14 +6,16 @@ import { formatCurrency } from '../utils/helpers';
 import { useState } from 'react';
 
 const ClubSquad = () => {
-  const { clubName } = useParams<{ clubName: string }>();
+  const { clubName, clubId } = useParams<{ clubName?: string; clubId?: string }>();
   const [sortBy, setSortBy] = useState('overall');
   const [sortOrder, setSortOrder] = useState('desc');
 
   const { clubs, players } = useDataStore();
   
   // Find club by slug
-  const club = clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);
+  const club = clubId
+    ? clubs.find(c => c.id === clubId)
+    : clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);
   
   if (!club) {
     return (
@@ -29,7 +31,7 @@ const ClubSquad = () => {
   
   // Get club players
   const clubPlayers = players
-    .filter(p => p.club === club.name)
+    .filter(p => p.clubId === club.id)
     .sort((a, b) => {
       if (sortBy === 'overall') {
         return sortOrder === 'desc' ? b.overall - a.overall : a.overall - b.overall;
@@ -76,8 +78,8 @@ const ClubSquad = () => {
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link 
-            to={`/liga-master/club/${clubName}`}
+          <Link
+            to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
             className="inline-flex items-center text-primary hover:text-primary-light"
           >
             <ChevronLeft size={16} className="mr-1" />
