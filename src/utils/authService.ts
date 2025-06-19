@@ -73,7 +73,7 @@ const TEST_USERS = [
 ];
 
 // Get users from localStorage or initialize with test users
-const getUsers = (): User[] => {
+export const getUsers = (): User[] => {
   const usersJson = localStorage.getItem(USERS_KEY);
   if (!usersJson) {
     localStorage.setItem(USERS_KEY, JSON.stringify(TEST_USERS));

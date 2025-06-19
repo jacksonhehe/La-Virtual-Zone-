@@ -12,7 +12,7 @@ const Admin = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players } = useDataStore();
+  const { clubs, players, users } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -303,141 +303,65 @@ const Admin = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-gray-800 hover:bg-dark-lighter">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                              <img src="https://ui-avatars.com/api/?name=Admin&background=111827&color=fff&size=128" alt="admin" />
-                            </div>
-                            <span className="font-medium">admin</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-center">admin@virtualzone.com</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-block px-2 py-1 bg-neon-red/20 text-neon-red text-xs rounded-full">
-                            Admin
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">Rayo Digital FC</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                            Activo
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center space-x-2">
-                            <button className="p-1 text-gray-400 hover:text-primary">
-                              <Edit size={16} />
-                            </button>
-                            <button className="p-1 text-gray-400 hover:text-red-500">
-                              <Trash size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      
-                      <tr className="border-b border-gray-800 hover:bg-dark-lighter">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                              <img src="https://ui-avatars.com/api/?name=PM&background=10b981&color=fff&size=128" alt="pixelmanager" />
-                            </div>
-                            <span className="font-medium">pixelmanager</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-center">pixel@virtualzone.com</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-block px-2 py-1 bg-neon-green/20 text-neon-green text-xs rounded-full">
-                            DT
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">Atlético Pixelado</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                            Activo
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center space-x-2">
-                            <button className="p-1 text-gray-400 hover:text-primary">
-                              <Edit size={16} />
-                            </button>
-                            <button className="p-1 text-gray-400 hover:text-red-500">
-                              <Trash size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      
-                      <tr className="border-b border-gray-800 hover:bg-dark-lighter">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                              <img src="https://ui-avatars.com/api/?name=LD&background=f59e0b&color=fff&size=128" alt="lagdefender" />
-                            </div>
-                            <span className="font-medium">lagdefender</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-center">lag@virtualzone.com</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-block px-2 py-1 bg-neon-green/20 text-neon-green text-xs rounded-full">
-                            DT
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">Defensores del Lag</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                            Activo
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center space-x-2">
-                            <button className="p-1 text-gray-400 hover:text-primary">
-                              <Edit size={16} />
-                            </button>
-                            <button className="p-1 text-gray-400 hover:text-red-500">
-                              <Trash size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      
-                      <tr className="border-b border-gray-800 hover:bg-dark-lighter">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                              <img src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff&size=128" alt="user2024" />
-                            </div>
-                            <span className="font-medium">user2024</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-center">user@virtualzone.com</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-block px-2 py-1 bg-secondary/20 text-secondary text-xs rounded-full">
-                            Usuario
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">-</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                            Activo
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center space-x-2">
-                            <button className="p-1 text-gray-400 hover:text-primary">
-                              <Edit size={16} />
-                            </button>
-                            <button className="p-1 text-gray-400 hover:text-red-500">
-                              <Trash size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                      {users.map((u) => {
+                        const roleClasses =
+                          u.role === 'admin'
+                            ? 'bg-neon-red/20 text-neon-red'
+                            : u.role === 'dt'
+                            ? 'bg-neon-green/20 text-neon-green'
+                            : 'bg-secondary/20 text-secondary';
+                        const roleLabel =
+                          u.role === 'admin'
+                            ? 'Admin'
+                            : u.role === 'dt'
+                            ? 'DT'
+                            : 'Usuario';
+                        const clubName =
+                          clubs.find((c) => c.id === (u as any).clubId)?.name ||
+                          (u as any).club ||
+                          '-';
+
+                        return (
+                          <tr
+                            key={u.id}
+                            className="border-b border-gray-800 hover:bg-dark-lighter"
+                          >
+                            <td className="px-4 py-3">
+                              <div className="flex items-center">
+                                <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                                  <img src={u.avatar} alt={u.username} />
+                                </div>
+                                <span className="font-medium">{u.username}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-center">{u.email}</td>
+                            <td className="px-4 py-3 text-center">
+                              <span
+                                className={`inline-block px-2 py-1 text-xs rounded-full ${roleClasses}`}
+                              >
+                                {roleLabel}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-center">{clubName}</td>
+                            <td className="px-4 py-3 text-center">
+                              <span className="inline-flex items-center px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded-full">
+                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
+                                Activo
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <div className="flex justify-center space-x-2">
+                                <button className="p-1 text-gray-400 hover:text-primary">
+                                  <Edit size={16} />
+                                </button>
+                                <button className="p-1 text-gray-400 hover:text-red-500">
+                                  <Trash size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

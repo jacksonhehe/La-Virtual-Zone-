@@ -1,4 +1,5 @@
-import  { create } from 'zustand';
+import { create } from 'zustand';
+import { getUsers } from '../utils/authService';
 import { 
   clubs,
   players,
@@ -66,7 +67,7 @@ export const useDataStore = create<DataState>((set) => ({
   faqs,
   storeItems,
   marketStatus,
-  users: [],
+  users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
   
