@@ -2,6 +2,7 @@
   background: var(--card);
   padding: 2rem 1rem;
   text-align: center;
+  border-top: 2px solid var(--primary);
 }
 
 .links {
@@ -22,4 +23,9 @@
   color: inherit;
   font-size: 1.25rem;
   text-decoration: none;
+  transition: color .2s;
+}
+
+.socials a:hover {
+  color: var(--accent);
 }

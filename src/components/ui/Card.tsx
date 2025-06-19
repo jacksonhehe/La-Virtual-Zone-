@@ -9,7 +9,7 @@ interface CardProps {
 }
 
 export default function Card({ title, image, onClick, children, className }: CardProps) {
-  const base = `bg-zinc-800 rounded border border-[var(--primary)] shadow hover:shadow-lg overflow-hidden w-full text-left ${
+  const base = `bg-[var(--card)] rounded border border-[var(--primary)] shadow-md hover:shadow-[0_0_8px_var(--primary-glow)] overflow-hidden w-full text-left ${
     onClick ? 'cursor-pointer transform transition-transform hover:scale-105' : ''
   } ${className ?? ''}`
 
