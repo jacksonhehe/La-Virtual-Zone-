@@ -23,8 +23,8 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
   const playerClub = clubs.find(c => c.id === player.clubId);
   
   // Find user's club (if DT)
-  const userClub = user?.role === 'dt' && user?.clubId 
-    ? clubs.find(c => c.id === user.clubId) 
+  const userClub = user?.role === 'dt' && user?.club
+    ? clubs.find(c => c.name === user.club)
     : null;
   
   // Calculate min and max offer
