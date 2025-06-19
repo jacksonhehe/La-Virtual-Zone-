@@ -8,6 +8,11 @@ import EditUserModal from '../components/admin/EditUserModal';
 import EditClubModal from '../components/admin/EditClubModal';
 import EditPlayerModal from '../components/admin/EditPlayerModal';
 import ConfirmDeleteModal from '../components/admin/ConfirmDeleteModal';
+import MarketAdminPanel from '../components/admin/MarketAdminPanel';
+import TournamentsAdminPanel from '../components/admin/TournamentsAdminPanel';
+import NewsAdminPanel from '../components/admin/NewsAdminPanel';
+import StatsAdminPanel from '../components/admin/StatsAdminPanel';
+import CalendarAdminPanel from '../components/admin/CalendarAdminPanel';
 import { User, Club, Player } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -29,7 +34,9 @@ const Admin = () => {
     users,
     removeUser,
     removeClub,
-    removePlayer
+    removePlayer,
+    marketStatus,
+    updateMarketStatus
   } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
@@ -249,7 +256,10 @@ const Admin = () => {
                       </div>
                       
                       <div className="mt-4 pt-4 border-t border-gray-800">
-                        <button className="btn-primary w-full">
+                        <button
+                          className="btn-primary w-full"
+                          onClick={() => setActiveTab('market')}
+                        >
                           Administrar estado del sistema
                         </button>
                       </div>
@@ -261,32 +271,50 @@ const Admin = () => {
                   <h3 className="text-xl font-bold mb-4">Acciones rápidas</h3>
                   <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('users')}
+                      >
                         <Users size={18} className="mb-1" />
                         <span className="text-sm">Gestionar usuarios</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => updateMarketStatus(!marketStatus)}
+                      >
                         <ShoppingCart size={18} className="mb-1" />
                         <span className="text-sm">Abrir/cerrar mercado</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('tournaments')}
+                      >
                         <Trophy size={18} className="mb-1" />
                         <span className="text-sm">Crear torneo</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('calendar')}
+                      >
                         <Calendar size={18} className="mb-1" />
                         <span className="text-sm">Registrar resultados</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('news')}
+                      >
                         <FileText size={18} className="mb-1" />
                         <span className="text-sm">Crear noticia</span>
                       </button>
-                      
-                      <button className="btn-outline py-3 flex flex-col items-center justify-center">
+
+                      <button
+                        className="btn-outline py-3 flex flex-col items-center justify-center"
+                        onClick={() => setActiveTab('stats')}
+                      >
                         <Settings size={18} className="mb-1" />
                         <span className="text-sm">Configuración</span>
                       </button>
@@ -536,50 +564,15 @@ const Admin = () => {
             </div>
           )}
 
-          {activeTab === 'market' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Gestión de Mercado</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración del mercado de fichajes.
-              </div>
-            </div>
-          )}
+          {activeTab === 'market' && <MarketAdminPanel />}
 
-          {activeTab === 'tournaments' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Gestión de Torneos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración de torneos y competiciones.
-              </div>
-            </div>
-          )}
+          {activeTab === 'tournaments' && <TournamentsAdminPanel />}
 
-          {activeTab === 'news' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Gestión de Noticias</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel para crear y editar noticias de la liga.
-              </div>
-            </div>
-          )}
+          {activeTab === 'news' && <NewsAdminPanel />}
 
-          {activeTab === 'stats' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Estadísticas Generales</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Resumen estadístico de clubes y jugadores.
-              </div>
-            </div>
-          )}
+          {activeTab === 'stats' && <StatsAdminPanel />}
 
-          {activeTab === 'calendar' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Calendario de Partidos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Gestión del calendario de encuentros y eventos.
-              </div>
-            </div>
-          )}
+          {activeTab === 'calendar' && <CalendarAdminPanel />}
         </div>
       </div>
       {showUserModal && <NewUserModal onClose={() => setShowUserModal(false)} />}
