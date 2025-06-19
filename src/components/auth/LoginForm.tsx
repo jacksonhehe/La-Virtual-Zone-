@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, User, Lock } from 'lucide-react';
-import useAuthStore from '../../store/authStore';
+import { useAuthStore } from '../../store/authStore';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
