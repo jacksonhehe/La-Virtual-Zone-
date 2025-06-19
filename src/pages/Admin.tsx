@@ -482,7 +482,7 @@ const Admin = () => {
                               maximumFractionDigits: 0
                             }).format(club.budget)}
                           </td>
-                          <td className="px-4 py-3 text-center">{club.style}</td>
+                          <td className="px-4 py-3 text-center">{club.playStyle}</td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex justify-center space-x-2">
                               <button className="p-1 text-gray-400 hover:text-primary">
