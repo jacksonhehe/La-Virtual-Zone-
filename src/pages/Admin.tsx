@@ -6,15 +6,84 @@ import NewClubModal from '../components/admin/NewClubModal';
 import NewPlayerModal from '../components/admin/NewPlayerModal';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import { generateStandings } from '../data/mockData';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const { clubs, players, users } = useDataStore();
+  const [newNewsTitle, setNewNewsTitle] = useState('');
+  const [newNewsContent, setNewNewsContent] = useState('');
+  const {
+    clubs,
+    players,
+    users,
+    marketStatus,
+    updateMarketStatus,
+    transfers,
+    offers,
+    tournaments,
+    updateTournaments,
+    newsItems,
+    addNewsItem,
+    updateNewsItems,
+    standings,
+    updateStandings
+  } = useDataStore();
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+
+  const handleToggleMarket = () => {
+    updateMarketStatus(!marketStatus);
+  };
+
+  const handleTournamentStatusChange = (id: string) => {
+    const updated = tournaments.map(t =>
+      t.id === id
+        ? { ...t, status: t.status === 'upcoming' ? 'active' : t.status === 'active' ? 'finished' : 'upcoming' }
+        : t
+    );
+    updateTournaments(updated);
+  };
+
+  const handleAddNews = () => {
+    if (!newNewsTitle || !newNewsContent) return;
+    addNewsItem({
+      id: `news${Date.now()}`,
+      title: newNewsTitle,
+      content: newNewsContent,
+      type: 'announcement',
+      date: new Date().toISOString(),
+      author: user?.username || 'Admin',
+      featured: false
+    });
+    setNewNewsTitle('');
+    setNewNewsContent('');
+  };
+
+  const handleDeleteNews = (id: string) => {
+    updateNewsItems(newsItems.filter(n => n.id !== id));
+  };
+
+  const handleRecalculateStandings = () => {
+    const updated = generateStandings('tournament1');
+    updateStandings(updated);
+  };
+
+  const handleFinishMatch = (tournamentId: string, matchId: string) => {
+    const updatedTournaments = tournaments.map(t => {
+      if (t.id !== tournamentId) return t;
+      return {
+        ...t,
+        matches: t.matches.map(m =>
+          m.id === matchId ? { ...m, status: 'finished', homeScore: 0, awayScore: 0 } : m
+        )
+      };
+    });
+    updateTournaments(updatedTournaments);
+    updateStandings(generateStandings('tournament1'));
+  };
 
   // Redirect if not admin
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -503,8 +572,67 @@ const Admin = () => {
           {activeTab === 'market' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Gestión de Mercado</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración del mercado de fichajes.
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 mb-6">
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">
+                    Estado actual: {marketStatus ? 'Abierto' : 'Cerrado'}
+                  </p>
+                  <button onClick={handleToggleMarket} className="btn-primary">
+                    {marketStatus ? 'Cerrar Mercado' : 'Abrir Mercado'}
+                  </button>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold mb-2">Ofertas Pendientes</h3>
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto mb-6">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-dark-lighter text-gray-400 text-xs">
+                      <th className="px-4 py-2 text-left">Jugador</th>
+                      <th className="px-4 py-2 text-center">De</th>
+                      <th className="px-4 py-2 text-center">A</th>
+                      <th className="px-4 py-2 text-center">Monto</th>
+                      <th className="px-4 py-2 text-center">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {offers.slice(0,5).map(o => (
+                      <tr key={o.id} className="border-b border-gray-800">
+                        <td className="px-4 py-2">{o.playerName}</td>
+                        <td className="px-4 py-2 text-center">{o.fromClub}</td>
+                        <td className="px-4 py-2 text-center">{o.toClub}</td>
+                        <td className="px-4 py-2 text-center">{new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(o.amount)}</td>
+                        <td className="px-4 py-2 text-center capitalize">{o.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <h3 className="text-xl font-bold mb-2">Transferencias Recientes</h3>
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-dark-lighter text-gray-400 text-xs">
+                      <th className="px-4 py-2 text-left">Jugador</th>
+                      <th className="px-4 py-2 text-center">De</th>
+                      <th className="px-4 py-2 text-center">A</th>
+                      <th className="px-4 py-2 text-center">Costo</th>
+                      <th className="px-4 py-2 text-center">Fecha</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transfers.slice(0,5).map(t => (
+                      <tr key={t.id} className="border-b border-gray-800">
+                        <td className="px-4 py-2">{t.playerName}</td>
+                        <td className="px-4 py-2 text-center">{t.fromClub}</td>
+                        <td className="px-4 py-2 text-center">{t.toClub}</td>
+                        <td className="px-4 py-2 text-center">{new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(t.fee)}</td>
+                        <td className="px-4 py-2 text-center">{new Date(t.date).toLocaleDateString('es-ES')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -512,8 +640,33 @@ const Admin = () => {
           {activeTab === 'tournaments' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Gestión de Torneos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel de administración de torneos y competiciones.
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-dark-lighter text-gray-400 text-xs">
+                      <th className="px-4 py-2 text-left">Torneo</th>
+                      <th className="px-4 py-2 text-center">Inicio</th>
+                      <th className="px-4 py-2 text-center">Fin</th>
+                      <th className="px-4 py-2 text-center">Estado</th>
+                      <th className="px-4 py-2 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tournaments.map(t => (
+                      <tr key={t.id} className="border-b border-gray-800">
+                        <td className="px-4 py-2">{t.name}</td>
+                        <td className="px-4 py-2 text-center">{new Date(t.startDate).toLocaleDateString('es-ES')}</td>
+                        <td className="px-4 py-2 text-center">{new Date(t.endDate).toLocaleDateString('es-ES')}</td>
+                        <td className="px-4 py-2 text-center capitalize">{t.status}</td>
+                        <td className="px-4 py-2 text-center">
+                          <button onClick={() => handleTournamentStatusChange(t.id)} className="btn-secondary btn-sm">
+                            Cambiar estado
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -521,17 +674,92 @@ const Admin = () => {
           {activeTab === 'news' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Gestión de Noticias</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Panel para crear y editar noticias de la liga.
+
+              <div className="bg-dark-light rounded-lg border border-gray-800 p-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input
+                    className="input w-full"
+                    placeholder="Título"
+                    value={newNewsTitle}
+                    onChange={e => setNewNewsTitle(e.target.value)}
+                  />
+                  <input
+                    className="input w-full md:col-span-2"
+                    placeholder="Contenido"
+                    value={newNewsContent}
+                    onChange={e => setNewNewsContent(e.target.value)}
+                  />
+                </div>
+                <button onClick={handleAddNews} className="btn-primary mt-4 w-full md:w-auto">
+                  Publicar
+                </button>
+              </div>
+
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-dark-lighter text-gray-400 text-xs">
+                      <th className="px-4 py-2 text-left">Título</th>
+                      <th className="px-4 py-2 text-center">Fecha</th>
+                      <th className="px-4 py-2 text-center">Autor</th>
+                      <th className="px-4 py-2 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {newsItems.map(n => (
+                      <tr key={n.id} className="border-b border-gray-800">
+                        <td className="px-4 py-2">{n.title}</td>
+                        <td className="px-4 py-2 text-center">{new Date(n.date).toLocaleDateString('es-ES')}</td>
+                        <td className="px-4 py-2 text-center">{n.author}</td>
+                        <td className="px-4 py-2 text-center">
+                          <button onClick={() => handleDeleteNews(n.id)} className="btn-secondary btn-sm">
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
           {activeTab === 'stats' && (
             <div>
-              <h2 className="text-2xl font-bold mb-4">Estadísticas Generales</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Resumen estadístico de clubes y jugadores.
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold">Estadísticas Generales</h2>
+                <button onClick={handleRecalculateStandings} className="btn-secondary btn-sm">Actualizar</button>
+              </div>
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-dark-lighter text-gray-400 text-xs">
+                      <th className="px-4 py-2 text-left">Pos</th>
+                      <th className="px-4 py-2 text-left">Club</th>
+                      <th className="px-4 py-2 text-center">PJ</th>
+                      <th className="px-4 py-2 text-center">G</th>
+                      <th className="px-4 py-2 text-center">E</th>
+                      <th className="px-4 py-2 text-center">P</th>
+                      <th className="px-4 py-2 text-center">Pts</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {standings.map((s, i) => {
+                      const club = clubs.find(c => c.id === s.clubId);
+                      return (
+                        <tr key={s.clubId} className="border-b border-gray-800">
+                          <td className="px-4 py-2 text-center">{i + 1}</td>
+                          <td className="px-4 py-2">{club?.name}</td>
+                          <td className="px-4 py-2 text-center">{s.played}</td>
+                          <td className="px-4 py-2 text-center">{s.won}</td>
+                          <td className="px-4 py-2 text-center">{s.drawn}</td>
+                          <td className="px-4 py-2 text-center">{s.lost}</td>
+                          <td className="px-4 py-2 text-center font-bold">{s.points}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -539,8 +767,37 @@ const Admin = () => {
           {activeTab === 'calendar' && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Calendario de Partidos</h2>
-              <div className="bg-dark-light rounded-lg border border-gray-800 p-6 text-gray-300">
-                Gestión del calendario de encuentros y eventos.
+              <div className="bg-dark-light rounded-lg border border-gray-800 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-dark-lighter text-gray-400 text-xs">
+                      <th className="px-4 py-2 text-left">Fecha</th>
+                      <th className="px-4 py-2 text-center">Local</th>
+                      <th className="px-4 py-2 text-center">Visitante</th>
+                      <th className="px-4 py-2 text-center">Jornada</th>
+                      <th className="px-4 py-2 text-center">Estado</th>
+                      <th className="px-4 py-2 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tournaments[0].matches.slice(0,10).map(m => (
+                      <tr key={m.id} className="border-b border-gray-800">
+                        <td className="px-4 py-2">{new Date(m.date).toLocaleDateString('es-ES')}</td>
+                        <td className="px-4 py-2 text-center">{m.homeTeam}</td>
+                        <td className="px-4 py-2 text-center">{m.awayTeam}</td>
+                        <td className="px-4 py-2 text-center">{m.round}</td>
+                        <td className="px-4 py-2 text-center">{m.status}</td>
+                        <td className="px-4 py-2 text-center">
+                          {m.status !== 'finished' && (
+                            <button onClick={() => handleFinishMatch(tournaments[0].id, m.id)} className="btn-secondary btn-sm">
+                              Marcar finalizado
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
