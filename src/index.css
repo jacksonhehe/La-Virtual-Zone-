@@ -58,3 +58,13 @@ a:hover {
 .neon {
   animation: pulse-glow 2s infinite;
 }
+
+body.light {
+  --bg: #f5f5f5;
+  --card: #ffffff;
+  --text: #0d0d0d;
+  --primary: #0077ff;
+  --primary-glow: rgba(0, 119, 255, 0.35);
+  --accent: #7c3aed;
+  --accent-glow: rgba(124, 58, 237, 0.4);
+}

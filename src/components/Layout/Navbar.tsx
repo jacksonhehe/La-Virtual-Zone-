@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { FaMoon, FaSun } from 'react-icons/fa'
+import { useTheme } from '../../hooks/useTheme'
 import styles from './Navbar.module.css'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const navId = 'main-nav'
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <header className={styles.navbar}>
@@ -19,6 +22,13 @@ export default function Navbar() {
         <span></span>
         <span></span>
         <span></span>
+      </button>
+      <button
+        className={styles.themeToggle}
+        onClick={toggleTheme}
+        aria-label="Alternar tema"
+      >
+        {theme === 'light' ? <FaMoon /> : <FaSun />}
       </button>
       <nav>
         <ul id={navId} className={`${styles.links} ${open ? styles.open : ''}`}>
