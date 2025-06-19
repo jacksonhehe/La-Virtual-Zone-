@@ -59,6 +59,10 @@ interface DataState {
   removeClub: (id: string) => void;
   updatePlayerEntry: (player: Player) => void;
   removePlayer: (id: string) => void;
+  addTournament: (tournament: Tournament) => void;
+  addNewsItem: (item: NewsItem) => void;
+  removeNewsItem: (id: string) => void;
+  updateStandings: (newStandings: Standing[]) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -138,6 +142,20 @@ export const useDataStore = create<DataState>((set) => ({
 
   removePlayer: (id) => set((state) => ({
     players: state.players.filter(p => p.id !== id)
-  }))
+  })),
+
+  addTournament: (tournament) => set((state) => ({
+    tournaments: [...state.tournaments, tournament]
+  })),
+
+  addNewsItem: (item) => set((state) => ({
+    newsItems: [item, ...state.newsItems]
+  })),
+
+  removeNewsItem: (id) => set((state) => ({
+    newsItems: state.newsItems.filter(n => n.id !== id)
+  })),
+
+  updateStandings: (newStandings) => set({ standings: newStandings })
 }));
  
