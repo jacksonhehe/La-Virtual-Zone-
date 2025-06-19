@@ -20,8 +20,8 @@
 }
 
 .socials a {
-  color: inherit;
-  font-size: 1.25rem;
+  color: var(--primary);
+  font-size: 1.5rem;
   text-decoration: none;
   transition: color .2s;
 }

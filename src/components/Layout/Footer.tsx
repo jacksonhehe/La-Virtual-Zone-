@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { FaTwitch, FaDiscord, FaTwitter } from 'react-icons/fa'
 import styles from './Footer.module.css'
 
 export default function Footer() {
@@ -11,9 +12,15 @@ export default function Footer() {
         <a href="#">Twitter</a>
       </nav>
         <div className={styles.socials}>
-          <a href="https://twitch.tv" aria-label="Twitch">🎮</a>
-          <a href="https://discord.com" aria-label="Discord">💬</a>
-          <a href="https://twitter.com" aria-label="Twitter">🐦</a>
+          <a href="https://twitch.tv" aria-label="Twitch">
+            <FaTwitch />
+          </a>
+          <a href="https://discord.com" aria-label="Discord">
+            <FaDiscord />
+          </a>
+          <a href="https://twitter.com" aria-label="Twitter">
+            <FaTwitter />
+          </a>
         </div>
       </footer>
   )
