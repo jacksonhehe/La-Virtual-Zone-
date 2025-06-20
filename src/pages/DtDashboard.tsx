@@ -8,11 +8,21 @@ import {
   Home,
   Plane,
   Newspaper,
-  Check
+  Check,
+  Trophy,
+  Calendar
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate, slugify } from '../utils/helpers';
+
+const getCountdown = (date: string): string => {
+  const diff = new Date(date).getTime() - Date.now();
+  if (diff <= 0) return 'faltan 0 d 0 h';
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  return `faltan ${days} d ${hours} h`;
+};
 
 const DtDashboard = () => {
   const [countdown, setCountdown] = useState('');
@@ -20,6 +30,7 @@ const DtDashboard = () => {
     'Confirma tu alineación antes del viernes',
     'Revisa el informe médico de tu delantero lesionado'
   ]);
+  const [, setTimer] = useState(0);
   const handleComplete = (index: number) => {
     setReminders(prev => prev.filter((_, i) => i !== index));
   };
@@ -79,6 +90,12 @@ const DtDashboard = () => {
     return () => clearInterval(id);
   }, [nextMatch]);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const id = setInterval(() => setTimer(t => t + 1), 3600000);
+    return () => clearInterval(id);
+  }, []);
+
   const latestNews = newsItems
     .filter(n => n.clubId === club.id)
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
@@ -96,6 +113,12 @@ const DtDashboard = () => {
     .filter(n => n.type === 'announcement')
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
     .slice(0, 2);
+
+  const milestones = [
+    { label: 'Cierre de mercado', date: '2025-01-31', icon: DollarSign },
+    { label: 'Inicio Copa PES', date: '2025-02-10', icon: Trophy },
+    { label: 'Supercopa Digital', date: '2025-06-15', icon: Calendar }
+  ];
 
 
   const leagueAvgGoals = standings.reduce((sum, s) => sum + s.goalsFor, 0) / standings.length;
@@ -219,6 +242,19 @@ const DtDashboard = () => {
           </div>
         </div>
       )}
+
+      <div className="card p-4 mb-8 flex flex-col sm:flex-row justify-between">
+        {milestones.map(m => {
+          const Icon = m.icon;
+          return (
+            <div key={m.label} className="flex items-center space-x-2">
+              <Icon className="text-accent w-5 h-5" />
+              <span>{m.label}</span>
+              <span className="text-gray-400 text-sm">{getCountdown(m.date)}</span>
+            </div>
+          );
+        })}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[359px]:grid-cols-1">
         <div className="lg:col-span-2 space-y-6">
