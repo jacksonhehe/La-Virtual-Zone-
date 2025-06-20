@@ -36,17 +36,22 @@ const DtDashboard = () => {
     'Revisa el informe médico de tu delantero lesionado'
   ]);
   const options = ['Jugador 1', 'Jugador 2', 'Jugador 3'];
-  const [{ voted, results }, setPoll] = useState<PollState>({
-    voted: false,
-    results: [36, 45, 19]
+  const [pollCounts, setPollCounts] = useState([36, 45, 19]);
+  const [{ voted, results }, setPoll] = useState(() => {
+    const total = pollCounts.reduce((a, b) => a + b, 0);
+    return {
+      voted: false,
+      results: pollCounts.map(c => Math.round((c / total) * 100))
+    };
   });
   const vote = (index: number) => {
-    setPoll(prev => {
-      const counts = [...prev.results];
+    setPollCounts(prev => {
+      const counts = [...prev];
       counts[index] += 1;
       const total = counts.reduce((a, b) => a + b, 0);
       const percentages = counts.map(c => Math.round((c / total) * 100));
-      return { voted: true, results: percentages };
+      setPoll({ voted: true, results: percentages });
+      return counts;
     });
   };
   const handleComplete = (index: number) => {
