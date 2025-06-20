@@ -389,11 +389,37 @@ const DtDashboard = () => {
       )}
     </div>
     <footer className="text-gray-400 text-sm mt-8">
-      <div className="flex justify-center gap-4 sm:grid sm:grid-cols-2 sm:w-1/2 sm:mx-auto lg:grid lg:grid-cols-2 lg:w-1/2 lg:mx-auto">
-        <Link to="/reglamento" className="focus:outline-none focus:ring-2 focus:ring-accent">Reglamento</Link>
-        <Link to="/liga-master/hall-of-fame" className="focus:outline-none focus:ring-2 focus:ring-accent">Salón de la Fama</Link>
-        <Link to="/pretemporada" className="focus:outline-none focus:ring-2 focus:ring-accent">Pretemporada</Link>
-        <Link to="/ayuda" className="focus:outline-none focus:ring-2 focus:ring-accent">Ayuda</Link>
+      <div className="card p-4 mx-auto max-w-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+          <div className="space-y-1">
+            <Link
+              to="/reglamento"
+              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              Reglamento
+            </Link>
+            <Link
+              to="/pretemporada"
+              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              Pretemporada
+            </Link>
+          </div>
+          <div className="space-y-1">
+            <Link
+              to="/liga-master/hall-of-fame"
+              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              Salón de la Fama
+            </Link>
+            <Link
+              to="/ayuda"
+              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              Ayuda
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   </>
