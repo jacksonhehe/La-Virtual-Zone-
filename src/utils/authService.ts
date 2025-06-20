@@ -59,6 +59,7 @@ const TEST_USERS = [
     level: 5,
     xp: 500,
     club: 'Neón FC',
+    clubId: 'club4',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     joinDate: new Date().toISOString(),
     status: 'active',
