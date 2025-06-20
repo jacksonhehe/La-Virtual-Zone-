@@ -1,8 +1,8 @@
-import  { 
-  Club, 
-  Player, 
-  Tournament, 
-  Match, 
+import  {
+  Club,
+  Player,
+  Tournament,
+  Match,
   Transfer,
   TransferOffer,
   NewsItem,
@@ -10,7 +10,13 @@ import  {
   Post,
   Standing,
   FAQ,
-  StoreItem
+  StoreItem,
+  DtClub,
+  DtFixture,
+  DtMarket,
+  DtObjectives,
+  DtTask,
+  DtEvent
 } from '../types';
 
 // Mock Clubs Data
@@ -1004,4 +1010,37 @@ export const storeItems: StoreItem[] = [
     inStock: true
   }
 ];
+
+// --- Datos para el tablero del DT ---
+export const dtClub: DtClub = {
+  id: 'club1',
+  name: 'Rayo Digital FC',
+  slug: 'rayo-digital-fc',
+  badge: clubs[0].logo,
+  formation: '4-3-3',
+  budget: clubs[0].budget,
+  players: players.filter(p => p.clubId === 'club1')
+};
+
+export const dtFixtures: DtFixture[] = tournaments[0].matches
+  .filter(m => m.homeTeam === dtClub.name || m.awayTeam === dtClub.name)
+  .slice(0, 6)
+  .map(m => ({ ...m, played: m.status === 'finished' }));
+
+export const dtMarket: DtMarket = { open: true };
+
+export const dtObjectives: DtObjectives = { position: 50, fairplay: 70 };
+
+export const dtTasks: DtTask[] = [
+  { id: 'task1', text: 'Actualizar tácticas' },
+  { id: 'task2', text: 'Revisar informe médico' }
+];
+
+export const dtEvents: DtEvent[] = [
+  { id: 'event1', message: 'Fin de mercado el 15 de febrero', date: '2025-02-15' },
+  { id: 'event2', message: 'Reunión de liga', date: '2025-02-05' }
+];
+
+export const dtNews: NewsItem[] = newsItems.slice(0, 5);
+export const dtPositions: Standing[] = leagueStandings;
  
