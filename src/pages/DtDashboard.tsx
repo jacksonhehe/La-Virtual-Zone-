@@ -14,6 +14,8 @@ import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate, slugify } from '../utils/helpers';
 
+const marketReopenDate = '2025-07-01';
+
 const DtDashboard = () => {
   const [countdown, setCountdown] = useState('');
   const [reminders, setReminders] = useState<string[]>([
@@ -317,6 +319,19 @@ const DtDashboard = () => {
                   <span>{formatCurrency(t.fee)}</span>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          <div className="card p-4 flex flex-col text-sm">
+            <div className={`font-bold ${marketStatus ? 'text-neon-green' : 'text-neon-red'}`}>
+              {marketStatus ? 'Mercado abierto' : 'Mercado cerrado'}
+            </div>
+            {!marketStatus && (
+              <span className="text-gray-400">Reabre {formatDate(marketReopenDate)}</span>
+            )}
+            <ul className="list-disc ml-4 mt-2 space-y-1">
+              <li>Límite de sueldos vigente</li>
+              <li>Cupo máximo de traspasos</li>
             </ul>
           </div>
 
