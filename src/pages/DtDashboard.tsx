@@ -20,6 +20,20 @@ const DtDashboard = () => {
     'Confirma tu alineación antes del viernes',
     'Revisa el informe médico de tu delantero lesionado'
   ]);
+  const options = ['Jugador 1', 'Jugador 2', 'Jugador 3'];
+  const [{ voted, results }, setPoll] = useState({
+    voted: false,
+    results: [36, 45, 19]
+  });
+  const vote = (index: number) => {
+    setPoll(prev => {
+      const counts = [...prev.results];
+      counts[index] += 1;
+      const total = counts.reduce((a, b) => a + b, 0);
+      const percentages = counts.map(c => Math.round((c / total) * 100));
+      return { voted: true, results: percentages };
+    });
+  };
   const handleComplete = (index: number) => {
     setReminders(prev => prev.filter((_, i) => i !== index));
   };
@@ -364,6 +378,30 @@ const DtDashboard = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="card p-4 mb-8 w-full">
+        <p className="font-bold mb-2">¿Quién será el goleador de la jornada?</p>
+        {!voted ? (
+          <ul className="space-y-1">
+            {options.map((opt, i) => (
+              <li key={i}>
+                <button onClick={() => vote(i)} className="btn-secondary w-full">
+                  {opt}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="space-y-1 text-sm">
+            {options.map((opt, i) => (
+              <li key={i} className="flex justify-between">
+                <span>{opt}</span>
+                <span>{results[i]}{"\u202F"}%</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {latestNews.length > 0 && (
