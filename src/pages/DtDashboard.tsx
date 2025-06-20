@@ -54,6 +54,9 @@ const DtDashboard = () => {
   const slug = slugify(club.name);
   const clubPlayers = players.filter(p => p.clubId === club.id);
   const captain = clubPlayers[0];
+  const inFormPlayer = [...clubPlayers].sort(
+    (a, b) => b.goals + b.assists - (a.goals + a.assists)
+  )[0];
   const formation = (club as unknown as { formation?: string }).formation || '4-3-3';
   const standing = standings.find(s => s.clubId === club.id);
   const morale = standing && standing.form.length > 0
@@ -295,35 +298,61 @@ const DtDashboard = () => {
           )}
 
           {standing && (
-            <div className="card p-6 lg:mt-6">
-              <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
-              <div className="space-y-4">
-                {[
-                  { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
-                  { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
-                  { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
-                ].map(stat => {
-                  const maxVal = Math.max(stat.club, stat.league);
-                  return (
-                    <div key={stat.label}>
-                      <p className="text-sm mb-1">{stat.label}</p>
-                      <div className="relative h-3 bg-gray-700 rounded">
-                        <div
-                          className="absolute top-0 left-0 h-3 bg-accent rounded"
-                          style={{ width: `${(stat.club / maxVal) * 100}%` }}
-                        ></div>
-                        <div
-                          className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
-                          style={{ width: `${(stat.league / maxVal) * 100}%` }}
-                        ></div>
+            <div className="lg:flex gap-4 lg:mt-6">
+              <div className="flex flex-col items-center mb-6 lg:mb-0">
+                <div className="flex space-x-1 mb-2">
+                  {standing.form.slice(-5).map((r, i) => (
+                    <span
+                      key={i}
+                      className={`w-3 h-3 rounded-full ${
+                        r === 'W' ? 'bg-green-500' : r === 'D' ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                    ></span>
+                  ))}
+                </div>
+                {inFormPlayer && (
+                  <div className="flex items-center space-x-2 text-xs">
+                    <img
+                      src={inFormPlayer.image}
+                      alt={inFormPlayer.name}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span>
+                      {inFormPlayer.goals} G / {inFormPlayer.assists} A
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="card p-6 flex-1">
+                <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
+                <div className="space-y-4">
+                  {[
+                    { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
+                    { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
+                    { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
+                  ].map(stat => {
+                    const maxVal = Math.max(stat.club, stat.league);
+                    return (
+                      <div key={stat.label}>
+                        <p className="text-sm mb-1">{stat.label}</p>
+                        <div className="relative h-3 bg-gray-700 rounded">
+                          <div
+                            className="absolute top-0 left-0 h-3 bg-accent rounded"
+                            style={{ width: `${(stat.club / maxVal) * 100}%` }}
+                          ></div>
+                          <div
+                            className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
+                            style={{ width: `${(stat.league / maxVal) * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                          <span>Club: {Math.round(stat.club)}</span>
+                          <span>Media liga: {Math.round(stat.league)}</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-400 mt-1">
-                        <span>Club: {Math.round(stat.club)}</span>
-                        <span>Media liga: {Math.round(stat.league)}</span>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
