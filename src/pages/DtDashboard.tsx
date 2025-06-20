@@ -385,6 +385,19 @@ const DtDashboard = () => {
             </ul>
           </div>
 
+          <div className="card p-4 flex flex-col text-sm">
+            <div className={`font-bold ${marketStatus ? 'text-neon-green' : 'text-neon-red'}`}>
+              {marketStatus ? 'Mercado abierto' : 'Mercado cerrado'}
+            </div>
+            {!marketStatus && (
+              <span className="text-gray-400">Reabre {formatDate(marketReopenDate)}</span>
+            )}
+            <ul className="list-disc ml-4 mt-2 space-y-1">
+              <li>Límite de sueldos vigente</li>
+              <li>Cupo máximo de traspasos</li>
+            </ul>
+          </div>
+
           {announcements.length > 0 && (
             <div className="card card-hover p-6 hover:shadow-[0_0_10px_var(--accent)] transition-shadow">
               <h2 className="text-lg font-bold mb-4">Anuncios</h2>
