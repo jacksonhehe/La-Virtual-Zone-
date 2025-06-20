@@ -308,14 +308,14 @@ const UserPanel = () => {
                   </div>
                   
                   <div className="flex flex-wrap gap-2">
-                    <a 
-                      href={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    <a
+                      href={`/liga-master/club/${userClub.slug}`}
                       className="btn-secondary"
                     >
                       Ver Perfil
                     </a>
-                    <a 
-                      href={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/plantilla`}
+                    <a
+                      href={`/liga-master/club/${userClub.slug}/plantilla`}
                       className="btn-outline"
                     >
                       Plantilla
@@ -329,8 +329,8 @@ const UserPanel = () => {
                     <p className="text-xl font-bold text-primary">
                       €{(userClub.budget / 1000000).toFixed(1)}M
                     </p>
-                    <a 
-                      href={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/finanzas`}
+                    <a
+                      href={`/liga-master/club/${userClub.slug}/finanzas`}
                       className="text-xs text-primary hover:underline mt-1 inline-block"
                     >
                       Ver finanzas
@@ -382,8 +382,8 @@ const UserPanel = () => {
                       <span className="text-xs text-gray-400 mt-1">Próximos partidos</span>
                     </a>
                     
-                    <a 
-                      href={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/tacticas`}
+                    <a
+                      href={`/liga-master/club/${userClub.slug}/tacticas`}
                       className="p-4 bg-dark rounded-lg hover:bg-gray-800 transition-colors flex flex-col items-center text-center"
                     >
                       <Clipboard size={24} className="text-primary mb-2" />
@@ -664,13 +664,13 @@ const UserPanel = () => {
                   {following.clubs.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {following.clubs.map(clubName => {
-                        const club = clubs.find(c => c.name === clubName);
+                        const club = clubs.find(c => c.name === clubName || c.slug === clubName);
                         if (!club) return null;
                         
                         return (
-                          <a 
+                          <a
                             key={club.id}
-                            href={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            href={`/liga-master/club/${club.slug}`}
                             className="flex items-center p-3 bg-dark rounded-lg hover:bg-gray-800"
                           >
                             <img 

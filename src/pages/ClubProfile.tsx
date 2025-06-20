@@ -12,7 +12,7 @@ import {
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import { useDataStore } from '../store/dataStore';
-import { formatDate, formatCurrency, getMatchResult } from '../utils/helpers';
+import { formatDate, formatCurrency, getMatchResult, slugify } from '../utils/helpers';
 
 const ClubProfile = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -21,7 +21,7 @@ const ClubProfile = () => {
   const { clubs, players, tournaments } = useDataStore();
   
   // Find club by slug
-  const club = clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);
+  const club = clubs.find(c => c.slug === clubName);
   
   if (!club) {
     return (
@@ -157,15 +157,15 @@ const ClubProfile = () => {
               </div>
               
               <div className="flex flex-wrap justify-center gap-4">
-                <Link 
-                  to={`/liga-master/club/${clubName}/plantilla`}
+                <Link
+                  to={`/liga-master/club/${club.slug}/plantilla`}
                   className="btn-secondary text-sm"
                 >
                   <Users size={16} className="mr-2" />
                   Ver Plantilla
                 </Link>
-                <Link 
-                  to={`/liga-master/club/${clubName}/finanzas`}
+                <Link
+                  to={`/liga-master/club/${club.slug}/finanzas`}
                   className="btn-secondary text-sm"
                 >
                   <Briefcase size={16} className="mr-2" />
@@ -414,8 +414,8 @@ const ClubProfile = () => {
                   <div>
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-bold">Plantilla del Club</h3>
-                      <Link 
-                        to={`/liga-master/club/${clubName}/plantilla`}
+                      <Link
+                        to={`/liga-master/club/${club.slug}/plantilla`}
                         className="text-primary text-sm flex items-center"
                       >
                         Ver Plantilla Completa

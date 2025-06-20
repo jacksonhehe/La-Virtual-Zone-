@@ -4,7 +4,7 @@ import PageHeader from '../components/common/PageHeader';
 import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { Match } from '../types';
-import { formatDate } from '../utils/helpers';
+import { formatDate, slugify } from '../utils/helpers';
 
 const TournamentDetail = () => {
   const { tournamentName } = useParams<{ tournamentName: string }>();
@@ -207,9 +207,9 @@ const TournamentDetail = () => {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {tournamentClubs.map(club => (
-                        <Link 
+                        <Link
                           key={club.id}
-                          to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                          to={`/liga-master/club/${club.slug}`}
                           className="bg-dark-lighter rounded-lg p-4 flex items-center hover:bg-dark transition-colors"
                         >
                           <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
@@ -316,8 +316,8 @@ const TournamentDetail = () => {
                                     <tr key={club.id} className="border-b border-gray-800 text-sm">
                                       <td className="px-3 py-2">{index + 1}</td>
                                       <td className="px-3 py-2">
-                                        <Link 
-                                          to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                        <Link
+                                          to={`/liga-master/club/${club.slug}`}
                                           className="flex items-center hover:text-primary"
                                         >
                                           <div className="w-6 h-6 mr-2">
@@ -376,8 +376,8 @@ const TournamentDetail = () => {
                                 </td>
                                 <td className="px-4 py-3 font-medium">{scorer.name}</td>
                                 <td className="px-4 py-3">
-                                  <Link 
-                                    to={`/liga-master/club/${scorer.club.toLowerCase().replace(/\s+/g, '-')}`}
+                                  <Link
+                                    to={`/liga-master/club/${slugify(scorer.club)}`}
                                     className="hover:text-primary"
                                   >
                                     {scorer.club}
@@ -509,9 +509,9 @@ const TournamentDetail = () => {
               
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {tournamentClubs.map(club => (
-                  <Link 
+                  <Link
                     key={club.id}
-                    to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    to={`/liga-master/club/${club.slug}`}
                     className="flex items-center p-2 rounded hover:bg-dark-lighter"
                   >
                     <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
