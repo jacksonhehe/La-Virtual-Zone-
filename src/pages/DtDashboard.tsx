@@ -110,11 +110,12 @@ const DtDashboard = () => {
     events
   } = useDataStore();
 
+  const nextMatch = fixtures.find(f => !f.played);
+  const countdown = useCountdown(nextMatch?.date || '');
+
   if (!user || !club) return <p>Cargando…</p>;
 
   /* ··· datos derivados ··· */
-  const nextMatch = fixtures.find(f => !f.played);
-  const countdown = nextMatch ? useCountdown(nextMatch.date) : '';
   const miniTable = getMiniTable(club.id, positions);
   const streak = calcStreak(club.id, fixtures);
   const performer = getTopPerformer(club.id);
