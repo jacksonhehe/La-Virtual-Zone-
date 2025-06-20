@@ -1,4 +1,5 @@
 import { Match, Standing, Player } from '../types';
+import { leagueStandings, players } from '../data/mockData';
 
 //  Format currency
 export const formatCurrency = (amount: number): string => {
@@ -115,23 +116,102 @@ export const xpForNextLevel = (level: number): number => {
 };
 
 // Placeholder helper implementations for DT dashboard
-export const getMiniTable = (clubId: string, standings: Standing[]): Standing[] => {
-  return standings.filter(s => s.clubId === clubId).slice(0, 5);
+export interface MiniTableRow {
+  club: string;
+  name: string;
+  pos: number;
+  pts: number;
+}
+
+export const getMiniTable = (
+  clubId: string,
+  standings: Standing[]
+): MiniTableRow[] => {
+  if (standings.length === 0) return [];
+
+  const index = standings.findIndex(s => s.clubId === clubId);
+  const start = Math.max(0, index === -1 ? 0 : index - 2);
+  const slice = standings.slice(start, start + 5);
+
+  return slice.map((s, i) => ({
+    club: s.clubId,
+    name: s.clubName,
+    pos: start + i + 1,
+    pts: s.points
+  }));
 };
 
-export const calcStreak = (clubId: string, fixtures: Match[]): number => {
-  return fixtures.filter(
-    m => (m.homeTeam === clubId || m.awayTeam === clubId) && m.status === 'finished'
-  ).length;
+export const calcStreak = (clubId: string, fixtures: Match[]): boolean[] => {
+  const team = leagueStandings.find(t => t.clubId === clubId);
+  const name = team ? team.clubName : clubId;
+
+  const recent = fixtures
+    .filter(
+      m =>
+        (m.homeTeam === name || m.awayTeam === name) &&
+        m.status === 'finished' &&
+        m.homeScore !== undefined &&
+        m.awayScore !== undefined
+    )
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
+  return recent.map(m => getMatchResult(m, name) === 'win');
 };
 
-export const getTopPerformer = (clubId: string): Player | null => {
-  return clubId ? null : null;
+export interface Performer {
+  name: string;
+  avatar: string;
+  g: number;
+  a: number;
+}
+
+export const getTopPerformer = (clubId: string): Performer | null => {
+  const clubPlayers = players.filter(p => p.clubId === clubId);
+  if (clubPlayers.length === 0) return null;
+
+  const best = clubPlayers.reduce((prev, curr) => {
+    const prevScore = prev.goals + prev.assists;
+    const currScore = curr.goals + curr.assists;
+    return currScore > prevScore ? curr : prev;
+  });
+
+  return {
+    name: best.name,
+    avatar: best.image,
+    g: best.goals,
+    a: best.assists
+  };
 };
 
-export const goalsDiff = (clubId: string): number => (clubId ? 0 : 0);
-export const possessionDiff = (clubId: string): number => (clubId ? 0 : 0);
-export const yellowDiff = (clubId: string): number => (clubId ? 0 : 0);
+export interface LeagueDiff {
+  label: string;
+  diff: number;
+}
+
+const computeDiff = (
+  clubId: string,
+  field: keyof Standing,
+  label: string
+): LeagueDiff => {
+  const team = leagueStandings.find(t => t.clubId === clubId);
+  if (!team) return { label, diff: 0 };
+
+  const avg =
+    leagueStandings.reduce((sum, s) => sum + (s as any)[field], 0) /
+    leagueStandings.length;
+
+  return { label, diff: Math.round((team as any)[field] - avg) };
+};
+
+export const goalsDiff = (clubId: string): LeagueDiff =>
+  computeDiff(clubId, 'goalsFor', 'Goles a favor');
+
+export const possessionDiff = (clubId: string): LeagueDiff =>
+  computeDiff(clubId, 'possession', 'Posesión');
+
+export const yellowDiff = (clubId: string): LeagueDiff =>
+  computeDiff(clubId, 'cards', 'Amarillas');
 
 // Format news type
 export const formatNewsType = (type: string): string => {
