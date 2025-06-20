@@ -2,7 +2,7 @@ import  { useParams, Link } from 'react-router-dom';
 import { Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, slugify } from '../utils/helpers';
 import { useState } from 'react';
 
 const ClubSquad = () => {
@@ -15,7 +15,7 @@ const ClubSquad = () => {
   // Find club by slug
   const club = clubId
     ? clubs.find(c => c.id === clubId)
-    : clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);
+    : clubs.find(c => c.slug === clubName);
   
   if (!club) {
     return (
@@ -79,7 +79,7 @@ const ClubSquad = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
-            to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+            to={`/liga-master/club/${club.slug}`}
             className="inline-flex items-center text-primary hover:text-primary-light"
           >
             <ChevronLeft size={16} className="mr-1" />

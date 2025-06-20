@@ -266,8 +266,8 @@ const HallOfFame = () => {
                         </div>
                       </div>
                       
-                      <Link 
-                        to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      <Link
+                        to={`/liga-master/club/${club.slug}`}
                         className="btn-secondary w-full mt-4 text-center"
                       >
                         Ver Club

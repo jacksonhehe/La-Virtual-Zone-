@@ -2,6 +2,7 @@ import  { useParams, Link } from 'react-router-dom';
 import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
+import { slugify } from '../utils/helpers';
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -128,8 +129,8 @@ const UserProfile = () => {
                 {user.role === 'dt' && user.club && (
                   <div className="flex items-center">
                     <Shield size={16} className="text-gray-400 mr-2" />
-                    <Link 
-                      to={`/liga-master/club/${user.club.toLowerCase().replace(/\s+/g, '-')}`}
+                    <Link
+                      to={`/liga-master/club/${slugify(user.club)}`}
                       className="text-primary hover:text-primary-light"
                     >
                       {user.club}
@@ -160,8 +161,8 @@ const UserProfile = () => {
                   <div>
                     <h4 className="font-bold">{club.name}</h4>
                     <p className="text-gray-400 text-sm">DT desde 2023</p>
-                    <Link 
-                      to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    <Link
+                      to={`/liga-master/club/${club.slug}`}
                       className="text-primary hover:text-primary-light text-sm"
                     >
                       Ver perfil del club

@@ -2,7 +2,7 @@ import  { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
-import { formatCurrency, formatDate } from '../utils/helpers';
+import { formatCurrency, formatDate, slugify } from '../utils/helpers';
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -10,7 +10,7 @@ const ClubFinances = () => {
   const { clubs, transfers } = useDataStore();
   
   // Find club by slug
-  const club = clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);
+  const club = clubs.find(c => c.slug === clubName);
   
   if (!club) {
     return (
@@ -56,8 +56,8 @@ const ClubFinances = () => {
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link 
-            to={`/liga-master/club/${clubName}`}
+          <Link
+            to={`/liga-master/club/${club.slug}`}
             className="inline-flex items-center text-primary hover:text-primary-light"
           >
             <ChevronLeft size={16} className="mr-1" />

@@ -135,8 +135,8 @@ const Rankings = () => {
                           </span>
                         </td>
                         <td className="p-4">
-                          <Link 
-                            to={`/liga-master/club/${club?.name.toLowerCase().replace(/\s+/g, '-')}`}
+                          <Link
+                            to={`/liga-master/club/${club?.slug ?? ''}`}
                             className="flex items-center"
                           >
                             <img 
