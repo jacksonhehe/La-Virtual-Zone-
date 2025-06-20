@@ -163,8 +163,8 @@ const LigaMaster = () => {
                             </span>
                           </td>
                           <td className="p-4">
-                            <Link 
-                              to={`/liga-master/club/${club?.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            <Link
+                              to={`/liga-master/club/${club?.name ? club.name.toLowerCase().replace(/\s+/g, '-') : ''}`}
                               className="flex items-center"
                             >
                               <img 
@@ -257,7 +257,7 @@ const LigaMaster = () => {
                 {clubs.map(club => (
                   <Link 
                     key={club.id} 
-                    to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    to={`/liga-master/club/${club.name ? club.name.toLowerCase().replace(/\s+/g, '-') : ''}`}
                     className="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors"
                   >
                     <img 
@@ -390,4 +390,4 @@ const LigaMaster = () => {
 };
 
 export default LigaMaster;
- 
+
