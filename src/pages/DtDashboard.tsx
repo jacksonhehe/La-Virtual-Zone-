@@ -8,13 +8,21 @@ import {
   Home,
   Plane,
   Newspaper,
-  Check
+  Check,
+  Trophy,
+  Calendar
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate, slugify } from '../utils/helpers';
 
-const marketReopenDate = '2025-07-01';
+const getCountdown = (date: string): string => {
+  const diff = new Date(date).getTime() - Date.now();
+  if (diff <= 0) return 'faltan 0 d 0 h';
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  return `faltan ${days} d ${hours} h`;
+};
 
 const DtDashboard = () => {
   const [countdown, setCountdown] = useState('');
@@ -22,6 +30,7 @@ const DtDashboard = () => {
     'Confirma tu alineación antes del viernes',
     'Revisa el informe médico de tu delantero lesionado'
   ]);
+  const [, setTimer] = useState(0);
   const handleComplete = (index: number) => {
     setReminders(prev => prev.filter((_, i) => i !== index));
   };
@@ -45,6 +54,9 @@ const DtDashboard = () => {
   const slug = slugify(club.name);
   const clubPlayers = players.filter(p => p.clubId === club.id);
   const captain = clubPlayers[0];
+  const inFormPlayer = [...clubPlayers].sort(
+    (a, b) => b.goals + b.assists - (a.goals + a.assists)
+  )[0];
   const formation = (club as unknown as { formation?: string }).formation || '4-3-3';
   const standing = standings.find(s => s.clubId === club.id);
   const morale = standing && standing.form.length > 0
@@ -81,6 +93,12 @@ const DtDashboard = () => {
     return () => clearInterval(id);
   }, [nextMatch]);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const id = setInterval(() => setTimer(t => t + 1), 3600000);
+    return () => clearInterval(id);
+  }, []);
+
   const latestNews = newsItems
     .filter(n => n.clubId === club.id)
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
@@ -98,6 +116,12 @@ const DtDashboard = () => {
     .filter(n => n.type === 'announcement')
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
     .slice(0, 2);
+
+  const milestones = [
+    { label: 'Cierre de mercado', date: '2025-01-31', icon: DollarSign },
+    { label: 'Inicio Copa PES', date: '2025-02-10', icon: Trophy },
+    { label: 'Supercopa Digital', date: '2025-06-15', icon: Calendar }
+  ];
 
 
   const leagueAvgGoals = standings.reduce((sum, s) => sum + s.goalsFor, 0) / standings.length;
@@ -222,6 +246,19 @@ const DtDashboard = () => {
         </div>
       )}
 
+      <div className="card p-4 mb-8 flex flex-col sm:flex-row justify-between">
+        {milestones.map(m => {
+          const Icon = m.icon;
+          return (
+            <div key={m.label} className="flex items-center space-x-2">
+              <Icon className="text-accent w-5 h-5" />
+              <span>{m.label}</span>
+              <span className="text-gray-400 text-sm">{getCountdown(m.date)}</span>
+            </div>
+          );
+        })}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[359px]:grid-cols-1">
         <div className="lg:col-span-2 space-y-6">
           {standing && (
@@ -261,35 +298,61 @@ const DtDashboard = () => {
           )}
 
           {standing && (
-            <div className="card p-6 lg:mt-6">
-              <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
-              <div className="space-y-4">
-                {[
-                  { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
-                  { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
-                  { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
-                ].map(stat => {
-                  const maxVal = Math.max(stat.club, stat.league);
-                  return (
-                    <div key={stat.label}>
-                      <p className="text-sm mb-1">{stat.label}</p>
-                      <div className="relative h-3 bg-gray-700 rounded">
-                        <div
-                          className="absolute top-0 left-0 h-3 bg-accent rounded"
-                          style={{ width: `${(stat.club / maxVal) * 100}%` }}
-                        ></div>
-                        <div
-                          className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
-                          style={{ width: `${(stat.league / maxVal) * 100}%` }}
-                        ></div>
+            <div className="lg:flex gap-4 lg:mt-6">
+              <div className="flex flex-col items-center mb-6 lg:mb-0">
+                <div className="flex space-x-1 mb-2">
+                  {standing.form.slice(-5).map((r, i) => (
+                    <span
+                      key={i}
+                      className={`w-3 h-3 rounded-full ${
+                        r === 'W' ? 'bg-green-500' : r === 'D' ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                    ></span>
+                  ))}
+                </div>
+                {inFormPlayer && (
+                  <div className="flex items-center space-x-2 text-xs">
+                    <img
+                      src={inFormPlayer.image}
+                      alt={inFormPlayer.name}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span>
+                      {inFormPlayer.goals} G / {inFormPlayer.assists} A
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="card p-6 flex-1">
+                <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
+                <div className="space-y-4">
+                  {[
+                    { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
+                    { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
+                    { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
+                  ].map(stat => {
+                    const maxVal = Math.max(stat.club, stat.league);
+                    return (
+                      <div key={stat.label}>
+                        <p className="text-sm mb-1">{stat.label}</p>
+                        <div className="relative h-3 bg-gray-700 rounded">
+                          <div
+                            className="absolute top-0 left-0 h-3 bg-accent rounded"
+                            style={{ width: `${(stat.club / maxVal) * 100}%` }}
+                          ></div>
+                          <div
+                            className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
+                            style={{ width: `${(stat.league / maxVal) * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                          <span>Club: {Math.round(stat.club)}</span>
+                          <span>Media liga: {Math.round(stat.league)}</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-400 mt-1">
-                        <span>Club: {Math.round(stat.club)}</span>
-                        <span>Media liga: {Math.round(stat.league)}</span>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
