@@ -22,6 +22,7 @@ export interface User {
 export interface Club {
   id: string;
   name: string;
+  slug: string;
   logo: string;
   foundedYear: number;
   stadium: string;

@@ -1,8 +1,8 @@
-import  { 
-  Club, 
-  Player, 
-  Tournament, 
-  Match, 
+import  {
+  Club,
+  Player,
+  Tournament,
+  Match,
   Transfer,
   TransferOffer,
   NewsItem,
@@ -12,11 +12,13 @@ import  {
   FAQ,
   StoreItem
 } from '../types';
+import { slugify } from '../utils/helpers';
 
 // Mock Clubs Data
 export const clubs: Club[] = [
   {
     id: 'club1',
+    slug: slugify('Rayo Digital FC'),
     name: 'Rayo Digital FC',
     logo: 'https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -47,6 +49,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club2',
+    slug: slugify('Atlético Pixelado'),
     name: 'Atlético Pixelado',
     logo: 'https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -71,6 +74,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club3',
+    slug: slugify('Defensores del Lag'),
     name: 'Defensores del Lag',
     logo: 'https://ui-avatars.com/api/?name=DL&background=a855f7&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -88,6 +92,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club4',
+    slug: slugify('Neón FC'),
     name: 'Neón FC',
     logo: 'https://ui-avatars.com/api/?name=NFC&background=ec4899&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -112,6 +117,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club5',
+    slug: slugify('Haxball United'),
     name: 'Haxball United',
     logo: 'https://ui-avatars.com/api/?name=HU&background=f97316&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -129,6 +135,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club6',
+    slug: slugify('Glitchers 404'),
     name: 'Glitchers 404',
     logo: 'https://ui-avatars.com/api/?name=404&background=84cc16&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -153,6 +160,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club7',
+    slug: slugify('Cyber Warriors'),
     name: 'Cyber Warriors',
     logo: 'https://ui-avatars.com/api/?name=CW&background=06b6d4&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -170,6 +178,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club8',
+    slug: slugify('Binary Strikers'),
     name: 'Binary Strikers',
     logo: 'https://ui-avatars.com/api/?name=BS&background=7c3aed&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -187,6 +196,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club9',
+    slug: slugify('Connection FC'),
     name: 'Connection FC',
     logo: 'https://ui-avatars.com/api/?name=CFC&background=eab308&color=fff&size=128&bold=true',
     foundedYear: 2023,
@@ -204,6 +214,7 @@ export const clubs: Club[] = [
   },
   {
     id: 'club10',
+    slug: slugify('Pixel Galaxy'),
     name: 'Pixel Galaxy',
     logo: 'https://ui-avatars.com/api/?name=PG&background=14b8a6&color=fff&size=128&bold=true',
     foundedYear: 2023,
