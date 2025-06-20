@@ -137,6 +137,11 @@ const DtDashboard = () => {
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
     .slice(0, 2);
 
+  const classificationTarget = 60;
+  const fairPlayTarget = 80;
+  const classificationProgress = classificationTarget;
+  const fairPlayProgress = fairPlayTarget;
+
   return (
     <>
       <div className="container mx-auto px-4 py-8 space-y-8">
@@ -354,11 +359,34 @@ const DtDashboard = () => {
                   })}
                 </div>
               </div>
-            </div>
-          )}
+          </div>
+        )}
 
-          {statements.length > 0 && (
-            <div className="card p-6">
+        <div className="space-y-6">
+          <div className="card p-4">
+            <p className="font-bold mb-2">Objetivo: Top 5</p>
+            <div className="h-3 bg-gray-700 rounded">
+              <div
+                style={{ width: `${classificationProgress}%` }}
+                className="h-3 bg-accent rounded"
+              ></div>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">{classificationProgress}% – ¡sigue así!</p>
+          </div>
+          <div className="card p-4">
+            <p className="font-bold mb-2">Juego limpio</p>
+            <div className="h-3 bg-gray-700 rounded">
+              <div
+                style={{ width: `${fairPlayProgress}%` }}
+                className="h-3 bg-accent rounded"
+              ></div>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">{fairPlayProgress}% – ¡sigue así!</p>
+          </div>
+        </div>
+
+        {statements.length > 0 && (
+          <div className="card p-6">
               <h2 className="text-lg font-bold mb-4">Voces de la jornada</h2>
               <ul className="space-y-2">
                 {statements.map(s => (
