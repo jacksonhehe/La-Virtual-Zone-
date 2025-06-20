@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Club } from '../../types';
+import { slugify } from '../../utils/helpers';
 
 interface Props {
   onClose: () => void;
@@ -25,6 +26,7 @@ const NewClubModal = ({ onClose }: Props) => {
     const newClub: Club = {
       id: `${Date.now()}`,
       name,
+      slug: slugify(name),
       logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3b82f6&color=fff&size=128`,
       foundedYear: new Date().getFullYear(),
       stadium: '',

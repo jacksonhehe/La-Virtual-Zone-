@@ -135,7 +135,7 @@ const DtDashboard = () => {
           className="flex items-center gap-3 hover:underline"
         >
           <img
-            src={club.badge}
+            src={club.logo}
             alt="Escudo"
             className="h-14 w-14 rounded-full"
           />
