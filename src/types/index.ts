@@ -256,3 +256,38 @@ export interface Comment {
   reported: boolean;
   hidden: boolean;
 }
+
+// --- DT dashboard specific types ---
+export interface DtClub {
+  id: string;
+  name: string;
+  slug: string;
+  badge: string;
+  formation: string;
+  budget: number;
+  players: Player[];
+}
+
+export interface DtFixture extends Match {
+  played: boolean;
+}
+
+export interface DtMarket {
+  open: boolean;
+}
+
+export interface DtObjectives {
+  position: number | null;
+  fairplay: number | null;
+}
+
+export interface DtTask {
+  id: string;
+  text: string;
+}
+
+export interface DtEvent {
+  id: string;
+  message: string;
+  date: string;
+}

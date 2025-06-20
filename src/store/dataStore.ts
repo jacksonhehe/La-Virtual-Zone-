@@ -19,6 +19,14 @@ import {
   faqs,
   storeItems,
   posts,
+  dtClub,
+  dtFixtures,
+  dtMarket,
+  dtObjectives,
+  dtTasks,
+  dtEvents,
+  dtNews,
+  dtPositions
 } from '../data/mockData';
 import {
   Club,
@@ -32,7 +40,13 @@ import {
   MediaItem,
   FAQ,
   StoreItem,
-  Post
+  Post,
+  DtClub,
+  DtFixture,
+  DtMarket,
+  DtObjectives,
+  DtTask,
+  DtEvent
 } from '../types';
 
 interface DataState {
@@ -49,6 +63,15 @@ interface DataState {
   storeItems: StoreItem[];
   posts: Post[];
   marketStatus: boolean;
+  // DT dashboard fields
+  club: DtClub;
+  fixtures: DtFixture[];
+  market: DtMarket;
+  objectives: DtObjectives;
+  tasks: DtTask[];
+  events: DtEvent[];
+  news: NewsItem[];
+  positions: Standing[];
   
   updateClubs: (newClubs: Club[]) => void;
   updatePlayers: (newPlayers: Player[]) => void;
@@ -88,6 +111,14 @@ export const useDataStore = create<DataState>((set) => ({
   storeItems,
   posts,
   marketStatus,
+  club: dtClub,
+  fixtures: dtFixtures,
+  market: dtMarket,
+  objectives: dtObjectives,
+  tasks: dtTasks,
+  events: dtEvents,
+  news: dtNews,
+  positions: dtPositions,
   users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
