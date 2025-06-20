@@ -16,7 +16,7 @@ import { formatCurrency, formatDate, slugify } from '../utils/helpers';
 const DtDashboard = () => {
   const [countdown, setCountdown] = useState('');
   const { user, isAuthenticated } = useAuthStore();
-  const { clubs, players, standings, tournaments, newsItems, marketStatus } = useDataStore();
+  const { clubs, players, standings, tournaments, newsItems, marketStatus, transfers } = useDataStore();
 
   if (!isAuthenticated || !user || user.role !== 'dt') {
     return <Navigate to="/liga-master" />;
@@ -75,6 +75,37 @@ const DtDashboard = () => {
     .filter(n => n.clubId === club.id)
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
     .slice(0, 3);
+
+  const rankIndex = standings.findIndex(s => s.clubId === club.id);
+  const miniStart = Math.max(0, rankIndex - 2);
+  const miniRanking = standings.slice(miniStart, miniStart + 5);
+
+  const topTransfers = [...transfers]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
+
+  const announcements = newsItems
+    .filter(n => n.type === 'announcement')
+    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
+    .slice(0, 2);
+
+  const reminders = [
+    'Confirma tu alineación antes del viernes',
+    'Revisa el informe médico de tu delantero lesionado'
+  ];
+
+  const leagueAvgGoals = standings.reduce((sum, s) => sum + s.goalsFor, 0) / standings.length;
+  const leagueAvgPossession = standings.reduce((sum, s) => sum + s.possession, 0) / standings.length;
+  const leagueAvgCards = standings.reduce((sum, s) => sum + s.cards, 0) / standings.length;
+
+  const clubStats = standing
+    ? { goals: standing.goalsFor, possession: standing.possession, cards: standing.cards }
+    : { goals: 0, possession: 0, cards: 0 };
+
+  const statements = newsItems
+    .filter(n => n.type === 'statement')
+    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
+    .slice(0, 2);
 
   return (
     <>
@@ -180,22 +211,143 @@ const DtDashboard = () => {
         </div>
       )}
 
-      {standing && (
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          <div className="card p-4 text-center">
-            <p className="text-gray-400 text-sm">Posición</p>
-            <p className="text-xl font-bold">{standings.indexOf(standing) + 1}</p>
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          {standing && (
+            <div className="card p-4 overflow-x-auto">
+              <h2 className="font-bold mb-3">Posiciones</h2>
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="text-left border-b border-gray-800 text-gray-400">
+                    <th className="p-2">Pos</th>
+                    <th className="p-2">Club</th>
+                    <th className="p-2 text-center">PJ</th>
+                    <th className="p-2 text-center">Pts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {miniRanking.map((team, idx) => {
+                    const clubRow = clubs.find(c => c.id === team.clubId);
+                    const pos = standings.indexOf(team) + 1;
+                    return (
+                      <tr
+                        key={team.clubId}
+                        className={`border-b border-gray-800 last:border-0 ${team.clubId === club.id ? 'bg-primary/20' : ''}`}
+                      >
+                        <td className="p-2">{pos}</td>
+                        <td className="p-2 flex items-center space-x-2">
+                          <img src={clubRow?.logo} className="w-5 h-5" />
+                          <span>{clubRow?.name}</span>
+                        </td>
+                        <td className="p-2 text-center">{team.played}</td>
+                        <td className="p-2 text-center font-bold">{team.points}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {standing && (
+            <div className="card p-6">
+              <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
+              <div className="space-y-4">
+                {[
+                  { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
+                  { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
+                  { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
+                ].map(stat => {
+                  const maxVal = Math.max(stat.club, stat.league);
+                  return (
+                    <div key={stat.label}>
+                      <p className="text-sm mb-1">{stat.label}</p>
+                      <div className="relative h-3 bg-gray-700 rounded">
+                        <div
+                          className="absolute top-0 left-0 h-3 bg-primary rounded"
+                          style={{ width: `${(stat.club / maxVal) * 100}%` }}
+                        ></div>
+                        <div
+                          className="absolute top-0 left-0 h-3 bg-gray-500 rounded opacity-50"
+                          style={{ width: `${(stat.league / maxVal) * 100}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>Club: {Math.round(stat.club)}</span>
+                        <span>Media liga: {Math.round(stat.league)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {statements.length > 0 && (
+            <div className="card p-6">
+              <h2 className="text-lg font-bold mb-4">Voces de la jornada</h2>
+              <ul className="space-y-2">
+                {statements.map(s => (
+                  <li key={s.id} className="flex justify-between items-center">
+                    <span className="font-medium">{s.title}</span>
+                    <Link to={`/blog/${s.id}`} className="text-primary text-sm">Leer</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <div className="card p-6">
+            <h2 className="text-lg font-bold mb-4">Fichajes destacados</h2>
+            <ul className="space-y-2 text-sm">
+              {topTransfers.map(t => (
+                <li key={t.id} className="flex justify-between">
+                  <span>{t.playerName} → {t.toClub}</span>
+                  <span>{formatCurrency(t.fee)}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="card p-4 text-center">
-            <p className="text-gray-400 text-sm">GF</p>
-            <p className="text-xl font-bold">{standing.goalsFor}</p>
+
+          {announcements.length > 0 && (
+            <div className="card p-6">
+              <h2 className="text-lg font-bold mb-4">Anuncios</h2>
+              <ul className="space-y-2 text-sm">
+                {announcements.map(a => (
+                  <li key={a.id} className="flex justify-between">
+                    <span>{a.title}</span>
+                    <span className="text-gray-400">{formatDate(a.publishDate)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="card p-6">
+            <h2 className="text-lg font-bold mb-4">Recordatorios</h2>
+            {reminders.length > 0 ? (
+              <ul className="list-disc ml-5 space-y-1 text-sm">
+                {reminders.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400 text-sm">Todo en orden</p>
+            )}
           </div>
-          <div className="card p-4 text-center">
-            <p className="text-gray-400 text-sm">GC</p>
-            <p className="text-xl font-bold">{standing.goalsAgainst}</p>
+
+          <div className="card p-6">
+            <div className="flex flex-wrap gap-3">
+              <Link to="/liga-master/mercado" className="btn-primary flex-1">Enviar oferta inmediata</Link>
+              <Link to={`/liga-master/club/${slug}/plantilla#medical`} className="btn-primary flex-1">Abrir informe médico</Link>
+              <Link to="/liga-master/mercado" className="btn-primary flex-1">Firmar juvenil</Link>
+              <Link to="/blog" className="btn-primary flex-1">Publicar declaración</Link>
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
       {latestNews.length > 0 && (
         <div className="card p-6 mt-12">

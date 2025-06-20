@@ -232,6 +232,8 @@ export interface Standing {
   goalsAgainst: number;
   points: number;
   form: string[];
+  possession: number;
+  cards: number;
 }
  
 // Activity log types
