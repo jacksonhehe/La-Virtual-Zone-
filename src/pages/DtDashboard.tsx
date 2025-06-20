@@ -1,4 +1,11 @@
-import { Link, Navigate } from 'react-router-dom';
+/* =========================================
+   LIGA MASTER · TABLERO DEL DT
+   Último pulido: alineación vertical,
+   sombras coherentes, contraste bullets,
+   apilado XS y margen antes del footer
+   ======================================= */
+
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   Users,
@@ -12,539 +19,401 @@ import {
   Trophy,
   Calendar
 } from 'lucide-react';
+
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
-import { formatCurrency, formatDate, slugify } from '../utils/helpers';
+import {
+  getMiniTable,
+  formatCurrency,
+  formatDate,
+  calcStreak,
+  getTopPerformer,
+  goalsDiff,
+  yellowDiff,
+  possessionDiff
+} from '../utils/helpers';
 
-interface PollState {
-  voted: boolean;
-  results: number[];
-}
+/* ---------- componentes pequeños reutilizados ---------- */
 
-const getCountdown = (date: string): string => {
-  const diff = new Date(date).getTime() - Date.now();
-  if (diff <= 0) return 'faltan 0 d 0 h';
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  return `faltan ${days} d ${hours} h`;
+/* sombra y escala homogéneas para TODAS las tarjetas */
+const Card = ({
+  children,
+  onClick
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => (
+  <div
+    onClick={onClick}
+    className="hover-card cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
+  >
+    {children}
+  </div>
+);
+
+/* Progress bar con transición suave */
+const ProgressBar = ({
+  value
+}: {
+  value: number | null;
+}) => {
+  if (value === null) {
+    return (
+      <div className="w-full rounded bg-zinc-800 py-1 text-center text-xs text-gray-400">
+        Sin datos
+      </div>
+    );
+  }
+  return (
+    <div className="h-3 w-full rounded bg-zinc-800">
+      <div
+        className="h-full rounded bg-accent transition-[width] duration-500 ease-out"
+        style={{ width: `${value}%` }}
+      />
+    </div>
+  );
 };
 
-const DtDashboard = () => {
-  const [countdown, setCountdown] = useState('');
-  const [reminders, setReminders] = useState<string[]>([
-    'Confirma tu alineación antes del viernes',
-    'Revisa el informe médico de tu delantero lesionado'
-  ]);
-  const options = ['Jugador 1', 'Jugador 2', 'Jugador 3'];
-  const [pollCounts, setPollCounts] = useState([36, 45, 19]);
-  const [{ voted, results }, setPoll] = useState(() => {
-    const total = pollCounts.reduce((a, b) => a + b, 0);
-    return {
-      voted: false,
-      results: pollCounts.map(c => Math.round((c / total) * 100))
-    };
-  });
-  const vote = (index: number) => {
-    setPollCounts(prev => {
-      const counts = [...prev];
-      counts[index] += 1;
-      const total = counts.reduce((a, b) => a + b, 0);
-      const percentages = counts.map(c => Math.round((c / total) * 100));
-      setPoll({ voted: true, results: percentages });
-      return counts;
-    });
-  };
-  const handleComplete = (index: number) => {
-    setReminders(prev => prev.filter((_, i) => i !== index));
-  };
-  const { user, isAuthenticated } = useAuthStore();
-  const { clubs, players, standings, tournaments, newsItems, marketStatus, transfers } = useDataStore();
-
-  if (!isAuthenticated || !user || user.role !== 'dt') {
-    return <Navigate to="/liga-master" />;
-  }
-
-  const club = user.clubId
-    ? clubs.find(c => c.id === user.clubId)
-    : user.club
-      ? clubs.find(c => c.name === user.club)
-      : undefined;
-
-  if (!club) {
-    return <Navigate to="/liga-master" />;
-  }
-
-  const slug = slugify(club.name);
-  const clubPlayers = players.filter(p => p.clubId === club.id);
-  const captain = clubPlayers[0];
-  const inFormPlayer = [...clubPlayers].sort(
-    (a, b) => b.goals + b.assists - (a.goals + a.assists)
-  )[0];
-  const formation = (club as unknown as { formation?: string }).formation || '4-3-3';
-  const standing = standings.find(s => s.clubId === club.id);
-  const morale = standing && standing.form.length > 0
-    ? Math.round(
-        (standing.form.reduce((sum, r) => sum + (r === 'W' ? 3 : r === 'D' ? 1 : 0), 0) /
-          (standing.form.length * 3)) * 100
-      )
-    : undefined;
-
-  const ligaMaster = tournaments.find(t => t.id === 'tournament1');
-  const nextMatch = ligaMaster
-    ? ligaMaster.matches
-        .filter(
-          m => (m.homeTeam === club.name || m.awayTeam === club.name) && m.status === 'scheduled'
-        )
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
-    : null;
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+/* Cuenta regresiva utilitaria */
+const useCountdown = (date: string) => {
+  const [out, setOut] = useState('');
   useEffect(() => {
-    if (!nextMatch) return;
-    const updateCountdown = () => {
-      const diff = new Date(nextMatch.date).getTime() - Date.now();
+    const fn = () => {
+      const diff = new Date(date).getTime() - Date.now();
       if (diff <= 0) {
-        setCountdown('');
+        setOut('');
         return;
       }
-      const days = Math.floor(diff / 86400000);
-      const hours = Math.floor((diff % 86400000) / 3600000);
-      setCountdown(`Faltan ${days} días y ${hours} horas`);
+      const d = Math.floor(diff / 864e5);
+      const h = Math.floor((diff % 864e5) / 36e5);
+      setOut(`Faltan ${d} d ${h} h`);
     };
-    updateCountdown();
-    const id = setInterval(updateCountdown, 60000);
+    fn();
+    const id = setInterval(fn, 6e4);
     return () => clearInterval(id);
-  }, [nextMatch]);
+  }, [date]);
+  return out;
+};
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    const id = setInterval(() => setTimer(t => t + 1), 3600000);
-    return () => clearInterval(id);
-  }, []);
+/* ---------- componente principal ---------- */
 
-  const latestNews = newsItems
-    .filter(n => n.clubId === club.id)
-    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
-    .slice(0, 3);
+const DtDashboard = () => {
+  const { user } = useAuthStore();
+  const {
+    club,
+    positions,
+    fixtures,
+    news,
+    market,
+    objectives,
+    tasks,
+    events
+  } = useDataStore();
 
-  const rankIndex = standings.findIndex(s => s.clubId === club.id);
-  const miniStart = Math.max(0, rankIndex - 2);
-  const miniRanking = standings.slice(miniStart, miniStart + 5);
+  if (!user || !club) return <p>Cargando…</p>;
 
-  const topTransfers = [...transfers]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 3);
-
-  const announcements = newsItems
-    .filter(n => n.type === 'announcement')
-    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
-    .slice(0, 2);
-
-  const milestones = [
-    { label: 'Cierre de mercado', date: '2025-01-31', icon: DollarSign },
-    { label: 'Inicio Copa PES', date: '2025-02-10', icon: Trophy },
-    { label: 'Supercopa Digital', date: '2025-06-15', icon: Calendar }
+  /* ··· datos derivados ··· */
+  const nextMatch = fixtures.find(f => !f.played);
+  const countdown = nextMatch ? useCountdown(nextMatch.date) : '';
+  const miniTable = getMiniTable(club.id, positions);
+  const streak = calcStreak(club.id, fixtures);
+  const performer = getTopPerformer(club.id);
+  const bullets = [
+    goalsDiff(club.id),
+    possessionDiff(club.id),
+    yellowDiff(club.id)
   ];
-
-
-  const leagueAvgGoals = standings.reduce((sum, s) => sum + s.goalsFor, 0) / standings.length;
-  const leagueAvgPossession = standings.reduce((sum, s) => sum + s.possession, 0) / standings.length;
-  const leagueAvgCards = standings.reduce((sum, s) => sum + s.cards, 0) / standings.length;
-
-  const clubStats = standing
-    ? { goals: standing.goalsFor, possession: standing.possession, cards: standing.cards }
-    : { goals: 0, possession: 0, cards: 0 };
-
-  const statements = newsItems
-    .filter(n => n.type === 'statement')
-    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
-    .slice(0, 2);
-
-  const classificationTarget = 60;
-  const fairPlayTarget = 80;
-  const classificationProgress = classificationTarget;
-  const fairPlayProgress = fairPlayTarget;
+  const latestNews = news.slice(0, 3);
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8 space-y-8">
-      <a
-        href={`/liga-master/club/${slug}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:opacity-90"
-      >
-        <div className="flex items-center">
-          <img src={club.logo} alt={club.name} className="w-14 h-14 mr-3" />
-          <h1 className="text-2xl font-bold">{club.name}</h1>
-        </div>
-        <div className="text-right">
-          <p className="text-gray-400">DT: {club.manager}</p>
-          <p className="text-gray-400">Presupuesto: {formatCurrency(club.budget)}</p>
-        </div>
-      </a>
-
-      {morale !== undefined ? (
-        <div className="h-2 bg-dark rounded-full overflow-hidden">
-          <div
-            className="h-full bg-accent transition-all duration-500"
-            style={{ width: `${morale}%` }}
-          ></div>
-        </div>
-      ) : (
-        <span className="badge bg-gray-700 text-gray-300">Sin datos</span>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ---------- ENCABEZADO ---------- */}
+      <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
-          to={`/liga-master/club/${slug}/plantilla`}
-          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--accent)] transition-shadow focus:outline-none focus:ring-2 focus:ring-accent"
+          to={`/liga-master/club/${club.slug}`}
+          className="flex items-center gap-3 hover:underline"
         >
-          <Users className="text-accent mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
-          <p className="text-gray-400 text-sm font-medium mb-1">Plantilla</p>
-          <p className="text-lg font-medium mb-2">{clubPlayers.length} jugadores</p>
-          {captain && (
-            <img src={captain.image} alt={captain.name} className="w-12 h-12 rounded-full mx-auto" />
-          )}
-        </Link>
-        <Link
-          to={`/liga-master/club/${slug}/tacticas`}
-          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--accent)] transition-shadow focus:outline-none focus:ring-2 focus:ring-accent"
-        >
-          <Layout className="text-accent mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
-          <p className="text-gray-400 text-sm font-medium mb-1">Táctica</p>
-          <p className="text-lg font-medium">{formation}</p>
-        </Link>
-        <Link
-          to={`/liga-master/club/${slug}/finanzas`}
-          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--accent)] transition-shadow focus:outline-none focus:ring-2 focus:ring-accent"
-        >
-          <DollarSign className="text-accent mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
-          <p className="text-gray-400 text-sm font-medium mb-1">Finanzas</p>
-          <p className="text-lg font-medium">{formatCurrency(club.budget)}</p>
-        </Link>
-        <Link
-          to="/liga-master/mercado"
-          className="card card-hover p-6 text-center hover:shadow-[0_0_10px_var(--accent)] transition-shadow focus:outline-none focus:ring-2 focus:ring-accent"
-        >
-          <TrendingUp className="text-accent mb-3 w-8 h-8 max-[359px]:w-5 max-[359px]:h-5" />
-          <p className="text-gray-400 text-sm font-medium mb-1">Mercado</p>
-          <p className="text-lg font-medium">{marketStatus ? 'Abierto' : 'Cerrado'}</p>
-        </Link>
-      </div>
-
-      {nextMatch && (
-        <div className="card p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Próximo Partido</h2>
-            <Link to="/liga-master/fixture" className="text-accent text-sm hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent">
-              Calendario
-            </Link>
+          <img
+            src={club.badge}
+            alt="Escudo"
+            className="h-14 w-14 rounded-full"
+          />
+          <div>
+            <h1 className="text-2xl font-semibold">{club.name}</h1>
+            <p className="text-sm text-gray-400">{user.name}</p>
           </div>
-          <div className="flex items-center justify-between text-center">
-            <div className="w-1/3 flex flex-col items-center">
-              <img
-                src={clubs.find(c => c.name === nextMatch.homeTeam)?.logo}
-                className="w-10 h-10 mb-2"
-              />
-              <span>{nextMatch.homeTeam}</span>
-            </div>
-            <div className="w-1/3">
-              <p className="text-sm text-gray-400">{formatDate(nextMatch.date)}</p>
-              {countdown && (
-                <p className="text-xs text-gray-500">{countdown}</p>
-              )}
-              <div className="flex items-center justify-center mt-1">
-                {nextMatch.homeTeam === club.name ? (
-                  <Home size={16} className="text-accent mr-1" />
+        </Link>
+        <div className="mt-4 flex flex-col items-center md:ml-auto md:mt-0 md:items-end">
+          <span className="text-xs text-gray-400">Presupuesto</span>
+          <span className="text-lg font-semibold text-accent">
+            {formatCurrency(club.budget)}
+          </span>
+        </div>
+      </header>
+
+      {/* ---------- TARJETAS RÁPIDAS ---------- */}
+      <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <div className="flex items-center gap-2">
+            <Users size={20} className="text-purple-400" />
+            <span className="font-semibold">Plantilla</span>
+          </div>
+          <p className="mt-2 text-sm font-medium text-gray-400">
+            {club.players.length} jugadores
+          </p>
+        </Card>
+        <Card>
+          <div className="flex items-center gap-2">
+            <Layout size={20} className="text-blue-400" />
+            <span className="font-semibold">Táctica</span>
+          </div>
+          <p className="mt-2 text-sm font-medium text-gray-400">
+            {club.formation}
+          </p>
+        </Card>
+        <Card>
+          <div className="flex items-center gap-2">
+            <DollarSign size={20} className="text-green-400" />
+            <span className="font-semibold">Finanzas</span>
+          </div>
+          <p className="mt-2 text-sm font-medium text-gray-400">
+            {formatCurrency(club.budget)}
+          </p>
+        </Card>
+        <Card>
+          <div className="flex items-center gap-2">
+            <TrendingUp size={20} className="text-yellow-400" />
+            <span className="font-semibold">Mercado</span>
+          </div>
+          <p className="mt-2 text-sm font-medium text-gray-400">
+            {market.open ? 'Abierto' : 'Cerrado'}
+          </p>
+        </Card>
+      </section>
+
+      {/* ---------- CUERPO PRINCIPAL ---------- */}
+      <main className="grid gap-8 lg:grid-cols-3">
+        {/* === COLUMNA IZQUIERDA (2/3) === */}
+        <div className="space-y-8 lg:col-span-2">
+          {/* Próximo partido */}
+          {nextMatch && (
+            <Card>
+              <div className="flex items-center gap-2">
+                {nextMatch.home === club.id ? (
+                  <Home size={16} className="text-accent" />
                 ) : (
-                  <Plane size={16} className="text-accent mr-1" />
+                  <Plane size={16} className="text-accent" />
                 )}
-                <span>{nextMatch.homeTeam === club.name ? 'Local' : 'Visitante'}</span>
+                <h2 className="font-semibold">Próximo partido</h2>
               </div>
-            </div>
-            <div className="w-1/3 flex flex-col items-center">
-              <img
-                src={clubs.find(c => c.name === nextMatch.awayTeam)?.logo}
-                className="w-10 h-10 mb-2"
-              />
-              <span>{nextMatch.awayTeam}</span>
-            </div>
-          </div>
-        </div>
-      )}
+              <p className="mt-2">
+                {nextMatch.rival} –{' '}
+                <span className="text-gray-400">{formatDate(nextMatch.date)}</span>
+              </p>
+              {countdown && (
+                <p className="mt-1 text-xs text-gray-400">{countdown}</p>
+              )}
+              <Link
+                to="/liga-master/fixture"
+                className="mt-3 inline-flex items-center gap-1 text-accent hover:underline"
+              >
+                <Calendar size={14} />
+                Calendario completo
+              </Link>
+            </Card>
+          )}
 
-      <div className="card p-4 mb-8 flex flex-col sm:flex-row justify-between">
-        {milestones.map(m => {
-          const Icon = m.icon;
-          return (
-            <div key={m.label} className="flex items-center space-x-2">
-              <Icon className="text-accent w-5 h-5" />
-              <span>{m.label}</span>
-              <span className="text-gray-400 text-sm">{getCountdown(m.date)}</span>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[359px]:grid-cols-1">
-        <div className="lg:col-span-2 space-y-6">
-          {standing && (
-            <div className="card p-4 overflow-x-auto">
-              <h2 className="font-bold mb-3">Posiciones</h2>
-              <table className="min-w-full text-sm">
-                <thead>
-                  <tr className="text-left border-b border-gray-800 text-gray-400">
-                    <th className="p-2">Pos</th>
-                    <th className="p-2">Club</th>
-                    <th className="p-2 text-center">PJ</th>
-                    <th className="p-2 text-center">Pts</th>
-                  </tr>
-                </thead>
+          {/* Mini-tabla + Streak + Performer */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Mini tabla de posiciones */}
+            <Card>
+              <h3 className="mb-3 font-semibold">Posiciones</h3>
+              <table className="w-full text-sm">
                 <tbody>
-                  {miniRanking.map(team => {
-                    const clubRow = clubs.find(c => c.id === team.clubId);
-                    const pos = standings.indexOf(team) + 1;
-                    return (
-                      <tr
-                        key={team.clubId}
-                        className={`border-b border-gray-800 last:border-0 ${team.clubId === club.id ? 'bg-accent/20' : ''}`}
-                      >
-                        <td className="p-2">{pos}</td>
-                        <td className="p-2 flex items-center space-x-2">
-                          <img src={clubRow?.logo} className="w-5 h-5" />
-                          <span>{clubRow?.name}</span>
-                        </td>
-                        <td className="p-2 text-center">{team.played}</td>
-                        <td className="p-2 text-center font-bold">{team.points}</td>
-                      </tr>
-                    );
-                  })}
+                  {miniTable.map(row => (
+                    <tr
+                      key={row.club}
+                      className={
+                        row.club === club.id ? 'text-accent font-semibold' : ''
+                      }
+                    >
+                      <td>{row.pos}</td>
+                      <td>{row.name}</td>
+                      <td className="text-right">{row.pts}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
-            </div>
-          )}
+              {/* Racha */}
+              <div className="mt-3 flex gap-1">
+                {streak.map((w, i) => (
+                  <Check
+                    key={i}
+                    size={14}
+                    className={w ? 'text-green-500' : 'text-red-500'}
+                  />
+                ))}
+              </div>
+            </Card>
 
-          {standing && (
-            <div className="lg:flex gap-4 lg:mt-6">
-              <div className="flex flex-col items-center mb-6 lg:mb-0">
-                <div className="flex space-x-1 mb-2">
-                  {standing.form.slice(-5).map((r, i) => (
+            {/* Comparativa + Jugador en forma */}
+            <Card>
+              <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
+              <ul className="space-y-2 text-sm">
+                {bullets.map(b => (
+                  <li key={b.label} className="flex items-center justify-between">
+                    <span>{b.label}</span>
                     <span
-                      key={i}
-                      className={`w-3 h-3 rounded-full ${
-                        r === 'W' ? 'bg-green-500' : r === 'D' ? 'bg-yellow-500' : 'bg-red-500'
-                      }`}
-                    ></span>
-                  ))}
-                </div>
-                {inFormPlayer && (
-                  <div className="flex items-center space-x-2 text-xs">
-                    <img
-                      src={inFormPlayer.image}
-                      alt={inFormPlayer.name}
-                      className="w-6 h-6 rounded-full object-cover"
-                    />
-                    <span>
-                      {inFormPlayer.goals} G / {inFormPlayer.assists} A
+                      className={
+                        b.diff > 0
+                          ? 'text-green-400'
+                          : b.diff < 0
+                          ? 'text-red-400'
+                          : 'text-gray-400'
+                      }
+                    >
+                      {b.diff > 0 && '+'}
+                      {b.diff}
                     </span>
-                  </div>
-                )}
-              </div>
-              <div className="card p-6 flex-1">
-                <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
-                <div className="space-y-4">
-                  {[
-                    { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
-                    { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
-                    { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
-                  ].map(stat => {
-                    const maxVal = Math.max(stat.club, stat.league);
-                    return (
-                      <div key={stat.label}>
-                        <p className="text-sm mb-1">{stat.label}</p>
-                        <div className="relative h-3 bg-gray-700 rounded">
-                          <div
-                            className="absolute top-0 left-0 h-3 bg-accent rounded"
-                            style={{ width: `${(stat.club / maxVal) * 100}%` }}
-                          ></div>
-                          <div
-                            className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
-                            style={{ width: `${(stat.league / maxVal) * 100}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-400 mt-1">
-                          <span>Club: {Math.round(stat.club)}</span>
-                          <span>Media liga: {Math.round(stat.league)}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-          </div>
-        )}
-
-        <div className="space-y-6">
-          <div className="card p-4">
-            <p className="font-bold mb-2">Objetivo: Top 5</p>
-            <div className="h-3 bg-gray-700 rounded">
-              <div
-                style={{ width: `${classificationProgress}%` }}
-                className="h-3 bg-accent rounded"
-              ></div>
-            </div>
-            <p className="text-xs text-gray-400 mt-1">{classificationProgress}% – ¡sigue así!</p>
-          </div>
-          <div className="card p-4">
-            <p className="font-bold mb-2">Juego limpio</p>
-            <div className="h-3 bg-gray-700 rounded">
-              <div
-                style={{ width: `${fairPlayProgress}%` }}
-                className="h-3 bg-accent rounded"
-              ></div>
-            </div>
-            <p className="text-xs text-gray-400 mt-1">{fairPlayProgress}% – ¡sigue así!</p>
-          </div>
-        </div>
-
-        {statements.length > 0 && (
-          <div className="card p-6">
-              <h2 className="text-lg font-bold mb-4">Voces de la jornada</h2>
-              <ul className="space-y-2">
-                {statements.map(s => (
-                  <li key={s.id} className="flex justify-between items-center">
-                    <span className="font-medium">{s.title}</span>
-                    <Link to={`/blog/${s.id}`} className="text-accent text-sm">Leer</Link>
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-        </div>
+              {/* Jugador destacado */}
+              {performer && (
+                <div className="mt-4 flex items-center gap-2 rounded bg-zinc-800 p-2">
+                  <img
+                    src={performer.avatar}
+                    alt={performer.name}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <div>
+                    <p className="text-sm">{performer.name}</p>
+                    <p className="text-xs text-gray-400">
+                      {performer.g} g – {performer.a} a
+                    </p>
+                  </div>
+                  <Trophy size={14} className="ml-auto text-yellow-400" />
+                </div>
+              )}
+            </Card>
+          </div>
 
-        <div className="space-y-6">
-          <div className="card p-6">
-            <h2 className="text-lg font-bold mb-4">Fichajes destacados</h2>
-            <ul className="space-y-2 text-sm">
-              {topTransfers.map(t => (
-                <li key={t.id} className="flex justify-between">
-                  <span>{t.playerName} {t.fromClub} → {t.toClub}</span>
-                  <span>{formatCurrency(t.fee)}</span>
+          {/* Objetivos de temporada */}
+          <Card>
+            <h3 className="mb-4 font-semibold">Objetivos de temporada</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="mb-1 text-xs text-gray-400">Clasificar top 5</p>
+                <ProgressBar value={objectives.position} />
+              </div>
+              <div>
+                <p className="mb-1 text-xs text-gray-400">Juego limpio</p>
+                <ProgressBar value={objectives.fairplay} />
+              </div>
+            </div>
+          </Card>
+
+          {/* Últimas noticias */}
+          <Card>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-semibold">Últimas noticias</h3>
+              <Link
+                to="/liga-master/feed"
+                className="text-accent text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                Ver todo
+              </Link>
+            </div>
+            <ul className="space-y-3">
+              {latestNews.map(item => (
+                <li key={item.id} className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Newspaper size={16} className="mr-2 text-accent" />
+                    <span>{item.title}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    {formatDate(item.publishDate)}
+                  </span>
                 </li>
               ))}
             </ul>
-          </div>
+          </Card>
+        </div>
 
-          <div className="card p-4 flex flex-col text-sm">
-            <div className={`font-bold ${marketStatus ? 'text-neon-green' : 'text-neon-red'}`}>
-              {marketStatus ? 'Mercado abierto' : 'Mercado cerrado'}
-            </div>
-            {!marketStatus && (
-              <span className="text-gray-400">Reabre {formatDate(marketReopenDate)}</span>
-            )}
-            <ul className="list-disc ml-4 mt-2 space-y-1">
-              <li>Límite de sueldos vigente</li>
-              <li>Cupo máximo de traspasos</li>
+        {/* === COLUMNA DERECHA (1/3) === */}
+        <div className="space-y-8">
+          {/* Anuncios */}
+          <Card>
+            <h3 className="mb-3 font-semibold">Anuncios</h3>
+            <ul className="space-y-2 text-sm">
+              {events.slice(0, 3).map(ev => (
+                <li key={ev.id} className="flex items-center justify-between">
+                  <span>{ev.message}</span>
+                  <span className="text-xs text-gray-400">{formatDate(ev.date)}</span>
+                </li>
+              ))}
             </ul>
-          </div>
+          </Card>
 
-          {announcements.length > 0 && (
-            <div className="card card-hover p-6 hover:shadow-[0_0_10px_var(--accent)] transition-shadow">
-              <h2 className="text-lg font-bold mb-4">Anuncios</h2>
-              <ul className="space-y-2 text-sm">
-                {announcements.map(a => (
-                  <li key={a.id} className="flex justify-between">
-                    <span>{a.title}</span>
-                    <span className="text-gray-400">{formatDate(a.publishDate)}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* Semáforo de mercado */}
+          <Card>
+            <h3 className="mb-3 font-semibold">Mercado</h3>
+            <div className="flex items-center gap-2">
+              <span
+                className={
+                  market.open ? 'h-3 w-3 rounded-full bg-green-500' : 'h-3 w-3 rounded-full bg-red-500'
+                }
+              />
+              <span>{market.open ? 'Abierto' : 'Cerrado'}</span>
             </div>
-          )}
+            <ul className="mt-3 space-y-1 text-xs text-primary">
+              <li>Máx. 3 traspasos salientes</li>
+              <li>Límite salarial activo</li>
+            </ul>
+          </Card>
 
-          <div className="card card-hover p-6 hover:shadow-[0_0_10px_var(--accent)] transition-shadow">
-            <h2 className="text-lg font-bold mb-4">Recordatorios</h2>
-            {reminders.length > 0 ? (
-              <ul className="space-y-1 text-sm">
-                {reminders.map((r, i) => (
-                  <li key={i} className="flex items-center justify-between">
-                    <span>{r}</span>
-                    <button
-                      onClick={() => handleComplete(i)}
-                      className="text-accent hover:text-white"
-                    >
-                      <Check size={16} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
+          {/* Recordatorios pendientes */}
+          <Card>
+            <h3 className="mb-3 font-semibold">Recordatorios</h3>
+            {tasks.length === 0 ? (
+              <p className="text-sm text-gray-400">Todo al día ✔️</p>
             ) : (
-              <p className="text-gray-400 text-sm">Todo al día ✔️</p>
+              <ul className="space-y-2 text-sm">
+                {tasks.map(t => (
+                  <li key={t.id} className="flex items-center gap-2">
+                    <Check size={16} className="text-accent" />
+                    <span>{t.text}</span>
+                  </li>
+                ))}
+              </ul>
             )}
-          </div>
+          </Card>
 
-          <div className="card p-6">
-            <div className="flex flex-wrap gap-3">
-              <Link to="/liga-master/mercado" className="btn-primary flex-1">Enviar oferta inmediata</Link>
-              <Link to={`/liga-master/club/${slug}/plantilla#medical`} className="btn-primary flex-1">Abrir informe médico</Link>
-              <Link to="/liga-master/mercado" className="btn-primary flex-1">Firmar juvenil</Link>
-              <Link to="/blog" className="btn-primary flex-1">Publicar declaración</Link>
-            </div>
+          {/* Botones de acción rápida */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button className="hover-card bg-accent py-2 font-semibold text-black">
+              Enviar oferta
+            </button>
+            <button className="hover-card bg-accent py-2 font-semibold text-black">
+              Informe médico
+            </button>
+            <button className="hover-card bg-accent py-2 font-semibold text-black">
+              Firmar juvenil
+            </button>
+            <button className="hover-card bg-accent py-2 font-semibold text-black">
+              Publicar declaración
+            </button>
           </div>
         </div>
-      </div>
+      </main>
 
-      <div className="card p-4 mb-8 w-full">
-        <p className="font-bold mb-2">¿Quién será el goleador de la jornada?</p>
-        {!voted ? (
-          <ul className="space-y-1">
-            {options.map((opt, i) => (
-              <li key={i}>
-                <button onClick={() => vote(i)} className="btn-secondary w-full">
-                  {opt}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ul className="space-y-1 text-sm">
-            {options.map((opt, i) => (
-              <li key={i} className="flex justify-between">
-                <span>{opt}</span>
-                <span>{results[i]}{"\u202F"}%</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {/* margen extra antes del footer */}
+      <div className="mb-8" />
 
-      {latestNews.length > 0 && (
-        <div className="card p-6 mt-12">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Últimas Noticias</h2>
-            <Link to="/liga-master/feed" className="text-accent text-sm hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent">
-              Ver todo
-            </Link>
-          </div>
-          <ul className="space-y-3">
-            {latestNews.map(item => (
-              <li key={item.id} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Newspaper size={16} className="text-accent mr-2" />
-                  <span>{item.title}</span>
-                </div>
-                <span className="text-xs text-gray-400">{formatDate(item.publishDate)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-    <footer className="text-gray-400 text-sm mt-8">
-      <div className="card p-4 mx-auto max-w-md">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-          <div className="space-y-1">
+      {/* ---------- FOOTER ---------- */}
+      <footer className="border-t border-zinc-800 pt-8 text-xs text-gray-500">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <Link
               to="/reglamento"
               className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
@@ -557,8 +426,6 @@ const DtDashboard = () => {
             >
               Pretemporada
             </Link>
-          </div>
-          <div className="space-y-1">
             <Link
               to="/liga-master/hall-of-fame"
               className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
@@ -572,10 +439,12 @@ const DtDashboard = () => {
               Ayuda
             </Link>
           </div>
+          <p className="mt-6 text-center text-gray-600">
+            © 2025 La Virtual Zone · Todos los derechos reservados.
+          </p>
         </div>
-      </div>
-    </footer>
-  </>
+      </footer>
+    </>
   );
 };
 

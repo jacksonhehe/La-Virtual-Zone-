@@ -25,6 +25,21 @@ export default {
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
+      module.exports = {
+  content: [/* … */],
+  theme: {
+    extend: {
+      boxShadow: {
+        neon: '0 0 6px rgba(0, 224, 255, .45)'
+      },
+      colors: {
+        accent: '#00e0ff',
+        'text-secondary': '#b5b5b5'
+      }
+    }
+  },
+  plugins: []
+},
     },
   },
   safelist: [
