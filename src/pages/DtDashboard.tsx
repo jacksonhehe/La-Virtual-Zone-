@@ -16,6 +16,11 @@ import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate, slugify } from '../utils/helpers';
 
+interface PollState {
+  voted: boolean;
+  results: number[];
+}
+
 const getCountdown = (date: string): string => {
   const diff = new Date(date).getTime() - Date.now();
   if (diff <= 0) return 'faltan 0 d 0 h';
