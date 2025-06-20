@@ -1,4 +1,4 @@
-import { Match } from '../types';
+import { Match, Standing, Player } from '../types';
 
 //  Format currency
 export const formatCurrency = (amount: number): string => {
@@ -113,6 +113,25 @@ export const calculateLevel = (xp: number): number => {
 export const xpForNextLevel = (level: number): number => {
   return Math.pow(level, 2) * 100;
 };
+
+// Placeholder helper implementations for DT dashboard
+export const getMiniTable = (clubId: string, standings: Standing[]): Standing[] => {
+  return standings.filter(s => s.clubId === clubId).slice(0, 5);
+};
+
+export const calcStreak = (clubId: string, fixtures: Match[]): number => {
+  return fixtures.filter(
+    m => (m.homeTeam === clubId || m.awayTeam === clubId) && m.status === 'finished'
+  ).length;
+};
+
+export const getTopPerformer = (clubId: string): Player | null => {
+  return clubId ? null : null;
+};
+
+export const goalsDiff = (clubId: string): number => (clubId ? 0 : 0);
+export const possessionDiff = (clubId: string): number => (clubId ? 0 : 0);
+export const yellowDiff = (clubId: string): number => (clubId ? 0 : 0);
 
 // Format news type
 export const formatNewsType = (type: string): string => {
