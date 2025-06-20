@@ -220,7 +220,7 @@ const DtDashboard = () => {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[359px]:grid-cols-1">
         <div className="lg:col-span-2 space-y-6">
           {standing && (
             <div className="card p-4 overflow-x-auto">
@@ -259,7 +259,7 @@ const DtDashboard = () => {
           )}
 
           {standing && (
-            <div className="card p-6">
+            <div className="card p-6 lg:mt-6">
               <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
               <div className="space-y-4">
                 {[
@@ -277,7 +277,7 @@ const DtDashboard = () => {
                           style={{ width: `${(stat.club / maxVal) * 100}%` }}
                         ></div>
                         <div
-                          className="absolute top-0 left-0 h-3 bg-gray-500 rounded opacity-50"
+                          className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
                           style={{ width: `${(stat.league / maxVal) * 100}%` }}
                         ></div>
                       </div>
@@ -313,7 +313,7 @@ const DtDashboard = () => {
             <ul className="space-y-2 text-sm">
               {topTransfers.map(t => (
                 <li key={t.id} className="flex justify-between">
-                  <span>{t.playerName} → {t.toClub}</span>
+                  <span>{t.playerName} {t.fromClub} → {t.toClub}</span>
                   <span>{formatCurrency(t.fee)}</span>
                 </li>
               ))}
@@ -321,7 +321,7 @@ const DtDashboard = () => {
           </div>
 
           {announcements.length > 0 && (
-            <div className="card p-6">
+            <div className="card card-hover p-6 hover:shadow-[0_0_10px_var(--accent)] transition-shadow">
               <h2 className="text-lg font-bold mb-4">Anuncios</h2>
               <ul className="space-y-2 text-sm">
                 {announcements.map(a => (
@@ -334,7 +334,7 @@ const DtDashboard = () => {
             </div>
           )}
 
-          <div className="card p-6">
+          <div className="card card-hover p-6 hover:shadow-[0_0_10px_var(--accent)] transition-shadow">
             <h2 className="text-lg font-bold mb-4">Recordatorios</h2>
             {reminders.length > 0 ? (
               <ul className="space-y-1 text-sm">
