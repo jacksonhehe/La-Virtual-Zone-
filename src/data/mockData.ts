@@ -571,7 +571,9 @@ export function generateStandings(tournamentId: string): Standing[] {
       goalsFor: 0,
       goalsAgainst: 0,
       points: 0,
-      form: []
+      form: [],
+      possession: 50,
+      cards: 0
     };
   });
   
@@ -648,7 +650,13 @@ export function generateStandings(tournamentId: string): Standing[] {
     // Sort alphabetically as last resort
     return a.clubName.localeCompare(b.clubName);
   });
-  
+
+  // Add synthetic stats
+  standingsArray.forEach(team => {
+    team.possession = 45 + Math.floor(Math.random() * 11);
+    team.cards = 5 + Math.floor(Math.random() * 20);
+  });
+
   return standingsArray;
 }
 
