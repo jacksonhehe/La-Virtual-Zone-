@@ -8,11 +8,21 @@ import {
   Home,
   Plane,
   Newspaper,
-  Check
+  Check,
+  Trophy,
+  Calendar
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate, slugify } from '../utils/helpers';
+
+const getCountdown = (date: string): string => {
+  const diff = new Date(date).getTime() - Date.now();
+  if (diff <= 0) return 'faltan 0 d 0 h';
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  return `faltan ${days} d ${hours} h`;
+};
 
 const DtDashboard = () => {
   const [countdown, setCountdown] = useState('');
@@ -57,6 +67,9 @@ const DtDashboard = () => {
   const slug = slugify(club.name);
   const clubPlayers = players.filter(p => p.clubId === club.id);
   const captain = clubPlayers[0];
+  const inFormPlayer = [...clubPlayers].sort(
+    (a, b) => b.goals + b.assists - (a.goals + a.assists)
+  )[0];
   const formation = (club as unknown as { formation?: string }).formation || '4-3-3';
   const standing = standings.find(s => s.clubId === club.id);
   const morale = standing && standing.form.length > 0
@@ -93,6 +106,12 @@ const DtDashboard = () => {
     return () => clearInterval(id);
   }, [nextMatch]);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const id = setInterval(() => setTimer(t => t + 1), 3600000);
+    return () => clearInterval(id);
+  }, []);
+
   const latestNews = newsItems
     .filter(n => n.clubId === club.id)
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
@@ -111,6 +130,12 @@ const DtDashboard = () => {
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
     .slice(0, 2);
 
+  const milestones = [
+    { label: 'Cierre de mercado', date: '2025-01-31', icon: DollarSign },
+    { label: 'Inicio Copa PES', date: '2025-02-10', icon: Trophy },
+    { label: 'Supercopa Digital', date: '2025-06-15', icon: Calendar }
+  ];
+
 
   const leagueAvgGoals = standings.reduce((sum, s) => sum + s.goalsFor, 0) / standings.length;
   const leagueAvgPossession = standings.reduce((sum, s) => sum + s.possession, 0) / standings.length;
@@ -124,6 +149,11 @@ const DtDashboard = () => {
     .filter(n => n.type === 'statement')
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
     .slice(0, 2);
+
+  const classificationTarget = 60;
+  const fairPlayTarget = 80;
+  const classificationProgress = classificationTarget;
+  const fairPlayProgress = fairPlayTarget;
 
   return (
     <>
@@ -234,6 +264,19 @@ const DtDashboard = () => {
         </div>
       )}
 
+      <div className="card p-4 mb-8 flex flex-col sm:flex-row justify-between">
+        {milestones.map(m => {
+          const Icon = m.icon;
+          return (
+            <div key={m.label} className="flex items-center space-x-2">
+              <Icon className="text-accent w-5 h-5" />
+              <span>{m.label}</span>
+              <span className="text-gray-400 text-sm">{getCountdown(m.date)}</span>
+            </div>
+          );
+        })}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-[359px]:grid-cols-1">
         <div className="lg:col-span-2 space-y-6">
           {standing && (
@@ -273,41 +316,90 @@ const DtDashboard = () => {
           )}
 
           {standing && (
-            <div className="card p-6 lg:mt-6">
-              <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
-              <div className="space-y-4">
-                {[
-                  { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
-                  { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
-                  { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
-                ].map(stat => {
-                  const maxVal = Math.max(stat.club, stat.league);
-                  return (
-                    <div key={stat.label}>
-                      <p className="text-sm mb-1">{stat.label}</p>
-                      <div className="relative h-3 bg-gray-700 rounded">
-                        <div
-                          className="absolute top-0 left-0 h-3 bg-accent rounded"
-                          style={{ width: `${(stat.club / maxVal) * 100}%` }}
-                        ></div>
-                        <div
-                          className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
-                          style={{ width: `${(stat.league / maxVal) * 100}%` }}
-                        ></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-400 mt-1">
-                        <span>Club: {Math.round(stat.club)}</span>
-                        <span>Media liga: {Math.round(stat.league)}</span>
-                      </div>
-                    </div>
-                  );
-                })}
+            <div className="lg:flex gap-4 lg:mt-6">
+              <div className="flex flex-col items-center mb-6 lg:mb-0">
+                <div className="flex space-x-1 mb-2">
+                  {standing.form.slice(-5).map((r, i) => (
+                    <span
+                      key={i}
+                      className={`w-3 h-3 rounded-full ${
+                        r === 'W' ? 'bg-green-500' : r === 'D' ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                    ></span>
+                  ))}
+                </div>
+                {inFormPlayer && (
+                  <div className="flex items-center space-x-2 text-xs">
+                    <img
+                      src={inFormPlayer.image}
+                      alt={inFormPlayer.name}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span>
+                      {inFormPlayer.goals} G / {inFormPlayer.assists} A
+                    </span>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+              <div className="card p-6 flex-1">
+                <h2 className="text-lg font-bold mb-4">Comparativa con la liga</h2>
+                <div className="space-y-4">
+                  {[
+                    { label: 'Goles anotados', club: clubStats.goals, league: leagueAvgGoals },
+                    { label: 'Posesión %', club: clubStats.possession, league: leagueAvgPossession },
+                    { label: 'Tarjetas', club: clubStats.cards, league: leagueAvgCards }
+                  ].map(stat => {
+                    const maxVal = Math.max(stat.club, stat.league);
+                    return (
+                      <div key={stat.label}>
+                        <p className="text-sm mb-1">{stat.label}</p>
+                        <div className="relative h-3 bg-gray-700 rounded">
+                          <div
+                            className="absolute top-0 left-0 h-3 bg-accent rounded"
+                            style={{ width: `${(stat.club / maxVal) * 100}%` }}
+                          ></div>
+                          <div
+                            className="absolute top-0 left-0 h-3 bg-gray-500/40 rounded"
+                            style={{ width: `${(stat.league / maxVal) * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                          <span>Club: {Math.round(stat.club)}</span>
+                          <span>Media liga: {Math.round(stat.league)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+          </div>
+        )}
 
-          {statements.length > 0 && (
-            <div className="card p-6">
+        <div className="space-y-6">
+          <div className="card p-4">
+            <p className="font-bold mb-2">Objetivo: Top 5</p>
+            <div className="h-3 bg-gray-700 rounded">
+              <div
+                style={{ width: `${classificationProgress}%` }}
+                className="h-3 bg-accent rounded"
+              ></div>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">{classificationProgress}% – ¡sigue así!</p>
+          </div>
+          <div className="card p-4">
+            <p className="font-bold mb-2">Juego limpio</p>
+            <div className="h-3 bg-gray-700 rounded">
+              <div
+                style={{ width: `${fairPlayProgress}%` }}
+                className="h-3 bg-accent rounded"
+              ></div>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">{fairPlayProgress}% – ¡sigue así!</p>
+          </div>
+        </div>
+
+        {statements.length > 0 && (
+          <div className="card p-6">
               <h2 className="text-lg font-bold mb-4">Voces de la jornada</h2>
               <ul className="space-y-2">
                 {statements.map(s => (
@@ -331,6 +423,19 @@ const DtDashboard = () => {
                   <span>{formatCurrency(t.fee)}</span>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          <div className="card p-4 flex flex-col text-sm">
+            <div className={`font-bold ${marketStatus ? 'text-neon-green' : 'text-neon-red'}`}>
+              {marketStatus ? 'Mercado abierto' : 'Mercado cerrado'}
+            </div>
+            {!marketStatus && (
+              <span className="text-gray-400">Reabre {formatDate(marketReopenDate)}</span>
+            )}
+            <ul className="list-disc ml-4 mt-2 space-y-1">
+              <li>Límite de sueldos vigente</li>
+              <li>Cupo máximo de traspasos</li>
             </ul>
           </div>
 
