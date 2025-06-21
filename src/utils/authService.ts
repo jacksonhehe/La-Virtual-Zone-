@@ -15,7 +15,7 @@ const hashPassword = (pwd: string): string => {
 // Mock test users
 const TEST_PASSWORD = hashPassword('password');
 
-const TEST_USERS = [
+const TEST_USERS: User[] = [
   {
     id: '1',
     username: 'admin',
@@ -23,15 +23,14 @@ const TEST_USERS = [
     role: 'admin',
     level: 10,
     xp: 1000,
-    avatar: 'https://ui-avatars.com/api/?name=Admin&background=9f65fd&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Admin&background=9f65fd&color=fff&size=128&bold=true',
     joinDate: new Date().toISOString(),
     status: 'active',
-    achievements: ['founder'],
-    following: {
-      users: [],
-      clubs: [],
-      players: []
-    },
+    notifications: true,
+    lastLogin: new Date().toISOString(),
+    followers: 0,
+    following: 0,
     password: TEST_PASSWORD
   },
   {
@@ -41,14 +40,14 @@ const TEST_USERS = [
     role: 'user',
     level: 1,
     xp: 0,
+    avatar:
+      'https://ui-avatars.com/api/?name=Usuario&background=111827&color=fff&size=128',
     joinDate: new Date().toISOString(),
     status: 'active',
-    achievements: [],
-    following: {
-      users: [],
-      clubs: [],
-      players: []
-    },
+    notifications: true,
+    lastLogin: new Date().toISOString(),
+    followers: 0,
+    following: 0,
     password: TEST_PASSWORD
   },
   {
@@ -60,15 +59,14 @@ const TEST_USERS = [
     xp: 500,
     club: 'Neón FC',
     clubId: 'club4',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     joinDate: new Date().toISOString(),
     status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: {
-      users: [],
-      clubs: ['Rayo Digital FC'],
-      players: []
-    },
+    notifications: true,
+    lastLogin: new Date().toISOString(),
+    followers: 0,
+    following: 0,
     password: TEST_PASSWORD
   }
 ];
@@ -185,7 +183,7 @@ export const addUser = (
     )}&background=111827&color=fff&size=128`,
     xp: 0,
     clubId,
-    createdAt: new Date().toISOString(),
+    joinDate: new Date().toISOString(),
     status: 'active',
     notifications: true,
     lastLogin: new Date().toISOString(),

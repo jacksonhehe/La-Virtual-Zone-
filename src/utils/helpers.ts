@@ -1,6 +1,6 @@
 import { Match, Standing } from '../types';
-import { leagueStandings, players } from '../data/mockData';
-export { slugify } from './slugify';
+import { leagueStandings, players } from '../data/mockData.js';
+export { slugify } from './slugify.js';
 
 //  Format currency
 export const formatCurrency = (amount: number): string => {
@@ -180,14 +180,14 @@ export interface LeagueDiff {
 
 const computeDiff = (
   clubId: string,
-  field: keyof Standing,
+  field: 'goalsFor' | 'possession' | 'cards',
   label: string
 ): LeagueDiff => {
   const team = leagueStandings.find(t => t.clubId === clubId);
   if (!team) return { label, diff: 0 };
 
-const avg =
-    leagueStandings.reduce((sum, s) => sum + s[field], 0) /
+  const avg =
+    leagueStandings.reduce((sum, s) => sum + (s[field] as number), 0) /
     leagueStandings.length;
 
   return { label, diff: Math.round(team[field] - avg) };
