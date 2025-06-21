@@ -235,9 +235,17 @@ const DtDashboard = () => {
                   {miniTable.map(row => (
                     <tr
                       key={row.club}
-                      className={
+                      className={`${
                         row.club === club.id ? 'text-accent font-semibold' : ''
-                      }
+                      } ${
+                        row.pos === 1
+                          ? 'bg-yellow-500/20'
+                          : row.pos === 2
+                          ? 'bg-gray-400/20'
+                          : row.pos === 3
+                          ? 'bg-amber-600/20'
+                          : ''
+                      }`}
                     >
                       <td>{row.pos}</td>
                       <td>{row.name}</td>
