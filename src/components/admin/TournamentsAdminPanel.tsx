@@ -19,13 +19,13 @@ const MatchResultModal = ({ tournament, onClose }: ResultModalProps) => {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!matchId) return;
-    const updated = tournaments.map(t => {
+    const updated = tournaments.map<Tournament>(t => {
       if (t.id !== tournament.id) return t;
       const matches = t.matches.map(m =>
         m.id === matchId ? { ...m, homeScore: home, awayScore: away, status: 'finished' } : m
       );
       const resultMatch = matches.find(m => m.id === matchId) as Match;
-      return { ...t, matches, results: [...(t.results || []), resultMatch] };
+      return { ...t, matches, results: [...(t.results || []), resultMatch] } as Tournament;
     });
     updateTournaments(updated);
     onClose();
@@ -83,8 +83,8 @@ const WinnerModal = ({ tournament, onClose }: WinnerModalProps) => {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!winner) return;
-    const updated = tournaments.map(t =>
-      t.id === tournament.id ? { ...t, winner, status: 'finished' } : t
+    const updated = tournaments.map<Tournament>(t =>
+      t.id === tournament.id ? ({ ...t, winner, status: 'finished' } as Tournament) : t
     );
     updateTournaments(updated);
     onClose();

@@ -10,11 +10,21 @@ export interface User {
   club?: string;
   clubId?: string;
   joinDate?: string;
+  /** Registration date */
+  createdAt?: string;
   status: 'active' | 'suspended' | 'banned';
   notifications: boolean;
   lastLogin: string;
   followers: number;
-  following: number;
+  /**
+   * Structure containing the clubs and users this user follows. Older
+   * mock data only stored a count, so these properties are optional.
+   */
+  following: {
+    clubs: string[];
+    users: string[];
+    players?: string[];
+  } | number;
   password?: string;
 }
 
@@ -28,7 +38,11 @@ export interface Club {
   stadium: string;
   budget: number;
   manager: string;
+  /** Style of play. Some components refer to this field as `style`. */
   playStyle: string;
+  style?: 'possession' | 'counter' | 'offensive' | 'defensive' | 'balanced';
+  /** Some views use `dt` as an alias for manager */
+  dt?: string;
   primaryColor: string;
   secondaryColor: string;
   description: string;
@@ -36,6 +50,16 @@ export interface Club {
   reputation: number;
   fanBase: number;
   morale: number;
+  /** Current season statistics used in some views */
+  season?: number;
+  wins?: number;
+  draws?: number;
+  losses?: number;
+  goalsFor?: number;
+  goalsAgainst?: number;
+  points?: number;
+  /** Optional squad information for panels that list players */
+  players?: Player[];
 }
 
 export interface Title {
@@ -88,10 +112,33 @@ export interface Tournament {
   id: string;
   name: string;
   type: 'league' | 'cup' | 'friendly';
+  /**
+   * Optional slug used in routes. Some pages expect this field so we
+   * include it here to avoid type errors when the data does not provide it.
+   */
+  slug?: string;
+  /**
+   * Optional banner or cover image used in tournament listings.
+   */
+  image?: string;
+  /**
+   * Alias used by some views instead of `type`. It may contain additional
+   * values like `playoff` so keep it flexible.
+   */
+  format?: 'league' | 'cup' | 'friendly' | 'playoff';
   logo: string;
   startDate: string;
   endDate: string;
-  status: 'upcoming' | 'active' | 'finished';
+  /**
+   * Tournament status. Older data only includes `upcoming`, `active` and
+   * `finished`, but UI components also reference `open` and `ongoing`.
+   */
+  status: 'upcoming' | 'active' | 'finished' | 'open' | 'ongoing';
+  /**
+   * List of participating club names. Not every tournament provides this
+   * information so it is optional.
+   */
+  participants?: string[];
   teams: string[];
   rounds: number;
   matches: Match[];
