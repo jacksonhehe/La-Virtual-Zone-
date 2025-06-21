@@ -2,6 +2,7 @@ import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Award, ChevronLeft, Star, Shield, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
+import { slugify } from '../utils/slugify';
 
 const HallOfFame = () => {
   const [activeSection, setActiveSection] = useState('clubs');
@@ -11,6 +12,7 @@ const HallOfFame = () => {
     {
       id: '1',
       name: 'Rayo Digital FC',
+      slug: slugify('Rayo Digital FC'),
       logo: 'https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true',
       manager: 'admin',
       foundedYear: 2023,
@@ -24,6 +26,7 @@ const HallOfFame = () => {
     {
       id: '2',
       name: 'Neón FC',
+      slug: slugify('Neón FC'),
       logo: 'https://ui-avatars.com/api/?name=NFC&background=ec4899&color=fff&size=128&bold=true',
       manager: 'DT Neon',
       foundedYear: 2023,
@@ -36,6 +39,7 @@ const HallOfFame = () => {
     {
       id: '3',
       name: 'Glitchers 404',
+      slug: slugify('Glitchers 404'),
       logo: 'https://ui-avatars.com/api/?name=404&background=84cc16&color=fff&size=128&bold=true',
       manager: 'DT Glitch',
       foundedYear: 2023,
