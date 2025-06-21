@@ -392,8 +392,8 @@ const DtDashboard = () => {
           </Card>
 
           {/* Botones de acción rápida */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <button className="hover-card bg-accent py-2 font-semibold text-black">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
               Enviar oferta
             </button>
             <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
