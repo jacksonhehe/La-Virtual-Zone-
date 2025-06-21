@@ -67,7 +67,7 @@ const ProgressBar = ({
   return (
     <div className="h-3 w-full rounded bg-zinc-800">
       <div
-        className="h-full rounded bg-accent transition-[width] duration-500 ease-out"
+        className="h-full rounded bg-accent transition-[width] duration-[400ms] ease-out"
         style={{ width: `${value}%` }}
       />
     </div>
