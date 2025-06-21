@@ -115,3 +115,19 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 0 6px rgba(0, 224, 255, 0.45);
 }
+
+.hover-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 6px rgba(0, 224, 255, 0.45);
+}
+
+.btn-outline {
+  @apply text-accent border border-accent rounded px-3 py-1 text-xs hover:bg-accent/10 transition;
+}
+
+.drop-shadow-neon {
+  filter: drop-shadow(0 0 6px #00e0ff);
+}
