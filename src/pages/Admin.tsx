@@ -18,7 +18,6 @@ import CommentsAdminPanel from '../components/admin/CommentsAdminPanel';
 import { User, Club, Player } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
-import Card from '../components/common/Card';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -205,34 +204,54 @@ const Admin = () => {
               <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <Card className="p-6 flex flex-col cursor-pointer" onClick={() => setActiveTab('users')}>
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
                   <p className="text-gray-400 text-sm mb-1">Nuevos usuarios</p>
                   <h3 className="text-2xl font-bold">{newUsersCount}</h3>
-                  <button className="btn-primary mt-3">Ver usuarios</button>
-                </Card>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('users')}
+                  >
+                    Ver usuarios
+                  </button>
+                </div>
 
-                <Card className="p-6 flex flex-col cursor-pointer" onClick={() => setActiveTab('clubs')}>
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
                   <p className="text-gray-400 text-sm mb-1">Clubes activos</p>
                   <h3 className="text-2xl font-bold">{activeClubsCount}</h3>
-                  <button className="btn-primary mt-3">Ver clubes</button>
-                </Card>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('clubs')}
+                  >
+                    Ver clubes
+                  </button>
+                </div>
 
-                <Card className="p-6 flex flex-col cursor-pointer" onClick={() => setActiveTab('market')}>
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
                   <p className="text-gray-400 text-sm mb-1">Transferencias hoy</p>
                   <h3 className="text-2xl font-bold">{transfersTodayCount}</h3>
-                  <button className="btn-primary mt-3">Ver mercado</button>
-                </Card>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('market')}
+                  >
+                    Ver mercado
+                  </button>
+                </div>
 
-                <Card className="p-6 flex flex-col cursor-pointer" onClick={() => setActiveTab('tournaments')}>
+                <div className="bg-dark-light rounded-lg p-6 border border-gray-800 flex flex-col">
                   <p className="text-gray-400 text-sm mb-1">Torneos activos</p>
                   <h3 className="text-2xl font-bold">{activeTournamentsCount}</h3>
-                  <button className="btn-primary mt-3">Ver torneos</button>
-                </Card>
+                  <button
+                    className="btn-primary mt-3"
+                    onClick={() => setActiveTab('tournaments')}
+                  >
+                    Ver torneos
+                  </button>
+                </div>
               </div>
               
               <div className="mb-8">
                 <h3 className="text-xl font-bold mb-4">Actividad reciente</h3>
-                <Card className="overflow-hidden">
+                <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
                   <div className="p-4 border-b border-gray-800">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
@@ -277,13 +296,13 @@ const Admin = () => {
                       <span className="text-xs text-gray-400">Hace 1 día</span>
                     </div>
                   </div>
-                </Card>
+                </div>
               </div>
-
+              
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-xl font-bold mb-4">Estado del sistema</h3>
-                  <Card className="p-4">
+                  <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Mercado de fichajes</span>
@@ -317,12 +336,12 @@ const Admin = () => {
                         </button>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 </div>
-
+                
                 <div>
                   <h3 className="text-xl font-bold mb-4">Acciones rápidas</h3>
-                  <Card className="p-4">
+                  <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
                     <div className="grid grid-cols-2 gap-4">
                       <button
                         className="btn-outline py-3 flex flex-col items-center justify-center"
@@ -372,7 +391,7 @@ const Admin = () => {
                         <span className="text-sm">Configuración</span>
                       </button>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </div>
             </div>

@@ -2,15 +2,9 @@
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "noEmit": false,
-    "allowImportingTsExtensions": false,
-    "module": "ES2022",
-    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "module": "CommonJS",
     "outDir": "tests/build"
   },
-  "include": [
-    "src/data/**/*",
-    "src/utils/**/*",
-    "src/types/**/*",
-    "tests/helpers.test.ts"
-  ]
+  "include": ["src/**/*", "tests/helpers.test.ts"]
 }

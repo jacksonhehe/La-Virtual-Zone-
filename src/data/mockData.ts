@@ -18,7 +18,7 @@ import  {
   DtTask,
   DtEvent
 } from '../types';
-import { slugify } from '../utils/slugify.js';
+import { slugify } from '../utils/slugify';
 
 // Mock Clubs Data
 export const clubs: Club[] = [

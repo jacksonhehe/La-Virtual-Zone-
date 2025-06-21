@@ -1,5 +1,4 @@
-/* tailwindcss v4 */
-@tailwind base;
+@tailwind  base;
 @tailwind components;
 @tailwind utilities;
 
@@ -113,6 +112,6 @@ body {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .hover-card:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-2px);
   box-shadow: 0 0 6px rgba(0, 224, 255, 0.45);
 }

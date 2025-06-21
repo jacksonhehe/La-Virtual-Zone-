@@ -20,10 +20,8 @@ import {
   Calendar
 } from 'lucide-react';
 
-import { useAuthStore } from '@/store/authStore';
-import { useDataStore } from '@/store/dataStore';
-import Card from '@/components/common/Card';
-import { DtFixture, NewsItem } from '@/types';
+import { useAuthStore } from '../store/authStore';
+import { useDataStore } from '../store/dataStore';
 import {
   getMiniTable,
   formatCurrency,
@@ -33,9 +31,25 @@ import {
   goalsDiff,
   yellowDiff,
   possessionDiff
-} from '@/utils/helpers';
+} from '../utils/helpers';
 
 /* ---------- componentes pequeños reutilizados ---------- */
+
+/* sombra y escala homogéneas para TODAS las tarjetas */
+const Card = ({
+  children,
+  onClick
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => (
+  <div
+    onClick={onClick}
+    className="hover-card cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
+  >
+    {children}
+  </div>
+);
 
 /* Progress bar con transición suave */
 const ProgressBar = ({
@@ -53,7 +67,7 @@ const ProgressBar = ({
   return (
     <div className="h-3 w-full rounded bg-zinc-800">
       <div
-        className="h-full rounded bg-accent transition-[width] duration-[400ms] ease-out"
+        className="h-full rounded bg-accent transition-[width] duration-500 ease-out"
         style={{ width: `${value}%` }}
       />
     </div>
@@ -96,7 +110,7 @@ const DtDashboard = () => {
     events
   } = useDataStore();
 
-  const nextMatch = fixtures.find((f: DtFixture) => !f.played);
+  const nextMatch = fixtures.find(f => !f.played);
   const countdown = useCountdown(nextMatch?.date || '');
 
   if (!user || !club) return <p>Cargando…</p>;
@@ -143,7 +157,7 @@ const DtDashboard = () => {
       <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <div className="flex items-center gap-2">
-            <Users size={24} className="text-purple-400 sm:size-24 size-20" />
+            <Users size={20} className="text-purple-400" />
             <span className="font-semibold">Plantilla</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -152,7 +166,7 @@ const DtDashboard = () => {
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <Layout size={24} className="text-blue-400 sm:size-24 size-20" />
+            <Layout size={20} className="text-blue-400" />
             <span className="font-semibold">Táctica</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -161,7 +175,7 @@ const DtDashboard = () => {
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <DollarSign size={24} className="text-green-400 sm:size-24 size-20" />
+            <DollarSign size={20} className="text-green-400" />
             <span className="font-semibold">Finanzas</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -170,7 +184,7 @@ const DtDashboard = () => {
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <TrendingUp size={24} className="text-yellow-400 sm:size-24 size-20" />
+            <TrendingUp size={20} className="text-yellow-400" />
             <span className="font-semibold">Mercado</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -188,9 +202,9 @@ const DtDashboard = () => {
             <Card>
               <div className="flex items-center gap-2">
                 {nextMatch.homeTeam === club.name ? (
-                  <Home size={24} className="text-accent sm:size-24 size-20" />
+                  <Home size={16} className="text-accent" />
                 ) : (
-                  <Plane size={24} className="text-accent sm:size-24 size-20" />
+                  <Plane size={16} className="text-accent" />
                 )}
                 <h2 className="font-semibold">Próximo partido</h2>
               </div>
@@ -205,7 +219,7 @@ const DtDashboard = () => {
                 to="/liga-master/fixture"
                 className="mt-3 inline-flex items-center gap-1 text-accent hover:underline"
               >
-                <Calendar size={24} className="sm:size-24 size-20" />
+                <Calendar size={14} />
                 Calendario completo
               </Link>
             </Card>
@@ -221,17 +235,9 @@ const DtDashboard = () => {
                   {miniTable.map(row => (
                     <tr
                       key={row.club}
-                      className={`${
+                      className={
                         row.club === club.id ? 'text-accent font-semibold' : ''
-                      } ${
-                        row.pos === 1
-                          ? 'bg-yellow-500/20'
-                          : row.pos === 2
-                          ? 'bg-gray-400/20'
-                          : row.pos === 3
-                          ? 'bg-amber-600/20'
-                          : ''
-                      }`}
+                      }
                     >
                       <td>{row.pos}</td>
                       <td>{row.name}</td>
@@ -245,8 +251,8 @@ const DtDashboard = () => {
                 {streak.map((w, i) => (
                   <Check
                     key={i}
-                    size={24}
-                    className={`${w ? 'text-green-500' : 'text-red-500'} sm:size-24 size-20`}
+                    size={14}
+                    className={w ? 'text-green-500' : 'text-red-500'}
                   />
                 ))}
               </div>
@@ -288,7 +294,7 @@ const DtDashboard = () => {
                       {performer.g} g – {performer.a} a
                     </p>
                   </div>
-                  <Trophy size={24} className="ml-auto text-yellow-400 sm:size-24 size-20" />
+                  <Trophy size={14} className="ml-auto text-yellow-400" />
                 </div>
               )}
             </Card>
@@ -321,10 +327,10 @@ const DtDashboard = () => {
               </Link>
             </div>
             <ul className="space-y-3">
-              {latestNews.map((item: NewsItem) => (
+              {latestNews.map(item => (
                 <li key={item.id} className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Newspaper size={24} className="mr-2 text-accent sm:size-24 size-20" />
+                    <Newspaper size={16} className="mr-2 text-accent" />
                     <span>{item.title}</span>
                   </div>
                   <span className="text-xs text-gray-400">
@@ -362,7 +368,7 @@ const DtDashboard = () => {
               />
               <span>{market.open ? 'Abierto' : 'Cerrado'}</span>
             </div>
-            <ul className="mt-3 space-y-1 text-xs text-gray-300">
+            <ul className="mt-3 space-y-1 text-xs text-primary">
               <li>Máx. 3 traspasos salientes</li>
               <li>Límite salarial activo</li>
             </ul>
@@ -377,7 +383,7 @@ const DtDashboard = () => {
               <ul className="space-y-2 text-sm">
                 {tasks.map(t => (
                   <li key={t.id} className="flex items-center gap-2">
-                    <Check size={24} className="text-accent sm:size-24 size-20" />
+                    <Check size={16} className="text-accent" />
                     <span>{t.text}</span>
                   </li>
                 ))}
@@ -386,7 +392,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Botones de acción rápida */}
-          <div className="grid gap-3 xs:grid-cols-2 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
               Enviar oferta
             </button>

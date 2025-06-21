@@ -8,10 +8,6 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
-    },
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
