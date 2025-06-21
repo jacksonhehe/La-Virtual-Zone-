@@ -1027,7 +1027,7 @@ export const dtClub: DtClub = {
   id: 'club1',
   name: 'Rayo Digital FC',
   slug: 'rayo-digital-fc',
-  badge: clubs[0].logo,
+  logo: clubs[0].logo,
   formation: '4-3-3',
   budget: clubs[0].budget,
   players: players.filter(p => p.clubId === 'club1')

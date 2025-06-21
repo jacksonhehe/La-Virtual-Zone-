@@ -262,7 +262,7 @@ export interface DtClub {
   id: string;
   name: string;
   slug: string;
-  badge: string;
+  logo: string;
   formation: string;
   budget: number;
   players: Player[];
