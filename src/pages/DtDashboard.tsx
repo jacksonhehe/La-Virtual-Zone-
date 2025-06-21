@@ -368,7 +368,7 @@ const DtDashboard = () => {
               />
               <span>{market.open ? 'Abierto' : 'Cerrado'}</span>
             </div>
-            <ul className="mt-3 space-y-1 text-xs text-primary">
+            <ul className="mt-3 space-y-1 text-xs text-gray-300">
               <li>Máx. 3 traspasos salientes</li>
               <li>Límite salarial activo</li>
             </ul>
