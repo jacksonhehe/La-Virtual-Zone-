@@ -141,7 +141,7 @@ const DtDashboard = () => {
             className="h-14 w-14 rounded-full"
           />
           <div>
-            <h1 className="text-2xl font-semibold">{club.name}</h1>
+              <h1 className="text-2xl font-semibold neon-text-blue drop-shadow-md">{club.name}</h1>
             <p className="text-sm text-gray-400">{user.username}</p>
           </div>
         </Link>
