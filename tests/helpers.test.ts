@@ -1,5 +1,12 @@
-import { getMiniTable, calcStreak, getTopPerformer, goalsDiff, possessionDiff, yellowDiff } from '../src/utils/helpers.ts';
-import { leagueStandings, tournaments } from '../src/data/mockData.ts';
+import {
+  getMiniTable,
+  calcStreak,
+  getTopPerformer,
+  goalsDiff,
+  possessionDiff,
+  yellowDiff
+} from '../src/utils/helpers.js';
+import { leagueStandings, tournaments } from '../src/data/mockData.js';
 
 const mini = getMiniTable('club1', leagueStandings);
 console.log('mini', mini.length === 5);
