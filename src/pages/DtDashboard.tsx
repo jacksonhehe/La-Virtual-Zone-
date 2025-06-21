@@ -23,6 +23,7 @@ import {
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import Card from '../components/common/Card';
+import { DtFixture, NewsItem } from '../types';
 import {
   getMiniTable,
   formatCurrency,
@@ -95,7 +96,7 @@ const DtDashboard = () => {
     events
   } = useDataStore();
 
-  const nextMatch = fixtures.find(f => !f.played);
+  const nextMatch = fixtures.find((f: DtFixture) => !f.played);
   const countdown = useCountdown(nextMatch?.date || '');
 
   if (!user || !club) return <p>Cargando…</p>;
@@ -320,7 +321,7 @@ const DtDashboard = () => {
               </Link>
             </div>
             <ul className="space-y-3">
-              {latestNews.map(item => (
+              {latestNews.map((item: NewsItem) => (
                 <li key={item.id} className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Newspaper size={24} className="mr-2 text-accent sm:size-24 size-20" />
