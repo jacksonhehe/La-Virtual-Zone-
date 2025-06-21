@@ -128,6 +128,7 @@ const DtDashboard = () => {
 
   return (
     <>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* ---------- ENCABEZADO ---------- */}
       <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
@@ -395,13 +396,13 @@ const DtDashboard = () => {
             <button className="hover-card bg-accent py-2 font-semibold text-black">
               Enviar oferta
             </button>
-            <button className="hover-card bg-accent py-2 font-semibold text-black">
+            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
               Informe médico
             </button>
-            <button className="hover-card bg-accent py-2 font-semibold text-black">
+            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
               Firmar juvenil
             </button>
-            <button className="hover-card bg-accent py-2 font-semibold text-black">
+            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
               Publicar declaración
             </button>
           </div>
@@ -410,6 +411,7 @@ const DtDashboard = () => {
 
       {/* margen extra antes del footer general */}
       <div className="mb-8" />
+      </div>
     </>
   );
 };
