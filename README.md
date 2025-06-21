@@ -12,6 +12,11 @@ npm install
 
 After the packages are installed you can start the development server.
 
+> **Note**: CSS rules such as `@tailwind` and `@apply` are processed by the
+> Tailwind/PostCSS pipeline. If your editor flags them as unknown, enable the
+> Tailwind CSS extension in VS Code or refer to the
+> [Tailwind documentation](https://tailwindcss.com/docs/installation).
+
 ## Development
 
 Run the development server with hot reload:
