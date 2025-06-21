@@ -128,6 +128,7 @@ const DtDashboard = () => {
 
   return (
     <>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* ---------- ENCABEZADO ---------- */}
       <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
@@ -410,6 +411,7 @@ const DtDashboard = () => {
 
       {/* margen extra antes del footer general */}
       <div className="mb-8" />
+      </div>
     </>
   );
 };
