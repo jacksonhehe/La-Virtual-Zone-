@@ -27,6 +27,9 @@ const HallOfFame = lazy(() => import('./pages/HallOfFame'));
 const Rankings = lazy(() => import('./pages/Rankings'));
 const Fixtures = lazy(() => import('./pages/Fixtures'));
 const DtDashboard = lazy(() => import('./pages/DtDashboard'));
+const Feed = lazy(() => import('./pages/Feed'));
+const Tacticas = lazy(() => import('./pages/Tacticas'));
+const Analisis = lazy(() => import('./pages/Analisis'));
 
 function App() {
   return (
@@ -40,17 +43,20 @@ function App() {
           <Route path="dt-dashboard" element={<DtDashboard />} />
           
           {/* Liga Master routes */}
-          <Route path="liga-master">
-            <Route index element={<LigaMaster />} />
-            <Route path="mercado" element={<Market />} />
-            <Route path="club/:clubName" element={<ClubProfile />} />
-          <Route path="club/:clubName/plantilla" element={<ClubSquad />} />
-          <Route path="clubes/:clubId/plantilla" element={<ClubSquad />} />
-          <Route path="club/:clubName/finanzas" element={<ClubFinances />} />
-            <Route path="hall-of-fame" element={<HallOfFame />} />
-            <Route path="rankings" element={<Rankings />} />
-            <Route path="fixture" element={<Fixtures />} />
-          </Route>
+        <Route path="liga-master">
+          <Route index element={<LigaMaster />} />
+          <Route path="mercado" element={<Market />} />
+          <Route path="club/:clubName" element={<ClubProfile />} />
+         <Route path="club/:clubName/plantilla" element={<ClubSquad />} />
+         <Route path="clubes/:clubId/plantilla" element={<ClubSquad />} />
+         <Route path="club/:clubName/finanzas" element={<ClubFinances />} />
+          <Route path="hall-of-fame" element={<HallOfFame />} />
+          <Route path="rankings" element={<Rankings />} />
+          <Route path="fixture" element={<Fixtures />} />
+          <Route path="feed" element={<Feed />} />
+          <Route path="tacticas" element={<Tacticas />} />
+          <Route path="analisis" element={<Analisis />} />
+        </Route>
           
           {/* Tournaments routes */}
           <Route path="torneos">
