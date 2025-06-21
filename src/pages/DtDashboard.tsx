@@ -157,7 +157,7 @@ const DtDashboard = () => {
       <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <div className="flex items-center gap-2">
-            <Users size={20} className="text-purple-400" />
+            <Users size={24} className="text-purple-400 sm:size-24 size-20" />
             <span className="font-semibold">Plantilla</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -166,7 +166,7 @@ const DtDashboard = () => {
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <Layout size={20} className="text-blue-400" />
+            <Layout size={24} className="text-blue-400 sm:size-24 size-20" />
             <span className="font-semibold">Táctica</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -175,7 +175,7 @@ const DtDashboard = () => {
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <DollarSign size={20} className="text-green-400" />
+            <DollarSign size={24} className="text-green-400 sm:size-24 size-20" />
             <span className="font-semibold">Finanzas</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -184,7 +184,7 @@ const DtDashboard = () => {
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <TrendingUp size={20} className="text-yellow-400" />
+            <TrendingUp size={24} className="text-yellow-400 sm:size-24 size-20" />
             <span className="font-semibold">Mercado</span>
           </div>
           <p className="mt-2 text-sm font-medium text-gray-400">
@@ -202,9 +202,9 @@ const DtDashboard = () => {
             <Card>
               <div className="flex items-center gap-2">
                 {nextMatch.homeTeam === club.name ? (
-                  <Home size={16} className="text-accent" />
+                  <Home size={24} className="text-accent sm:size-24 size-20" />
                 ) : (
-                  <Plane size={16} className="text-accent" />
+                  <Plane size={24} className="text-accent sm:size-24 size-20" />
                 )}
                 <h2 className="font-semibold">Próximo partido</h2>
               </div>
@@ -219,7 +219,7 @@ const DtDashboard = () => {
                 to="/liga-master/fixture"
                 className="mt-3 inline-flex items-center gap-1 text-accent hover:underline"
               >
-                <Calendar size={14} />
+                <Calendar size={24} className="sm:size-24 size-20" />
                 Calendario completo
               </Link>
             </Card>
@@ -251,8 +251,8 @@ const DtDashboard = () => {
                 {streak.map((w, i) => (
                   <Check
                     key={i}
-                    size={14}
-                    className={w ? 'text-green-500' : 'text-red-500'}
+                    size={24}
+                    className={`${w ? 'text-green-500' : 'text-red-500'} sm:size-24 size-20`}
                   />
                 ))}
               </div>
@@ -294,7 +294,7 @@ const DtDashboard = () => {
                       {performer.g} g – {performer.a} a
                     </p>
                   </div>
-                  <Trophy size={14} className="ml-auto text-yellow-400" />
+                  <Trophy size={24} className="ml-auto text-yellow-400 sm:size-24 size-20" />
                 </div>
               )}
             </Card>
@@ -330,7 +330,7 @@ const DtDashboard = () => {
               {latestNews.map(item => (
                 <li key={item.id} className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Newspaper size={16} className="mr-2 text-accent" />
+                    <Newspaper size={24} className="mr-2 text-accent sm:size-24 size-20" />
                     <span>{item.title}</span>
                   </div>
                   <span className="text-xs text-gray-400">
@@ -383,7 +383,7 @@ const DtDashboard = () => {
               <ul className="space-y-2 text-sm">
                 {tasks.map(t => (
                   <li key={t.id} className="flex items-center gap-2">
-                    <Check size={16} className="text-accent" />
+                    <Check size={24} className="text-accent sm:size-24 size-20" />
                     <span>{t.text}</span>
                   </li>
                 ))}
