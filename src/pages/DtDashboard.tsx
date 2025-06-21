@@ -20,10 +20,10 @@ import {
   Calendar
 } from 'lucide-react';
 
-import { useAuthStore } from '../store/authStore';
-import { useDataStore } from '../store/dataStore';
-import Card from '../components/common/Card';
-import { DtFixture, NewsItem } from '../types';
+import { useAuthStore } from '@/store/authStore';
+import { useDataStore } from '@/store/dataStore';
+import Card from '@/components/common/Card';
+import { DtFixture, NewsItem } from '@/types';
 import {
   getMiniTable,
   formatCurrency,
@@ -33,7 +33,7 @@ import {
   goalsDiff,
   yellowDiff,
   possessionDiff
-} from '../utils/helpers';
+} from '@/utils/helpers';
 
 /* ---------- componentes pequeños reutilizados ---------- */
 
