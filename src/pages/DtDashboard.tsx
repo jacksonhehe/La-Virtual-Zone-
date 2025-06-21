@@ -128,6 +128,7 @@ const DtDashboard = () => {
 
   return (
     <>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* ---------- ENCABEZADO ---------- */}
       <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
@@ -153,7 +154,7 @@ const DtDashboard = () => {
       </header>
 
       {/* ---------- TARJETAS RÁPIDAS ---------- */}
-      <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <div className="flex items-center gap-2">
             <Users size={20} className="text-purple-400" />
@@ -225,7 +226,7 @@ const DtDashboard = () => {
           )}
 
           {/* Mini-tabla + Streak + Performer */}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {/* Mini tabla de posiciones */}
             <Card>
               <h3 className="mb-3 font-semibold">Posiciones</h3>
@@ -410,6 +411,7 @@ const DtDashboard = () => {
 
       {/* margen extra antes del footer general */}
       <div className="mb-8" />
+      </div>
     </>
   );
 };
