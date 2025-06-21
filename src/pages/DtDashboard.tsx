@@ -32,20 +32,26 @@ import {
   yellowDiff,
   possessionDiff
 } from '../utils/helpers';
+import type { MiniTableRow, LeagueDiff } from '../utils/helpers';
+import { DtFixture, DtTask, DtEvent, NewsItem } from '../types';
 
 /* ---------- componentes pequeños reutilizados ---------- */
 
 /* sombra y escala homogéneas para TODAS las tarjetas */
-const Card = ({
-  children,
-  onClick
-}: {
+interface CardProps {
   children: React.ReactNode;
   onClick?: () => void;
+  className?: string;
+}
+
+const Card: React.FC<CardProps> = ({
+  children,
+  onClick,
+  className = ''
 }) => (
   <div
     onClick={onClick}
-    className="hover-card cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
+    className={`hover-card cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40 ${className}`}
   >
     {children}
   </div>
@@ -110,7 +116,7 @@ const DtDashboard = () => {
     events
   } = useDataStore();
 
-  const nextMatch = fixtures.find(f => !f.played);
+  const nextMatch = fixtures.find((f: DtFixture) => !f.played);
   const countdown = useCountdown(nextMatch?.date || '');
 
   if (!user || !club) return <p>Cargando…</p>;
@@ -232,7 +238,7 @@ const DtDashboard = () => {
               <h3 className="mb-3 font-semibold">Posiciones</h3>
               <table className="w-full text-sm">
                 <tbody>
-                  {miniTable.map(row => (
+                  {miniTable.map((row: MiniTableRow) => (
                     <tr
                       key={row.club}
                       className={
@@ -248,7 +254,7 @@ const DtDashboard = () => {
               </table>
               {/* Racha */}
               <div className="mt-3 flex gap-1">
-                {streak.map((w, i) => (
+                {streak.map((w: boolean, i: number) => (
                   <Check
                     key={i}
                     size={14}
@@ -262,7 +268,7 @@ const DtDashboard = () => {
             <Card>
               <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
               <ul className="space-y-2 text-sm">
-                {bullets.map(b => (
+                {bullets.map((b: LeagueDiff) => (
                   <li key={b.label} className="flex items-center justify-between">
                     <span>{b.label}</span>
                     <span
@@ -327,7 +333,7 @@ const DtDashboard = () => {
               </Link>
             </div>
             <ul className="space-y-3">
-              {latestNews.map(item => (
+                {latestNews.map((item: NewsItem) => (
                 <li key={item.id} className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Newspaper size={16} className="mr-2 text-accent" />
@@ -347,8 +353,8 @@ const DtDashboard = () => {
           {/* Anuncios */}
           <Card>
             <h3 className="mb-3 font-semibold">Anuncios</h3>
-            <ul className="space-y-2 text-sm">
-              {events.slice(0, 3).map(ev => (
+              <ul className="space-y-2 text-sm">
+              {events.slice(0, 3).map((ev: DtEvent) => (
                 <li key={ev.id} className="flex items-center justify-between">
                   <span>{ev.message}</span>
                   <span className="text-xs text-gray-400">{formatDate(ev.date)}</span>
@@ -381,7 +387,7 @@ const DtDashboard = () => {
               <p className="text-sm text-gray-400">Todo al día ✔️</p>
             ) : (
               <ul className="space-y-2 text-sm">
-                {tasks.map(t => (
+                  {tasks.map((t: DtTask) => (
                   <li key={t.id} className="flex items-center gap-2">
                     <Check size={16} className="text-accent" />
                     <span>{t.text}</span>
