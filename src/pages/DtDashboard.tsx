@@ -408,43 +408,8 @@ const DtDashboard = () => {
         </div>
       </main>
 
-      {/* margen extra antes del footer */}
+      {/* margen extra antes del footer general */}
       <div className="mb-8" />
-
-      {/* ---------- FOOTER ---------- */}
-      <footer className="border-t border-zinc-800 pt-8 text-xs text-gray-500">
-        <div className="mx-auto max-w-5xl px-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Link
-              to="/reglamento"
-              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              Reglamento
-            </Link>
-            <Link
-              to="/pretemporada"
-              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              Pretemporada
-            </Link>
-            <Link
-              to="/liga-master/hall-of-fame"
-              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              Salón de la Fama
-            </Link>
-            <Link
-              to="/ayuda"
-              className="hover:underline hover:text-white focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              Ayuda
-            </Link>
-          </div>
-          <p className="mt-6 text-center text-gray-600">
-            © 2025 La Virtual Zone · Todos los derechos reservados.
-          </p>
-        </div>
-      </footer>
     </>
   );
 };
