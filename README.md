@@ -4,13 +4,13 @@ La Virtual Zone is a web platform for managing PES 2021 leagues and tournaments.
 
 ## Prerequisites
 
-Before running the project, make sure you have **Node.js** installed. Install the dependencies once and reuse them for any script:
+Before running the project, make sure you have **Node.js** installed. Install the dependencies once and reuse them for any script. This step installs packages such as `@types/node` that the TypeScript compiler depends on:
 
 ```bash
 npm install
 ```
 
-After the packages are installed you can start the development server.
+Run `npm install` before executing TypeScript builds or tests, otherwise `tsc` will report missing type definitions. After the packages are installed you can start the development server.
 
 ## Development
 
