@@ -22,6 +22,7 @@ import {
 
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import Card from '../components/common/Card';
 import {
   getMiniTable,
   formatCurrency,
@@ -34,22 +35,6 @@ import {
 } from '../utils/helpers';
 
 /* ---------- componentes pequeños reutilizados ---------- */
-
-/* sombra y escala homogéneas para TODAS las tarjetas */
-const Card = ({
-  children,
-  onClick
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => (
-  <div
-    onClick={onClick}
-    className="hover-card cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
-  >
-    {children}
-  </div>
-);
 
 /* Progress bar con transición suave */
 const ProgressBar = ({
