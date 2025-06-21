@@ -153,7 +153,7 @@ const DtDashboard = () => {
       </header>
 
       {/* ---------- TARJETAS RÁPIDAS ---------- */}
-      <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <div className="flex items-center gap-2">
             <Users size={20} className="text-purple-400" />
@@ -225,7 +225,7 @@ const DtDashboard = () => {
           )}
 
           {/* Mini-tabla + Streak + Performer */}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {/* Mini tabla de posiciones */}
             <Card>
               <h3 className="mb-3 font-semibold">Posiciones</h3>
@@ -391,7 +391,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Botones de acción rápida */}
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <button className="hover-card bg-accent py-2 font-semibold text-black">
               Enviar oferta
             </button>
