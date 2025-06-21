@@ -193,7 +193,7 @@ const TestMarket = () => {
             <div>
               <h4 className="font-bold text-primary mb-2">3. Revisa la Plantilla de tu Club</h4>
               <p className="text-gray-300 text-sm">
-                Ve a <a href="/liga-master/club/neón-fc" className="text-primary hover:underline">/liga-master/club/neón-fc</a> para ver tu plantilla actual y las finanzas del club.
+                Ve a <a href="/liga-master/club/neon-fc" className="text-primary hover:underline">/liga-master/club/neon-fc</a> para ver tu plantilla actual y las finanzas del club.
               </p>
             </div>
             
