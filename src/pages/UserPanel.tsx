@@ -383,7 +383,7 @@ const UserPanel = () => {
                     </a>
                     
                     <a
-                      href={`/liga-master/club/${userClub.slug}/tacticas`}
+                      href="/liga-master/tacticas"
                       className="p-4 bg-dark rounded-lg hover:bg-gray-800 transition-colors flex flex-col items-center text-center"
                     >
                       <Clipboard size={24} className="text-primary mb-2" />
