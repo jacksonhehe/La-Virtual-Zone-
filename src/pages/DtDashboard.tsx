@@ -141,7 +141,7 @@ const DtDashboard = () => {
           />
           <div>
             <h1 className="text-2xl font-semibold">{club.name}</h1>
-            <p className="text-sm text-gray-400">{user.name}</p>
+            <p className="text-sm text-gray-400">{user.username}</p>
           </div>
         </Link>
         <div className="mt-4 flex flex-col items-center md:ml-auto md:mt-0 md:items-end">
@@ -200,7 +200,7 @@ const DtDashboard = () => {
           {nextMatch && (
             <Card>
               <div className="flex items-center gap-2">
-                {nextMatch.home === club.id ? (
+                {nextMatch.homeTeam === club.name ? (
                   <Home size={16} className="text-accent" />
                 ) : (
                   <Plane size={16} className="text-accent" />
@@ -208,7 +208,7 @@ const DtDashboard = () => {
                 <h2 className="font-semibold">Próximo partido</h2>
               </div>
               <p className="mt-2">
-                {nextMatch.rival} –{' '}
+                {nextMatch.homeTeam === club.name ? nextMatch.awayTeam : nextMatch.homeTeam} –{' '}
                 <span className="text-gray-400">{formatDate(nextMatch.date)}</span>
               </p>
               {countdown && (
