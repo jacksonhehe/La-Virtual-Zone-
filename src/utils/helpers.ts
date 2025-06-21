@@ -1,5 +1,6 @@
-import { Match, Standing, Player } from '../types';
+import { Match, Standing } from '../types';
 import { leagueStandings, players } from '../data/mockData';
+export { slugify } from './slugify';
 
 //  Format currency
 export const formatCurrency = (amount: number): string => {
@@ -91,20 +92,6 @@ export const getMatchResult = (match: Match, teamName: string): 'win' | 'loss' |
   }
   
   return null;
-};
-
-// Slugify string
-export const slugify = (text: string): string => {
-  return text
-    .toString()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
 };
 
 // Calculate level from XP
@@ -199,11 +186,11 @@ const computeDiff = (
   const team = leagueStandings.find(t => t.clubId === clubId);
   if (!team) return { label, diff: 0 };
 
-  const avg =
-    leagueStandings.reduce((sum, s) => sum + (s as any)[field], 0) /
+const avg =
+    leagueStandings.reduce((sum, s) => sum + s[field], 0) /
     leagueStandings.length;
 
-  return { label, diff: Math.round((team as any)[field] - avg) };
+  return { label, diff: Math.round(team[field] - avg) };
 };
 
 export const goalsDiff = (clubId: string): LeagueDiff =>

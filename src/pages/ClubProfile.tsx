@@ -12,7 +12,7 @@ import {
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import { useDataStore } from '../store/dataStore';
-import { formatDate, formatCurrency, getMatchResult, slugify } from '../utils/helpers';
+import { formatDate, formatCurrency, getMatchResult } from '../utils/helpers';
 
 const ClubProfile = () => {
   const { clubName } = useParams<{ clubName: string }>();
