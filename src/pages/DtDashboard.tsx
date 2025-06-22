@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 
 import StatsCard from '../components/common/StatsCard';
+import Card from '../components/common/Card';
 
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -37,22 +38,6 @@ import {
 } from '../utils/helpers';
 
 /* ---------- componentes pequeños reutilizados ---------- */
-
-/* sombra y escala homogéneas para TODAS las tarjetas */
-const Card = ({
-  children,
-  onClick
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => (
-  <div
-    onClick={onClick}
-    className="card-hover cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
-  >
-    {children}
-  </div>
-);
 
 import ProgressBar from '../components/common/ProgressBar';
 
@@ -170,7 +155,7 @@ const DtDashboard = () => {
         <div className="space-y-8 lg:col-span-2">
           {/* Próximo partido */}
           {nextMatch && (
-            <Card>
+            <Card className="p-4">
               <div className="flex items-center gap-2">
                 {nextMatch.homeTeam === club.name ? (
                   <Home size={16} className="text-accent" />
@@ -199,7 +184,7 @@ const DtDashboard = () => {
           {/* Mini-tabla + Streak + Performer */}
           <div className="grid gap-6 md:grid-cols-2">
             {/* Mini tabla de posiciones */}
-            <Card>
+            <Card className="p-4">
               <h3 className="mb-3 font-semibold">Posiciones</h3>
               <table className="w-full text-sm">
                 <tbody>
@@ -230,7 +215,7 @@ const DtDashboard = () => {
             </Card>
 
             {/* Comparativa + Jugador en forma */}
-            <Card>
+            <Card className="p-4">
               <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
               <ul className="space-y-2 text-sm">
                 {bullets.map(b => (
@@ -272,7 +257,7 @@ const DtDashboard = () => {
           </div>
 
           {/* Objetivos de temporada */}
-          <Card>
+          <Card className="p-4">
             <h3 className="mb-4 font-semibold">Objetivos de temporada</h3>
             <div className="space-y-4">
               <div>
@@ -287,7 +272,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Últimas noticias */}
-          <Card>
+          <Card className="p-4">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="font-semibold">Últimas noticias</h3>
               <Link
@@ -316,7 +301,7 @@ const DtDashboard = () => {
         {/* === COLUMNA DERECHA (1/3) === */}
         <div className="space-y-8">
           {/* Anuncios */}
-          <Card>
+          <Card className="p-4">
             <h3 className="mb-3 font-semibold">Anuncios</h3>
             <ul className="space-y-2 text-sm">
               {events.slice(0, 3).map(ev => (
@@ -329,7 +314,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Semáforo de mercado */}
-          <Card>
+          <Card className="p-4">
             <h3 className="mb-3 font-semibold">Mercado</h3>
             <div className="flex items-center gap-2">
               <span
@@ -346,7 +331,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Recordatorios pendientes */}
-          <Card>
+          <Card className="p-4">
             <h3 className="mb-3 font-semibold">Recordatorios</h3>
             {tasks.length === 0 ? (
               <p className="text-sm text-gray-400">Todo al día ✔️</p>

@@ -5,6 +5,7 @@ import { Player } from '../types';
 import PageHeader from '../components/common/PageHeader';
 import OfferModal from '../components/market/OfferModal';
 import OffersPanel from '../components/market/OffersPanel';
+import Card from '../components/common/Card';
 import { formatCurrency, getPositionColor, getFormIcon } from '../utils/helpers';
 
 const Market = () => {
@@ -217,7 +218,7 @@ const Market = () => {
             {/* Players grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {sortedPlayers.map(player => (
-                <div key={player.id} className="card card-hover">
+                <Card key={player.id} className="overflow-hidden">
                   <div className="p-4 border-b border-gray-700">
                     <div className="flex items-center">
                       <img 
@@ -292,7 +293,7 @@ const Market = () => {
                       Hacer Oferta
                     </button>
                   </div>
-                </div>
+                </Card>
               ))}
               
               {filteredPlayers.length === 0 && (

@@ -5,6 +5,7 @@ import { useDataStore } from '../../store/dataStore';
 import { processTransfer } from '../../utils/transferService';
 import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
+import Card from '../common/Card';
 
 const OffersPanel = () => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
@@ -98,7 +99,7 @@ const OffersPanel = () => {
       )}
       
       {filteredOffers.map(offer => (
-        <div key={offer.id} className="card card-hover overflow-hidden">
+        <Card key={offer.id} className="overflow-hidden">
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-3">
@@ -194,7 +195,7 @@ const OffersPanel = () => {
               )}
             </div>
           )}
-        </div>
+        </Card>
       ))}
     </div>
   );

@@ -2,6 +2,7 @@ import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronLeft, ChevronUp } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
+import Card from '../components/common/Card';
 import { useDataStore } from '../store/dataStore';
 import { formatDate } from '../utils/helpers';
 
@@ -121,9 +122,9 @@ const Fixtures = () => {
             const isExpanded = expandedMatches[match.id] || false;
             
             return (
-              <div
+              <Card
                 key={match.id}
-                className="card card-hover overflow-hidden bg-gradient-to-br from-dark to-gray-800 border border-gray-700"
+                className="overflow-hidden bg-gradient-to-br from-dark to-gray-800 border border-gray-700"
               >
                 <div className="p-4 border-b border-gray-800">
                   <div className="flex justify-between items-center">
@@ -231,8 +232,8 @@ const Fixtures = () => {
                     )}
                   </div>
                 )}
-              </div>
-            );
+                </Card>
+              );
           })}
           
           {roundMatches.length === 0 && (
