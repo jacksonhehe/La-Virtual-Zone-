@@ -2,6 +2,8 @@
 export interface User {
   id: string;
   username: string;
+  /** Display name */
+  name: string;
   email: string;
   role: 'user' | 'dt' | 'admin';
   avatar: string;
@@ -310,12 +312,18 @@ export interface DtClub {
   name: string;
   slug: string;
   logo: string;
+  /** Optional badge image */
+  badge?: string;
   formation: string;
   budget: number;
   players: Player[];
+  captain?: string;
 }
 
 export interface DtFixture extends Match {
+  home: boolean;
+  rival: string;
+  matchday: number;
   played: boolean;
 }
 

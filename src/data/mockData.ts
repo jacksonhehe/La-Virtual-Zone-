@@ -1036,7 +1036,13 @@ export const dtClub: DtClub = {
 export const dtFixtures: DtFixture[] = tournaments[0].matches
   .filter(m => m.homeTeam === dtClub.name || m.awayTeam === dtClub.name)
   .slice(0, 6)
-  .map(m => ({ ...m, played: m.status === 'finished' }));
+  .map(m => ({
+    ...m,
+    home: m.homeTeam === dtClub.name,
+    rival: m.homeTeam === dtClub.name ? m.awayTeam : m.homeTeam,
+    matchday: m.round,
+    played: m.status === 'finished'
+  }));
 
 export const dtMarket: DtMarket = { open: true };
 
