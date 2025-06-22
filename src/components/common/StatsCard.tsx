@@ -1,4 +1,5 @@
 import ProgressBar from './ProgressBar';
+import { ArrowUp, ArrowDown, ArrowRight } from 'lucide-react';
 
 interface  StatsCardProps {
   title: string;
@@ -17,21 +18,21 @@ const StatsCard = ({ title, value, icon, trend, trendValue, progress }: StatsCar
       case 'up':
         return (
           <div className="text-green-400 text-sm flex items-center">
-            <span className="mr-1">↑</span>
+            <ArrowUp size={14} className="mr-1" />
             <span>{trendValue}</span>
           </div>
         );
       case 'down':
         return (
           <div className="text-red-400 text-sm flex items-center">
-            <span className="mr-1">↓</span>
+            <ArrowDown size={14} className="mr-1" />
             <span>{trendValue}</span>
           </div>
         );
       case 'neutral':
         return (
           <div className="text-gray-400 text-sm flex items-center">
-            <span className="mr-1">→</span>
+            <ArrowRight size={14} className="mr-1" />
             <span>{trendValue}</span>
           </div>
         );
