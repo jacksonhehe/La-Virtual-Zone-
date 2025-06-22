@@ -106,7 +106,7 @@ const DtDashboard = () => {
       </header>
 
       {/* ---------- TARJETAS RÁPIDAS ---------- */}
-      <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mb-8 grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Plantilla"
           value={`${club.players.length} jugadores`}
@@ -130,7 +130,7 @@ const DtDashboard = () => {
       </section>
 
       {/* ---------- CUERPO PRINCIPAL ---------- */}
-      <main className="grid gap-8 lg:grid-cols-3">
+      <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* === COLUMNA IZQUIERDA (2/3) === */}
         <div className="space-y-8 lg:col-span-2">
           {/* Próximo partido */}
@@ -160,7 +160,7 @@ const DtDashboard = () => {
           )}
 
           {/* Mini-tabla + Streak + Performer */}
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Mini tabla de posiciones */}
             <Card className="p-4">
               <h3 className="mb-3 font-semibold">Posiciones</h3>
