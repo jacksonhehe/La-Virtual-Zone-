@@ -35,6 +35,14 @@ Serve the production build locally to verify the output:
 ```bash
 npm run preview
 ```
+## Tests
+
+Run the TypeScript tests using `tsx`:
+
+```bash
+npm test
+```
+
 
 ## Admin Panel
 
