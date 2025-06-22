@@ -1,12 +1,15 @@
+import ProgressBar from './ProgressBar';
+
 interface  StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
   trend?: 'up' | 'down' | 'neutral';
   trendValue?: string;
+  progress?: number;
 }
 
-const StatsCard = ({ title, value, icon, trend, trendValue }: StatsCardProps) => {
+const StatsCard = ({ title, value, icon, trend, trendValue, progress }: StatsCardProps) => {
   const renderTrend = () => {
     if (!trend || !trendValue) return null;
     
@@ -40,12 +43,17 @@ const StatsCard = ({ title, value, icon, trend, trendValue }: StatsCardProps) =>
   return (
     <div className="card p-4">
       <div className="flex items-start justify-between">
-        <div>
+        <div className="flex-1">
           <p className="text-gray-400 text-sm mb-2">{title}</p>
           <p className="text-xl font-bold">{value}</p>
           {renderTrend()}
+          {typeof progress === 'number' && (
+            <div className="mt-2">
+              <ProgressBar value={progress} />
+            </div>
+          )}
         </div>
-        <div className="bg-gray-800 p-3 rounded-lg">
+        <div className="bg-gray-800 p-3 rounded-lg ml-4">
           {icon}
         </div>
       </div>

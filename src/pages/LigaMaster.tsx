@@ -36,9 +36,17 @@ const LigaMaster = () => {
     : [];
   
   // Get top scorers
-  const topScorers = [...players]
-    .sort((a, b) => b.goals - a.goals)
-    .slice(0, 5);
+const topScorers = [...players]
+  .sort((a, b) => b.goals - a.goals)
+  .slice(0, 5);
+
+  const totalMatches = ligaMaster ? ligaMaster.matches.length : 0;
+  const playedMatches = ligaMaster
+    ? ligaMaster.matches.filter(m => m.status === 'finished').length
+    : 0;
+  const seasonProgress = totalMatches > 0
+    ? Math.round((playedMatches / totalMatches) * 100)
+    : 0;
   
   return (
     <div>
@@ -50,7 +58,7 @@ const LigaMaster = () => {
       
       <div className="container mx-auto px-4 py-8">
         {/* Stats cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <StatsCard 
             title="Total de Clubes" 
             value={clubs.length}
@@ -66,12 +74,18 @@ const LigaMaster = () => {
             value={formatCurrency(clubs.reduce((sum, club) => sum + club.budget, 0) / clubs.length)}
             icon={<Briefcase size={24} className="text-primary" />}
           />
-          <StatsCard 
-            title="Partidos Disputados" 
+          <StatsCard
+            title="Partidos Disputados"
             value={ligaMaster ? ligaMaster.matches.filter(m => m.status === 'finished').length : 0}
             icon={<Calendar size={24} className="text-primary" />}
             trend="up"
             trendValue="+3 última semana"
+          />
+          <StatsCard
+            title="Avance de Temporada"
+            value={`${playedMatches}/${totalMatches}`}
+            icon={<Trophy size={24} className="text-primary" />}
+            progress={seasonProgress}
           />
         </div>
         
