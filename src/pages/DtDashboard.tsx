@@ -16,7 +16,8 @@ import {
   Newspaper,
   Check,
   Trophy,
-  Calendar
+  Calendar,
+  Inbox
 } from 'lucide-react';
 
 import StatsCard from '../components/common/StatsCard';
@@ -295,14 +296,21 @@ const DtDashboard = () => {
           {/* Anuncios */}
           <Card>
             <h3 className="mb-3 font-semibold">Anuncios</h3>
-            <ul className="space-y-2 text-sm">
-              {events.slice(0, 3).map(ev => (
-                <li key={ev.id} className="flex items-center justify-between">
-                  <span>{ev.message}</span>
-                  <span className="text-xs text-gray-400">{formatDate(ev.date)}</span>
-                </li>
-              ))}
-            </ul>
+            {events.length === 0 ? (
+              <p className="flex items-center gap-2 text-sm text-gray-400">
+                <Inbox size={16} className="text-gray-400" />
+                No hay anuncios
+              </p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {events.slice(0, 3).map(ev => (
+                  <li key={ev.id} className="flex items-center justify-between">
+                    <span>{ev.message}</span>
+                    <span className="text-xs text-gray-400">{formatDate(ev.date)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Card>
 
           {/* Semáforo de mercado */}
@@ -326,7 +334,10 @@ const DtDashboard = () => {
           <Card>
             <h3 className="mb-3 font-semibold">Recordatorios</h3>
             {tasks.length === 0 ? (
-              <p className="text-sm text-gray-400">Todo al día ✔️</p>
+              <p className="flex items-center gap-2 text-sm text-gray-400">
+                <Inbox size={16} className="text-gray-400" />
+                No hay recordatorios
+              </p>
             ) : (
               <ul className="space-y-2 text-sm">
                 {tasks.map(t => (
