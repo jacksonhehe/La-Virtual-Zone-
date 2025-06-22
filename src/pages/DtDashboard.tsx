@@ -6,7 +6,6 @@
    ======================================= */
 
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import {
   Users,
   Layout,
@@ -55,27 +54,8 @@ const Card = ({
 );
 
 import ProgressBar from '../components/common/ProgressBar';
+import CountdownBar from '../components/common/CountdownBar';
 
-/* Cuenta regresiva utilitaria */
-const useCountdown = (date: string) => {
-  const [out, setOut] = useState('');
-  useEffect(() => {
-    const fn = () => {
-      const diff = new Date(date).getTime() - Date.now();
-      if (diff <= 0) {
-        setOut('');
-        return;
-      }
-      const d = Math.floor(diff / 864e5);
-      const h = Math.floor((diff % 864e5) / 36e5);
-      setOut(`Faltan ${d} d ${h} h`);
-    };
-    fn();
-    const id = setInterval(fn, 6e4);
-    return () => clearInterval(id);
-  }, [date]);
-  return out;
-};
 
 /* ---------- componente principal ---------- */
 
@@ -93,7 +73,6 @@ const DtDashboard = () => {
   } = useDataStore();
 
   const nextMatch = fixtures.find(f => !f.played);
-  const countdown = useCountdown(nextMatch?.date || '');
 
   if (!user || !club) return <p>Cargando…</p>;
 
@@ -183,9 +162,7 @@ const DtDashboard = () => {
                 {nextMatch.homeTeam === club.name ? nextMatch.awayTeam : nextMatch.homeTeam} –{' '}
                 <span className="text-gray-400">{formatDate(nextMatch.date)}</span>
               </p>
-              {countdown && (
-                <p className="mt-1 text-xs text-gray-400">{countdown}</p>
-              )}
+              <CountdownBar date={nextMatch.date} />
               <Link
                 to="/liga-master/fixture"
                 className="mt-3 inline-flex items-center gap-1 text-accent hover:underline"
