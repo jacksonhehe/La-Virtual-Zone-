@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import   { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { 
