@@ -2,6 +2,7 @@ import  { Link } from 'react-router-dom';
 import { Trophy, Calendar, Award, Users } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate } from '../../utils/helpers';
+import Card from '../common/Card';
 
 const FeaturedTournaments = () => {
   const { tournaments } = useDataStore();
@@ -36,7 +37,7 @@ const FeaturedTournaments = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {tournaments.map((tournament) => (
-          <div key={tournament.id} className="card card-hover">
+          <Card key={tournament.id}>
             <div className="relative h-40 overflow-hidden">
               {/* Background gradient */}
               <div 
@@ -122,7 +123,7 @@ const FeaturedTournaments = () => {
                 Ver Detalles
               </Link>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
