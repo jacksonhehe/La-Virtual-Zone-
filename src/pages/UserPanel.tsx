@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import   { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { 
@@ -24,23 +23,20 @@ const UserPanel = () => {
   
   const [activeTab, setActiveTab] = useState('profile');
   
-  // If not authenticated, redirect to login
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" />;
-  }
-  
   // Initialize following property if it doesn't exist
-  const following = user.following || { clubs: [], users: [] };
+  const following = user?.following || { clubs: [], users: [] };
   
   // Get user's club if they are a DT
-  const userClub = user.role === 'dt' && user.club 
+  const userClub = user?.role === 'dt' && user?.club
     ? clubs.find(club => club.name === user.club)
     : null;
-  
+
   // Calculate XP progress for the level bar
-  const currentLevelXp = xpForNextLevel(user.level - 1);
-  const nextLevelXp = xpForNextLevel(user.level);
-  const levelProgress = ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
+  const currentLevelXp = xpForNextLevel((user?.level ?? 1) - 1);
+  const nextLevelXp = xpForNextLevel(user?.level ?? 1);
+  const levelProgress = user
+    ? ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100
+    : 0;
   const [levelPulse, setLevelPulse] = useState(false);
   const prevLevel = useRef(levelProgress);
 
@@ -54,7 +50,12 @@ const UserPanel = () => {
   }, [levelProgress]);
   
   // Initialize achievements array if it doesn't exist
-  const achievements = user.achievements || [];
+  const achievements = user?.achievements || [];
+
+  // If not authenticated, redirect to login
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" />;
+  }
   
   return (
     <div className="container mx-auto px-4 py-8 pt-24">
