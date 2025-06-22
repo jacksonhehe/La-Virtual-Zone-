@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Home,
   Plane,
-  Newspaper,
   Check,
   Trophy,
   Calendar,
@@ -39,8 +38,10 @@ import {
 
 /* ---------- componentes pequeños reutilizados ---------- */
 
-import ProgressBar from '../components/common/ProgressBar';
 import CountdownBar from '../components/common/CountdownBar';
+import SeasonObjectives from './dt-dashboard/SeasonObjectives';
+import LatestNews from './dt-dashboard/LatestNews';
+import QuickActions from './dt-dashboard/QuickActions';
 
 
 /* ---------- componente principal ---------- */
@@ -73,7 +74,6 @@ const DtDashboard = () => {
     possessionDiff(club.id),
     yellowDiff(club.id)
   ];
-  const latestNews = news.slice(0, 3);
 
   return (
     <>
@@ -108,7 +108,7 @@ const DtDashboard = () => {
       </header>
 
       {/* ---------- TARJETAS RÁPIDAS ---------- */}
-      <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mb-8 grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Plantilla"
           value={`${club.players.length} jugadores`}
@@ -132,7 +132,7 @@ const DtDashboard = () => {
       </section>
 
       {/* ---------- CUERPO PRINCIPAL ---------- */}
-      <main className="grid gap-8 lg:grid-cols-3">
+      <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* === COLUMNA IZQUIERDA (2/3) === */}
         <div className="space-y-8 lg:col-span-2">
           {/* Próximo partido */}
@@ -162,7 +162,7 @@ const DtDashboard = () => {
           )}
 
           {/* Mini-tabla + Streak + Performer */}
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Mini tabla de posiciones */}
             <Card className="p-4">
               <h3 className="mb-3 font-semibold">Posiciones</h3>
@@ -237,45 +237,10 @@ const DtDashboard = () => {
           </div>
 
           {/* Objetivos de temporada */}
-          <Card className="p-4">
-            <h3 className="mb-4 font-semibold">Objetivos de temporada</h3>
-            <div className="space-y-4">
-              <div>
-                <p className="mb-1 text-xs text-gray-400">Clasificar top 5</p>
-                <ProgressBar value={objectives.position} />
-              </div>
-              <div>
-                <p className="mb-1 text-xs text-gray-400">Juego limpio</p>
-                <ProgressBar value={objectives.fairplay} />
-              </div>
-            </div>
-          </Card>
+          <SeasonObjectives />
 
           {/* Últimas noticias */}
-          <Card className="p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-semibold">Últimas noticias</h3>
-              <Link
-                to="/liga-master/feed"
-                className="text-accent text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                Ver todo
-              </Link>
-            </div>
-            <ul className="space-y-3">
-              {latestNews.map(item => (
-                <li key={item.id} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Newspaper size={16} className="mr-2 text-accent" />
-                    <span>{item.title}</span>
-                  </div>
-                  <span className="text-xs text-gray-400">
-                    {formatDate(item.publishDate)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <LatestNews />
         </div>
 
         {/* === COLUMNA DERECHA (1/3) === */}
@@ -345,13 +310,22 @@ const DtDashboard = () => {
             >
               Enviar oferta
             </button>
-            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
+            <button
+              aria-label="Informe médico"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
               Informe médico
             </button>
-            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
+            <button
+              aria-label="Firmar juvenil"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
               Firmar juvenil
             </button>
-            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
+            <button
+              aria-label="Publicar declaración"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
               Publicar declaración
             </button>
           </div>
