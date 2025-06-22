@@ -12,6 +12,7 @@ const ProgressBar = ({ value }: ProgressBarProps) => {
     if (prev.current !== null && value !== prev.current) {
       setAnimate(true);
       const id = setTimeout(() => setAnimate(false), 1000);
+      prev.current = value;
       return () => clearTimeout(id);
     }
     prev.current = value;
