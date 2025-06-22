@@ -20,6 +20,8 @@ import {
   Calendar
 } from 'lucide-react';
 
+import StatsCard from '../components/common/StatsCard';
+
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import PageHeader from '../components/common/PageHeader';
@@ -161,42 +163,26 @@ const DtDashboard = () => {
 
       {/* ---------- TARJETAS RÁPIDAS ---------- */}
       <section className="mb-8 grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <div className="flex items-center gap-2">
-            <Users size={20} className="text-purple-400" />
-            <span className="font-semibold">Plantilla</span>
-          </div>
-          <p className="mt-2 text-sm font-medium text-gray-400">
-            {club.players.length} jugadores
-          </p>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-2">
-            <Layout size={20} className="text-blue-400" />
-            <span className="font-semibold">Táctica</span>
-          </div>
-          <p className="mt-2 text-sm font-medium text-gray-400">
-            {club.formation}
-          </p>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-2">
-            <DollarSign size={20} className="text-green-400" />
-            <span className="font-semibold">Finanzas</span>
-          </div>
-          <p className="mt-2 text-sm font-medium text-gray-400">
-            {formatCurrency(club.budget)}
-          </p>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-2">
-            <TrendingUp size={20} className="text-yellow-400" />
-            <span className="font-semibold">Mercado</span>
-          </div>
-          <p className="mt-2 text-sm font-medium text-gray-400">
-            {market.open ? 'Abierto' : 'Cerrado'}
-          </p>
-        </Card>
+        <StatsCard
+          title="Plantilla"
+          value={`${club.players.length} jugadores`}
+          icon={<Users size={20} className="text-purple-400" />}
+        />
+        <StatsCard
+          title="Táctica"
+          value={club.formation}
+          icon={<Layout size={20} className="text-blue-400" />}
+        />
+        <StatsCard
+          title="Finanzas"
+          value={formatCurrency(club.budget)}
+          icon={<DollarSign size={20} className="text-green-400" />}
+        />
+        <StatsCard
+          title="Mercado"
+          value={market.open ? 'Abierto' : 'Cerrado'}
+          icon={<TrendingUp size={20} className="text-yellow-400" />}
+        />
       </section>
 
       {/* ---------- CUERPO PRINCIPAL ---------- */}
