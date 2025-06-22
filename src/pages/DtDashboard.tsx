@@ -59,6 +59,8 @@ const DtDashboard = () => {
     events
   } = useDataStore();
 
+  const marketOpen = useDataStore(state => state.market.open);
+
   const nextMatch = fixtures.find(f => !f.played);
 
   if (!user || !club) return <p>Cargando…</p>;
@@ -303,8 +305,8 @@ const DtDashboard = () => {
           {/* Botones de acción rápida */}
           <div className="grid gap-3 sm:grid-cols-2">
             <button
-              aria-label="Enviar oferta"
-              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+              className={`card-hover bg-accent px-4 py-2 font-semibold text-black ${!marketOpen ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!marketOpen}
             >
               Enviar oferta
             </button>
