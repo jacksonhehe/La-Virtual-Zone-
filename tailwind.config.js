@@ -13,6 +13,8 @@ export default {
         'neon-yellow': 'var(--neon-yellow)',
         accent: 'var(--accent)',
         dark: '#1a1a24',
+        'dark-light': '#47474f',
+        'dark-lighter': '#75757b',
         'text-secondary': '#b5b5b5'
       },
       fontFamily: {
