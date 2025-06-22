@@ -207,30 +207,33 @@ const LigaMaster = () => {
                 {upcomingMatches.map((match) => {
                   const homeClub = clubs.find(c => c.name === match.homeTeam);
                   const awayClub = clubs.find(c => c.name === match.awayTeam);
-                  
+
                   return (
-                    <div key={match.id} className="p-4">
+                    <div
+                      key={match.id}
+                      className="p-4 bg-gradient-to-br from-dark to-gray-800 border border-gray-700 rounded-lg"
+                    >
                       <div className="text-sm text-gray-400 text-center mb-3">
                         {formatDate(match.date)} • Jornada {match.round}
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col items-center w-2/5">
-                          <img 
-                            src={homeClub?.logo} 
+                          <img
+                            src={homeClub?.logo}
                             alt={homeClub?.name}
-                            className="w-10 h-10 object-contain mb-1"
+                            className="w-16 h-16 object-contain mb-1"
                           />
                           <span className="font-medium text-center">{homeClub?.name}</span>
                         </div>
-                        <div className="flex-shrink-0 w-1/5 text-center">
-                          <span className="text-lg font-bold">VS</span>
+                        <div className="flex-shrink-0 flex-1 text-center">
+                          <span className="text-2xl font-bold neon-text-blue">VS</span>
                         </div>
                         <div className="flex flex-col items-center w-2/5">
-                          <img 
-                            src={awayClub?.logo} 
+                          <img
+                            src={awayClub?.logo}
                             alt={awayClub?.name}
-                            className="w-10 h-10 object-contain mb-1"
+                            className="w-16 h-16 object-contain mb-1"
                           />
                           <span className="font-medium text-center">{awayClub?.name}</span>
                         </div>
