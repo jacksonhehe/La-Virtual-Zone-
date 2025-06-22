@@ -48,7 +48,7 @@ const Card = ({
 }) => (
   <div
     onClick={onClick}
-    className="hover-card cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
+    className="card-hover cursor-pointer rounded-lg bg-zinc-900 p-4 shadow transition-transform hover:shadow-neon/40"
   >
     {children}
   </div>
@@ -364,16 +364,16 @@ const DtDashboard = () => {
 
           {/* Botones de acción rápida */}
           <div className="grid gap-3 sm:grid-cols-2">
-            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
+            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
               Enviar oferta
             </button>
-            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
+            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
               Informe médico
             </button>
-            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
+            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
               Firmar juvenil
             </button>
-            <button className="hover-card bg-accent px-4 py-2 font-semibold text-black">
+            <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
               Publicar declaración
             </button>
           </div>
