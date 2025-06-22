@@ -1,4 +1,4 @@
-import   { useState } from 'react';
+import   { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { 
   User, 
@@ -40,6 +40,17 @@ const UserPanel = () => {
   const currentLevelXp = xpForNextLevel(user.level - 1);
   const nextLevelXp = xpForNextLevel(user.level);
   const levelProgress = ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
+  const [levelPulse, setLevelPulse] = useState(false);
+  const prevLevel = useRef(levelProgress);
+
+  useEffect(() => {
+    if (prevLevel.current !== levelProgress) {
+      setLevelPulse(true);
+      const id = setTimeout(() => setLevelPulse(false), 1000);
+      prevLevel.current = levelProgress;
+      return () => clearTimeout(id);
+    }
+  }, [levelProgress]);
   
   // Initialize achievements array if it doesn't exist
   const achievements = user.achievements || [];
@@ -80,11 +91,14 @@ const UserPanel = () => {
                 <span>Nivel {user.level}</span>
                 <span>Nivel {user.level + 1}</span>
               </div>
-              <div className="h-2 bg-dark rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary"
-                  style={{ width: `${levelProgress}%` }}
-                ></div>
+              <div className="flex items-center gap-2">
+                <div className="h-2 flex-1 bg-dark rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${levelProgress >= 50 ? 'bg-green-500' : 'bg-red-500'} ${levelPulse ? 'animate-pulse' : ''}`}
+                    style={{ width: `${levelProgress}%` }}
+                  ></div>
+                </div>
+                <span className="text-xs w-10 text-right">{Math.round(levelProgress)}%</span>
               </div>
               <div className="text-xs text-gray-400 mt-1">
                 {user.xp} / {nextLevelXp} XP
