@@ -301,7 +301,32 @@ const DtDashboard = () => {
           </Card>
 
           {/* Botones de acción rápida */}
-          <QuickActions />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              aria-label="Enviar oferta"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
+              Enviar oferta
+            </button>
+            <button
+              aria-label="Informe médico"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
+              Informe médico
+            </button>
+            <button
+              aria-label="Firmar juvenil"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
+              Firmar juvenil
+            </button>
+            <button
+              aria-label="Publicar declaración"
+              className="card-hover bg-accent px-4 py-2 font-semibold text-black"
+            >
+              Publicar declaración
+            </button>
+          </div>
         </div>
       </main>
 
