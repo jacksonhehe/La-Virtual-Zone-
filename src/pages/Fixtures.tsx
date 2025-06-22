@@ -121,7 +121,10 @@ const Fixtures = () => {
             const isExpanded = expandedMatches[match.id] || false;
             
             return (
-              <div key={match.id} className="card card-hover overflow-hidden">
+              <div
+                key={match.id}
+                className="card card-hover overflow-hidden bg-gradient-to-br from-dark to-gray-800 border border-gray-700"
+              >
                 <div className="p-4 border-b border-gray-800">
                   <div className="flex justify-between items-center">
                     <div className="text-sm text-gray-400">
@@ -144,21 +147,21 @@ const Fixtures = () => {
                 <div className="p-5">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col items-center w-2/5 sm:w-1/3">
-                      <img 
-                        src={homeClub?.logo} 
+                      <img
+                        src={homeClub?.logo}
                         alt={homeClub?.name}
-                        className="w-12 h-12 sm:w-16 sm:h-16 object-contain mb-2"
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
                       />
                       <span className="font-medium text-center">{homeClub?.name}</span>
                     </div>
-                    
-                    <div className="flex flex-col items-center">
+
+                    <div className="flex flex-col items-center flex-1 text-center">
                       {match.status === 'finished' ? (
-                        <div className="text-2xl sm:text-3xl font-bold mb-1">
+                        <div className="text-3xl sm:text-4xl font-bold mb-1 neon-text-blue">
                           {match.homeScore} - {match.awayScore}
                         </div>
                       ) : (
-                        <div className="text-xl sm:text-2xl font-bold mb-1">VS</div>
+                        <div className="text-2xl sm:text-3xl font-bold mb-1 neon-text-blue">VS</div>
                       )}
                       
                       <button
@@ -180,10 +183,10 @@ const Fixtures = () => {
                     </div>
                     
                     <div className="flex flex-col items-center w-2/5 sm:w-1/3">
-                      <img 
-                        src={awayClub?.logo} 
+                      <img
+                        src={awayClub?.logo}
                         alt={awayClub?.name}
-                        className="w-12 h-12 sm:w-16 sm:h-16 object-contain mb-2"
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
                       />
                       <span className="font-medium text-center">{awayClub?.name}</span>
                     </div>
