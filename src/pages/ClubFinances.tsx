@@ -3,6 +3,7 @@ import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } f
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate } from '../utils/helpers';
+import DtSidebar from '../components/club/DtSidebar';
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -48,12 +49,14 @@ const ClubFinances = () => {
   const totalBalance = totalIncome - totalExpenses;
   
   return (
-    <div>
-      <PageHeader 
-        title={`Finanzas de ${club.name}`} 
+    <div className="flex">
+      <DtSidebar />
+      <div className="flex-1">
+        <PageHeader
+        title={`Finanzas de ${club.name}`}
         subtitle="Presupuesto, transacciones y balance económico del club."
       />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
