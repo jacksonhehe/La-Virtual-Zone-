@@ -4,6 +4,7 @@ import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency } from '../utils/helpers';
 import { useState } from 'react';
+ codex/crear-componente-quicknavcards-y-actualizar-páginas-de-club
 import QuickNavCards from '../components/club/QuickNavCards';
 
 const ClubSquad = () => {
@@ -73,12 +74,14 @@ const ClubSquad = () => {
   };
   
   return (
-    <div>
-      <PageHeader 
-        title={`Plantilla de ${club.name}`} 
+    <div className="flex">
+      <DtSidebar />
+      <div className="flex-1">
+        <PageHeader
+        title={`Plantilla de ${club.name}`}
         subtitle="Jugadores, estadísticas y formación táctica del club."
       />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link

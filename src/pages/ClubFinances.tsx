@@ -51,12 +51,14 @@ const ClubFinances = () => {
   const totalBalance = totalIncome - totalExpenses;
   
   return (
-    <div>
-      <PageHeader 
-        title={`Finanzas de ${club.name}`} 
+    <div className="flex">
+      <DtSidebar />
+      <div className="flex-1">
+        <PageHeader
+        title={`Finanzas de ${club.name}`}
         subtitle="Presupuesto, transacciones y balance económico del club."
       />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
