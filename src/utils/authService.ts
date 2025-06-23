@@ -1,8 +1,10 @@
 import { User } from '../types';
+import {
+  VZ_USERS_KEY,
+  VZ_CURRENT_USER_KEY
+} from './storageKeys';
 
 // Simulated backend - using localStorage for persistence
-const USERS_KEY = 'virtual_zone_users';
-const CURRENT_USER_KEY = 'virtual_zone_current_user';
 
 // Simple base64 "hash" for demo purposes
 const hashPassword = (pwd: string): string => {
@@ -75,32 +77,32 @@ const TEST_USERS = [
 
 // Get users from localStorage or initialize with test users
 export const getUsers = (): User[] => {
-  const usersJson = localStorage.getItem(USERS_KEY);
+  const usersJson = localStorage.getItem(VZ_USERS_KEY);
   if (!usersJson) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(TEST_USERS));
+    localStorage.setItem(VZ_USERS_KEY, JSON.stringify(TEST_USERS));
     return TEST_USERS;
   }
-  
+
   return JSON.parse(usersJson);
 };
 
 // Save users to localStorage
 const saveUsers = (users: User[]): void => {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  localStorage.setItem(VZ_USERS_KEY, JSON.stringify(users));
 };
 
 // Get current logged in user
 export const getCurrentUser = (): User | null => {
-  const userJson = localStorage.getItem(CURRENT_USER_KEY);
+  const userJson = localStorage.getItem(VZ_CURRENT_USER_KEY);
   return userJson ? JSON.parse(userJson) : null;
 };
 
 // Save current user to localStorage
 export const saveCurrentUser = (user: User | null): void => {
   if (user) {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    localStorage.setItem(VZ_CURRENT_USER_KEY, JSON.stringify(user));
   } else {
-    localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem(VZ_CURRENT_USER_KEY);
   }
 };
 

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
+import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
@@ -26,6 +27,10 @@ const LigaMaster = () => {
   
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
+
+  if (!ligaMaster) {
+    return <DashboardSkeleton />;
+  }
   
   // Get upcoming matches
   const upcomingMatches = ligaMaster 
@@ -50,15 +55,23 @@ const topScorers = [...players]
   
   return (
     <div>
-      <PageHeader 
-        title="Liga Master 2025" 
+      <PageHeader
+        title="Liga Master 2025"
         subtitle="La competición principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 10 equipos participantes."
-        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
+        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
+        breadcrumb={(
+          <nav className="text-xs md:text-sm mb-4" aria-label="breadcrumb">
+            /Inicio › Liga Master
+          </nav>
+        )}
       />
       
       <div className="container mx-auto px-4 py-8">
         {/* Stats cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div
+          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-8"
+          aria-live="polite"
+        >
           <StatsCard 
             title="Total de Clubes" 
             value={clubs.length}
@@ -147,17 +160,17 @@ const topScorers = [...players]
                 </div>
               </div>
               
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto min-w-[640px]">
                 <table className="w-full">
                   <thead>
                     <tr className="text-xs text-gray-400 border-b border-gray-800">
-                      <th className="font-medium p-4 text-left">Pos</th>
-                      <th className="font-medium p-4 text-left">Club</th>
-                      <th className="font-medium p-4 text-center">PJ</th>
-                      <th className="font-medium p-4 text-center">G</th>
-                      <th className="font-medium p-4 text-center">E</th>
-                      <th className="font-medium p-4 text-center">P</th>
-                      <th className="font-medium p-4 text-center">Pts</th>
+                      <th scope="col" className="font-medium p-4 text-left">Pos</th>
+                      <th scope="col" className="font-medium p-4 text-left">Club</th>
+                      <th scope="col" className="font-medium p-4 text-center">PJ</th>
+                      <th scope="col" className="font-medium p-4 text-center">G</th>
+                      <th scope="col" className="font-medium p-4 text-center">E</th>
+                      <th scope="col" className="font-medium p-4 text-center">P</th>
+                      <th scope="col" className="font-medium p-4 text-center">Pts</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-800">
@@ -167,12 +180,15 @@ const topScorers = [...players]
                       return (
                         <tr key={team.clubId} className="hover:bg-gray-800/50">
                           <td className="p-4 text-center">
-                            <span className={`
+                            <span
+                              aria-label={`Posición ${index + 1}`}
+                              className={`
                               inline-block w-6 h-6 rounded-full font-medium text-sm flex items-center justify-center
-                              ${index === 0 ? 'bg-yellow-500/20 text-yellow-400' : 
-                                index === 1 ? 'bg-gray-400/20 text-gray-300' : 
+                              ${index === 0 ? 'bg-yellow-500/20 text-yellow-400' :
+                                index === 1 ? 'bg-gray-400/20 text-gray-300' :
                                 index === 2 ? 'bg-amber-600/20 text-amber-500' : 'text-gray-400'}
-                            `}>
+                            `}
+                            >
                               {index + 1}
                             </span>
                           </td>

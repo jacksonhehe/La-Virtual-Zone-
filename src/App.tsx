@@ -2,6 +2,7 @@ import  { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import LoadingScreen from './components/common/LoadingScreen';
+import Spinner from './components/common/Spinner';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -30,6 +31,9 @@ const DtDashboard = lazy(() => import('./pages/DtDashboard'));
 const Feed = lazy(() => import('./pages/Feed'));
 const Tacticas = lazy(() => import('./pages/Tacticas'));
 const Analisis = lazy(() => import('./pages/Analisis'));
+const Plantilla = lazy(() => import('./pages/Plantilla'));
+const Finanzas = lazy(() => import('./pages/Finanzas'));
+const Calendario = lazy(() => import('./pages/Calendario'));
 
 function App() {
   return (
@@ -45,14 +49,38 @@ function App() {
           {/* Liga Master routes */}
         <Route path="liga-master">
           <Route index element={<LigaMaster />} />
-          <Route path="mercado" element={<Market />} />
+          <Route
+            path="mercado"
+            element={(
+              <Suspense fallback={<Spinner />}>
+                <Market />
+              </Suspense>
+            )}
+          />
           <Route path="club/:clubName" element={<ClubProfile />} />
          <Route path="club/:clubName/plantilla" element={<ClubSquad />} />
          <Route path="clubes/:clubId/plantilla" element={<ClubSquad />} />
          <Route path="club/:clubName/finanzas" element={<ClubFinances />} />
           <Route path="hall-of-fame" element={<HallOfFame />} />
-          <Route path="rankings" element={<Rankings />} />
-          <Route path="fixture" element={<Fixtures />} />
+          <Route
+            path="rankings"
+            element={(
+              <Suspense fallback={<Spinner />}>
+                <Rankings />
+              </Suspense>
+            )}
+          />
+          <Route
+            path="fixture"
+            element={(
+              <Suspense fallback={<Spinner />}>
+                <Fixtures />
+              </Suspense>
+            )}
+          />
+          <Route path="plantilla" element={<Plantilla />} />
+          <Route path="finanzas" element={<Finanzas />} />
+          <Route path="calendario" element={<Calendario />} />
           <Route path="feed" element={<Feed />} />
           <Route path="tacticas" element={<Tacticas />} />
           <Route path="analisis" element={<Analisis />} />

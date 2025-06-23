@@ -1,15 +1,14 @@
 import { create } from 'zustand';
 import { Comment } from '../types';
-
-const COMMENTS_KEY = 'virtual_zone_comments';
+import { VZ_COMMENTS_KEY } from '../utils/storageKeys';
 
 const loadComments = (): Comment[] => {
-  const json = localStorage.getItem(COMMENTS_KEY);
+  const json = localStorage.getItem(VZ_COMMENTS_KEY);
   return json ? JSON.parse(json) : [];
 };
 
 const saveComments = (comments: Comment[]) => {
-  localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+  localStorage.setItem(VZ_COMMENTS_KEY, JSON.stringify(comments));
 };
 
 interface CommentState {
