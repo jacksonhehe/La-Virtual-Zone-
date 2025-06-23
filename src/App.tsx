@@ -31,7 +31,7 @@ const DtDashboard = lazy(() => import('./pages/DtDashboard'));
 const Feed = lazy(() => import('./pages/Feed'));
 const Tacticas = lazy(() => import('./pages/Tacticas'));
 const Analisis = lazy(() => import('./pages/Analisis'));
-const Plantilla = lazy(() => import('./pages/Plantilla'));
+const PlantillaPage = lazy(() => import('./pages/PlantillaPage'));
 const Finanzas = lazy(() => import('./pages/Finanzas'));
 const Calendario = lazy(() => import('./pages/Calendario'));
 
@@ -78,7 +78,7 @@ function App() {
               </Suspense>
             )}
           />
-          <Route path="plantilla" element={<Plantilla />} />
+          <Route path="plantilla" element={<PlantillaPage />} />
           <Route path="finanzas" element={<Finanzas />} />
           <Route path="calendario" element={<Calendario />} />
           <Route path="feed" element={<Feed />} />
