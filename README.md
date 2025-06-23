@@ -37,11 +37,14 @@ npm run preview
 ```
 ## Tests
 
-Run the TypeScript tests using `tsx`:
+To run the test suite execute:
 
 ```bash
 npm test
 ```
+
+The `npm test` command uses **tsx** to run the TypeScript files inside the
+`tests` directory.
 
 
 ## Admin Panel
