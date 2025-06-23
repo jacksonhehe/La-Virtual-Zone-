@@ -1,5 +1,6 @@
 import { lazy, useState } from 'react';
 import playersData from '../data/players.json';
+import type { Player } from '../types';
 import { dtClub } from '../data/mockData';
 import usePersistentState from '../utils/usePersistentState';
 import ResumenClub from '../components/plantilla/ResumenClub';
@@ -8,8 +9,11 @@ import PlayerTable from '../components/plantilla/PlayerTable';
 const PlayerDrawer = lazy(() => import('../components/plantilla/PlayerDrawer'));
 
 const PlantillaPage = () => {
-  const [players, setPlayers] = usePersistentState('vz_players', playersData);
-  const [active, setActive] = useState<null | typeof players[0]>(null);
+  const [players, setPlayers] = usePersistentState<Player[]>(
+    'vz_players',
+    playersData as Player[]
+  );
+  const [active, setActive] = useState<Player | null>(null);
 
   return (
     <div className="container mx-auto px-4 py-8">
