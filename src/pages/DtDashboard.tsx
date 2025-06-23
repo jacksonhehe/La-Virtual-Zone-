@@ -80,7 +80,7 @@ const DtDashboard = () => {
         subtitle="Vista general del club y próximas actividades."
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
       />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 animated-bg rounded-lg">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* ---------- ENCABEZADO ---------- */}
       <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
@@ -111,29 +111,21 @@ const DtDashboard = () => {
           title="Plantilla"
           value={`${club.players.length} jugadores`}
           icon={<Users size={20} className="text-purple-400" />}
-          className="esports-card"
-          iconClassName="animate-pulse-slow"
         />
         <StatsCard
           title="Táctica"
           value={club.formation}
           icon={<Layout size={20} className="text-blue-400" />}
-          className="esports-card"
-          iconClassName="animate-pulse-slow"
         />
         <StatsCard
           title="Finanzas"
           value={formatCurrency(club.budget)}
           icon={<DollarSign size={20} className="text-green-400" />}
-          className="esports-card"
-          iconClassName="animate-pulse-slow"
         />
         <StatsCard
           title="Mercado"
           value={market.open ? 'Abierto' : 'Cerrado'}
           icon={<TrendingUp size={20} className="text-yellow-400" />}
-          className="esports-card"
-          iconClassName="animate-pulse-slow"
         />
       </section>
 
@@ -143,7 +135,7 @@ const DtDashboard = () => {
         <div className="space-y-8 lg:col-span-2">
           {/* Próximo partido */}
           {nextMatch && (
-            <Card className="p-4 esports-card">
+            <Card className="p-4">
               <div className="flex items-center gap-2">
                 {nextMatch.homeTeam === club.name ? (
                   <Home size={16} className="text-accent" />
@@ -170,7 +162,7 @@ const DtDashboard = () => {
           {/* Mini-tabla + Streak + Performer */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Mini tabla de posiciones */}
-            <Card className="p-4 esports-card">
+            <Card className="p-4">
               <h3 className="mb-3 font-semibold">Posiciones</h3>
               <table className="w-full text-sm">
                 <tbody>
@@ -201,7 +193,7 @@ const DtDashboard = () => {
             </Card>
 
             {/* Comparativa + Jugador en forma */}
-            <Card className="p-4 esports-card">
+            <Card className="p-4">
               <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
               <ul className="space-y-2 text-sm">
                 {bullets.map(b => (
@@ -252,7 +244,7 @@ const DtDashboard = () => {
         {/* === COLUMNA DERECHA (1/3) === */}
         <div className="space-y-8">
           {/* Anuncios */}
-          <Card className="p-4 esports-card">
+          <Card className="p-4">
             <h3 className="mb-3 font-semibold">Anuncios</h3>
             {events.length === 0 ? (
               <p className="flex items-center gap-2 text-sm text-gray-400">
@@ -272,7 +264,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Semáforo de mercado */}
-          <Card className="p-4 esports-card">
+          <Card className="p-4">
             <h3 className="mb-3 font-semibold">Mercado</h3>
             <div className="flex items-center gap-2">
               <span
@@ -289,7 +281,7 @@ const DtDashboard = () => {
           </Card>
 
           {/* Recordatorios pendientes */}
-          <Card className="p-4 esports-card">
+          <Card className="p-4">
             <h3 className="mb-3 font-semibold">Recordatorios</h3>
             {tasks.length === 0 ? (
               <p className="flex items-center gap-2 text-sm text-gray-400">

@@ -8,11 +8,9 @@ interface  StatsCardProps {
   trend?: 'up' | 'down' | 'neutral';
   trendValue?: string;
   progress?: number;
-  className?: string;
-  iconClassName?: string;
 }
 
-const StatsCard = ({ title, value, icon, trend, trendValue, progress, className = '', iconClassName = '' }: StatsCardProps) => {
+const StatsCard = ({ title, value, icon, trend, trendValue, progress }: StatsCardProps) => {
   const renderTrend = () => {
     if (!trend || !trendValue) return null;
     
@@ -44,7 +42,7 @@ const StatsCard = ({ title, value, icon, trend, trendValue, progress, className 
   };
   
   return (
-    <div className={`card p-4 ${className}`.trim()}>
+    <div className="card p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-gray-400 text-sm mb-2">{title}</p>
@@ -56,7 +54,7 @@ const StatsCard = ({ title, value, icon, trend, trendValue, progress, className 
             </div>
           )}
         </div>
-        <div className={`bg-gray-800 p-3 rounded-lg ml-4 ${iconClassName}`.trim()}>
+        <div className="bg-gray-800 p-3 rounded-lg ml-4">
           {icon}
         </div>
       </div>

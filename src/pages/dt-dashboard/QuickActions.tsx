@@ -7,7 +7,7 @@ interface QuickActionsProps {
 const QuickActions = ({ marketOpen }: QuickActionsProps) => (
   <div className="grid gap-3 sm:grid-cols-2">
     <button
-      className={`card-hover esports-btn bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2 ${!marketOpen ? 'opacity-50 cursor-not-allowed' : ''}`}
+      className={`card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2 ${!marketOpen ? 'opacity-50 cursor-not-allowed' : ''}`}
       disabled={!marketOpen}
     >
       <Banknote size={16} />
@@ -15,21 +15,21 @@ const QuickActions = ({ marketOpen }: QuickActionsProps) => (
     </button>
     <button
       aria-label="Informe médico"
-      className="card-hover esports-btn bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+      className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
     >
       <Stethoscope size={16} />
       <span>Informe médico</span>
     </button>
     <button
       aria-label="Firmar juvenil"
-      className="card-hover esports-btn bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+      className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
     >
       <UserPlus size={16} />
       <span>Firmar juvenil</span>
     </button>
     <button
       aria-label="Publicar declaración"
-      className="card-hover esports-btn bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+      className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
     >
       <Megaphone size={16} />
       <span>Publicar declaración</span>
