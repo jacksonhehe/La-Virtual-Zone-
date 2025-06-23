@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import usePersistentState from '../utils/usePersistentState';
+import usePersistentState from '../hooks/usePersistentState';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, Search, ExternalLink, MessageSquare } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';

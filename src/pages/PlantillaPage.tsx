@@ -1,7 +1,7 @@
 import { lazy, useState } from 'react';
 import playersData from '../data/players.json';
 import { dtClub } from '../data/mockData';
-import usePersistentState from '../utils/usePersistentState';
+import usePersistentState from '../hooks/usePersistentState';
 import ResumenClub from '../components/plantilla/ResumenClub';
 import PlayerTable from '../components/plantilla/PlayerTable';
 

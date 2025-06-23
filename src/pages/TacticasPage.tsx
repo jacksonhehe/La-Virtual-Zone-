@@ -2,7 +2,7 @@ import FormationSelector from '../components/tacticas/FormationSelector';
 import PitchCanvas, { TacticsState } from '../components/tacticas/PitchCanvas';
 import TeamInstructions from '../components/tacticas/TeamInstructions';
 import SetPiecesManager from '../components/tacticas/SetPiecesManager';
-import usePersistentState from '../utils/usePersistentState';
+import usePersistentState from '../hooks/usePersistentState';
 import { useDataStore } from '../store/dataStore';
 
 const TacticasPage = () => {
