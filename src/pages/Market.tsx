@@ -1,8 +1,6 @@
 import  { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
-import { useAuthStore } from '../store/authStore';
 import { Player } from '../types';
 import PageHeader from '../components/common/PageHeader';
 import OfferModal from '../components/market/OfferModal';
@@ -10,7 +8,6 @@ import OffersPanel from '../components/market/OffersPanel';
 import Card from '../components/common/Card';
 import DtSidebar from '../components/club/DtSidebar';
 import { formatCurrency, getPositionColor, getFormIcon } from '../utils/helpers';
-import QuickNavCards from '../components/club/QuickNavCards';
 
 const Market = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,8 +18,7 @@ const Market = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [activeTab, setActiveTab] = useState<'players' | 'offers'>('players');
   
-  const { players, clubs, marketStatus, club, market } = useDataStore();
-  const { user } = useAuthStore();
+  const { players, clubs, marketStatus } = useDataStore();
   
   // Filter players
   const transferListedPlayers = players.filter(p => p.transferListed);
@@ -90,31 +86,10 @@ const Market = () => {
         <PageHeader
         title="Mercado de Fichajes"
         subtitle="Compra y vende jugadores para mejorar tu equipo."
-        image="https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"      />
-      
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
-          <Link to={`/liga-master/club/${club.slug}`} className="flex items-center gap-3 hover:underline">
-            <img src={club.logo} alt="Escudo" className="h-14 w-14 rounded-full" />
-            <div>
-              <h1 className="text-2xl font-semibold">{club.name}</h1>
-              <p className="text-sm text-gray-400">{user?.username}</p>
-            </div>
-          </Link>
-          <div className="mt-4 flex flex-col items-center md:ml-auto md:mt-0 md:items-end">
-            <span className="text-xs text-gray-400">Presupuesto</span>
-            <span className="text-lg font-semibold text-accent">{formatCurrency(club.budget)}</span>
-          </div>
-        </header>
-
-        <QuickNavCards
-          clubSlug={club.slug}
-          playersCount={club.players.length}
-          formation={club.formation}
-          budget={club.budget}
-          marketOpen={market.open}
+        image="https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
         />
 
+        <div className="container mx-auto px-4 py-8">
         {/* Market status */}
         <div className="mb-6">
           {marketStatus ? (
