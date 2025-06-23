@@ -29,7 +29,7 @@ const Rankings = lazy(() => import('./pages/Rankings'));
 const Fixtures = lazy(() => import('./pages/Fixtures'));
 const DtDashboard = lazy(() => import('./pages/DtDashboard'));
 const Feed = lazy(() => import('./pages/Feed'));
-const Tacticas = lazy(() => import('./pages/Tacticas'));
+const Tacticas = lazy(() => import('./pages/TacticasPage'));
 const Analisis = lazy(() => import('./pages/Analisis'));
 const Plantilla = lazy(() => import('./pages/Plantilla'));
 const Finanzas = lazy(() => import('./pages/Finanzas'));
