@@ -1,16 +1,38 @@
-const QuickActions = () => (
+import { Banknote, Stethoscope, UserPlus, Megaphone } from 'lucide-react';
+
+interface QuickActionsProps {
+  marketOpen: boolean;
+}
+
+const QuickActions = ({ marketOpen }: QuickActionsProps) => (
   <div className="grid gap-3 sm:grid-cols-2">
-    <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
-      Enviar oferta
+    <button
+      className={`card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2 ${!marketOpen ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={!marketOpen}
+    >
+      <Banknote size={16} />
+      <span>Enviar oferta</span>
     </button>
-    <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
-      Informe médico
+    <button
+      aria-label="Informe médico"
+      className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+    >
+      <Stethoscope size={16} />
+      <span>Informe médico</span>
     </button>
-    <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
-      Firmar juvenil
+    <button
+      aria-label="Firmar juvenil"
+      className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+    >
+      <UserPlus size={16} />
+      <span>Firmar juvenil</span>
     </button>
-    <button className="card-hover bg-accent px-4 py-2 font-semibold text-black">
-      Publicar declaración
+    <button
+      aria-label="Publicar declaración"
+      className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+    >
+      <Megaphone size={16} />
+      <span>Publicar declaración</span>
     </button>
   </div>
 );
