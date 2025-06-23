@@ -1,10 +1,11 @@
-import  { useState, useEffect } from 'react';
+import  { useState, useEffect, useRef } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types';
 import { makeOffer, getMinOfferAmount, getMaxOfferAmount } from '../../utils/transferService';
 import { formatCurrency } from '../../utils/helpers';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 interface OfferModalProps {
   player: Player;
@@ -12,6 +13,8 @@ interface OfferModalProps {
 }
 
 const OfferModal = ({ player, onClose }: OfferModalProps) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef);
   const [offerAmount, setOfferAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -98,8 +101,14 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70" onClick={onClose}></div>
-      
-      <div className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+
+      <div
+        className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="offer-modal-title"
+        ref={dialogRef}
+      >
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -107,7 +116,7 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
           <X size={24} />
         </button>
         
-        <h3 className="text-xl font-bold mb-4">Hacer Oferta</h3>
+        <h3 id="offer-modal-title" className="text-xl font-bold mb-4">Hacer Oferta</h3>
         
         {success ? (
           <div className="mb-4 p-3 bg-green-500/20 text-green-400 rounded-lg">
