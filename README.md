@@ -37,7 +37,7 @@ npm run preview
 ```
 ## Tests
 
-Run the TypeScript tests using `tsx`:
+Run the test suite with `tsx`:
 
 ```bash
 npm test
