@@ -4,29 +4,18 @@ import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency } from '../utils/helpers';
 import { useState } from 'react';
-<<<<<<< HEAD
-<<<<<<< HEAD
-import DtSidebar from '../components/club/DtSidebar';
-=======
->>>>>>> parent of 79cab00 (Add QuickNavCards component and integrate across club pages)
-=======
- codex/crear-componente-quicknavcards-y-actualizar-páginas-de-club
-import QuickNavCards from '../components/club/QuickNavCards';
->>>>>>> parent of 8dda5bc (Revert "Merge pull request #192 from jacksonhehe/codex/crear-componente-quicknavcards-y-actualizar-páginas-de-club")
 
 const ClubSquad = () => {
   const { clubName, clubId } = useParams<{ clubName?: string; clubId?: string }>();
   const [sortBy, setSortBy] = useState('overall');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  const { clubs, players, marketStatus } = useDataStore();
+  const { clubs, players } = useDataStore();
   
   // Find club by slug
   const club = clubId
     ? clubs.find(c => c.id === clubId)
     : clubs.find(c => c.slug === clubName);
-
-  const formation = (club as any).formation || '4-4-2';
   
   if (!club) {
     return (
@@ -81,14 +70,12 @@ const ClubSquad = () => {
   };
   
   return (
-    <div className="flex">
-      <DtSidebar />
-      <div className="flex-1">
-        <PageHeader
-        title={`Plantilla de ${club.name}`}
+    <div>
+      <PageHeader 
+        title={`Plantilla de ${club.name}`} 
         subtitle="Jugadores, estadísticas y formación táctica del club."
       />
-
+      
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
@@ -112,15 +99,7 @@ const ClubSquad = () => {
               </p>
             </div>
           </div>
-
-          <QuickNavCards
-            clubSlug={club.slug}
-            playersCount={clubPlayers.length}
-            formation={formation}
-            budget={club.budget}
-            marketOpen={marketStatus}
-          />
-
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-dark-light rounded-lg p-4 flex flex-col items-center">
               <Users size={24} className="text-primary mb-2" />

@@ -7,6 +7,10 @@
 
 import { Link } from 'react-router-dom';
 import {
+  Users,
+  Layout,
+  DollarSign,
+  TrendingUp,
   Home,
   Plane,
   Check,
@@ -15,9 +19,8 @@ import {
   Inbox
 } from 'lucide-react';
 
-import QuickNavCards from '../components/club/QuickNavCards';
+import StatsCard from '../components/common/StatsCard';
 import Card from '../components/common/Card';
-import DtSidebar from '../components/club/DtSidebar';
 
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -71,15 +74,13 @@ const DtDashboard = () => {
   ];
 
   return (
-    <div className="flex">
-      <DtSidebar />
-      <div className="flex-1">
-        <PageHeader
+    <>
+      <PageHeader
         title="Tablero del DT"
         subtitle="Vista general del club y próximas actividades."
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
-        />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* ---------- ENCABEZADO ---------- */}
       <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
@@ -105,13 +106,28 @@ const DtDashboard = () => {
       </header>
 
       {/* ---------- TARJETAS RÁPIDAS ---------- */}
-      <QuickNavCards
-        clubSlug={club.slug}
-        playersCount={club.players.length}
-        formation={club.formation}
-        budget={club.budget}
-        marketOpen={market.open}
-      />
+      <section className="mb-8 grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Plantilla"
+          value={`${club.players.length} jugadores`}
+          icon={<Users size={20} className="text-purple-400" />}
+        />
+        <StatsCard
+          title="Táctica"
+          value={club.formation}
+          icon={<Layout size={20} className="text-blue-400" />}
+        />
+        <StatsCard
+          title="Finanzas"
+          value={formatCurrency(club.budget)}
+          icon={<DollarSign size={20} className="text-green-400" />}
+        />
+        <StatsCard
+          title="Mercado"
+          value={market.open ? 'Abierto' : 'Cerrado'}
+          icon={<TrendingUp size={20} className="text-yellow-400" />}
+        />
+      </section>
 
       {/* ---------- CUERPO PRINCIPAL ---------- */}
       <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -291,9 +307,8 @@ const DtDashboard = () => {
 
       {/* margen extra antes del footer general */}
       <div className="mb-8" />
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 

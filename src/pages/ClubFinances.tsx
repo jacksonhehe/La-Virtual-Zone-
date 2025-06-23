@@ -3,24 +3,14 @@ import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } f
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate } from '../utils/helpers';
-<<<<<<< HEAD
-<<<<<<< HEAD
-import DtSidebar from '../components/club/DtSidebar';
-=======
->>>>>>> parent of 79cab00 (Add QuickNavCards component and integrate across club pages)
-=======
-import QuickNavCards from '../components/club/QuickNavCards';
->>>>>>> parent of 8dda5bc (Revert "Merge pull request #192 from jacksonhehe/codex/crear-componente-quicknavcards-y-actualizar-páginas-de-club")
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
 
-  const { clubs, transfers, players, marketStatus } = useDataStore();
+  const { clubs, transfers } = useDataStore();
   
   // Find club by slug
   const club = clubs.find(c => c.slug === clubName);
-
-  const clubPlayers = club ? players.filter(p => p.clubId === club.id) : [];
   
   if (!club) {
     return (
@@ -58,14 +48,12 @@ const ClubFinances = () => {
   const totalBalance = totalIncome - totalExpenses;
   
   return (
-    <div className="flex">
-      <DtSidebar />
-      <div className="flex-1">
-        <PageHeader
-        title={`Finanzas de ${club.name}`}
+    <div>
+      <PageHeader 
+        title={`Finanzas de ${club.name}`} 
         subtitle="Presupuesto, transacciones y balance económico del club."
       />
-
+      
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
@@ -89,15 +77,7 @@ const ClubFinances = () => {
               </p>
             </div>
           </div>
-
-          <QuickNavCards
-            clubSlug={club.slug}
-            playersCount={clubPlayers.length}
-            formation={(club as any).formation || '4-4-2'}
-            budget={club.budget}
-            marketOpen={marketStatus}
-          />
-
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="card p-6">
               <div className="flex justify-between items-start mb-4">

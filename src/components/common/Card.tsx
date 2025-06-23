@@ -7,13 +7,7 @@ interface CardProps {
 }
 
 const Card = ({ children, onClick, className = '' }: CardProps) => (
-  <div
-    onClick={onClick}
-    tabIndex={onClick ? 0 : undefined}
-    className={`card card-hover ${
-      onClick ? 'cursor-pointer focus:outline-none focus:ring-primary' : ''
-    } ${className}`.trim()}
-  >
+  <div onClick={onClick} className={`card card-hover ${className}`.trim()}>
     {children}
   </div>
 );

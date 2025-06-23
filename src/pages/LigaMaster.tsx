@@ -1,5 +1,4 @@
 import  { Link } from 'react-router-dom';
-import { useState } from 'react';
 import DtDashboard from './DtDashboard';
 import { useAuthStore } from '../store/authStore';
 import { 
@@ -20,20 +19,9 @@ import { formatDate, formatCurrency } from '../utils/helpers';
 const LigaMaster = () => {
   const { user } = useAuthStore();
   const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
-  const isDtWithClub = user?.role === 'dt' && (user.club || user.clubId);
-  const [showLeague, setShowLeague] = useState(!isDtWithClub);
 
-  if (isDtWithClub && !showLeague) {
-    return (
-      <>
-        <div className="container mx-auto px-4 pt-4 flex justify-end">
-          <button className="btn-secondary" onClick={() => setShowLeague(true)}>
-            Ver Liga
-          </button>
-        </div>
-        <DtDashboard />
-      </>
-    );
+  if (user?.role === 'dt' && (user.club || user.clubId)) {
+    return <DtDashboard />;
   }
   
   // Get active tournament (Liga Master)
@@ -62,15 +50,8 @@ const topScorers = [...players]
   
   return (
     <div>
-      {isDtWithClub && (
-        <div className="container mx-auto px-4 pt-4 flex justify-end">
-          <button className="btn-secondary" onClick={() => setShowLeague(false)}>
-            Ver Tablero
-          </button>
-        </div>
-      )}
-      <PageHeader
-        title="Liga Master 2025"
+      <PageHeader 
+        title="Liga Master 2025" 
         subtitle="La competición principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 10 equipos participantes."
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
       />
