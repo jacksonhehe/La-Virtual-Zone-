@@ -1,25 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-function usePersistentState<T>(key: string, initialValue: T): [T, (v: T) => void] {
+function usePersistentState<T>(key: string, initial: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => {
     try {
       const stored = localStorage.getItem(key);
-      return stored ? (JSON.parse(stored) as T) : initialValue;
+      return stored ? JSON.parse(stored) as T : initial;
     } catch {
-      return initialValue;
+      return initial;
     }
   });
 
-  const updateState = (value: T) => {
-    setState(value);
+  useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (err) {
-      console.error('Failed to store state', err);
+      localStorage.setItem(key, JSON.stringify(state));
+    } catch {
+      // ignore write errors
     }
-  };
+  }, [key, state]);
 
-  return [state, updateState];
+  return [state, setState];
 }
 
 export default usePersistentState;
