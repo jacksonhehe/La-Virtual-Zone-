@@ -4,18 +4,21 @@ import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency } from '../utils/helpers';
 import { useState } from 'react';
+import QuickNavCards from '../components/club/QuickNavCards';
 
 const ClubSquad = () => {
   const { clubName, clubId } = useParams<{ clubName?: string; clubId?: string }>();
   const [sortBy, setSortBy] = useState('overall');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  const { clubs, players } = useDataStore();
+  const { clubs, players, marketStatus } = useDataStore();
   
   // Find club by slug
   const club = clubId
     ? clubs.find(c => c.id === clubId)
     : clubs.find(c => c.slug === clubName);
+
+  const formation = (club as any).formation || '4-4-2';
   
   if (!club) {
     return (
@@ -99,7 +102,15 @@ const ClubSquad = () => {
               </p>
             </div>
           </div>
-          
+
+          <QuickNavCards
+            clubSlug={club.slug}
+            playersCount={clubPlayers.length}
+            formation={formation}
+            budget={club.budget}
+            marketOpen={marketStatus}
+          />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-dark-light rounded-lg p-4 flex flex-col items-center">
               <Users size={24} className="text-primary mb-2" />
