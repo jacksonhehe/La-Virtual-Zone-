@@ -1,37 +1,25 @@
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 
-const PREFIX = 'vz_';
-
-function getInitialValue<T>(key: string, defaultValue: T): T {
-  if (typeof window === 'undefined') {
-    return defaultValue;
-  }
-
-  try {
-    const stored = localStorage.getItem(PREFIX + key);
-    if (stored !== null) {
-      return JSON.parse(stored) as T;
-    }
-  } catch {
-    // ignore parsing errors
-  }
-
-  return defaultValue;
-}
-
-export default function usePersistentState<T>(
-  key: string,
-  defaultValue: T
-): [T, Dispatch<SetStateAction<T>>] {
-  const [state, setState] = useState<T>(() => getInitialValue(key, defaultValue));
-
-  useEffect(() => {
+function usePersistentState<T>(key: string, initialValue: T): [T, (v: T) => void] {
+  const [state, setState] = useState<T>(() => {
     try {
-      localStorage.setItem(PREFIX + key, JSON.stringify(state));
+      const stored = localStorage.getItem(key);
+      return stored ? (JSON.parse(stored) as T) : initialValue;
     } catch {
-      // ignore write errors
+      return initialValue;
     }
-  }, [key, state]);
+  });
 
-  return [state, setState];
+  const updateState = (value: T) => {
+    setState(value);
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (err) {
+      console.error('Failed to store state', err);
+    }
+  };
+
+  return [state, updateState];
 }
+
+export default usePersistentState;
