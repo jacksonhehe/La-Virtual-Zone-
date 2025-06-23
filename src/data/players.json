@@ -1,0 +1,7 @@
+[
+  {"id":"p1","name":"Carlos Pérez","age":25,"position":"ST","nationality":"España","overall":80},
+  {"id":"p2","name":"Diego Morales","age":22,"position":"CM","nationality":"Argentina","overall":78},
+  {"id":"p3","name":"Andrés Silva","age":27,"position":"CB","nationality":"Uruguay","overall":82},
+  {"id":"p4","name":"Luís Gomes","age":23,"position":"LB","nationality":"Brasil","overall":79},
+  {"id":"p5","name":"Miguel Torres","age":21,"position":"GK","nationality":"México","overall":77}
+]
