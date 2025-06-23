@@ -6,6 +6,7 @@ import PageHeader from '../components/common/PageHeader';
 import OfferModal from '../components/market/OfferModal';
 import OffersPanel from '../components/market/OffersPanel';
 import Card from '../components/common/Card';
+import DtSidebar from '../components/club/DtSidebar';
 import { formatCurrency, getPositionColor, getFormIcon } from '../utils/helpers';
 
 const Market = () => {
@@ -79,14 +80,16 @@ const Market = () => {
   };
   
   return (
-    <div>
-      <PageHeader 
-        title="Mercado de Fichajes" 
+    <div className="flex">
+      <DtSidebar />
+      <div className="flex-1">
+        <PageHeader
+        title="Mercado de Fichajes"
         subtitle="Compra y vende jugadores para mejorar tu equipo."
         image="https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
-      />
-      
-      <div className="container mx-auto px-4 py-8">
+        />
+
+        <div className="container mx-auto px-4 py-8">
         {/* Market status */}
         <div className="mb-6">
           {marketStatus ? (
@@ -311,11 +314,13 @@ const Market = () => {
       
       {/* Offer modal */}
       {selectedPlayer && (
-        <OfferModal 
-          player={selectedPlayer} 
-          onClose={() => setSelectedPlayer(null)} 
+        <OfferModal
+          player={selectedPlayer}
+          onClose={() => setSelectedPlayer(null)}
         />
       )}
+        </div>
+      </div>
     </div>
   );
 };
