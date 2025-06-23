@@ -1,3 +1,6 @@
 export const VZ_USERS_KEY = 'vz_users';
 export const VZ_CURRENT_USER_KEY = 'vz_current_user';
 export const VZ_COMMENTS_KEY = 'vz_comments';
+export const VZ_PLAYERS_KEY = 'vz_players';
+export const VZ_FINANCE_HISTORY_KEY = 'vz_finance_history';
+export const VZ_FIXTURES_KEY = 'vz_fixtures';
