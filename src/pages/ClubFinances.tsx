@@ -3,7 +3,10 @@ import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } f
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate } from '../utils/helpers';
+<<<<<<< HEAD
 import DtSidebar from '../components/club/DtSidebar';
+=======
+>>>>>>> parent of 79cab00 (Add QuickNavCards component and integrate across club pages)
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();

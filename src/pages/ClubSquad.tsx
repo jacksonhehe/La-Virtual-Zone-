@@ -4,7 +4,10 @@ import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency } from '../utils/helpers';
 import { useState } from 'react';
+<<<<<<< HEAD
 import DtSidebar from '../components/club/DtSidebar';
+=======
+>>>>>>> parent of 79cab00 (Add QuickNavCards component and integrate across club pages)
 
 const ClubSquad = () => {
   const { clubName, clubId } = useParams<{ clubName?: string; clubId?: string }>();

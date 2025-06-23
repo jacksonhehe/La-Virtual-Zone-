@@ -87,9 +87,15 @@ const Market = () => {
         title="Mercado de Fichajes"
         subtitle="Compra y vende jugadores para mejorar tu equipo."
         image="https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
+<<<<<<< HEAD
         />
 
         <div className="container mx-auto px-4 py-8">
+=======
+      />
+      
+      <div className="container mx-auto px-4 py-8">
+>>>>>>> parent of 79cab00 (Add QuickNavCards component and integrate across club pages)
         {/* Market status */}
         <div className="mb-6">
           {marketStatus ? (
