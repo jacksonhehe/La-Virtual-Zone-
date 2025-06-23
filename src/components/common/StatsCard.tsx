@@ -45,7 +45,7 @@ const StatsCard = ({ title, value, icon, trend, trendValue, progress }: StatsCar
     <div className="card p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-gray-400 text-sm mb-2">{title}</p>
+          <p className="text-gray-400 text-xs sm:text-sm mb-2">{title}</p>
           <p className="text-xl font-bold">{value}</p>
           {renderTrend()}
           {typeof progress === 'number' && (

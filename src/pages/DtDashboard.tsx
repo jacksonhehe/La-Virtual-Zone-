@@ -25,6 +25,7 @@ import Card from '../components/common/Card';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import PageHeader from '../components/common/PageHeader';
+import DtMenuTabs from '../components/DtMenuTabs';
 import {
   getMiniTable,
   formatCurrency,
@@ -78,9 +79,10 @@ const DtDashboard = () => {
       <PageHeader
         title="Tablero del DT"
         subtitle="Vista general del club y próximas actividades."
-        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
+        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
       />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <DtMenuTabs />
       {/* ---------- ENCABEZADO ---------- */}
       <header className="mb-6 flex flex-col items-center gap-4 md:flex-row">
         <Link
