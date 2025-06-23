@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { X } from 'lucide-react';
+import useFocusTrap from '../../hooks/useFocusTrap';
 
 interface Props {
   onClose: () => void;
 }
 
 const RequestFundsModal = ({ onClose }: Props) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef);
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -17,7 +20,13 @@ const RequestFundsModal = ({ onClose }: Props) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70" onClick={onClose}></div>
-      <div className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-sm p-6">
+      <div
+        className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-sm p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="request-funds-title"
+        ref={dialogRef}
+      >
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
           <X size={24} />
         </button>
@@ -28,7 +37,7 @@ const RequestFundsModal = ({ onClose }: Props) => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-xl font-bold">Solicitar Fondos</h3>
+            <h3 id="request-funds-title" className="text-xl font-bold">Solicitar Fondos</h3>
             <div>
               <label className="block text-sm text-gray-400 mb-1">Cantidad</label>
               <input type="number" className="input w-full" required />
