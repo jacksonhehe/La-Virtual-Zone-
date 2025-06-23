@@ -2,7 +2,7 @@ import  { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
-import usePersistentState from '../utils/usePersistentState';
+import usePersistentState from '../hooks/usePersistentState';
 
 const Tournaments = () => {
   const [filter, setFilter] = usePersistentState<'all' | 'ongoing' | 'open' | 'finished'>('tournaments_filter', 'all');

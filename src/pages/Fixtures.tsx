@@ -5,7 +5,7 @@ import PageHeader from '../components/common/PageHeader';
 import Card from '../components/common/Card';
 import { useDataStore } from '../store/dataStore';
 import { formatDate } from '../utils/helpers';
-import usePersistentState from '../utils/usePersistentState';
+import usePersistentState from '../hooks/usePersistentState';
 
 const Fixtures = () => {
   const [selectedRound, setSelectedRound] = usePersistentState<number | null>('fixtures_round', null);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import usePersistentState from '../utils/usePersistentState';
+import usePersistentState from '../hooks/usePersistentState';
 import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { Player } from '../types';

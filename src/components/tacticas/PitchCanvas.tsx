@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Player } from '../../types';
-import usePersistentState from '../../utils/usePersistentState';
+import usePersistentState from '../../hooks/usePersistentState';
 import PlayerCard from './PlayerCard';
 import SynergyIndicator from './SynergyIndicator';
 import { Instructions } from './TeamInstructions';
