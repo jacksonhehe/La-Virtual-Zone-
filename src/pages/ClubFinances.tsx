@@ -4,17 +4,23 @@ import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate } from '../utils/helpers';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import DtSidebar from '../components/club/DtSidebar';
 =======
 >>>>>>> parent of 79cab00 (Add QuickNavCards component and integrate across club pages)
+=======
+import QuickNavCards from '../components/club/QuickNavCards';
+>>>>>>> parent of 8dda5bc (Revert "Merge pull request #192 from jacksonhehe/codex/crear-componente-quicknavcards-y-actualizar-páginas-de-club")
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
 
-  const { clubs, transfers } = useDataStore();
+  const { clubs, transfers, players, marketStatus } = useDataStore();
   
   // Find club by slug
   const club = clubs.find(c => c.slug === clubName);
+
+  const clubPlayers = club ? players.filter(p => p.clubId === club.id) : [];
   
   if (!club) {
     return (
@@ -83,7 +89,15 @@ const ClubFinances = () => {
               </p>
             </div>
           </div>
-          
+
+          <QuickNavCards
+            clubSlug={club.slug}
+            playersCount={clubPlayers.length}
+            formation={(club as any).formation || '4-4-2'}
+            budget={club.budget}
+            marketOpen={marketStatus}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="card p-6">
               <div className="flex justify-between items-start mb-4">
