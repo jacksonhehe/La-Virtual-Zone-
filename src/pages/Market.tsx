@@ -1,4 +1,5 @@
-import  { useState } from 'react';
+import { useState } from 'react';
+import usePersistentState from '../utils/usePersistentState';
 import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { Player } from '../types';
@@ -15,7 +16,7 @@ const Market = () => {
   const [ratingSort, setRatingSort] = useState<'asc' | 'desc' | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
-  const [activeTab, setActiveTab] = useState<'players' | 'offers'>('players');
+  const [activeTab, setActiveTab] = usePersistentState<'players' | 'offers'>('market_tab', 'players');
   
   const { players, clubs, marketStatus } = useDataStore();
   

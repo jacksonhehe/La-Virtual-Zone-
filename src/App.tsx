@@ -29,11 +29,11 @@ const Rankings = lazy(() => import('./pages/Rankings'));
 const Fixtures = lazy(() => import('./pages/Fixtures'));
 const DtDashboard = lazy(() => import('./pages/DtDashboard'));
 const Feed = lazy(() => import('./pages/Feed'));
-const Tacticas = lazy(() => import('./pages/Tacticas'));
+const Tacticas = lazy(() => import('./pages/TacticasPage'));
 const Analisis = lazy(() => import('./pages/Analisis'));
 const PlantillaPage = lazy(() => import('./pages/PlantillaPage'));
 const Finanzas = lazy(() => import('./pages/Finanzas'));
-const Calendario = lazy(() => import('./pages/Calendario'));
+const Calendario = lazy(() => import('./pages/CalendarioPage'));
 
 function App() {
   return (

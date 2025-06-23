@@ -37,11 +37,8 @@ npm run preview
 ```
 ## Tests
 
-Run the TypeScript tests using `tsx`:
-
-```bash
-npm test
-```
+Testing has not been configured yet. Once Cypress or another test framework is
+added, instructions for running tests will be documented here.
 
 
 ## Admin Panel
