@@ -33,7 +33,7 @@ const Tacticas = lazy(() => import('./pages/TacticasPage'));
 const Analisis = lazy(() => import('./pages/Analisis'));
 const Plantilla = lazy(() => import('./pages/Plantilla'));
 const Finanzas = lazy(() => import('./pages/Finanzas'));
-const Calendario = lazy(() => import('./pages/Calendario'));
+const Calendario = lazy(() => import('./pages/CalendarioPage'));
 
 function App() {
   return (

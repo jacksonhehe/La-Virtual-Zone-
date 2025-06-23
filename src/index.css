@@ -107,3 +107,23 @@ body {
   }
 }
 
+
+/* FullCalendar dark overrides */
+.fc-theme-standard,
+.fc-theme-standard td,
+.fc-theme-standard th {
+  @apply border-zinc-700;
+}
+.fc .fc-button {
+  @apply bg-dark-light text-white border-none hover:bg-dark-lighter rounded;
+}
+.fc .fc-button.fc-button-active {
+  @apply bg-primary;
+}
+.fc .fc-daygrid-day-number {
+  @apply text-gray-300;
+}
+.fc .fc-daygrid-event {
+  background-color: rgb(127 57 251 / 0.2);
+  @apply border border-primary text-primary text-xs rounded px-1;
+}

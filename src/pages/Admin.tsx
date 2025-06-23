@@ -1,4 +1,5 @@
-import  { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import usePersistentState from '../utils/usePersistentState';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { Settings, Users, Trophy, ShoppingCart, Calendar, FileText, Clipboard, BarChart, Edit, Plus, Trash, Activity, Search, ExternalLink, MessageSquare } from 'lucide-react';
 import NewUserModal from '../components/admin/NewUserModal';
@@ -20,7 +21,7 @@ import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = usePersistentState('admin_tab', 'dashboard');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showClubModal, setShowClubModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
