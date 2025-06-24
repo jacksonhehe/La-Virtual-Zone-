@@ -11,7 +11,6 @@ import {
   Trophy,
   Calendar,
   Inbox,
-  ChevronRight,
   Sun,
   Moon,
 } from "lucide-react";
@@ -19,7 +18,6 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import ReactGA from "react-ga4";
 
-import StatsCard from "../components/common/StatsCard";
 import Card from "../components/common/Card";
 import DtMenuTabs from "../components/DtMenuTabs";
 import CountdownBar from "../components/common/CountdownBar";
