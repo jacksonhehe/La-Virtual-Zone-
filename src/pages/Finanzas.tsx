@@ -3,6 +3,7 @@ import PageHeader from '../components/common/PageHeader';
 import financeData from '../data/financeHistory.json';
 import { VZ_FINANCE_HISTORY_KEY } from '../utils/storageKeys';
 import { formatCurrency } from '../utils/helpers';
+import IncomeVsExpensesChart from '../components/finanzas/IncomeVsExpensesChart';
 
 interface FinanceEntry {
   season: string;
@@ -31,7 +32,8 @@ const Finanzas = () => {
         subtitle="Presupuesto y movimientos de transferencias por temporada."
       />
       <div className="container mx-auto px-4 py-8">
-        <div className="overflow-x-auto">
+        <IncomeVsExpensesChart />
+        <div className="mt-6 overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="text-gray-400 text-xs uppercase border-b border-gray-800">

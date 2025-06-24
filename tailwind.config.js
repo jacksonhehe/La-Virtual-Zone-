@@ -11,7 +11,7 @@ export default {
         'neon-blue': 'var(--neon-blue)',
         'neon-green': 'var(--neon-green)',
         'neon-yellow': 'var(--neon-yellow)',
-        accent: 'var(--accent)',
+        accent: '#3ff',
         dark: '#1a1a24',
         'dark-light': '#47474f',
         'dark-lighter': '#75757b',

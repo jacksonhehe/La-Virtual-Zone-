@@ -8,10 +8,10 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
 
 const LigaMaster = lazy(() => import("./pages/LigaMaster"));
-const PlantillaPage = lazy(() => import("./pages/PlantillaPage"));
-const TacticasPage = lazy(() => import("./pages/TacticasPage"));
-const FinanzasPage = lazy(() => import("./pages/FinanzasPage"));
-const CalendarioPage = lazy(() => import("./pages/CalendarioPage"));
+const Plantilla = lazy(() => import("./pages/Plantilla"));
+const Tacticas = lazy(() => import("./pages/Tacticas"));
+const Finanzas = lazy(() => import("./pages/Finanzas"));
+const Calendario = lazy(() => import("./pages/Calendario"));
 
 function App() {
   return (
@@ -22,10 +22,10 @@ function App() {
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="liga-master" element={<LigaMaster />} />
-            <Route path="liga-master/plantilla" element={<PlantillaPage />} />
-            <Route path="liga-master/tacticas" element={<TacticasPage />} />
-            <Route path="liga-master/finanzas" element={<FinanzasPage />} />
-            <Route path="liga-master/calendario" element={<CalendarioPage />} />
+            <Route path="liga-master/plantilla" element={<Plantilla />} />
+            <Route path="liga-master/tacticas" element={<Tacticas />} />
+            <Route path="liga-master/finanzas" element={<Finanzas />} />
+            <Route path="liga-master/calendario" element={<Calendario />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
