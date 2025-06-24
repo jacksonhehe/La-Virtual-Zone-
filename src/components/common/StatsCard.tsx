@@ -1,7 +1,7 @@
 import ProgressBar from './ProgressBar';
 import { ArrowUp, ArrowDown, ArrowRight } from 'lucide-react';
 
-interface  StatsCardProps {
+interface StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;

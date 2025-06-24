@@ -1,5 +1,4 @@
-import { Match, Standing } from '../types';
-import { leagueStandings, players } from '../data/mockData';
+import { Match, Standing, Player } from '../types';
 export { slugify } from './slugify';
 
 //  Format currency
@@ -134,8 +133,12 @@ export const getMiniTable = (
   }));
 };
 
-export const calcStreak = (clubId: string, fixtures: Match[]): boolean[] => {
-  const team = leagueStandings.find(t => t.clubId === clubId);
+export const calcStreak = (
+  clubId: string,
+  fixtures: Match[],
+  standings: Standing[]
+): boolean[] => {
+  const team = standings.find(t => t.clubId === clubId);
   const name = team ? team.clubName : clubId;
 
   const recent = fixtures
@@ -159,8 +162,11 @@ export interface Performer {
   a: number;
 }
 
-export const getTopPerformer = (clubId: string): Performer | null => {
-  const clubPlayers = players.filter(p => p.clubId === clubId);
+export const getTopPerformer = (
+  clubId: string,
+  playersData: Player[]
+): Performer | null => {
+  const clubPlayers = playersData.filter(p => p.clubId === clubId);
   if (clubPlayers.length === 0) return null;
 
   const best = clubPlayers.reduce((prev, curr) => {
@@ -185,26 +191,32 @@ export interface LeagueDiff {
 const computeDiff = (
   clubId: string,
   field: keyof Standing,
-  label: string
+  label: string,
+  standings: Standing[]
 ): LeagueDiff => {
-  const team = leagueStandings.find(t => t.clubId === clubId);
+  const team = standings.find(t => t.clubId === clubId);
   if (!team) return { label, diff: 0 };
 
-const avg =
-    leagueStandings.reduce((sum, s) => sum + s[field], 0) /
-    leagueStandings.length;
+  const avg = standings.reduce((sum, s) => sum + (s[field] as number), 0) /
+    standings.length;
 
   return { label, diff: Math.round(team[field] - avg) };
 };
 
-export const goalsDiff = (clubId: string): LeagueDiff =>
-  computeDiff(clubId, 'goalsFor', 'Goles a favor');
+export const goalsDiff = (
+  clubId: string,
+  standings: Standing[]
+): LeagueDiff => computeDiff(clubId, 'goalsFor', 'Goles a favor', standings);
 
-export const possessionDiff = (clubId: string): LeagueDiff =>
-  computeDiff(clubId, 'possession', 'Posesión');
+export const possessionDiff = (
+  clubId: string,
+  standings: Standing[]
+): LeagueDiff => computeDiff(clubId, 'possession', 'Posesión', standings);
 
-export const yellowDiff = (clubId: string): LeagueDiff =>
-  computeDiff(clubId, 'cards', 'Amarillas');
+export const yellowDiff = (
+  clubId: string,
+  standings: Standing[]
+): LeagueDiff => computeDiff(clubId, 'cards', 'Amarillas', standings);
 
 // Format news type
 export const formatNewsType = (type: string): string => {
