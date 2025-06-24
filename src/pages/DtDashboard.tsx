@@ -86,7 +86,7 @@ ReactGA.initialize("G-XXXXXXX");
 
 /* ---------- Tipos ---------- */
 interface LayoutItem {
-  id: string;
+  id: RightModuleId;
   visible: boolean;
 }
 interface ChatMsg {
@@ -824,7 +824,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
   handleDragEnd,
   findModule,
 }) => {
-  const SortableItem: React.FC<{ id: string; children: React.ReactNode }> = ({
+  const SortableItem: React.FC<{ id: RightModuleId; children: React.ReactNode }> = ({
     id,
     children,
   }) => {
