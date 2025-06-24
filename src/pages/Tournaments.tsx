@@ -1,4 +1,4 @@
-import  { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';

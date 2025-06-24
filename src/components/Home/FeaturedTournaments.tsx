@@ -1,4 +1,4 @@
-import  { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Trophy, Calendar, Award, Users } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate } from '../../utils/helpers';
