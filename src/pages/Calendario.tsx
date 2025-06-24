@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import DtMenuTabs from '../components/DtMenuTabs';
 import EventModal, { CalendarEvent } from '../components/calendar/EventModal';
+import CardSkeleton from '../components/common/CardSkeleton';
 import fixtures from '../data/fixtures.json';
 import { VZ_CALENDAR_PREFS_KEY } from '../utils/storageKeys';
 
@@ -85,7 +86,7 @@ const Calendario = () => {
           Mercado
         </label>
       </div>
-      <Suspense fallback={<div className="text-center">Cargando…</div>}>
+      <Suspense fallback={<CardSkeleton lines={4} /> }>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"

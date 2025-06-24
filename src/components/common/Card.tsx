@@ -7,7 +7,7 @@ interface CardProps {
 }
 
 const Card = ({ children, onClick, className = '' }: CardProps) => (
-  <div onClick={onClick} className={`card card-hover ${className}`.trim()}>
+  <div onClick={onClick} className={`card-glass card-hover ${className}`.trim()}>
     {children}
   </div>
 );

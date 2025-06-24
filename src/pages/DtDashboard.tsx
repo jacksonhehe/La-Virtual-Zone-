@@ -27,7 +27,7 @@ import {
   EyeOff,
   GripVertical,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import ReactGA from "react-ga4";
 import {
@@ -66,6 +66,8 @@ import LatestNews from "./dt-dashboard/LatestNews";
 import QuickActions from "./dt-dashboard/QuickActions";
 import PageHeader from "../components/common/PageHeader";
 import DashboardSkeleton from "../components/common/DashboardSkeleton";
+import FilterChip from "../components/common/FilterChip";
+import RankingRow from "../components/common/RankingRow";
 import { DtRanking } from "../types";
 
 import { useAuthStore } from "../store/authStore";
@@ -271,7 +273,7 @@ const DtDashboard: React.FC = () => {
       title: "Anuncios",
       render: () => (
         <Card className="p-4" aria-label="Anuncios" aria-live="polite">
-          <h3 className="mb-3 font-semibold">Anuncios</h3>
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Anuncios</h3>
           {events.length === 0 ? (
             <EmptyState label="No hay anuncios" />
           ) : (
@@ -295,7 +297,7 @@ const DtDashboard: React.FC = () => {
       title: "Mercado",
       render: () => (
         <Card className="p-4" aria-label="Mercado">
-          <h3 className="mb-3 font-semibold">Mercado</h3>
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Mercado</h3>
           <div className="flex items-center gap-2">
             <span
               className={
@@ -319,7 +321,7 @@ const DtDashboard: React.FC = () => {
       title: "Logros",
       render: () => (
         <Card className="p-4" aria-label="Logros">
-          <h3 className="mb-3 font-semibold">Logros</h3>
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Logros</h3>
           <ul className="space-y-2 text-sm">
             {achievements.map((a) => (
               <li
@@ -345,7 +347,7 @@ const DtDashboard: React.FC = () => {
       title: "Ranking DT",
       render: () => (
         <Card className="p-4" aria-label="Ranking DT">
-          <h3 className="mb-3 font-semibold">Ranking de Entrenadores</h3>
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Ranking de Entrenadores</h3>
           {dtRankings.length === 0 ? (
             <EmptyState label="Sin datos de ranking" />
           ) : (
@@ -360,18 +362,7 @@ const DtDashboard: React.FC = () => {
               </thead>
               <tbody>
                 {dtRankings.slice(0, 10).map((d: DtRanking, idx: number) => (
-                  <tr key={d.id} className="border-t border-white/10">
-                    <td>{idx + 1}</td>
-                    <td>{d.username}</td>
-                    <td className="flex items-center justify-center gap-1">
-                      <img
-                        src={d.clubLogo}
-                        alt={d.clubName}
-                        className="h-4 w-4"
-                      />
-                    </td>
-                    <td className="text-right">{d.elo}</td>
-                  </tr>
+                  <RankingRow key={d.id} rank={idx + 1} data={d} />
                 ))}
               </tbody>
             </table>
@@ -392,20 +383,15 @@ const DtDashboard: React.FC = () => {
           {/* filtros */}
           <div className="mb-4 flex flex-wrap gap-2">
             {categories.map((c) => (
-              <button
+              <FilterChip
                 key={c}
+                label={c}
+                active={cat === c}
                 onClick={() => {
                   setCat(c);
                   setNewsCount(5);
                 }}
-                className={`rounded-full px-3 py-1 text-xs ${
-                  cat === c
-                    ? "bg-accent text-black"
-                    : "bg-white/10 text-gray-300 hover:bg-white/20"
-                } focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-accent`}
-              >
-                {c}
-              </button>
+              />
             ))}
           </div>
           {/* lista */}
@@ -447,7 +433,7 @@ const DtDashboard: React.FC = () => {
       title: "Recordatorios",
       render: () => (
         <Card className="p-4" aria-label="Recordatorios">
-          <h3 className="mb-3 font-semibold">Recordatorios</h3>
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Recordatorios</h3>
           {tasks.length === 0 ? (
             <EmptyState label="No hay recordatorios" />
           ) : (
@@ -573,26 +559,30 @@ const DtDashboard: React.FC = () => {
 
         {/* KPI + gráfica */}
         <section className="mb-8 space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible snap-x">
             <KPICard
               title="Plantilla"
               icon={<Users size={24} />}
               value={`${club.players.length} jugadores`}
+              className="min-w-[90%] sm:min-w-0 snap-start"
             />
             <KPICard
               title="Táctica"
               icon={<LayoutIcon size={24} />}
               value={club.formation}
+              className="min-w-[90%] sm:min-w-0 snap-start"
             />
             <KPICard
               title="Finanzas"
               icon={<DollarSign size={24} />}
               value={formatCurrency(club.budget)}
+              className="min-w-[90%] sm:min-w-0 snap-start"
             />
             <KPICard
               title="Mercado"
               icon={<TrendingUp size={24} />}
               value={marketOpen ? "Abierto" : "Cerrado"}
+              className="min-w-[90%] sm:min-w-0 snap-start"
             />
           </div>
 
@@ -613,7 +603,12 @@ const DtDashboard: React.FC = () => {
         {/* cuerpo principal */}
         <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* izquierda */}
-          <div className="space-y-8 lg:col-span-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8 lg:col-span-2"
+          >
             {/* Próximo partido */}
             {nextMatch && (
               <Card className="p-4" aria-label="Próximo partido">
@@ -623,7 +618,7 @@ const DtDashboard: React.FC = () => {
                   ) : (
                     <Plane size={16} className="text-accent" aria-hidden />
                   )}
-                  <h2 className="font-semibold">Próximo partido</h2>
+                  <h2 className="text-xl font-semibold leading-tight">Próximo partido</h2>
                 </div>
                 <p className="mt-2">
                   {nextMatch.homeTeam === club.name
@@ -644,7 +639,7 @@ const DtDashboard: React.FC = () => {
             {/* mini tabla + comparativa */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Card className="p-4" aria-label="Mini tabla">
-                <h3 className="mb-3 font-semibold">Posiciones</h3>
+                <h3 className="mb-4 text-xl font-semibold leading-tight">Posiciones</h3>
                 <table className="w-full text-sm">
                   <tbody>
                     {miniTable.map((row) => (
@@ -675,7 +670,7 @@ const DtDashboard: React.FC = () => {
               </Card>
 
               <Card className="p-4" aria-label="Comparativa liga">
-                <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
+                <h3 className="mb-4 text-xl font-semibold leading-tight">Comparativa con la liga</h3>
                 <ul className="space-y-2 text-sm">
                   {bullets.map((b) => (
                     <li key={b.label} className="flex justify-between">
@@ -719,7 +714,7 @@ const DtDashboard: React.FC = () => {
 
             <SeasonObjectives />
             <LatestNews />
-          </div>
+          </motion.div>
 
           {/* derecha */}
           <RightColumn
@@ -742,14 +737,15 @@ export default DtDashboard;
 
 /* ═════════ sub-componentes ═════════ */
 
-const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string }> = ({
+const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string; className?: string }> = ({
   title,
   icon,
   value,
+  className = '',
 }) => (
   <motion.div
-    whileHover={{ scale: 1.04 }}
-    className="flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-colors"
+    whileHover={{ scale: 1.02, y: -2 }}
+    className={`flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-colors ${className}`.trim()}
   >
     <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
       <span className="rounded-full bg-white/10 p-1">{icon}</span>
@@ -774,6 +770,7 @@ const ChatModule: React.FC<{
   endRef: React.RefObject<HTMLDivElement>;
 }> = ({ chat, sendChat, endRef }) => {
   const [input, setInput] = useState("");
+  const { user } = useAuthStore();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendChat(input);
@@ -781,12 +778,19 @@ const ChatModule: React.FC<{
   };
   return (
     <Card className="p-4" aria-label="Chat de comunidad">
-      <h3 className="mb-3 flex items-center gap-2 font-semibold">
+      <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold leading-tight">
         <MessageCircle size={18} /> Chat
       </h3>
-      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs">
+      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs space-y-1">
         {chat.map((m) => (
-          <p key={m.id} className="mb-1">
+          <p
+            key={m.id}
+            className={`max-w-[90%] ${
+              m.user === user?.username
+                ? 'ml-auto text-right bg-accent/20 rounded px-1'
+                : ''
+            }`}
+          >
             <span className="font-semibold text-accent">{m.user}</span>: {m.text}
           </p>
         ))}
@@ -838,8 +842,18 @@ const RightColumn: React.FC<RightColumnProps> = ({
       useSortable({ id });
     const style = { transform: CSS.Transform.toString(transform), transition };
     const item = layout.find((l) => l.id === id)!;
+    const controls = useAnimation();
+    useEffect(() => {
+      if (!transform) {
+        controls.start({
+          opacity: [0.9, 1],
+          scale: [0.98, 1],
+          transition: { type: 'spring', stiffness: 150, damping: 12 },
+        });
+      }
+    }, [transform, controls]);
     return (
-      <div ref={setNodeRef} style={style}>
+      <motion.div ref={setNodeRef} style={style} animate={controls}>
         <div className="relative">
           {customizing && (
             <>
@@ -868,12 +882,17 @@ const RightColumn: React.FC<RightColumnProps> = ({
           )}
           {item.visible ? children : <div className="opacity-40">{children}</div>}
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
-    <div className="space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="space-y-8"
+    >
       {customizing ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={layout.map((l) => l.id)} strategy={verticalListSortingStrategy}>
@@ -889,6 +908,6 @@ const RightColumn: React.FC<RightColumnProps> = ({
           .filter((l) => l.visible)
           .map((l) => <div key={l.id}>{findModule(l.id).render()}</div>)
       )}
-    </div>
+    </motion.div>
   );
 };

@@ -11,10 +11,26 @@
   --neon-green: #00ff8f;
   --neon-yellow: #ffe600;
   --accent: #3ff;
+  --bg-surface: #18181f;
+  --bg-overlay: rgba(255, 255, 255, 0.05);
+  --text-main: #fff;
+}
+
+html:not(.dark) {
+  --bg-surface: #f4f4f5; /* zinc-100 */
+  --bg-overlay: rgba(0, 0, 0, 0.05);
+  --text-main: #27272a; /* zinc-800 */
 }
 
 body {
-  @apply bg-[#18181f] text-white font-sans;
+  @apply bg-[var(--bg-surface)] text-[var(--text-main)] font-sans;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
 }
 
 @layer components {
@@ -25,9 +41,13 @@ body {
   .card {
     @apply bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition-all;
   }
-  
+
   .card-hover {
     @apply hover:border-gray-600 hover:shadow-lg;
+  }
+
+  .card-glass {
+    @apply rounded-2xl border border-white/10 bg-[var(--bg-overlay)] shadow-inner backdrop-blur;
   }
   
   .input {

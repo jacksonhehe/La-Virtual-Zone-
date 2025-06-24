@@ -3,20 +3,22 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      colors: {
-        primary: 'var(--primary)',
-        'primary-light': 'var(--primary-light)',
-        'primary-dark': 'var(--primary-dark)',
-        'neon-red': 'var(--neon-red)',
-        'neon-blue': 'var(--neon-blue)',
-        'neon-green': 'var(--neon-green)',
-        'neon-yellow': 'var(--neon-yellow)',
-        accent: '#3ff',
-        dark: '#1a1a24',
-        'dark-light': '#47474f',
-        'dark-lighter': '#75757b',
-        'text-secondary': '#b5b5b5'
-      },
+        colors: {
+          primary: 'var(--primary)',
+          'primary-light': 'var(--primary-light)',
+          'primary-dark': 'var(--primary-dark)',
+          'neon-red': 'var(--neon-red)',
+          'neon-blue': 'var(--neon-blue)',
+          'neon-green': 'var(--neon-green)',
+          'neon-yellow': 'var(--neon-yellow)',
+          accent: 'var(--accent)',
+          'bg-surface': 'var(--bg-surface)',
+          'bg-overlay': 'var(--bg-overlay)',
+          dark: '#1a1a24',
+          'dark-light': '#47474f',
+          'dark-lighter': '#75757b',
+          'text-secondary': '#b5b5b5'
+        },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Rajdhani', 'sans-serif']
