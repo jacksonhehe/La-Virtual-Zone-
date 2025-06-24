@@ -8,8 +8,9 @@
       "build": "tsc && vite build",
       "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
       "preview": "vite preview",
-      "cypress:open": "cypress open",
-      "test": "npm run lint && npm run build && cypress run"
+     "cypress:open": "cypress open",
+     "test:unit": "vitest run",
+     "test": "npm run lint && npm run build && npm run test:unit && cypress run"
    },
    "dependencies": {
       "@fullcalendar/core": "^6.1.17",
@@ -43,6 +44,7 @@
       "tailwindcss": "^3.3.2",
       "typescript": "^5.0.2",
       "typescript-eslint": "^8.34.1",
-      "vite": "^6.3.5"
+      "vite": "^6.3.5",
+      "vitest": "^3.2.4"
    }
 }
