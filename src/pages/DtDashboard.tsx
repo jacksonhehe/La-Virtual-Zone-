@@ -603,8 +603,8 @@ const DtDashboard: React.FC = () => {
                 <YAxis stroke="#AAA" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="GF" stackId="a" />
-                <Bar dataKey="GC" stackId="a" />
+                <Bar dataKey="GF" stackId="a" fill="var(--neon-green)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="GC" stackId="a" fill="var(--neon-red)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -749,7 +749,7 @@ const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string }>
 }) => (
   <motion.div
     whileHover={{ scale: 1.04 }}
-    className="flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md"
+    className="flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-colors"
   >
     <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
       <span className="rounded-full bg-white/10 p-1">{icon}</span>
