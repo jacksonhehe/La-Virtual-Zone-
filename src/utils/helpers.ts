@@ -119,7 +119,11 @@ export const getMiniTable = (
   if (standings.length === 0) return [];
 
   const index = standings.findIndex(s => s.clubId === clubId);
-  const start = Math.max(0, index === -1 ? 0 : index - 2);
+  let start = index === -1 ? 0 : index - 2;
+  if (start < 0) start = 0;
+  if (start + 5 > standings.length) {
+    start = Math.max(0, standings.length - 5);
+  }
   const slice = standings.slice(start, start + 5);
 
   return slice.map((s, i) => ({
