@@ -1,8 +1,62 @@
 [
-  { "month": "Jan", "income": 1200000, "expenses": 1000000 },
-  { "month": "Feb", "income": 1100000, "expenses": 1150000 },
-  { "month": "Mar", "income": 1300000, "expenses": 900000 },
-  { "month": "Apr", "income": 1250000, "expenses": 950000 },
-  { "month": "May", "income": 1400000, "expenses": 1000000 },
-  { "month": "Jun", "income": 1350000, "expenses": 1200000 }
+  {
+    "month": "Ene",
+    "income": 120000,
+    "expenses": 90000
+  },
+  {
+    "month": "Feb",
+    "income": 95000,
+    "expenses": 85000
+  },
+  {
+    "month": "Mar",
+    "income": 110000,
+    "expenses": 97000
+  },
+  {
+    "month": "Abr",
+    "income": 130000,
+    "expenses": 99000
+  },
+  {
+    "month": "May",
+    "income": 140000,
+    "expenses": 105000
+  },
+  {
+    "month": "Jun",
+    "income": 150000,
+    "expenses": 110000
+  },
+  {
+    "month": "Jul",
+    "income": 115000,
+    "expenses": 95000
+  },
+  {
+    "month": "Ago",
+    "income": 120000,
+    "expenses": 96000
+  },
+  {
+    "month": "Sep",
+    "income": 125000,
+    "expenses": 98000
+  },
+  {
+    "month": "Oct",
+    "income": 135000,
+    "expenses": 100000
+  },
+  {
+    "month": "Nov",
+    "income": 145000,
+    "expenses": 103000
+  },
+  {
+    "month": "Dic",
+    "income": 155000,
+    "expenses": 108000
+  }
 ]
