@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Home,
   Plane,
-  Check,
   Trophy,
   Calendar,
   Inbox,
@@ -59,7 +58,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import StatsCard from "../components/common/StatsCard";
 import Card from "../components/common/Card";
 import DtMenuTabs from "../components/DtMenuTabs";
 import CountdownBar from "../components/common/CountdownBar";
@@ -127,28 +125,28 @@ const DtDashboard: React.FC = () => {
     ReactGA.send({ hitType: "pageview", page: "/dt-dashboard" });
   }, []);
 
-  /* ===== loading ===== */
-  if (!user || !club) return <DashboardSkeleton />;
-
   /* ===== datos derivados ===== */
   const marketOpen = market.open;
   const nextMatch = fixtures.find((m) => !m.played);
 
   const miniTable = useMemo(
-    () => getMiniTable(club.id, positions),
-    [club.id, positions]
+    () => (club ? getMiniTable(club.id, positions) : []),
+    [club, positions]
   );
   const streak = useMemo(
-    () => calcStreak(club.id, fixtures),
-    [club.id, fixtures]
+    () => (club ? calcStreak(club.id, fixtures) : []),
+    [club, fixtures]
   );
   const performer = useMemo(
-    () => getTopPerformer(club.id),
-    [club.id, fixtures]
+    () => (club ? getTopPerformer(club.id) : null),
+    [club]
   );
   const bullets = useMemo(
-    () => [goalsDiff(club.id), possessionDiff(club.id), yellowDiff(club.id)],
-    [club.id, positions]
+    () =>
+      club
+        ? [goalsDiff(club.id), possessionDiff(club.id), yellowDiff(club.id)]
+        : [],
+    [club]
   );
 
   /* ===== gráfica ===== */
@@ -177,10 +175,10 @@ const DtDashboard: React.FC = () => {
       {
         id: "million",
         name: "Presupuesto > 1 M €",
-        unlocked: club.budget > 1_000_000,
+        unlocked: club ? club.budget > 1_000_000 : false,
       },
     ],
-    [streak, performer, club.budget]
+    [streak, performer, club]
   );
 
   /* ===== noticias ===== */
@@ -239,7 +237,7 @@ const DtDashboard: React.FC = () => {
     doc.text(`Presupuesto: ${formatCurrency(club.budget)}`, 14, 32);
     doc.text(`Plantilla: ${club.players.length} jugadores`, 14, 40);
     doc.text(`Táctica base: ${club.formation}`, 14, 48);
-    // @ts-ignore
+    // @ts-expect-error jsPDF plugin lacks types
     doc.autoTable({
       head: [["J", "GF", "GC"]],
       body: recent.map((r) => [r.name, r.GF, r.GC]),
@@ -490,6 +488,8 @@ const DtDashboard: React.FC = () => {
     localStorage.setItem("vz_dashboard_layout", JSON.stringify(layout));
   }, [layout]);
 
+  const loading = !user || !club;
+
   /* dnd sensors */
   const sensors = useSensors(useSensor(PointerSensor));
   const handleDragEnd = (evt: DragEndEvent) => {
@@ -505,6 +505,7 @@ const DtDashboard: React.FC = () => {
   /* ═════════════════════════════════════════════════════════════ */
   /* ------------------------------ UI --------------------------- */
   /* ═════════════════════════════════════════════════════════════ */
+  if (loading) return <DashboardSkeleton />;
   return (
     <div className="relative transition-colors duration-300">
       {/* Toaster */}
@@ -711,7 +712,7 @@ const DtDashboard: React.FC = () => {
             setLayout={setLayout}
             sensors={sensors}
             handleDragEnd={handleDragEnd}
-            findModule={(id) => RIGHT_MODULES.find((m) => m.id === id)!}
+            findModule={findModule}
           />
         </main>
 
