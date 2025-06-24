@@ -37,9 +37,21 @@ npm run preview
 ```
 ## Tests
 
-Testing has not been configured yet. Once Cypress or another test framework is
-added, instructions for running tests will be documented here.
+Run the Cypress test suite:
 
+```bash
+npm run test
+```
+
+This command lints the code, builds the project and then runs Cypress in
+headless mode. To open the interactive Cypress UI instead, execute:
+
+```bash
+npx cypress open
+```
+
+Ensure the development server is running on `http://localhost:5173` before
+starting the E2E tests.
 
 ## Admin Panel
 
