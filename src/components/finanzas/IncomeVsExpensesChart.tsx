@@ -28,7 +28,7 @@ const IncomeVsExpensesChart: React.FC = () => {
         <h3 className="text-sm font-semibold">Ingresos vs Gastos</h3>
         <select
           value={range}
-          onChange={(e) => setRange(e.target.value as any)}
+          onChange={(e) => setRange(e.target.value as "3m" | "6m" | "12m")}
           className="rounded bg-zinc-700 p-1 text-xs"
         >
           <option value="3m">3 meses</option>

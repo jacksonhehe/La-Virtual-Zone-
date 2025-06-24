@@ -4,12 +4,23 @@ import toast from "react-hot-toast";
 import RenewContractModal from "./RenewContractModal";
 import playersMock from "../../data/players.json";
 
-const PlayerTable: React.FC = () => {
-  const [players, setPlayers] = useState(playersMock);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selected, setSelected] = useState<any>(null);
+interface Player {
+  id: number;
+  number: number;
+  name: string;
+  position: string;
+  ovr: number;
+  age: number;
+  contractYears: number;
+  salary: number;
+}
 
-  const handleRenew = (player: any) => {
+const PlayerTable: React.FC = () => {
+  const [players, setPlayers] = useState<Player[]>(playersMock as Player[]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selected, setSelected] = useState<Player | null>(null);
+
+  const handleRenew = (player: Player) => {
     setSelected(player);
     setModalOpen(true);
   };
@@ -17,7 +28,9 @@ const PlayerTable: React.FC = () => {
   const confirmRenew = (years: number, salary: number) => {
     setPlayers((prev) =>
       prev.map((p) =>
-        p.id === selected.id ? { ...p, contractYears: years, salary } : p
+        selected && p.id === selected.id
+          ? { ...p, contractYears: years, salary }
+          : p
       )
     );
   };

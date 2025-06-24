@@ -2,9 +2,20 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
+interface Player {
+  id: number;
+  number: number;
+  name: string;
+  position: string;
+  ovr: number;
+  age: number;
+  contractYears: number;
+  salary: number;
+}
+
 interface Props {
   isOpen: boolean;
-  player: any;
+  player: Player | null;
   onClose: () => void;
   onConfirm: (years: number, salary: number) => void;
 }
