@@ -562,6 +562,12 @@ const DtDashboard: React.FC = () => {
         </button>
       </PageHeader>
 
+      {customizing && (
+        <div className="bg-accent py-2 text-center text-sm font-semibold text-black">
+          Modo personalización activo
+        </div>
+      )}
+
       <div className="container mx-auto px-4 py-8">
         <DtMenuTabs />
 
@@ -570,22 +576,22 @@ const DtDashboard: React.FC = () => {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <KPICard
               title="Plantilla"
-              icon={<Users size={20} />}
+              icon={<Users size={24} />}
               value={`${club.players.length} jugadores`}
             />
             <KPICard
               title="Táctica"
-              icon={<LayoutIcon size={20} />}
+              icon={<LayoutIcon size={24} />}
               value={club.formation}
             />
             <KPICard
               title="Finanzas"
-              icon={<DollarSign size={20} />}
+              icon={<DollarSign size={24} />}
               value={formatCurrency(club.budget)}
             />
             <KPICard
               title="Mercado"
-              icon={<TrendingUp size={20} />}
+              icon={<TrendingUp size={24} />}
               value={marketOpen ? "Abierto" : "Cerrado"}
             />
           </div>
@@ -743,10 +749,10 @@ const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string }>
 }) => (
   <motion.div
     whileHover={{ scale: 1.04 }}
-    className="flex flex-col justify-between rounded-2xl bg-white/5 p-6 shadow-inner backdrop-blur-md"
+    className="flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md"
   >
     <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
-      {icon}
+      <span className="rounded-full bg-white/10 p-1">{icon}</span>
       {title}
     </div>
     <p className="text-xl font-bold text-white" aria-live="polite">
