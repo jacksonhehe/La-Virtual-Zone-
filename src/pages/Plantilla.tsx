@@ -1,52 +1,30 @@
-import { useEffect, useState } from 'react';
+import { lazy, useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
+import ResumenClub from '../components/plantilla/ResumenClub';
+import PlayerTable from '../components/plantilla/PlayerTable';
 import playersData from '../data/players.json';
-import { VZ_PLAYERS_KEY } from '../utils/storageKeys';
+import { dtClub } from '../data/mockData';
+import type { Player } from '../types';
+import usePersistentState from '../hooks/usePersistentState';
 
-interface SquadPlayer {
-  id: string;
-  name: string;
-  age: number;
-  position: string;
-  nationality: string;
-  overall: number;
-}
+const PlayerDrawer = lazy(() => import('../components/plantilla/PlayerDrawer'));
 
 const Plantilla = () => {
-  const [players, setPlayers] = useState<SquadPlayer[]>([]);
-
-  useEffect(() => {
-    const json = localStorage.getItem(VZ_PLAYERS_KEY);
-    if (json) {
-      setPlayers(JSON.parse(json));
-    } else {
-      localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(playersData));
-      setPlayers(playersData as SquadPlayer[]);
-    }
-  }, []);
+  const [players, setPlayers] = usePersistentState<Player[]>(
+    'vz_players',
+    playersData as Player[]
+  );
+  const [active, setActive] = useState<Player | null>(null);
 
   return (
     <div>
-      <PageHeader
-        title="Plantilla"
-        subtitle="Jugadores registrados en tu plantilla."
-      />
+      <PageHeader title="Plantilla" subtitle="Jugadores registrados en tu plantilla." />
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {players.map(player => (
-            <div key={player.id} className="card p-4 flex justify-between">
-              <div>
-                <h3 className="font-bold">{player.name}</h3>
-                <p className="text-sm text-gray-400">
-                  {player.position} • {player.nationality} • {player.age} años
-                </p>
-              </div>
-              <span className="text-sm text-gray-300 font-bold">
-                {player.overall}
-              </span>
-            </div>
-          ))}
+        <ResumenClub club={{ name: dtClub.name, logo: dtClub.logo }} players={players} />
+        <div className="mt-6">
+          <PlayerTable players={players} setPlayers={setPlayers} onSelectPlayer={setActive} />
         </div>
+        {active && <PlayerDrawer player={active} onClose={() => setActive(null)} />}
       </div>
     </div>
   );
