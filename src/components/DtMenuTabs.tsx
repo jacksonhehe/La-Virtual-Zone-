@@ -19,7 +19,7 @@ const DtMenuTabs: React.FC = () => {
           key={tab.to}
           to={tab.to}
           className={({ isActive }) =>
-            \`pb-2 transition-colors duration-150 hover:text-accent \${isActive ? "border-b-2 border-accent text-accent" : "text-zinc-300"}\`
+            `pb-2 transition-colors duration-150 hover:text-accent ${isActive ? "border-b-2 border-accent text-accent" : "text-zinc-300"}`
           }
           aria-selected={window.location.pathname === tab.to}
         >

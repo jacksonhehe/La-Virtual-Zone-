@@ -22,7 +22,7 @@ const RenewContractModal: React.FC<Props> = ({
 
   const handleConfirm = () => {
     onConfirm(years, salary);
-    toast.success(\`Contrato de \${player.name} renovado por \${years} años\`);
+    toast.success(`Contrato de ${player.name} renovado por ${years} años`);
     onClose();
   };
 

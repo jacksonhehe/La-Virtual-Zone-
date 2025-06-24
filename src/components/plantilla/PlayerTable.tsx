@@ -23,7 +23,7 @@ const PlayerTable: React.FC = () => {
   };
 
   const handleSell = (player: any) => {
-    toast.success(\`\${player.name} añadido al mercado\`);
+    toast.success(`${player.name} añadido al mercado`);
   };
 
   return (
