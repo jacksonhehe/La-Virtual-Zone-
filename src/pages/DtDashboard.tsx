@@ -66,6 +66,7 @@ import LatestNews from "./dt-dashboard/LatestNews";
 import QuickActions from "./dt-dashboard/QuickActions";
 import PageHeader from "../components/common/PageHeader";
 import DashboardSkeleton from "../components/common/DashboardSkeleton";
+import { DtRanking } from "../types";
 
 import { useAuthStore } from "../store/authStore";
 import { useDataStore } from "../store/dataStore";
@@ -94,6 +95,16 @@ interface ChatMsg {
   text: string;
   ts: number;
 }
+
+type RightModuleId =
+  | "chat"
+  | "anuncios"
+  | "mercado"
+  | "logros"
+  | "ranking"
+  | "noticias"
+  | "recordatorios"
+  | "acciones";
 
 /* ---------- componente principal ---------- */
 const DtDashboard: React.FC = () => {
@@ -155,8 +166,8 @@ const DtDashboard: React.FC = () => {
     .slice(-5)
     .map((m) => ({
       name: `J${m.round}`,
-      GF: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
-      GC: m.homeTeam === club.name ? m.awayGoals : m.homeGoals,
+      GF: m.homeTeam === club.name ? m.homeScore ?? 0 : m.awayScore ?? 0,
+      GC: m.homeTeam === club.name ? m.awayScore ?? 0 : m.homeScore ?? 0,
     }));
 
   /* ===== logros ===== */
@@ -188,9 +199,10 @@ const DtDashboard: React.FC = () => {
 
   const filteredNews = useMemo(
     () =>
-      (news ?? []).filter(
-        (n) => cat === "Todas" || n.category.toLowerCase() === cat.toLowerCase()
-      ),
+      (news ?? []).filter((n) => {
+        const category = n.category ?? n.type;
+        return cat === "Todas" || category.toLowerCase() === cat.toLowerCase();
+      }),
     [news, cat]
   );
   const visibleNews = filteredNews.slice(0, newsCount);
@@ -216,7 +228,7 @@ const DtDashboard: React.FC = () => {
     if (!text.trim()) return;
     const msg: ChatMsg = {
       id: crypto.randomUUID(),
-      user: user.username,
+      user: user?.username ?? 'Anon',
       text: text.trim(),
       ts: Date.now(),
     };
@@ -347,7 +359,7 @@ const DtDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {dtRankings.slice(0, 10).map((d, idx) => (
+                {dtRankings.slice(0, 10).map((d: DtRanking, idx: number) => (
                   <tr key={d.id} className="border-t border-white/10">
                     <td>{idx + 1}</td>
                     <td>{d.username}</td>
@@ -405,7 +417,7 @@ const DtDashboard: React.FC = () => {
                 <li key={n.id} className="rounded bg-white/5 p-2">
                   <p className="font-medium">{n.title}</p>
                   <p className="text-xs text-gray-400">
-                    {formatDate(n.date)} • {n.category}
+                    {formatDate(n.date ?? n.publishDate)} • {n.category ?? n.type}
                   </p>
                 </li>
               ))}
@@ -466,8 +478,6 @@ const DtDashboard: React.FC = () => {
       render: () => <QuickActions marketOpen={marketOpen} />,
     },
   ] as const;
-
-  type RightModuleId = (typeof RIGHT_MODULES)[number]["id"];
 
   /* layout */
   const DEFAULT_LAYOUT: LayoutItem[] = RIGHT_MODULES.map((m) => ({
@@ -803,7 +813,7 @@ interface RightColumnProps {
   setLayout: (l: LayoutItem[]) => void;
   sensors: ReturnType<typeof useSensors>;
   handleDragEnd: (e: DragEndEvent) => void;
-  findModule: (id: string) => { id: string; title: string; render: () => JSX.Element };
+  findModule: (id: RightModuleId) => { id: string; title: string; render: () => JSX.Element };
 }
 
 const RightColumn: React.FC<RightColumnProps> = ({

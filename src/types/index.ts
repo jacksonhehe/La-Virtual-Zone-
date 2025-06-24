@@ -161,8 +161,12 @@ export interface NewsItem {
   title: string;
   content: string;
   type: 'transfer' | 'rumor' | 'result' | 'announcement' | 'statement';
+  /** Optional category label used in some views */
+  category?: string;
   imageUrl?: string;
+  /** Publication date (alias 'date' used in some components) */
   publishDate: string;
+  date?: string;
   author: string;
   clubId?: string;
   playerId?: string;
@@ -284,10 +288,19 @@ export interface DtObjectives {
 export interface DtTask {
   id: string;
   text: string;
+  done?: boolean;
 }
 
 export interface DtEvent {
   id: string;
   message: string;
   date: string;
+}
+
+export interface DtRanking {
+  id: string;
+  username: string;
+  clubName: string;
+  clubLogo: string;
+  elo: number;
 }
