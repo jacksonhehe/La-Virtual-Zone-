@@ -84,7 +84,10 @@ import {
 } from "../utils/helpers";
 
 /* ▸ Google Analytics 4 */
-ReactGA.initialize("G-XXXXXXX");
+const gaId = import.meta.env.VITE_GA_ID;
+if (gaId) {
+  ReactGA.initialize(gaId);
+}
 
 /* ---------- Tipos ---------- */
 interface LayoutItem {
@@ -120,8 +123,9 @@ const DtDashboard: React.FC = () => {
     tasks,
     events,
     toggleTask,
-    news,          // noticias
-    dtRankings,    // [{ id, username, elo, clubName, clubLogo }]
+    news, // noticias
+    dtRankings, // [{ id, username, elo, clubName, clubLogo }]
+    players,
   } = useDataStore();
 
   /* ===== Tema ===== */
@@ -147,19 +151,23 @@ const DtDashboard: React.FC = () => {
     [club, positions]
   );
   const streak = useMemo(
-    () => (club ? calcStreak(club.id, fixtures) : []),
-    [club, fixtures]
+    () => (club ? calcStreak(club.id, fixtures, positions) : []),
+    [club, fixtures, positions]
   );
   const performer = useMemo(
-    () => (club ? getTopPerformer(club.id) : null),
-    [club]
+    () => (club ? getTopPerformer(club.id, players) : null),
+    [club, players]
   );
   const bullets = useMemo(
     () =>
       club
-        ? [goalsDiff(club.id), possessionDiff(club.id), yellowDiff(club.id)]
+        ? [
+            goalsDiff(club.id, positions),
+            possessionDiff(club.id, positions),
+            yellowDiff(club.id, positions),
+          ]
         : [],
-    [club]
+    [club, positions]
   );
 
   /* ===== gráfica ===== */
