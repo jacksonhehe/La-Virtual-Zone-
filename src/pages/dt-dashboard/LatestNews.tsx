@@ -11,7 +11,7 @@ const LatestNews = () => {
   return (
     <Card className="p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-semibold">Últimas noticias</h3>
+        <h3 className="text-xl font-semibold leading-tight">Últimas noticias</h3>
         <Link
           to="/liga-master/feed"
           className="text-accent text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-accent"

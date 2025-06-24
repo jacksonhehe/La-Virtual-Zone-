@@ -7,7 +7,7 @@ const SeasonObjectives = () => {
 
   return (
     <Card className="p-4">
-      <h3 className="mb-4 font-semibold">Objetivos de temporada</h3>
+      <h3 className="mb-4 text-xl font-semibold leading-tight">Objetivos de temporada</h3>
       <div className="space-y-4">
         <div>
           <p className="mb-1 text-xs text-gray-400">Clasificar top 5</p>
