@@ -60,6 +60,7 @@ const PitchCanvas = ({ players, state, onChange }: PitchCanvasProps) => {
             const player = item ? players.find(p => p.id === item.playerId) : undefined;
             return (
               <div
+                data-cy="pitch-slot"
                 key={`${r}-${c}`}
                 className="relative border border-white/20 h-16 flex items-center justify-center"
                 onDragOver={e => e.preventDefault()}

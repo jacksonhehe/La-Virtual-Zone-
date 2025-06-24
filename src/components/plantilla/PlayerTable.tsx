@@ -1,11 +1,10 @@
 
-import React, { useState } from "react";
-import toast from "react-hot-toast";
-import RenewContractModal from "./RenewContractModal";
-import playersMock from "../../data/players.json";
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import RenewContractModal from './RenewContractModal';
 
 interface Player {
-  id: number;
+  id: string;
   number: number;
   name: string;
   position: string;
@@ -15,10 +14,17 @@ interface Player {
   salary: number;
 }
 
-const PlayerTable: React.FC = () => {
-  const [players, setPlayers] = useState<Player[]>(playersMock as Player[]);
+interface Props {
+  players: Player[];
+  setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+  onSelectPlayer: (p: Player) => void;
+}
+
+const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<Player | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
 
   const handleRenew = (player: Player) => {
     setSelected(player);
@@ -37,6 +43,19 @@ const PlayerTable: React.FC = () => {
 
   const handleSell = (player: Player) => {
     toast.success(`${player.name} añadido al mercado`);
+  };
+
+  const handleEdit = (player: Player) => {
+    setEditingId(player.id);
+    setEditingName(player.name);
+  };
+
+  const saveEdit = () => {
+    if (!editingId) return;
+    setPlayers(prev =>
+      prev.map(p => (p.id === editingId ? { ...p, name: editingName } : p))
+    );
+    setEditingId(null);
   };
 
   return (
@@ -68,30 +87,61 @@ const PlayerTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {players.map((p) => (
+          {players.map(p => (
             <tr
               key={p.id}
               className="border-b border-zinc-800 hover:bg-zinc-800"
+              onClick={() => onSelectPlayer(p)}
             >
               <td className="px-4 py-2 text-center">{p.number}</td>
-              <td className="px-4 py-2">{p.name}</td>
+              <td className="px-4 py-2">
+                {editingId === p.id ? (
+                  <input
+                    data-cy="player-name-input"
+                    value={editingName}
+                    onChange={e => setEditingName(e.target.value)}
+                    className="rounded bg-zinc-700 p-1 text-sm"
+                  />
+                ) : (
+                  p.name
+                )}
+              </td>
               <td className="px-4 py-2 text-center">{p.position}</td>
               <td className="px-4 py-2 text-center">{p.ovr}</td>
               <td className="px-4 py-2 text-center">{p.age}</td>
               <td className="px-4 py-2 text-center">{p.contractYears}y</td>
-              <td className="px-4 py-2 text-center">
-                <button
-                  onClick={() => handleRenew(p)}
-                  className="mr-2 text-accent hover:underline"
-                >
-                  Renovar
-                </button>
-                <button
-                  onClick={() => handleSell(p)}
-                  className="text-red-400 hover:underline"
-                >
-                  Vender
-                </button>
+              <td className="px-4 py-2 text-center space-x-2">
+                {editingId === p.id ? (
+                  <button
+                    data-cy="save-player"
+                    onClick={saveEdit}
+                    className="text-green-400 hover:underline"
+                  >
+                    Guardar
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      data-cy="edit-player"
+                      onClick={() => handleEdit(p)}
+                      className="text-blue-400 hover:underline"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleRenew(p)}
+                      className="text-accent hover:underline"
+                    >
+                      Renovar
+                    </button>
+                    <button
+                      onClick={() => handleSell(p)}
+                      className="text-red-400 hover:underline"
+                    >
+                      Vender
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))}
