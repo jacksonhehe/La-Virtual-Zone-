@@ -1,4 +1,4 @@
-import  { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Calendar, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import Comments from '../components/comments/Comments';

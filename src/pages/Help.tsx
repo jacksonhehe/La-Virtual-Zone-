@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, FileText, Info } from 'lucide-react';
 

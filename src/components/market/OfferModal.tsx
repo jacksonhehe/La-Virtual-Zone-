@@ -1,4 +1,4 @@
-import  { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';

@@ -1,4 +1,4 @@
-import  { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';

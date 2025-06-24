@@ -1,4 +1,4 @@
-import  { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate, formatTime } from '../../utils/helpers';
