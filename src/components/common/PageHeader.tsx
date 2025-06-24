@@ -3,9 +3,10 @@ interface PageHeaderProps {
   subtitle?: string;
   image?: string;
   breadcrumb?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const PageHeader = ({ title, subtitle, image, breadcrumb }: PageHeaderProps) => {
+const PageHeader = ({ title, subtitle, image, breadcrumb, children }: PageHeaderProps) => {
   return (
     <div className="relative bg-gray-900 py-16 md:py-24 overflow-hidden">
       {image && (
@@ -24,12 +25,13 @@ const PageHeader = ({ title, subtitle, image, breadcrumb }: PageHeaderProps) => 
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-display neon-text-blue">
           {title}
         </h1>
-        
+
         {subtitle && (
           <p className="text-gray-300 mt-4 max-w-3xl">
             {subtitle}
           </p>
         )}
+        {children}
       </div>
     </div>
   );

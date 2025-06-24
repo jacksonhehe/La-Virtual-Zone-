@@ -26,7 +26,8 @@ import {
   dtTasks,
   dtEvents,
   dtNews,
-  dtPositions
+  dtPositions,
+  dtRankings
 } from '../data/mockData';
 import {
   Club,
@@ -46,7 +47,8 @@ import {
   DtMarket,
   DtObjectives,
   DtTask,
-  DtEvent
+  DtEvent,
+  DtRanking
 } from '../types';
 
 interface DataState {
@@ -72,6 +74,7 @@ interface DataState {
   events: DtEvent[];
   news: NewsItem[];
   positions: Standing[];
+  dtRankings: DtRanking[];
   
   updateClubs: (newClubs: Club[]) => void;
   updatePlayers: (newPlayers: Player[]) => void;
@@ -96,6 +99,7 @@ interface DataState {
   addNewsItem: (item: NewsItem) => void;
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
+  toggleTask: (id: string) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -119,6 +123,7 @@ export const useDataStore = create<DataState>((set) => ({
   events: dtEvents,
   news: dtNews,
   positions: dtPositions,
+  dtRankings,
   users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
@@ -244,6 +249,13 @@ export const useDataStore = create<DataState>((set) => ({
     newsItems: state.newsItems.filter(n => n.id !== id)
   })),
 
-  updateStandings: (newStandings) => set({ standings: newStandings })
+  updateStandings: (newStandings) => set({ standings: newStandings }),
+
+  toggleTask: (id) =>
+    set((state) => ({
+      tasks: state.tasks.map(t =>
+        t.id === id ? { ...t, done: !t.done } : t
+      )
+    }))
 }));
  

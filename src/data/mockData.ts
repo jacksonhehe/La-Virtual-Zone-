@@ -687,8 +687,10 @@ export const newsItems: NewsItem[] = [
     title: 'Comienza la Liga Master 2025',
     content: 'La temporada 2025 de La Virtual Zone ha arrancado oficialmente. 10 clubes compiten por el título en una liga que promete emociones hasta la última jornada.',
     type: 'announcement',
+    category: 'Anuncios',
     imageUrl: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
     publishDate: '2025-01-15',
+    date: '2025-01-15',
     author: 'Admin',
     featured: true
   },
@@ -697,8 +699,10 @@ export const newsItems: NewsItem[] = [
     title: 'El mercado de fichajes está abierto',
     content: 'Desde hoy los clubes pueden realizar ofertas por jugadores de otros equipos. El mercado permanecerá abierto hasta el 15 de febrero.',
     type: 'announcement',
+    category: 'Anuncios',
     imageUrl: 'https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
     publishDate: '2025-01-16',
+    date: '2025-01-16',
     author: 'Admin',
     featured: false
   },
@@ -707,7 +711,9 @@ export const newsItems: NewsItem[] = [
     title: 'Diego López ficha por Rayo Digital FC',
     content: 'El delantero ha firmado un contrato de 3 temporadas tras el pago de 8.5 millones. "Estoy emocionado por este nuevo reto", declaró el jugador.',
     type: 'transfer',
+    category: 'Fichajes',
     publishDate: '2025-01-05',
+    date: '2025-01-05',
     author: 'Admin',
     clubId: 'club1',
     playerId: 'player21',
@@ -718,7 +724,9 @@ export const newsItems: NewsItem[] = [
     title: 'Rayo Digital vence en el derbi',
     content: 'Los rojiblancos se impusieron 3-1 a Atlético Pixelado en un partido vibrante. Diego López, nuevo fichaje, marcó dos goles.',
     type: 'result',
+    category: 'Resultados',
     publishDate: '2025-01-20',
+    date: '2025-01-20',
     author: 'Admin',
     clubId: 'club1',
     tournamentId: 'tournament1',
@@ -729,7 +737,9 @@ export const newsItems: NewsItem[] = [
     title: 'Rumor: Neón FC tras una estrella de Binary Strikers',
     content: 'Según fuentes cercanas al club, los neonistas estarían dispuestos a pagar hasta 15 millones por un centrocampista de los Strikers.',
     type: 'rumor',
+    category: 'Rumores',
     publishDate: '2025-01-22',
+    date: '2025-01-22',
     author: 'Admin',
     clubId: 'club4',
     featured: false
@@ -739,7 +749,9 @@ export const newsItems: NewsItem[] = [
     title: 'DT de Glitchers 404: "Vamos a por el título"',
     content: '"Este año tenemos un equipo para luchar arriba. No renunciamos a nada y vamos partido a partido", declaró el técnico tras la victoria 2-0 ante Connection FC.',
     type: 'statement',
+    category: 'Declaraciones',
     publishDate: '2025-01-23',
+    date: '2025-01-23',
     author: 'Admin',
     clubId: 'club6',
     featured: false
@@ -1043,8 +1055,8 @@ export const dtMarket: DtMarket = { open: true };
 export const dtObjectives: DtObjectives = { position: 50, fairplay: 70 };
 
 export const dtTasks: DtTask[] = [
-  { id: 'task1', text: 'Actualizar tácticas' },
-  { id: 'task2', text: 'Revisar informe médico' }
+  { id: 'task1', text: 'Actualizar tácticas', done: false },
+  { id: 'task2', text: 'Revisar informe médico', done: false }
 ];
 
 export const dtEvents: DtEvent[] = [
@@ -1054,4 +1066,28 @@ export const dtEvents: DtEvent[] = [
 
 export const dtNews: NewsItem[] = newsItems.slice(0, 5);
 export const dtPositions: Standing[] = leagueStandings;
+
+export const dtRankings: DtRanking[] = [
+  {
+    id: 'r1',
+    username: 'coach',
+    clubName: clubs[0].name,
+    clubLogo: clubs[0].logo,
+    elo: 1500
+  },
+  {
+    id: 'r2',
+    username: 'DT Neon',
+    clubName: clubs[3].name,
+    clubLogo: clubs[3].logo,
+    elo: 1480
+  },
+  {
+    id: 'r3',
+    username: 'DT Pixel',
+    clubName: clubs[1].name,
+    clubLogo: clubs[1].logo,
+    elo: 1450
+  }
+];
  
