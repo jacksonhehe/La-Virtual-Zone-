@@ -82,6 +82,15 @@ import {
 ReactGA.initialize("G-XXXXXXX");
 
 /* ---------- Tipos ---------- */
+type RightModuleId =
+  | "anuncios"
+  | "mercado"
+  | "logros"
+  | "ranking"
+  | "noticias"
+  | "chat"
+  | "recordatorios"
+  | "acciones";
 interface LayoutItem {
   id: RightModuleId;
   visible: boolean;
@@ -134,7 +143,10 @@ const DtDashboard: React.FC = () => {
     () => (club ? getMiniTable(club.id, positions) : []),
     [club, positions]
   );
-  const streak = useMemo(() => (club ? calcStreak(club.id, fixtures) : []), [club, fixtures]);
+  const streak = useMemo(
+    () => (club ? calcStreak(club.id, fixtures, positions) : []),
+    [club, fixtures, positions]
+  );
   const performer = useMemo(
     () => (club ? getTopPerformer(club.id, players) : null),
     [club, players]
@@ -161,8 +173,8 @@ const DtDashboard: React.FC = () => {
             .slice(-5)
             .map((m) => ({
               name: `J${m.round}`,
-              GF: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
-              GC: m.homeTeam === club.name ? m.awayGoals : m.homeGoals,
+              GF: m.homeTeam === club.name ? m.homeScore! : m.awayScore!,
+              GC: m.homeTeam === club.name ? m.awayScore! : m.homeScore!,
             }))
         : [],
     [fixtures, club]
@@ -200,7 +212,9 @@ const DtDashboard: React.FC = () => {
   const filteredNews = useMemo(
     () =>
       news.filter(
-        (n) => cat === "Todas" || n.category.toLowerCase() === cat.toLowerCase()
+        (n) =>
+          cat === "Todas" ||
+          n.category?.toLowerCase() === cat.toLowerCase()
       ),
     [news, cat]
   );
@@ -407,7 +421,7 @@ const DtDashboard: React.FC = () => {
                 <li key={n.id} className="rounded bg-white/5 p-2">
                   <p className="font-medium">{n.title}</p>
                   <p className="text-xs text-gray-400">
-                    {formatDate(n.date)} • {n.category}
+                    {formatDate(n.date ?? n.publishDate)} • {n.category}
                   </p>
                 </li>
               ))}
@@ -467,8 +481,6 @@ const DtDashboard: React.FC = () => {
       render: () => <QuickActions marketOpen={marketOpen} />,
     },
   ] as const;
-
-  type RightModuleId = (typeof RIGHT_MODULES)[number]["id"];
 
   /* ----- layout en localStorage */
   const DEFAULT_LAYOUT: LayoutItem[] = RIGHT_MODULES.map((m) => ({
