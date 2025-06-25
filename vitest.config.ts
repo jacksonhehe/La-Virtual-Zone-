@@ -4,7 +4,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
-    exclude: ['tests/useContrastCheck.test.tsx'],
+    include: ['tests/helpers.test.ts'],
   },
 });

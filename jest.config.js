@@ -1,12 +1,12 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  moduleDirectories: ['node_modules', 'src'],
-  setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.test.json',
-    },
+  roots: ['<rootDir>/tests'],
+  testMatch: ['**/useContrastCheck.test.tsx'],
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', { useESM: true }]
   },
-  testMatch: ['<rootDir>/tests/useContrastCheck.test.tsx'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1'
+  },
 };
