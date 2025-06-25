@@ -5,6 +5,7 @@ import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { Match } from '../types';
 import { formatDate, slugify } from '../utils/helpers';
+import ClubListItem from '../components/common/ClubListItem';
 
 const TournamentDetail = () => {
   const { tournamentName } = useParams<{ tournamentName: string }>();
@@ -207,19 +208,12 @@ const TournamentDetail = () => {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {tournamentClubs.map(club => (
-                        <Link
+                        <ClubListItem
                           key={club.id}
+                          club={club}
                           to={`/liga-master/club/${club.slug}`}
-                          className="bg-dark-lighter rounded-lg p-4 flex items-center hover:bg-dark transition-colors"
-                        >
-                          <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-                            <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{club.name}</p>
-                            <p className="text-xs text-gray-400">DT: {club.manager}</p>
-                          </div>
-                        </Link>
+                          className="bg-dark-lighter hover:bg-dark"
+                        />
                       ))}
                       
                       {tournament.status === 'open' && tournament.participants.length < 8 && (

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
+import ClubListItem from '../components/common/ClubListItem';
 import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
 import { formatDate, formatCurrency } from '../utils/helpers';
@@ -288,23 +289,11 @@ const topScorers = [...players]
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                 {clubs.map(club => (
-                  <Link 
-                    key={club.id} 
+                  <ClubListItem
+                    key={club.id}
+                    club={club}
                     to={`/liga-master/club/${club.slug}`}
-                    className="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors"
-                  >
-                    <img 
-                      src={club.logo} 
-                      alt={club.name}
-                      className="w-12 h-12 object-contain mr-4"
-                    />
-                    <div>
-                      <h3 className="font-bold">{club.name}</h3>
-                      <p className="text-sm text-gray-400">
-                        DT: {club.manager}
-                      </p>
-                    </div>
-                  </Link>
+                  />
                 ))}
               </div>
             </div>
