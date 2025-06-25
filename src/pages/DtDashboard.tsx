@@ -236,9 +236,14 @@ const DtDashboard: React.FC = () => {
     }
   });
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const initialChatRender = useRef(true);
 
   useEffect(() => {
     localStorage.setItem("vz_chat_history", JSON.stringify(chat));
+    if (initialChatRender.current) {
+      initialChatRender.current = false;
+      return;
+    }
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
