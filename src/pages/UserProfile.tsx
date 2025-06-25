@@ -65,7 +65,7 @@ const UserProfile = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <div className="card p-6 text-center mb-6">
+            <div className="card-glass p-6 text-center mb-6">
               <div className="w-24 h-24 mx-auto mb-4 relative group">
                 <img 
                   src={user.avatar} 
@@ -148,7 +148,7 @@ const UserProfile = () => {
             </div>
             
             {club && (
-              <div className="card p-6 mb-6">
+              <div className="card-glass p-6 mb-6">
                 <h3 className="font-bold mb-4 flex items-center">
                   <Shield size={18} className="text-primary mr-2" />
                   Club actual
@@ -189,7 +189,7 @@ const UserProfile = () => {
           </div>
           
           <div className="md:col-span-2 lg:col-span-3">
-            <div className="card mb-8">
+            <div className="card-glass mb-8">
               <div className="p-4 bg-dark-lighter border-b border-gray-800">
                 <h3 className="font-bold text-lg flex items-center">
                   <Award size={18} className="text-primary mr-2" />
@@ -279,7 +279,7 @@ const UserProfile = () => {
               </div>
             </div>
             
-            <div className="card mb-8">
+            <div className="card-glass mb-8">
               <div className="p-4 bg-dark-lighter border-b border-gray-800 flex justify-between items-center">
                 <h3 className="font-bold text-lg flex items-center">
                   <Calendar size={18} className="text-primary mr-2" />
@@ -327,7 +327,7 @@ const UserProfile = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="card">
+              <div className="card-glass">
                 <div className="p-4 bg-dark-lighter border-b border-gray-800">
                   <h3 className="font-bold">Comentarios y valoraciones</h3>
                 </div>
@@ -395,7 +395,7 @@ const UserProfile = () => {
               </div>
               
               {user.role === 'dt' && (
-                <div className="card">
+                <div className="card-glass">
                   <div className="p-4 bg-dark-lighter border-b border-gray-800">
                     <h3 className="font-bold">Estilo de juego</h3>
                   </div>

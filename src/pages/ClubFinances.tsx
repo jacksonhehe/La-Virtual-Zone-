@@ -79,7 +79,7 @@ const ClubFinances = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-bold flex items-center">
                   <DollarSign size={20} className="text-green-500 mr-2" />
@@ -118,7 +118,7 @@ const ClubFinances = () => {
               </div>
             </div>
             
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-bold flex items-center">
                   <ShoppingBag size={20} className="text-red-500 mr-2" />
@@ -157,7 +157,7 @@ const ClubFinances = () => {
               </div>
             </div>
             
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-bold flex items-center">
                   <Clipboard size={20} className="text-primary mr-2" />
@@ -201,7 +201,7 @@ const ClubFinances = () => {
         <div className="mb-8">
           <h3 className="text-xl font-bold mb-4">Historial de traspasos</h3>
           
-          <div className="card overflow-hidden">
+          <div className="card-glass overflow-hidden">
             <div className="p-4 bg-dark-lighter border-b border-gray-800">
               <h4 className="font-bold">Temporada 2025</h4>
             </div>
@@ -274,7 +274,7 @@ const ClubFinances = () => {
         <div>
           <h3 className="text-xl font-bold mb-4">Proyección financiera</h3>
           
-          <div className="card p-6">
+          <div className="card-glass p-6">
             <div className="mb-6">
               <h4 className="font-bold mb-3">Temporada 2025-2026</h4>
               <div className="h-8 bg-dark-lighter rounded-full overflow-hidden">
