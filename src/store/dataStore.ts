@@ -25,7 +25,7 @@ import {
   dtNews,
   dtPositions
 } from '../data/mockData';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   Club,
   Player,
@@ -45,7 +45,8 @@ import {
   DtObjectives,
   DtTask,
   DtEvent,
-  DtRanking
+  DtRanking,
+  ChatMsg
 } from '../types';
 
 interface DataState {
@@ -72,7 +73,8 @@ interface DataState {
   news: NewsItem[];
   positions: Standing[];
   dtRankings: DtRanking[];
-  
+  chat: ChatMsg[];
+
   updateClubs: (newClubs: Club[]) => void;
   updatePlayers: (newPlayers: Player[]) => void;
   updateTournaments: (newTournaments: Tournament[]) => void;
@@ -99,6 +101,8 @@ interface DataState {
   toggleTask: (id: string) => void;
   updateFixtures: (newFixtures: DtFixture[]) => void;
   updateDtRankings: (r: DtRanking[]) => void;
+  setChat: (c: ChatMsg[]) => void;
+  addChatMessage: (msg: ChatMsg) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -123,6 +127,7 @@ export const useDataStore = create<DataState>((set) => ({
   news: dtNews,
   positions: dtPositions,
   dtRankings: [],
+  chat: [],
   users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
@@ -254,6 +259,11 @@ export const useDataStore = create<DataState>((set) => ({
 
   updateDtRankings: (r) => set({ dtRankings: r }),
 
+  setChat: (c) => set({ chat: c }),
+
+  addChatMessage: (msg) =>
+    set((state) => ({ chat: [...state.chat, msg] })),
+
   toggleTask: (id) =>
     set((state) => ({
       tasks: state.tasks.map(t =>
@@ -306,4 +316,43 @@ export const useRankingsQuery = () => {
     () => fetchWithCache<DtRanking>("rankings", "/rankings"),
     { onSuccess: setRankings }
   );
+};
+
+export const useChatQuery = () => {
+  const setChat = useDataStore((s) => s.setChat);
+  return useQuery(['chat'], () => fetchWithCache<ChatMsg>('chat', '/chat'), {
+    onSuccess: setChat,
+  });
+};
+
+export const useSendChatMutation = () => {
+  const addMsg = useDataStore((s) => s.addChatMessage);
+  return useMutation({
+    mutationFn: async (payload: Omit<ChatMsg, 'id' | 'ts'>) => {
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('post failed');
+        const msg = (await res.json()) as ChatMsg;
+        const cached = localStorage.getItem('chat');
+        const hist = cached ? (JSON.parse(cached) as ChatMsg[]) : [];
+        localStorage.setItem('chat', JSON.stringify([...hist, msg]));
+        return msg;
+      } catch {
+        const msg: ChatMsg = {
+          id: crypto.randomUUID(),
+          ...payload,
+          ts: Date.now(),
+        };
+        const cached = localStorage.getItem('chat');
+        const hist = cached ? (JSON.parse(cached) as ChatMsg[]) : [];
+        localStorage.setItem('chat', JSON.stringify([...hist, msg]));
+        return msg;
+      }
+    },
+    onSuccess: addMsg,
+  });
 };

@@ -68,10 +68,14 @@ import PageHeader from "../components/common/PageHeader";
 import DashboardSkeleton from "../components/common/DashboardSkeleton";
 import FilterChip from "../components/common/FilterChip";
 import RankingRow from "../components/common/RankingRow";
-import { DtRanking } from "../types";
+import { DtRanking, ChatMsg } from "../types";
 
 import { useAuthStore } from "../store/authStore";
-import { useDataStore } from "../store/dataStore";
+import {
+  useDataStore,
+  useChatQuery,
+  useSendChatMutation,
+} from "../store/dataStore";
 import {
   getMiniTable,
   formatCurrency,
@@ -93,12 +97,6 @@ if (gaId) {
 interface LayoutItem {
   id: RightModuleId;
   visible: boolean;
-}
-interface ChatMsg {
-  id: string;
-  user: string;
-  text: string;
-  ts: number;
 }
 
 type RightModuleId =
@@ -218,31 +216,22 @@ const DtDashboard: React.FC = () => {
   const visibleNews = filteredNews.slice(0, newsCount);
   const loadMoreNews = () => setNewsCount((c) => c + 5);
 
-  /* ===== chat (local demo) ===== */
-  const [chat, setChat] = useState<ChatMsg[]>(() => {
-    const raw = localStorage.getItem("vz_chat_history");
-    try {
-      return raw ? (JSON.parse(raw) as ChatMsg[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  /* ===== chat ===== */
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chat = useDataStore((s) => s.chat);
+  const { isLoading: chatLoading } = useChatQuery();
+  const sendChatMutation = useSendChatMutation();
 
   useEffect(() => {
-    localStorage.setItem("vz_chat_history", JSON.stringify(chat));
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
   const sendChat = (text: string) => {
     if (!text.trim()) return;
-    const msg: ChatMsg = {
-      id: crypto.randomUUID(),
-      user: user?.username ?? 'Anon',
+    sendChatMutation.mutate({
+      user: user?.username ?? "Anon",
       text: text.trim(),
-      ts: Date.now(),
-    };
-    setChat((old) => [...old.slice(-49), msg]); // máx 50
+    });
   };
 
   /* ===== PDF mensual ===== */
