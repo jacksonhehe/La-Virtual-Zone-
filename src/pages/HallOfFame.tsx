@@ -226,7 +226,7 @@ const HallOfFame = () => {
               <h2 className="text-2xl font-bold mb-6">Clubes Legendarios</h2>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {legendaryClubs.map(club => (
-                  <div key={club.id} className="card overflow-hidden">
+                  <div key={club.id} className="card-glass overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 text-center">
                       <img 
                         src={club.logo} 
@@ -285,7 +285,7 @@ const HallOfFame = () => {
               <h2 className="text-2xl font-bold mb-6">Jugadores Históricos</h2>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {legendaryPlayers.map(player => (
-                  <div key={player.id} className="card overflow-hidden">
+                  <div key={player.id} className="card-glass overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 flex items-center">
                       <img 
                         src={player.image} 
@@ -350,7 +350,7 @@ const HallOfFame = () => {
               <h2 className="text-2xl font-bold mb-6">DTs Exitosos</h2>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {legendaryManagers.map(manager => (
-                  <div key={manager.id} className="card overflow-hidden">
+                  <div key={manager.id} className="card-glass overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 text-center">
                       <img 
                         src={manager.avatar} 
@@ -402,7 +402,7 @@ const HallOfFame = () => {
               <h2 className="text-2xl font-bold mb-6">Momentos Legendarios</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {legendaryMoments.map(moment => (
-                  <div key={moment.id} className="card overflow-hidden">
+                  <div key={moment.id} className="card-glass overflow-hidden">
                     <img 
                       src={moment.image} 
                       alt={moment.title}

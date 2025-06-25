@@ -60,7 +60,7 @@ const Tournaments = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTournaments.map(tournament => (
-              <div key={tournament.id} className="card overflow-hidden group">
+              <div key={tournament.id} className="card-glass overflow-hidden group">
                 <div className="h-48 overflow-hidden relative">
                   <img 
                     src={tournament.image} 
@@ -145,7 +145,7 @@ const Tournaments = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
                 <span className="text-xl font-bold text-primary">1</span>
               </div>
@@ -159,7 +159,7 @@ const Tournaments = () => {
               </Link>
             </div>
             
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
                 <span className="text-xl font-bold text-primary">2</span>
               </div>
@@ -173,7 +173,7 @@ const Tournaments = () => {
               </Link>
             </div>
             
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
                 <span className="text-xl font-bold text-primary">3</span>
               </div>
