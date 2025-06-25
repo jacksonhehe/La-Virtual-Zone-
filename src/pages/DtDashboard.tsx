@@ -69,10 +69,14 @@ import PageHeader from "../components/common/PageHeader";
 import DashboardSkeleton from "../components/common/DashboardSkeleton";
 import FilterChip from "../components/common/FilterChip";
 import RankingRow from "../components/common/RankingRow";
-import { DtRanking } from "../types";
+import { DtRanking, ChatMsg } from "../types";
 
 import { useAuthStore } from "../store/authStore";
-import { useDataStore } from "../store/dataStore";
+import {
+  useDataStore,
+  useChatQuery,
+  useSendChatMutation,
+} from "../store/dataStore";
 import {
   getMiniTable,
   formatCurrency,
@@ -94,12 +98,6 @@ if (gaId) {
 interface LayoutItem {
   id: RightModuleId;
   visible: boolean;
-}
-interface ChatMsg {
-  id: string;
-  user: string;
-  text: string;
-  ts: number;
 }
 
 type RightModuleId =
@@ -219,7 +217,23 @@ const DtDashboard: React.FC = () => {
   const visibleNews = filteredNews.slice(0, newsCount);
   const loadMoreNews = () => setNewsCount((c) => c + 5);
 
-  /* ===== chat via WebSocket ===== */
+  /* ===== chat ===== */
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chat = useDataStore((s) => s.chat);
+  const { isLoading: chatLoading } = useChatQuery();
+  const sendChatMutation = useSendChatMutation();
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat]);
+
+  const sendChat = (text: string) => {
+    if (!text.trim()) return;
+    sendChatMutation.mutate({
+      user: user?.username ?? "Anon",
+      text: text.trim(),
+    });
+  };
 
   /* ===== PDF mensual ===== */
   const generateMonthlyReport = () => {
