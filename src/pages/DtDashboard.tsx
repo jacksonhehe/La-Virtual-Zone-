@@ -12,7 +12,6 @@ import {
   TrendingUp,
   Home,
   Plane,
-  Check,
   Trophy,
   Calendar,
   Inbox,
@@ -104,6 +103,7 @@ const DtDashboard: React.FC = () => {
     club,
     positions,
     fixtures,
+    players,
     market,
     tasks,
     events,
@@ -126,61 +126,71 @@ const DtDashboard: React.FC = () => {
     ReactGA.send({ hitType: "pageview", page: "/dt-dashboard" });
   }, []);
 
-  /* ----- loading skeleton */
-  if (!user || !club) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
-
   /* ----- datos derivados */
   const marketOpen = market.open;
   const nextMatch = fixtures.find((m) => !m.played);
 
   const miniTable = useMemo(
-    () => getMiniTable(club.id, positions),
-    [club.id, positions]
+    () => (club ? getMiniTable(club.id, positions) : []),
+    [club, positions]
   );
-  const streak = useMemo(() => calcStreak(club.id, fixtures), [club.id, fixtures]);
-  const performer = useMemo(() => getTopPerformer(club.id), [club.id, fixtures]);
+  const streak = useMemo(() => (club ? calcStreak(club.id, fixtures) : []), [club, fixtures]);
+  const performer = useMemo(
+    () => (club ? getTopPerformer(club.id, players) : null),
+    [club, players]
+  );
 
   const bullets = useMemo(
-    () => [goalsDiff(club.id), possessionDiff(club.id), yellowDiff(club.id)],
-    [club.id, positions]
+    () =>
+      club
+        ? [
+            goalsDiff(club.id, positions),
+            possessionDiff(club.id, positions),
+            yellowDiff(club.id, positions),
+          ]
+        : [],
+    [club, positions]
   );
 
   /* ----- gráfica GF vs GC (últ. 5 partidos) */
-  const recent = fixtures
-    .filter((m) => m.played)
-    .slice(-5)
-    .map((m) => ({
-      name: `J${m.round}`,
-      GF: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
-      GC: m.homeTeam === club.name ? m.awayGoals : m.homeGoals,
-    }));
+  const recent = useMemo(
+    () =>
+      club
+        ? fixtures
+            .filter((m) => m.played)
+            .slice(-5)
+            .map((m) => ({
+              name: `J${m.round}`,
+              GF: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
+              GC: m.homeTeam === club.name ? m.awayGoals : m.homeGoals,
+            }))
+        : [],
+    [fixtures, club]
+  );
 
   /* ----- logros */
   const achievements = useMemo(
-    () => [
-      {
-        id: "invicto5",
-        name: "Invicto – 5 partidos",
-        unlocked: streak.slice(-5).every(Boolean),
-      },
-      {
-        id: "goleador10",
-        name: "Goleador +10",
-        unlocked: performer ? performer.g >= 10 : false,
-      },
-      {
-        id: "million",
-        name: "Presupuesto > 1 M €",
-        unlocked: club.budget > 1_000_000,
-      },
-    ],
-    [streak, performer, club.budget]
+    () =>
+      club
+        ? [
+            {
+              id: "invicto5",
+              name: "Invicto – 5 partidos",
+              unlocked: streak.slice(-5).every(Boolean),
+            },
+            {
+              id: "goleador10",
+              name: "Goleador +10",
+              unlocked: performer ? performer.g >= 10 : false,
+            },
+            {
+              id: "million",
+              name: "Presupuesto > 1 M €",
+              unlocked: club.budget > 1_000_000,
+            },
+          ]
+        : [],
+    [streak, performer, club]
   );
 
   /* ----- noticias */
@@ -212,7 +222,7 @@ const DtDashboard: React.FC = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
   const sendChat = (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || !user) return;
     setChat((c) => [
       ...c.slice(-49),
       {
@@ -226,6 +236,7 @@ const DtDashboard: React.FC = () => {
 
   /* ----- PDF mensual */
   const generateMonthlyReport = () => {
+    if (!club) return;
     const doc = new jsPDF();
     const monthStr = new Date().toLocaleDateString("es-ES", {
       month: "long",
@@ -237,7 +248,7 @@ const DtDashboard: React.FC = () => {
     doc.text(`Presupuesto: ${formatCurrency(club.budget)}`, 14, 32);
     doc.text(`Plantilla: ${club.players.length} jugadores`, 14, 40);
     doc.text(`Táctica base: ${club.formation}`, 14, 48);
-    // @ts-ignore
+    // @ts-expect-error jsPDF types lack autoTable
     doc.autoTable({
       head: [["Jornada", "GF", "GC"]],
       body: recent.map((r) => [r.name, r.GF, r.GC]),
@@ -491,6 +502,14 @@ const DtDashboard: React.FC = () => {
   /* =========================================================================
      RENDER
      ========================================================================= */
+  if (!user || !club) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <div className="relative transition-colors duration-300">
       <Toaster
