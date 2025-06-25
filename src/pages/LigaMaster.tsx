@@ -104,7 +104,7 @@ const topScorers = [...players]
         
         {/* Quick access */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Link to="/liga-master/mercado" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
+          <Link to="/liga-master/mercado" className="card-glass card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
             <TrendingUp size={32} className="text-neon-green mb-4" />
             <h3 className="text-xl font-bold mb-2">Mercado de Fichajes</h3>
             <p className="text-gray-400 mb-4">
@@ -116,7 +116,7 @@ const topScorers = [...players]
             </div>
           </Link>
           
-          <Link to="/liga-master/fixture" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
+          <Link to="/liga-master/fixture" className="card-glass card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
             <Calendar size={32} className="text-neon-blue mb-4" />
             <h3 className="text-xl font-bold mb-2">Fixture y Resultados</h3>
             <p className="text-gray-400 mb-4">
@@ -128,7 +128,7 @@ const topScorers = [...players]
             </div>
           </Link>
           
-          <Link to="/liga-master/rankings" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
+          <Link to="/liga-master/rankings" className="card-glass card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
             <Trophy size={32} className="text-neon-yellow mb-4" />
             <h3 className="text-xl font-bold mb-2">Rankings</h3>
             <p className="text-gray-400 mb-4">
@@ -146,7 +146,7 @@ const topScorers = [...players]
           {/* Left column */}
           <div className="lg:col-span-2 space-y-8">
             {/* Top teams */}
-            <div className="card">
+            <div className="card-glass">
               <div className="p-6 border-b border-gray-800">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold">Clasificación</h2>
@@ -219,7 +219,7 @@ const topScorers = [...players]
             </div>
             
             {/* Upcoming matches */}
-            <div className="card">
+            <div className="card-glass">
               <div className="p-6 border-b border-gray-800">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold">Próximos Partidos</h2>
@@ -281,7 +281,7 @@ const topScorers = [...players]
             </div>
             
             {/* Club listing with manager */}
-            <div className="card">
+            <div className="card-glass">
               <div className="p-6 border-b border-gray-800">
                 <h2 className="text-xl font-bold">Clubes Participantes</h2>
               </div>
@@ -313,7 +313,7 @@ const topScorers = [...players]
           {/* Right column */}
           <div className="space-y-8">
             {/* Quick links */}
-            <div className="card p-6">
+            <div className="card-glass p-6">
               <h2 className="text-xl font-bold mb-4">Accesos Rápidos</h2>
               <div className="space-y-2">
                 <Link 
@@ -348,7 +348,7 @@ const topScorers = [...players]
             </div>
             
             {/* Top Scorers */}
-            <div className="card">
+            <div className="card-glass">
               <div className="p-6 border-b border-gray-800">
                 <h2 className="text-xl font-bold">Máximos Goleadores</h2>
               </div>
@@ -392,7 +392,7 @@ const topScorers = [...players]
             </div>
             
             {/* Season info */}
-            <div className="card p-6 bg-gradient-to-br from-gray-800 to-dark">
+            <div className="card-glass p-6 bg-gradient-to-br from-gray-800 to-dark">
               <h2 className="text-xl font-bold mb-4">Información de Temporada</h2>
               <div className="space-y-4">
                 <div>

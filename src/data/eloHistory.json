@@ -1,0 +1,14 @@
+[
+  { "month": "Ene", "elo": 1500 },
+  { "month": "Feb", "elo": 1503 },
+  { "month": "Mar", "elo": 1510 },
+  { "month": "Abr", "elo": 1505 },
+  { "month": "May", "elo": 1520 },
+  { "month": "Jun", "elo": 1530 },
+  { "month": "Jul", "elo": 1525 },
+  { "month": "Ago", "elo": 1540 },
+  { "month": "Sep", "elo": 1550 },
+  { "month": "Oct", "elo": 1545 },
+  { "month": "Nov", "elo": 1560 },
+  { "month": "Dic", "elo": 1570 }
+]
