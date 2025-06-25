@@ -3,31 +3,22 @@
    Mantiene lógica previa + nuevo layout de la maqueta 24/11/2024
    ========================================================================= */
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import {
   Calendar,
-  Check,
   DollarSign,
-  Home,
   LayoutGrid,
-  MessageCircle,
   PieChart,
-  TrendingUp,
   Trophy,
-  Users,
 } from "lucide-react";
 import {
   Bar,
   BarChart,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
   DndContext,
   PointerSensor,
@@ -42,7 +33,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import toast, { Toaster } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import PageHeader from "@/components/common/PageHeader";
 import Card from "@/components/common/Card";
@@ -56,7 +46,6 @@ import {
   formatDate,
   getMiniTable,
 } from "@/utils/helpers";
-import { formatCurrency, formatDate, getMiniTable } from "@/utils/helpers";
 
 interface LayoutItem {
   id: string;
@@ -71,11 +60,6 @@ export default function DtDashboard() {
     fixtures,
     positions,
     players,
-    market,
-    news,
-    tasks,
-    events,
-    dtRankings,
   } = useDataStore();
 
   /* — loading skeleton — */
@@ -92,8 +76,6 @@ export default function DtDashboard() {
   const miniTable = useMemo(
     () => getMiniTable(club.id, positions),
     [club.id, positions]
-    () => (club ? getMiniTable(club.id, positions) : []),
-    [club, positions]
   );
   const streak = calcStreak(club.id, fixtures);
 
@@ -103,7 +85,6 @@ export default function DtDashboard() {
     .map((m, i) => ({
       idx: i + 1,
       gf: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
-      gf: m.homeTeam === club?.name ? m.homeGoals : m.awayGoals,
     }));
 
   /* ———  layout personalizable (solo side-column) ——— */
@@ -115,7 +96,6 @@ export default function DtDashboard() {
   ];
   const [layout, setLayout] = useState<LayoutItem[]>(DEFAULT_LAYOUT);
   const sensors = useSensors(useSensor(PointerSensor));
-  const handleDrag = ({ active, over }: any) => {
   const handleDrag = ({ active, over }: DragEndEvent) => {
     if (!over) return;
     const oldI = layout.findIndex((l) => l.id === active.id);
@@ -123,13 +103,7 @@ export default function DtDashboard() {
     if (oldI !== newI) setLayout(arrayMove(layout, oldI, newI));
   };
 
-  if (!user || !club) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
+
 
   /* ——— render helpers ——— */
   const RightCard: React.FC<{ id: string; children: React.ReactNode }> = ({
