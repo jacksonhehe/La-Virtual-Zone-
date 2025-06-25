@@ -5,8 +5,11 @@ describe('Tactics pitch', () => {
     cy.visit('/liga-master/tacticas');
 
     // Example drag action assuming draggable players and pitch slots exist
-    cy.get('[data-cy="player"]').first().trigger('dragstart');
-    cy.get('[data-cy="pitch-slot"]').first().trigger('drop');
+    cy.get('[data-cy="player"]').first().as('drag');
+    cy.get('[data-cy="pitch-slot"]').first().as('drop');
+    cy.get('@drag').trigger('dragstart');
+    cy.get('@drop').trigger('drop');
+    cy.get('@drop').find('[data-cy="player"]').should('exist');
 
     cy.reload();
     cy.window().then((win) => {
