@@ -11,7 +11,7 @@ const UpcomingMatches = () => {
   
   if (!activeTournament) {
     return (
-      <div className="card p-6">
+      <div className="card-glass p-6">
         <h2 className="text-xl font-bold mb-4">Próximos Partidos</h2>
         <p className="text-gray-400">No hay torneos activos en este momento.</p>
       </div>
@@ -26,7 +26,7 @@ const UpcomingMatches = () => {
   
   if (upcomingMatches.length === 0) {
     return (
-      <div className="card p-6">
+      <div className="card-glass p-6">
         <h2 className="text-xl font-bold mb-4">Próximos Partidos</h2>
         <p className="text-gray-400">No hay partidos programados próximamente.</p>
       </div>
@@ -34,7 +34,7 @@ const UpcomingMatches = () => {
   }
   
   return (
-    <div className="card">
+    <div className="card-glass">
       <div className="p-6 border-b border-gray-800">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Próximos Partidos</h2>

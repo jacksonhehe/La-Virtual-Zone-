@@ -9,7 +9,7 @@ const LeagueStandings = () => {
   const topTeams = standings.slice(0, 5);
   
   return (
-    <div className="card">
+    <div className="card-glass">
       <div className="p-6 border-b border-gray-800">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Clasificación Liga Master</h2>

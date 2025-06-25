@@ -40,7 +40,7 @@ const Login = () => {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-20">
       <div className="w-full max-w-md">
-        <div className="card border border-gray-800">
+        <div className="card-glass border border-gray-800">
           <div className="p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold">Iniciar Sesión</h2>
