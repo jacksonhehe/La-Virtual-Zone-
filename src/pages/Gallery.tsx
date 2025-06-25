@@ -157,7 +157,7 @@ const Gallery = () => {
         {filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map(item => (
-              <div key={item.id} className="card-glass overflow-hidden group">
+              <div key={item.id} className="card overflow-hidden group">
                 <div className="aspect-video relative overflow-hidden">
                   <img 
                     src={item.image} 

@@ -18,21 +18,21 @@ const QuickActions = ({ marketOpen }: QuickActionsProps) => (
       </button>
       <button
         aria-label="Informe médico"
-        className="card-glass-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+        className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
       >
         <Stethoscope size={16} />
         <span>Informe médico</span>
       </button>
       <button
         aria-label="Firmar juvenil"
-        className="card-glass-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+        className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
       >
         <UserPlus size={16} />
         <span>Firmar juvenil</span>
       </button>
       <button
         aria-label="Publicar declaración"
-        className="card-glass-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
+        className="card-hover bg-accent px-4 py-2 font-semibold text-black flex items-center justify-center gap-2"
       >
         <Megaphone size={16} />
         <span>Publicar declaración</span>

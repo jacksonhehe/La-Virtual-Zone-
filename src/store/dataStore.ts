@@ -7,6 +7,8 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
+  clubs,
+  players,
   tournaments,
   transfers,
   offers,
@@ -18,14 +20,15 @@ import {
   storeItems,
   posts,
   dtClub,
+  dtFixtures,
   dtMarket,
   dtObjectives,
   dtTasks,
   dtEvents,
   dtNews,
-  dtPositions
+  dtPositions,
+  dtRankings
 } from '../data/mockData';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   Club,
   Player,
@@ -45,8 +48,7 @@ import {
   DtObjectives,
   DtTask,
   DtEvent,
-  DtRanking,
-  ChatMsg
+  DtRanking
 } from '../types';
 
 interface DataState {
@@ -73,8 +75,7 @@ interface DataState {
   news: NewsItem[];
   positions: Standing[];
   dtRankings: DtRanking[];
-  chat: ChatMsg[];
-
+  
   updateClubs: (newClubs: Club[]) => void;
   updatePlayers: (newPlayers: Player[]) => void;
   updateTournaments: (newTournaments: Tournament[]) => void;
@@ -99,15 +100,11 @@ interface DataState {
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
-  updateFixtures: (newFixtures: DtFixture[]) => void;
-  updateDtRankings: (r: DtRanking[]) => void;
-  setChat: (c: ChatMsg[]) => void;
-  addChatMessage: (msg: ChatMsg) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
-  clubs: [],
-  players: [],
+  clubs,
+  players,
   tournaments,
   transfers,
   offers,
@@ -119,15 +116,14 @@ export const useDataStore = create<DataState>((set) => ({
   posts,
   marketStatus,
   club: dtClub,
-  fixtures: [],
+  fixtures: dtFixtures,
   market: dtMarket,
   objectives: dtObjectives,
   tasks: dtTasks,
   events: dtEvents,
   news: dtNews,
   positions: dtPositions,
-  dtRankings: [],
-  chat: [],
+  dtRankings,
   users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
@@ -255,15 +251,6 @@ export const useDataStore = create<DataState>((set) => ({
 
   updateStandings: (newStandings) => set({ standings: newStandings }),
 
-  updateFixtures: (newFixtures) => set({ fixtures: newFixtures }),
-
-  updateDtRankings: (r) => set({ dtRankings: r }),
-
-  setChat: (c) => set({ chat: c }),
-
-  addChatMessage: (msg) =>
-    set((state) => ({ chat: [...state.chat, msg] })),
-
   toggleTask: (id) =>
     set((state) => ({
       tasks: state.tasks.map(t =>
@@ -271,88 +258,4 @@ export const useDataStore = create<DataState>((set) => ({
       )
     }))
 }));
-
-// ---- React Query hooks ----
-const fetchWithCache = async <T>(key: string, url: string): Promise<T[]> => {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('fetch failed');
-    const data = (await res.json()) as T[];
-    localStorage.setItem(key, JSON.stringify(data));
-    return data;
-  } catch {
-    const cached = localStorage.getItem(key);
-    return cached ? (JSON.parse(cached) as T[]) : [];
-  }
-};
-
-export const useClubsQuery = () => {
-  const setClubs = useDataStore((s) => s.updateClubs);
-  return useQuery(['clubs'], () => fetchWithCache<Club>('clubs', '/clubs'), {
-    onSuccess: setClubs
-  });
-};
-
-export const usePlayersQuery = () => {
-  const setPlayers = useDataStore((s) => s.updatePlayers);
-  return useQuery(['players'], () => fetchWithCache<Player>('players', '/players'), {
-    onSuccess: setPlayers
-  });
-};
-
-export const useFixturesQuery = () => {
-  const setFixtures = useDataStore((s) => s.updateFixtures);
-  return useQuery(
-    ['fixtures'],
-    () => fetchWithCache<DtFixture>('fixtures', '/fixtures'),
-    { onSuccess: setFixtures }
-  );
-};
-
-export const useRankingsQuery = () => {
-  const setRankings = useDataStore((s) => s.updateDtRankings);
-  return useQuery(
-    ["rankings"],
-    () => fetchWithCache<DtRanking>("rankings", "/rankings"),
-    { onSuccess: setRankings }
-  );
-};
-
-export const useChatQuery = () => {
-  const setChat = useDataStore((s) => s.setChat);
-  return useQuery(['chat'], () => fetchWithCache<ChatMsg>('chat', '/chat'), {
-    onSuccess: setChat,
-  });
-};
-
-export const useSendChatMutation = () => {
-  const addMsg = useDataStore((s) => s.addChatMessage);
-  return useMutation({
-    mutationFn: async (payload: Omit<ChatMsg, 'id' | 'ts'>) => {
-      try {
-        const res = await fetch('/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error('post failed');
-        const msg = (await res.json()) as ChatMsg;
-        const cached = localStorage.getItem('chat');
-        const hist = cached ? (JSON.parse(cached) as ChatMsg[]) : [];
-        localStorage.setItem('chat', JSON.stringify([...hist, msg]));
-        return msg;
-      } catch {
-        const msg: ChatMsg = {
-          id: crypto.randomUUID(),
-          ...payload,
-          ts: Date.now(),
-        };
-        const cached = localStorage.getItem('chat');
-        const hist = cached ? (JSON.parse(cached) as ChatMsg[]) : [];
-        localStorage.setItem('chat', JSON.stringify([...hist, msg]));
-        return msg;
-      }
-    },
-    onSuccess: addMsg,
-  });
-};
+ 

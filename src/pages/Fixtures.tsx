@@ -26,7 +26,7 @@ const Fixtures = () => {
         />
         
         <div className="container mx-auto px-4 py-8 text-center">
-          <div className="card-glass p-6">
+          <div className="card p-6">
             <p>No se encontró información del torneo.</p>
           </div>
         </div>
@@ -82,7 +82,7 @@ const Fixtures = () => {
         </div>
         
         {/* Tournament info */}
-        <div className="card-glass p-6 mb-6">
+        <div className="card p-6 mb-6">
           <h2 className="text-xl font-bold">{ligaMaster.name}</h2>
           <div className="flex flex-wrap gap-4 mt-2">
             <div className="text-gray-400">
@@ -238,7 +238,7 @@ const Fixtures = () => {
           })}
           
           {roundMatches.length === 0 && (
-            <div className="card-glass p-6 text-center">
+            <div className="card p-6 text-center">
               <p className="text-gray-400">No hay partidos disponibles para esta jornada.</p>
             </div>
           )}

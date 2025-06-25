@@ -7,7 +7,7 @@ const TransferHistoryTable = () => {
   const recent = [...transfers].slice(0, 5);
 
   return (
-    <div className="card-glass overflow-hidden">
+    <div className="card overflow-hidden">
       <div className="p-4 bg-dark-lighter border-b border-gray-800">
         <h4 className="font-bold">Últimos Traspasos</h4>
       </div>

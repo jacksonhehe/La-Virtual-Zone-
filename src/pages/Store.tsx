@@ -84,7 +84,7 @@ const Store = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredItems.map(product => (
-            <div key={product.id} className="card-glass overflow-hidden group">
+            <div key={product.id} className="card overflow-hidden group">
               <div className="aspect-square bg-dark-lighter overflow-hidden relative">
                 <img 
                   src={product.image} 

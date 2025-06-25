@@ -21,7 +21,7 @@ const Home = () => {
             <div className="lg:col-span-2">
               <h2 className="text-2xl font-bold mb-6">Liga Master 2025</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="card-glass p-6">
+                <div className="card p-6">
                   <h3 className="text-lg font-bold mb-4">Sobre la Liga</h3>
                   <p className="text-gray-300 mb-4">
                     La Liga Master es el núcleo de La Virtual Zone. Una competición cerrada con 10 clubes ficticios, cada uno dirigido por un usuario con rol de DT. Compite por el título, gestiona tu presupuesto y construye tu legado.
@@ -31,7 +31,7 @@ const Home = () => {
                   </Link>
                 </div>
                 
-                <div className="card-glass p-6">
+                <div className="card p-6">
                   <h3 className="text-lg font-bold mb-4">Mercado de Fichajes</h3>
                   <p className="text-gray-300 mb-4">
                     El mercado está abierto. Refuerza tu plantilla con nuevos talentos, vende jugadores para generar ingresos y compite por los mejores jugadores disponibles.
@@ -59,7 +59,7 @@ const Home = () => {
               <LeagueStandings />
               
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
-                <Link to="/usuarios" className="card-glass card-hover p-5 flex items-center">
+                <Link to="/usuarios" className="card card-hover p-5 flex items-center">
                   <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mr-4">
                     <Users size={20} />
                   </div>
@@ -69,7 +69,7 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/tienda" className="card-glass card-hover p-5 flex items-center">
+                <Link to="/tienda" className="card card-hover p-5 flex items-center">
                   <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mr-4">
                     <ShoppingCart size={20} />
                   </div>
@@ -79,7 +79,7 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/torneos" className="card-glass card-hover p-5 flex items-center">
+                <Link to="/torneos" className="card card-hover p-5 flex items-center">
                   <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400 mr-4">
                     <Trophy size={20} />
                   </div>
@@ -89,7 +89,7 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/ayuda" className="card-glass card-hover p-5 flex items-center">
+                <Link to="/ayuda" className="card card-hover p-5 flex items-center">
                   <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mr-4">
                     <HelpCircle size={20} />
                   </div>

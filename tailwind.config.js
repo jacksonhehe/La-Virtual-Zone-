@@ -1,6 +1,3 @@
-import plugin from 'tailwindcss/plugin';
-import typography from '@tailwindcss/typography';
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -20,8 +17,7 @@ export default {
           dark: '#1a1a24',
           'dark-light': '#47474f',
           'dark-lighter': '#75757b',
-          'text-secondary': '#b5b5b5',
-          link: '#b18aff'
+          'text-secondary': '#b5b5b5'
         },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -45,10 +41,5 @@ export default {
     'focus:ring-primary',
     'focus:ring-opacity-50'
   ],
-  plugins: [
-    typography,
-    plugin(({ addVariant }) => {
-      addVariant('focus-visible', '&:focus-visible');
-    })
-  ]
+  plugins: []
 };

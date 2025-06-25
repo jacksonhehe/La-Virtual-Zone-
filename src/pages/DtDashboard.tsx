@@ -5,7 +5,6 @@
    ========================================================================= */
 
 import { useEffect, useMemo, useState, useRef } from "react";
-import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 import {
   Users,
@@ -69,14 +68,10 @@ import PageHeader from "../components/common/PageHeader";
 import DashboardSkeleton from "../components/common/DashboardSkeleton";
 import FilterChip from "../components/common/FilterChip";
 import RankingRow from "../components/common/RankingRow";
-import { DtRanking, ChatMsg } from "../types";
+import { DtRanking } from "../types";
 
 import { useAuthStore } from "../store/authStore";
-import {
-  useDataStore,
-  useChatQuery,
-  useSendChatMutation,
-} from "../store/dataStore";
+import { useDataStore } from "../store/dataStore";
 import {
   getMiniTable,
   formatCurrency,
@@ -98,6 +93,12 @@ if (gaId) {
 interface LayoutItem {
   id: RightModuleId;
   visible: boolean;
+}
+interface ChatMsg {
+  id: string;
+  user: string;
+  text: string;
+  ts: number;
 }
 
 type RightModuleId =
@@ -217,22 +218,31 @@ const DtDashboard: React.FC = () => {
   const visibleNews = filteredNews.slice(0, newsCount);
   const loadMoreNews = () => setNewsCount((c) => c + 5);
 
-  /* ===== chat ===== */
+  /* ===== chat (local demo) ===== */
+  const [chat, setChat] = useState<ChatMsg[]>(() => {
+    const raw = localStorage.getItem("vz_chat_history");
+    try {
+      return raw ? (JSON.parse(raw) as ChatMsg[]) : [];
+    } catch {
+      return [];
+    }
+  });
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const chat = useDataStore((s) => s.chat);
-  const { isLoading: chatLoading } = useChatQuery();
-  const sendChatMutation = useSendChatMutation();
 
   useEffect(() => {
+    localStorage.setItem("vz_chat_history", JSON.stringify(chat));
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
   const sendChat = (text: string) => {
     if (!text.trim()) return;
-    sendChatMutation.mutate({
-      user: user?.username ?? "Anon",
+    const msg: ChatMsg = {
+      id: crypto.randomUUID(),
+      user: user?.username ?? 'Anon',
       text: text.trim(),
-    });
+      ts: Date.now(),
+    };
+    setChat((old) => [...old.slice(-49), msg]); // máx 50
   };
 
   /* ===== PDF mensual ===== */
@@ -423,7 +433,7 @@ const DtDashboard: React.FC = () => {
     {
       id: "chat",
       title: "Chat",
-      render: () => <ChatModule />,
+      render: () => <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />,
     },
     /* --- Recordatorios --- */
     {
@@ -762,46 +772,18 @@ const EmptyState: React.FC<{ label: string }> = ({ label }) => (
 );
 
 /* Chat módulo */
-const ChatModule: React.FC = () => {
-  const [chat, setChat] = useState<ChatMsg[]>([]);
+const ChatModule: React.FC<{
+  chat: ChatMsg[];
+  sendChat: (t: string) => void;
+  endRef: React.RefObject<HTMLDivElement>;
+}> = ({ chat, sendChat, endRef }) => {
   const [input, setInput] = useState("");
   const { user } = useAuthStore();
-  const endRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<ReturnType<typeof io> | null>(null);
-
-  useEffect(() => {
-    socketRef.current = io("http://localhost:3001");
-    socketRef.current.emit("join", "lobby");
-    socketRef.current.on("message", (msg: ChatMsg) => {
-      setChat((old) => [...old.slice(-49), msg]);
-    });
-    socketRef.current.on("goal_scored", (data) => {
-      toast.success(`¡Gol de ${data.scorer}!`);
-    });
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chat]);
-
-  const sendChat = (text: string) => {
-    if (!text.trim()) return;
-    socketRef.current?.emit("message", {
-      room: "lobby",
-      user: user?.username ?? "Anon",
-      text: text.trim(),
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendChat(input);
     setInput("");
   };
-
   return (
     <Card className="p-4" aria-label="Chat de comunidad">
       <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold leading-tight">

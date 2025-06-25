@@ -6,7 +6,6 @@ import Spinner from "./components/Spinner";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
-import useFCM from "./hooks/useFCM";
 
 const LigaMaster = lazy(() => import("./pages/LigaMaster"));
 const Plantilla = lazy(() => import("./pages/Plantilla"));
@@ -29,7 +28,6 @@ const Store = lazy(() => import("./pages/Store"));
 const Help = lazy(() => import("./pages/Help"));
 
 function App() {
-  useFCM();
   return (
     <div className="min-h-screen bg-[#18181f] text-white">
       <Toaster position="top-right" />

@@ -35,15 +35,6 @@ Serve the production build locally to verify the output:
 ```bash
 npm run preview
 ```
-
-## Audit
-
-Run Lighthouse CI against the production build. The audit fails if
-performance is below 90 or accessibility is below 95:
-
-```bash
-npm run audit
-```
 ## Tests
 
 Run the Cypress test suite:
@@ -57,12 +48,6 @@ headless mode. To open the interactive Cypress UI instead, execute:
 
 ```bash
 npx cypress open
-```
-
-For unit tests using Jest and React Testing Library run:
-
-```bash
-npm run test:jest
 ```
 
 Ensure the development server is running on `http://localhost:5173` before

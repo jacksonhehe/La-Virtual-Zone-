@@ -304,10 +304,3 @@ export interface DtRanking {
   clubLogo: string;
   elo: number;
 }
-
-export interface ChatMsg {
-  id: string;
-  user: string;
-  text: string;
-  ts: number;
-}

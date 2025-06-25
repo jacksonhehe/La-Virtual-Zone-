@@ -117,7 +117,7 @@ const ClubProfile = () => {
         {/* Club overview */}
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="w-full md:w-1/3">
-            <div className="card-glass p-6 text-center">
+            <div className="card p-6 text-center">
               <img 
                 src={club.logo} 
                 alt={club.name}
@@ -203,7 +203,7 @@ const ClubProfile = () => {
             </div>
             
             {/* Tabs */}
-            <div className="card-glass">
+            <div className="card">
               <div className="border-b border-gray-800">
                 <div className="flex space-x-2 overflow-x-auto">
                   <button 

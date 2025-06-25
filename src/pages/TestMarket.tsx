@@ -38,7 +38,7 @@ const TestMarket = () => {
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="max-w-4xl mx-auto">
-        <div className="card-glass p-6 mb-8">
+        <div className="card p-6 mb-8">
           <h2 className="text-2xl font-bold mb-4">Test del Sistema de Mercado</h2>
           <p className="text-gray-300 mb-6">
             Esta página te permite probar el sistema de mercado de La Virtual Zone. Inicia sesión con una cuenta de DT para acceder a la funcionalidad completa.
@@ -167,7 +167,7 @@ const TestMarket = () => {
           )}
         </div>
         
-        <div className="card-glass p-6">
+        <div className="card p-6">
           <h3 className="text-xl font-bold mb-4">Instrucciones de Prueba</h3>
           
           <div className="space-y-6">

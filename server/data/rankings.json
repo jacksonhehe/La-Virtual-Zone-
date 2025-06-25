@@ -1,5 +1,0 @@
-[
-  { "id": "r1", "username": "coach", "clubName": "Rayo Digital FC", "clubLogo": "https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true", "elo": 1500 },
-  { "id": "r2", "username": "DT Neon", "clubName": "Neón FC", "clubLogo": "https://ui-avatars.com/api/?name=NFC&background=ec4899&color=fff&size=128&bold=true", "elo": 1480 },
-  { "id": "r3", "username": "DT Pixel", "clubName": "Atlético Pixelado", "clubLogo": "https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true", "elo": 1450 }
-]
