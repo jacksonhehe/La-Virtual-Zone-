@@ -1,324 +1,921 @@
 /* =========================================================================
-   DT DASHBOARD – Estilo “gradient neo-blue” (sección Liga Master)
-   Mantiene lógica previa + nuevo layout de la maqueta 24/11/2024
+   DT DASHBOARD – LIGA MASTER
+   Pulido · Gráfica · PDF · Logros · Noticias · Personalización
+   + Funciones sociales (Ranking DT + Chat)
    ========================================================================= */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
-  Calendar,
+  Users,
+  Layout as LayoutIcon,
   DollarSign,
-  LayoutGrid,
-  PieChart,
+  TrendingUp,
+  Home,
+  Plane,
   Trophy,
+  Calendar,
+  Inbox,
+  Sun,
+  Moon,
+  FileText,
+  Award,
+  MessagesSquare,
+  MessageCircle,
+  Wrench,
+  Eye,
+  EyeOff,
+  GripVertical,
 } from "lucide-react";
+import { motion, useAnimation } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
+import ReactGA from "react-ga4";
 import {
-  Bar,
   BarChart,
-  ResponsiveContainer,
-  Tooltip,
+  Bar,
   XAxis,
   YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
 } from "recharts";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 import {
   DndContext,
+  closestCenter,
   PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  arrayMove,
-  useSortable,
   verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Toaster } from "react-hot-toast";
-import PageHeader from "@/components/common/PageHeader";
-import Card from "@/components/common/Card";
-import Spinner from "@/components/Spinner";
-import CountdownBar from "@/components/common/CountdownBar";
-import { useAuthStore } from "@/store/authStore";
-import { useDataStore } from "@/store/dataStore";
-import { formatCurrency, formatDate, getMiniTable } from "@/utils/helpers";
 
-interface LayoutItem {
-  id: string;
-  visible: boolean;
+import Card from "../components/common/Card";
+import DtMenuTabs from "../components/DtMenuTabs";
+import CountdownBar from "../components/common/CountdownBar";
+import SeasonObjectives from "./dt-dashboard/SeasonObjectives";
+import LatestNews from "./dt-dashboard/LatestNews";
+import QuickActions from "./dt-dashboard/QuickActions";
+import PageHeader from "../components/common/PageHeader";
+import DashboardSkeleton from "../components/common/DashboardSkeleton";
+import FilterChip from "../components/common/FilterChip";
+import RankingRow from "../components/common/RankingRow";
+import { DtRanking } from "../types";
+
+import { useAuthStore } from "../store/authStore";
+import { useDataStore } from "../store/dataStore";
+import {
+  getMiniTable,
+  formatCurrency,
+  formatDate,
+  calcStreak,
+  getTopPerformer,
+  goalsDiff,
+  yellowDiff,
+  possessionDiff,
+} from "../utils/helpers";
+
+/* ▸ Google Analytics 4 */
+const gaId = import.meta.env.VITE_GA_ID;
+if (gaId) {
+  ReactGA.initialize(gaId);
 }
 
-/* ——— componente principal ——— */
-export default function DtDashboard() {
+/* ---------- Tipos ---------- */
+interface LayoutItem {
+  id: RightModuleId;
+  visible: boolean;
+}
+interface ChatMsg {
+  id: string;
+  user: string;
+  text: string;
+  ts: number;
+}
+
+type RightModuleId =
+  | "chat"
+  | "anuncios"
+  | "mercado"
+  | "logros"
+  | "ranking"
+  | "noticias"
+  | "recordatorios"
+  | "acciones";
+
+/* ---------- componente principal ---------- */
+const DtDashboard: React.FC = () => {
+  /* stores */
   const { user } = useAuthStore();
   const {
     club,
-    fixtures,
     positions,
+    fixtures,
+    market,
+    tasks,
+    events,
+    toggleTask,
+    news, // noticias
+    dtRankings, // [{ id, username, elo, clubName, clubLogo }]
     players,
   } = useDataStore();
 
-  /* datos derivados */
+  /* ===== Tema ===== */
+  const [theme, setTheme] = useState<"dark" | "light">(
+    localStorage.getItem("vz_theme") === "light" ? "light" : "dark"
+  );
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("vz_theme", theme);
+  }, [theme]);
+
+  /* ===== GA4 ===== */
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: "/dt-dashboard" });
+  }, []);
+
+  /* ===== datos derivados ===== */
+  const marketOpen = market.open;
   const nextMatch = fixtures.find((m) => !m.played);
+
   const miniTable = useMemo(
     () => (club ? getMiniTable(club.id, positions) : []),
     [club, positions]
   );
+  const streak = useMemo(
+    () => (club ? calcStreak(club.id, fixtures, positions) : []),
+    [club, fixtures, positions]
+  );
+  const performer = useMemo(
+    () => (club ? getTopPerformer(club.id, players) : null),
+    [club, players]
+  );
+  const bullets = useMemo(
+    () =>
+      club
+        ? [
+            goalsDiff(club.id, positions),
+            possessionDiff(club.id, positions),
+            yellowDiff(club.id, positions),
+          ]
+        : [],
+    [club, positions]
+  );
 
-  const barData = fixtures
+  /* ===== gráfica ===== */
+  const recent = fixtures
     .filter((m) => m.played)
-    .slice(-8)
-    .map((m, i) => ({
-      idx: i + 1,
-      gf: m.homeTeam === club?.name ? m.homeGoals : m.awayGoals,
+    .slice(-5)
+    .map((m) => ({
+      name: `J${m.round}`,
+      GF: m.homeTeam === club.name ? m.homeScore ?? 0 : m.awayScore ?? 0,
+      GC: m.homeTeam === club.name ? m.awayScore ?? 0 : m.homeScore ?? 0,
     }));
 
-  /* ———  layout personalizable (solo side-column) ——— */
-  const DEFAULT_LAYOUT: LayoutItem[] = [
-    { id: "table", visible: true },
-    { id: "next", visible: true },
-    { id: "top", visible: true },
-    { id: "actions", visible: true },
-  ];
-  const [layout, setLayout] = useState<LayoutItem[]>(DEFAULT_LAYOUT);
+  /* ===== logros ===== */
+  const achievements = useMemo(
+    () => [
+      {
+        id: "invicto5",
+        name: "Invicto – 5 partidos",
+        unlocked: streak.slice(-5).every((w) => w),
+      },
+      {
+        id: "goleador10",
+        name: "Goleador +10",
+        unlocked: performer ? performer.g >= 10 : false,
+      },
+      {
+        id: "million",
+        name: "Presupuesto > 1 M €",
+        unlocked: club ? club.budget > 1_000_000 : false,
+      },
+    ],
+    [streak, performer, club]
+  );
+
+  /* ===== noticias ===== */
+  const categories = ["Todas", "Fichajes", "Lesiones", "Declaraciones"] as const;
+  const [cat, setCat] = useState<(typeof categories)[number]>("Todas");
+  const [newsCount, setNewsCount] = useState(5);
+
+  const filteredNews = useMemo(
+    () =>
+      (news ?? []).filter((n) => {
+        const category = n.category ?? n.type;
+        return cat === "Todas" || category.toLowerCase() === cat.toLowerCase();
+      }),
+    [news, cat]
+  );
+  const visibleNews = filteredNews.slice(0, newsCount);
+  const loadMoreNews = () => setNewsCount((c) => c + 5);
+
+  /* ===== chat (local demo) ===== */
+  const [chat, setChat] = useState<ChatMsg[]>(() => {
+    const raw = localStorage.getItem("vz_chat_history");
+    try {
+      return raw ? (JSON.parse(raw) as ChatMsg[]) : [];
+    } catch {
+      return [];
+    }
+  });
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem("vz_chat_history", JSON.stringify(chat));
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat]);
+
+  const sendChat = (text: string) => {
+    if (!text.trim()) return;
+    const msg: ChatMsg = {
+      id: crypto.randomUUID(),
+      user: user?.username ?? 'Anon',
+      text: text.trim(),
+      ts: Date.now(),
+    };
+    setChat((old) => [...old.slice(-49), msg]); // máx 50
+  };
+
+  /* ===== PDF mensual ===== */
+  const generateMonthlyReport = () => {
+    const doc = new jsPDF();
+    const monthStr = new Date().toLocaleString("es-ES", {
+      month: "long",
+      year: "numeric",
+    });
+
+    doc.setFontSize(18);
+    doc.text(`${club.name} – Informe ${monthStr}`, 14, 20);
+    doc.setFontSize(12);
+    doc.text(`Presupuesto: ${formatCurrency(club.budget)}`, 14, 32);
+    doc.text(`Plantilla: ${club.players.length} jugadores`, 14, 40);
+    doc.text(`Táctica base: ${club.formation}`, 14, 48);
+    // @ts-expect-error jsPDF plugin lacks types
+    doc.autoTable({
+      head: [["J", "GF", "GC"]],
+      body: recent.map((r) => [r.name, r.GF, r.GC]),
+      startY: 60,
+    });
+    doc.save(`Informe_${club.slug}_${monthStr}.pdf`);
+    toast.success("Informe descargado");
+  };
+
+  /* =======================================================================
+     PERSONALIZACIÓN (drag-and-drop + visibilidad)
+     ======================================================================= */
+
+  /* registro de módulos del lado derecho */
+  const RIGHT_MODULES = [
+    /* --- Anuncios --- */
+    {
+      id: "anuncios",
+      title: "Anuncios",
+      render: () => (
+        <Card className="p-4" aria-label="Anuncios" aria-live="polite">
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Anuncios</h3>
+          {events.length === 0 ? (
+            <EmptyState label="No hay anuncios" />
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {events.slice(0, 3).map((ev) => (
+                <li key={ev.id} className="flex justify-between">
+                  <span>{ev.message}</span>
+                  <span className="text-xs text-gray-300">
+                    {formatDate(ev.date)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      ),
+    },
+    /* --- Mercado --- */
+    {
+      id: "mercado",
+      title: "Mercado",
+      render: () => (
+        <Card className="p-4" aria-label="Mercado">
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Mercado</h3>
+          <div className="flex items-center gap-2">
+            <span
+              className={
+                marketOpen
+                  ? "h-3 w-3 rounded-full bg-green-500"
+                  : "h-3 w-3 rounded-full bg-red-500"
+              }
+            />
+            <span>{marketOpen ? "Abierto" : "Cerrado"}</span>
+          </div>
+          <ul className="mt-3 space-y-1 text-xs text-primary">
+            <li>Máx. 3 traspasos salientes</li>
+            <li>Límite salarial activo</li>
+          </ul>
+        </Card>
+      ),
+    },
+    /* --- Logros --- */
+    {
+      id: "logros",
+      title: "Logros",
+      render: () => (
+        <Card className="p-4" aria-label="Logros">
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Logros</h3>
+          <ul className="space-y-2 text-sm">
+            {achievements.map((a) => (
+              <li
+                key={a.id}
+                className={`flex items-center gap-2 ${
+                  a.unlocked ? "" : "opacity-40"
+                }`}
+              >
+                <Award
+                  size={18}
+                  className={a.unlocked ? "text-accent" : "text-gray-400"}
+                />
+                <span>{a.name}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ),
+    },
+    /* --- Ranking DT --- */
+    {
+      id: "ranking",
+      title: "Ranking DT",
+      render: () => (
+        <Card className="p-4" aria-label="Ranking DT">
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Ranking de Entrenadores</h3>
+          {dtRankings.length === 0 ? (
+            <EmptyState label="Sin datos de ranking" />
+          ) : (
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-gray-400">
+                  <th className="text-left">#</th>
+                  <th className="text-left">DT</th>
+                  <th className="text-center">Club</th>
+                  <th className="text-right">Elo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dtRankings.slice(0, 10).map((d: DtRanking, idx: number) => (
+                  <RankingRow key={d.id} rank={idx + 1} data={d} />
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Card>
+      ),
+    },
+    /* --- Noticias --- */
+    {
+      id: "noticias",
+      title: "Noticias",
+      render: () => (
+        <Card className="p-4" aria-label="Noticias">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold">
+            <MessagesSquare size={18} />
+            Noticias
+          </h3>
+          {/* filtros */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            {categories.map((c) => (
+              <FilterChip
+                key={c}
+                label={c}
+                active={cat === c}
+                onClick={() => {
+                  setCat(c);
+                  setNewsCount(5);
+                }}
+              />
+            ))}
+          </div>
+          {/* lista */}
+          {visibleNews.length === 0 ? (
+            <EmptyState label="Sin noticias en esta categoría" />
+          ) : (
+            <ul className="space-y-3 text-sm">
+              {visibleNews.map((n) => (
+                <li key={n.id} className="rounded bg-white/5 p-2">
+                  <p className="font-medium">{n.title}</p>
+                  <p className="text-xs text-gray-400">
+                    {formatDate(n.date ?? n.publishDate)} • {n.category ?? n.type}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+          {/* cargar más */}
+          {visibleNews.length < filteredNews.length && (
+            <button
+              onClick={loadMoreNews}
+              className="mt-4 w-full rounded bg-white/10 py-2 text-xs hover:bg-white/20 focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-accent"
+            >
+              Cargar más
+            </button>
+          )}
+        </Card>
+      ),
+    },
+    /* --- Chat --- */
+    {
+      id: "chat",
+      title: "Chat",
+      render: () => <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />,
+    },
+    /* --- Recordatorios --- */
+    {
+      id: "recordatorios",
+      title: "Recordatorios",
+      render: () => (
+        <Card className="p-4" aria-label="Recordatorios">
+          <h3 className="mb-4 text-xl font-semibold leading-tight">Recordatorios</h3>
+          {tasks.length === 0 ? (
+            <EmptyState label="No hay recordatorios" />
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {tasks.map((t) => (
+                <li key={t.id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="accent-accent focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+                    checked={t.done}
+                    onChange={() => toggleTask(t.id)}
+                    aria-label={t.text}
+                  />
+                  <span className={t.done ? "line-through opacity-60" : ""}>
+                    {t.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      ),
+    },
+    /* --- Acciones rápidas --- */
+    {
+      id: "acciones",
+      title: "Acciones rápidas",
+      render: () => <QuickActions marketOpen={marketOpen} />,
+    },
+  ] as const;
+
+  /* layout */
+  const DEFAULT_LAYOUT: LayoutItem[] = RIGHT_MODULES.map((m) => ({
+    id: m.id,
+    visible: true,
+  }));
+  const [layout, setLayout] = useState<LayoutItem[]>(() => {
+    const raw = localStorage.getItem("vz_dashboard_layout");
+    try {
+      return raw ? (JSON.parse(raw) as LayoutItem[]) : DEFAULT_LAYOUT;
+    } catch {
+      return DEFAULT_LAYOUT;
+    }
+  });
+  const [customizing, setCustomizing] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("vz_dashboard_layout", JSON.stringify(layout));
+  }, [layout]);
+
+  const loading = !user || !club;
+
+  /* dnd sensors */
   const sensors = useSensors(useSensor(PointerSensor));
-  const handleDrag = ({ active, over }: DragEndEvent) => {
-    if (!over) return;
-    const oldI = layout.findIndex((l) => l.id === active.id);
-    const newI = layout.findIndex((l) => l.id === over.id);
-    if (oldI !== newI) setLayout(arrayMove(layout, oldI, newI));
+  const handleDragEnd = (evt: DragEndEvent) => {
+    const { active, over } = evt;
+    if (!over || active.id === over.id) return;
+    const oldIndex = layout.findIndex((l) => l.id === active.id);
+    const newIndex = layout.findIndex((l) => l.id === over.id);
+    setLayout(arrayMove(layout, oldIndex, newIndex));
   };
+  const findModule = (id: RightModuleId) =>
+    RIGHT_MODULES.find((m) => m.id === id)!;
 
-  if (!user || !club) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
-
-  /* ——— render helpers ——— */
-  const RightCard: React.FC<{ id: string; children: React.ReactNode }> = ({
-    id,
-    children,
-  }) => {
-    const { setNodeRef, transform } = useSortable({ id });
-    return (
-      <div
-        ref={setNodeRef}
-        style={{ transform: CSS.Translate.toString(transform) }}
-        className="space-y-6"
-      >
-        {children}
-      </div>
-    );
-  };
-
-  /* =========================================================================
-     UI
-     ========================================================================= */
+  /* ═════════════════════════════════════════════════════════════ */
+  /* ------------------------------ UI --------------------------- */
+  /* ═════════════════════════════════════════════════════════════ */
+  if (loading) return <DashboardSkeleton />;
   return (
-    <div className="bg-gradient-to-br from-[var(--bg-gradient-from)] to-[var(--bg-gradient-to)] min-h-screen">
-      <Toaster />
-      {/* hero reutiliza tu componente global */}
-      <PageHeader
-        title="Tablero del DT"
-        subtitle="Gestiona tu club en Liga Master"
-        image="/hero-dt.jpg"
-        full
+    <div className="relative transition-colors duration-300">
+      {/* Toaster */}
+      <Toaster
+        position="top-right"
+        toastOptions={{ ariaProps: { role: "status", "aria-live": "polite" } }}
       />
 
-      <div className="mx-auto max-w-6xl px-4 pb-20">
-        {/* KPI row ---------------------------------------------------------------- */}
-        <div className="grid grid-cols-2 gap-4 py-6 md:grid-cols-5">
-          <KPICard icon={<Calendar size={18} />} label="Partidos" value="24" />
-          <KPICard icon={<PieChart size={18} />} label="Puntos" value="67" />
-          <KPICard
-            icon={<DollarSign size={18} />}
-            label="Presupuesto"
-            value={formatCurrency(club.budget)}
-          />
-          <KPICard icon={<Trophy size={18} />} label="Posición" value="3°" />
-          <KPICard
-            icon={<LayoutGrid size={18} />}
-            label="Formación"
-            value={club.formation}
-          />
+      {/* Rayo */}
+      <div className="pointer-events-none absolute -top-14 left-1/2 h-[340px] w-[120%] -translate-x-1/2 bg-gradient-to-r from-transparent via-purple-700/40 to-transparent blur-3xl" />
+
+      {/* Header */}
+      <PageHeader
+        title="Tablero del DT"
+        subtitle="Vista general del club y próximas actividades."
+        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp"
+      >
+        {/* Theme toggle */}
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          aria-label="Cambiar tema"
+          className="absolute right-20 top-4 rounded-full bg-white/10 p-2 backdrop-blur transition hover:bg-white/20 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+        >
+          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
+
+        {/* Customizer toggle */}
+        <button
+          onClick={() => setCustomizing(!customizing)}
+          aria-label={customizing ? "Salir de personalización" : "Personalizar tablero"}
+          className="absolute right-14 top-4 rounded-full bg-white/10 p-2 backdrop-blur transition hover:bg-white/20 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+        >
+          <Wrench size={16} />
+        </button>
+
+        {/* PDF */}
+        <button
+          onClick={generateMonthlyReport}
+          aria-label="Descargar informe mensual"
+          className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-accent px-3 py-2 text-black backdrop-blur transition hover:brightness-110 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+        >
+          <FileText size={16} />
+          <span className="hidden sm:inline">Informe</span>
+        </button>
+      </PageHeader>
+
+      {customizing && (
+        <div className="bg-accent py-2 text-center text-sm font-semibold text-black">
+          Modo personalización activo
         </div>
+      )}
 
-        {/* torso: grid 2 : 1 ------------------------------------------------------ */}
-        <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
-          {/* -------- columna izquierda -------- */}
-          <div className="space-y-6">
-            {/* gráfico rendimiento */}
-            <Card title="Rendimiento de la Temporada">
-              <div className="h-36 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barData} barCategoryGap={6}>
-                    <XAxis dataKey="idx" hide />
-                    <YAxis hide />
-                    <Tooltip />
-                    <Bar dataKey="gf" radius={[4, 4, 0, 0]} fill="#14b8a6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
+      <div className="container mx-auto px-4 py-8">
+        <DtMenuTabs />
 
-            {/* plantilla */}
-            <Card title="Plantilla">
-              <div className="flex justify-between text-sm">
-                <div>
-                  <h4 className="mb-1 font-medium text-accent">Titulares</h4>
-                  <p>Delanteros  3</p>
-                  <p>Mediocampistas  4</p>
-                  <p>Defensores  4</p>
+        {/* KPI + gráfica */}
+        <section className="mb-8 space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
+          <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible snap-x">
+            <KPICard
+              title="Plantilla"
+              icon={<Users size={24} />}
+              value={`${club.players.length} jugadores`}
+              className="min-w-[90%] sm:min-w-0 snap-start"
+            />
+            <KPICard
+              title="Táctica"
+              icon={<LayoutIcon size={24} />}
+              value={club.formation}
+              className="min-w-[90%] sm:min-w-0 snap-start"
+            />
+            <KPICard
+              title="Finanzas"
+              icon={<DollarSign size={24} />}
+              value={formatCurrency(club.budget)}
+              className="min-w-[90%] sm:min-w-0 snap-start"
+            />
+            <KPICard
+              title="Mercado"
+              icon={<TrendingUp size={24} />}
+              value={marketOpen ? "Abierto" : "Cerrado"}
+              className="min-w-[90%] sm:min-w-0 snap-start"
+            />
+          </div>
+
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={recent}>
+                <XAxis dataKey="name" stroke="#AAA" />
+                <YAxis stroke="#AAA" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="GF" stackId="a" fill="var(--neon-green)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="GC" stackId="a" fill="var(--neon-red)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* cuerpo principal */}
+        <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          {/* izquierda */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8 lg:col-span-2"
+          >
+            {/* Próximo partido */}
+            {nextMatch && (
+              <Card className="p-4" aria-label="Próximo partido">
+                <div className="flex items-center gap-2">
+                  {nextMatch.homeTeam === club.name ? (
+                    <Home size={16} className="text-accent" aria-hidden />
+                  ) : (
+                    <Plane size={16} className="text-accent" aria-hidden />
+                  )}
+                  <h2 className="text-xl font-semibold leading-tight">Próximo partido</h2>
                 </div>
-                <div>
-                  <h4 className="mb-1 font-medium text-yellow-400">Suplentes</h4>
-                  <p>Disponibles  14</p>
-                  <p>Lesionados  2</p>
-                  <p>Suspendidos  1</p>
-                </div>
-              </div>
-            </Card>
+                <p className="mt-2">
+                  {nextMatch.homeTeam === club.name
+                    ? nextMatch.awayTeam
+                    : nextMatch.homeTeam}{" "}
+                  – <span className="text-gray-300">{formatDate(nextMatch.date)}</span>
+                </p>
+                <CountdownBar date={nextMatch.date} />
+                <Link
+                  to="/liga-master/fixture"
+                  className="mt-3 inline-flex items-center gap-1 text-accent hover:underline focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+                >
+                  <Calendar size={14} /> Calendario completo
+                </Link>
+              </Card>
+            )}
 
-            {/* últimos partidos */}
-            <Card title="Últimos Partidos">
-              <ul className="text-sm">
-                {fixtures
-                  .filter((m) => m.played)
-                  .slice(-4)
-                  .map((m) => (
-                    <li
-                      key={m.id}
-                      className="flex justify-between py-1 odd:bg-white/5 px-2 rounded"
+            {/* mini tabla + comparativa */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Card className="p-4" aria-label="Mini tabla">
+                <h3 className="mb-4 text-xl font-semibold leading-tight">Posiciones</h3>
+                <table className="w-full text-sm">
+                  <tbody>
+                    {miniTable.map((row) => (
+                      <tr
+                        key={row.club}
+                        className={
+                          row.club === club.id ? "text-accent font-semibold" : ""
+                        }
+                      >
+                        <td>{row.pos}</td>
+                        <td>{row.name}</td>
+                        <td className="text-right">{row.pts}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="mt-3 flex gap-1">
+                  {streak.map((w, i) => (
+                    <span
+                      key={i}
+                      className={w ? "text-green-500" : "text-red-500"}
+                      aria-label={w ? "Victoria" : "Derrota"}
                     >
-                      <span>
-                        {m.result === "W" ? "✅" : m.result === "D" ? "⚪" : "❌"}{" "}
-                        vs {m.awayTeam}
-                      </span>
-                      <span className="tabular-nums">
-                        {m.homeGoals}-{m.awayGoals}
+                      {w ? "✔" : "✖"}
+                    </span>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="p-4" aria-label="Comparativa liga">
+                <h3 className="mb-4 text-xl font-semibold leading-tight">Comparativa con la liga</h3>
+                <ul className="space-y-2 text-sm">
+                  {bullets.map((b) => (
+                    <li key={b.label} className="flex justify-between">
+                      <span>{b.label}</span>
+                      <span
+                        className={
+                          b.diff > 0
+                            ? "text-green-400"
+                            : b.diff < 0
+                            ? "text-red-400"
+                            : "text-gray-300"
+                        }
+                        aria-label={
+                          b.diff > 0 ? `+${b.diff}` : b.diff.toString()
+                        }
+                      >
+                        {b.diff > 0 && "+"}
+                        {b.diff}
                       </span>
                     </li>
                   ))}
-              </ul>
-            </Card>
-          </div>
+                </ul>
+                {performer && (
+                  <div className="mt-4 flex items-center gap-2 rounded bg-zinc-800 p-2">
+                    <img
+                      src={performer.avatar}
+                      alt={performer.name}
+                      className="h-8 w-8 rounded-full"
+                    />
+                    <div>
+                      <p className="text-sm">{performer.name}</p>
+                      <p className="text-xs text-gray-300">
+                        {performer.g} g – {performer.a} a
+                      </p>
+                    </div>
+                    <Trophy size={14} className="ml-auto text-yellow-400" aria-hidden />
+                  </div>
+                )}
+              </Card>
+            </div>
 
-          {/* -------- columna derecha (sortable) -------- */}
-          <DndContext sensors={sensors} onDragEnd={handleDrag}>
-            <SortableContext
-              strategy={verticalListSortingStrategy}
-              items={layout.map((l) => l.id)}
-            >
-              {layout.map((l) =>
-                l.id === "table" ? (
-                  <RightCard id="table" key="table">
-                    <Card title="Clasificación">
-                      <table className="w-full text-sm">
-                        <tbody>
-                          {miniTable.slice(0, 5).map((r) => (
-                            <tr
-                              key={r.club}
-                              className={`${
-                                r.club === club.id
-                                  ? "bg-primary/10 text-accent"
-                                  : ""
-                              }`}
-                            >
-                              <td className="w-4">{r.pos}</td>
-                              <td>{r.name}</td>
-                              <td className="text-right">{r.pts}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </Card>
-                  </RightCard>
-                ) : l.id === "next" ? (
-                  <RightCard id="next" key="next">
-                    <Card title="Próximo Partido" center>
-                      {nextMatch ? (
-                        <>
-                          <h4 className="mb-1 text-center font-bold text-accent">
-                            vs {nextMatch.awayTeam}
-                          </h4>
-                          <p className="text-center text-xs">
-                            {formatDate(nextMatch.date)} • {nextMatch.competition}
-                          </p>
-                          <CountdownBar date={nextMatch.date} compact />
-                        </>
-                      ) : (
-                        <p className="text-center text-sm text-gray-400">
-                          Sin partidos programados
-                        </p>
-                      )}
-                    </Card>
-                  </RightCard>
-                ) : l.id === "top" ? (
-                  <RightCard id="top" key="top">
-                    <Card title="Mejores Jugadores">
-                      <ul className="space-y-1 text-sm">
-                        {players
-                          .sort((a, b) => b.goals - a.goals)
-                          .slice(0, 3)
-                          .map((p, i) => (
-                            <li
-                              key={p.id}
-                              className="flex justify-between rounded px-2 py-1 odd:bg-white/5"
-                            >
-                              <span>{i + 1}.  {p.name}</span>
-                              <span className="text-accent">{p.goals}</span>
-                            </li>
-                          ))}
-                      </ul>
-                    </Card>
-                  </RightCard>
-                ) : (
-                  <RightCard id="actions" key="actions">
-                    <Card title="Acciones Rápidas">
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <button className="rounded bg-accent py-1">
-                          Ver Plantilla
-                        </button>
-                        <button className="rounded bg-pink-500 py-1">
-                          Mercado
-                        </button>
-                        <button className="rounded bg-green-500 py-1">
-                          Entrenar
-                        </button>
-                        <button className="rounded bg-orange-500 py-1">
-                          ⚙️
-                        </button>
-                      </div>
-                    </Card>
-                  </RightCard>
-                )
-              )}
-            </SortableContext>
-          </DndContext>
-        </div>
+            <SeasonObjectives />
+            <LatestNews />
+          </motion.div>
+
+          {/* derecha */}
+          <RightColumn
+            customizing={customizing}
+            layout={layout}
+            setLayout={setLayout}
+            sensors={sensors}
+            handleDragEnd={handleDragEnd}
+            findModule={findModule}
+          />
+        </main>
+
+        <div className="mb-8" />
       </div>
     </div>
   );
-}
+};
 
-/* —————————————— subcomponentes —————————————— */
+export default DtDashboard;
 
-const KPICard = ({
+/* ═════════ sub-componentes ═════════ */
+
+const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string; className?: string }> = ({
+  title,
   icon,
-  label,
   value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
+  className = '',
 }) => (
-  <div className="rounded-lg bg-white/5 p-4 text-center shadow-[0_0_0_1px_var(--card-border)]">
-    <div className="mb-1 flex justify-center text-accent">{icon}</div>
-    <p className="text-2xl font-semibold">{value}</p>
-    <p className="text-xs text-gray-300">{label}</p>
-  </div>
+  <motion.div
+    whileHover={{ scale: 1.02, y: -2 }}
+    className={`flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-colors ${className}`.trim()}
+  >
+    <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
+      <span className="rounded-full bg-white/10 p-1">{icon}</span>
+      {title}
+    </div>
+    <p className="text-xl font-bold text-white" aria-live="polite">
+      {value}
+    </p>
+  </motion.div>
 );
 
-/* Card re-export minimal if you use your own  */
+const EmptyState: React.FC<{ label: string }> = ({ label }) => (
+  <p className="flex items-center gap-2 text-sm text-gray-400">
+    <Inbox size={16} className="text-gray-400" /> {label}
+  </p>
+);
+
+/* Chat módulo */
+const ChatModule: React.FC<{
+  chat: ChatMsg[];
+  sendChat: (t: string) => void;
+  endRef: React.RefObject<HTMLDivElement>;
+}> = ({ chat, sendChat, endRef }) => {
+  const [input, setInput] = useState("");
+  const { user } = useAuthStore();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendChat(input);
+    setInput("");
+  };
+  return (
+    <Card className="p-4" aria-label="Chat de comunidad">
+      <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold leading-tight">
+        <MessageCircle size={18} /> Chat
+      </h3>
+      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs space-y-1">
+        {chat.map((m) => (
+          <p
+            key={m.id}
+            className={`max-w-[90%] ${
+              m.user === user?.username
+                ? 'ml-auto text-right bg-accent/20 rounded px-1'
+                : ''
+            }`}
+          >
+            <span className="font-semibold text-accent">{m.user}</span>: {m.text}
+          </p>
+        ))}
+        <div ref={endRef} />
+      </div>
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Escribe un mensaje…"
+          className="flex-1 rounded bg-white/10 px-2 py-1 text-xs focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="rounded bg-accent px-3 text-xs font-semibold text-black hover:brightness-110"
+        >
+          Enviar
+        </button>
+      </form>
+    </Card>
+  );
+};
+
+/* ═════════ PERSONALIZABLE RIGHT COLUMN ═════════ */
+
+interface RightColumnProps {
+  customizing: boolean;
+  layout: LayoutItem[];
+  setLayout: (l: LayoutItem[]) => void;
+  sensors: ReturnType<typeof useSensors>;
+  handleDragEnd: (e: DragEndEvent) => void;
+  findModule: (id: RightModuleId) => { id: string; title: string; render: () => JSX.Element };
+}
+
+const RightColumn: React.FC<RightColumnProps> = ({
+  customizing,
+  layout,
+  setLayout,
+  sensors,
+  handleDragEnd,
+  findModule,
+}) => {
+  const SortableItem: React.FC<{ id: RightModuleId; children: React.ReactNode }> = ({
+    id,
+    children,
+  }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id });
+    const style = { transform: CSS.Transform.toString(transform), transition };
+    const item = layout.find((l) => l.id === id)!;
+    const controls = useAnimation();
+    useEffect(() => {
+      if (!transform) {
+        controls.start({
+          opacity: [0.9, 1],
+          scale: [0.98, 1],
+          transition: { type: 'spring', stiffness: 150, damping: 12 },
+        });
+      }
+    }, [transform, controls]);
+    return (
+      <motion.div ref={setNodeRef} style={style} animate={controls}>
+        <div className="relative">
+          {customizing && (
+            <>
+              <button
+                {...attributes}
+                {...listeners}
+                className="absolute -left-2 top-2 cursor-grab text-gray-400"
+                aria-label="Mover módulo"
+              >
+                <GripVertical size={16} />
+              </button>
+              <button
+                onClick={() =>
+                  setLayout(
+                    layout.map((l) =>
+                      l.id === id ? { ...l, visible: !l.visible } : l
+                    )
+                  )
+                }
+                className="absolute -right-2 top-2 text-gray-400"
+                aria-label="Mostrar/ocultar"
+              >
+                {item.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+              </button>
+            </>
+          )}
+          {item.visible ? children : <div className="opacity-40">{children}</div>}
+        </div>
+      </motion.div>
+    );
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="space-y-8"
+    >
+      {customizing ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={layout.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+            {layout.map((l) => (
+              <SortableItem key={l.id} id={l.id}>
+                {findModule(l.id).render()}
+              </SortableItem>
+            ))}
+          </SortableContext>
+        </DndContext>
+      ) : (
+        layout
+          .filter((l) => l.visible)
+          .map((l) => <div key={l.id}>{findModule(l.id).render()}</div>)
+      )}
+    </motion.div>
+  );
+};

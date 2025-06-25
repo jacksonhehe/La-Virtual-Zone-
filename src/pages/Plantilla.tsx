@@ -24,12 +24,7 @@ const Plantilla = () => {
         <div className="mt-6">
           <PlayerTable players={players} setPlayers={setPlayers} onSelectPlayer={setActive} />
         </div>
-        {active && (
-          <PlayerDrawer
-            player={active}
-            onClose={() => setActive(null)}
-          />
-        )}
+        {active && <PlayerDrawer player={active} onClose={() => setActive(null)} />}
       </div>
     </div>
   );
