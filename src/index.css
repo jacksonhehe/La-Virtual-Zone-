@@ -47,7 +47,7 @@ input:focus-visible {
   }
 
   .card-glass {
-    @apply rounded-2xl border border-white/10 bg-[var(--bg-overlay)] shadow-inner backdrop-blur;
+    @apply rounded-2xl bg-white/5 backdrop-blur shadow-inner;
   }
   
   .input {

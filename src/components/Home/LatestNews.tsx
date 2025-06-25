@@ -10,7 +10,7 @@ const LatestNews = () => {
   const latestNews = newsItems.slice(0, 4);
   
   return (
-    <div className="card">
+    <div className="card-glass">
       <div className="p-6 border-b border-gray-800">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Últimas Noticias</h2>

@@ -96,7 +96,7 @@ const Rankings = () => {
         
         {/* Clubs Ranking */}
         {activeTab === 'clubs' && (
-          <div className="card">
+          <div className="card-glass">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-xl font-bold">Clasificación de Clubes</h2>
               <p className="text-gray-400 text-sm">Temporada {season}</p>
@@ -166,7 +166,7 @@ const Rankings = () => {
         
         {/* Top Scorers */}
         {activeTab === 'scorers' && (
-          <div className="card">
+          <div className="card-glass">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-xl font-bold">Máximos Goleadores</h2>
               <p className="text-gray-400 text-sm">Temporada {season}</p>
@@ -243,7 +243,7 @@ const Rankings = () => {
         
         {/* Top Assisters */}
         {activeTab === 'assisters' && (
-          <div className="card">
+          <div className="card-glass">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-xl font-bold">Máximos Asistentes</h2>
               <p className="text-gray-400 text-sm">Temporada {season}</p>
@@ -320,7 +320,7 @@ const Rankings = () => {
         
         {/* Top Managers */}
         {activeTab === 'managers' && (
-          <div className="card">
+          <div className="card-glass">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-xl font-bold">Mejores DTs</h2>
               <p className="text-gray-400 text-sm">Temporada {season}</p>
