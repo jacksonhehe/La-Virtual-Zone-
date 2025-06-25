@@ -1,53 +1,78 @@
-import express from 'express';
-import { OpenAI } from 'openai';
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
+const crypto = require('crypto');
+const admin = require('firebase-admin');
+const fs = require('fs');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-function fallbackLineup(players) {
-  const lineup = [];
-  const pick = (list, n) => list.sort((a,b) => (b.overall || b.ovr) - (a.overall || a.ovr)).slice(0,n).map(p => p.id);
-  const byPos = {
-    GK: players.filter(p => p.position === 'GK'),
-    DF: players.filter(p => ['CB','LB','RB','LWB','RWB'].includes(p.position)),
-    MF: players.filter(p => ['CDM','CM','CAM','LM','RM'].includes(p.position)),
-    FW: players.filter(p => ['ST','LW','RW','CF'].includes(p.position)),
-  };
-  if(byPos.GK.length) lineup.push(...pick(byPos.GK,1));
-  lineup.push(...pick(byPos.DF,4));
-  lineup.push(...pick(byPos.MF,3));
-  lineup.push(...pick(byPos.FW,3));
-  return lineup.slice(0,11);
+// --- Firebase Admin Init (optional) ---
+let messaging = null;
+if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
+  try {
+    const serviceAccount = JSON.parse(
+      fs.readFileSync(process.env.FIREBASE_SERVICE_ACCOUNT_PATH, 'utf8')
+    );
+    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+    messaging = admin.messaging();
+  } catch (err) {
+    console.error('Failed to init Firebase', err);
+  }
 }
 
-app.post('/ai/suggest-lineup', async (req, res) => {
-  const { squad } = req.body;
-  if(!Array.isArray(squad)) {
-    return res.status(400).json({ error: 'Invalid squad' });
-  }
-  try {
-    if(!process.env.OPENAI_API_KEY) throw new Error('Missing API key');
-    const prompt = `Given this squad ${JSON.stringify(squad)}, return the best 11 player ids as a JSON array`;
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.2,
-    });
-    const text = completion.choices[0]?.message?.content || '';
-    const lineup = JSON.parse(text);
-    if(!Array.isArray(lineup) || lineup.length !== 11) {
-      throw new Error('Invalid AI response');
-    }
-    return res.json({ lineup });
-  } catch (err) {
-    const lineup = fallbackLineup(squad);
-    return res.json({ lineup, fallback: true });
+const userTokens = {};
+
+app.post('/register-token', (req, res) => {
+  const { user, token } = req.body;
+  if (user && token) {
+    userTokens[user] = token;
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(400);
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
+
+io.on('connection', (socket) => {
+  socket.on('join', (room) => {
+    socket.join(room);
+  });
+
+  socket.on('message', (msg) => {
+    const full = {
+      id: crypto.randomUUID(),
+      user: msg.user,
+      text: msg.text,
+      ts: Date.now(),
+    };
+    io.to(msg.room || 'lobby').emit('message', full);
+  });
+
+  socket.on('goal_scored', (data) => {
+    io.to(data.room || 'lobby').emit('goal_scored', data);
+    if (messaging) {
+      const notification = {
+        notification: {
+          title: '¡Gol!',
+          body: `${data.scorer} anotó en el minuto ${data.minute}`,
+        },
+      };
+      Object.values(userTokens).forEach((token) => {
+        messaging.send({ ...notification, token }).catch((err) => {
+          console.error('FCM error', err);
+        });
+      });
+    }
+  });
+});
+
+const PORT = process.env.PORT || 3001;
+httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
