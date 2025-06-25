@@ -10,7 +10,7 @@ const ResumenClub = ({ club, players }: Props) => {
   const totalSalary = players.reduce((sum, p) => sum + p.contract.salary, 0);
 
   return (
-    <div className="card p-6 flex items-center">
+    <div className="card-glass p-6 flex items-center">
       <img src={club.logo} alt={club.name} className="w-16 h-16 mr-4" />
       <div>
         <h2 className="text-xl font-bold mb-1">{club.name}</h2>
