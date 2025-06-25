@@ -26,6 +26,8 @@ import {
   Eye,
   EyeOff,
   GripVertical,
+  Heart,
+  Smile,
 } from "lucide-react";
 import { motion, useAnimation } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
@@ -575,7 +577,7 @@ const DtDashboard: React.FC = () => {
 
         {/* KPI + gráfica */}
         <section className="mb-8 space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
-          <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible snap-x">
+          <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-6 sm:overflow-visible snap-x">
             <KPICard
               title="Plantilla"
               icon={<Users size={24} />}
@@ -600,6 +602,22 @@ const DtDashboard: React.FC = () => {
               value={marketOpen ? "Abierto" : "Cerrado"}
               className="min-w-[90%] sm:min-w-0 snap-start"
             />
+            {fullClub && (
+              <KPICard
+                title="Afición"
+                icon={<Heart size={24} />}
+                value={`${fullClub.fanBase.toLocaleString()} hinchas`}
+                className="min-w-[90%] sm:min-w-0 snap-start"
+              />
+            )}
+            {fullClub && (
+              <KPICard
+                title="Moral"
+                icon={<Smile size={24} />}
+                value={`${fullClub.morale}/100`}
+                className="min-w-[90%] sm:min-w-0 snap-start"
+              />
+            )}
           </div>
 
           <div className="h-64 w-full">
@@ -792,6 +810,10 @@ const ClubInfoCard: React.FC<ClubInfoProps> = ({ club, manager, details }) => (
             <span className="badge bg-white/20">
               {details.titles.length} títulos
             </span>
+            <span className="badge bg-white/20">
+              Afición {details.fanBase.toLocaleString()}
+            </span>
+            <span className="badge bg-white/20">Moral {details.morale}</span>
           </div>
         </>
       )}
