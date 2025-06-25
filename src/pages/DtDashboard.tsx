@@ -1,524 +1,74 @@
 /* =========================================================================
-   DT DASHBOARD – LIGA MASTER
-   Visual idéntico a la captura  –  React 18 + TS + Tailwind
+   DT DASHBOARD – Estilo “gradient neo-blue” (sección Liga Master)
+   Mantiene lógica previa + nuevo layout de la maqueta 24/11/2024
    ========================================================================= */
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Users,
-  Layout as LayoutIcon,
-  DollarSign,
-  TrendingUp,
-  Home,
-  Plane,
-  Trophy,
   Calendar,
-  Inbox,
-  Sun,
-  Moon,
-  FileText,
-  Award,
-  MessagesSquare,
+  Check,
+  DollarSign,
+  Home,
+  LayoutGrid,
   MessageCircle,
-  Wrench,
-  Eye,
-  EyeOff,
-  GripVertical,
+  PieChart,
+  TrendingUp,
+  Trophy,
+  Users,
 } from "lucide-react";
-import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
-import ReactGA from "react-ga4";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
 } from "recharts";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
+import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
   SortableContext,
-  verticalListSortingStrategy,
-  useSortable,
   arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
-import Card from "@/components/common/Card";
+import toast, { Toaster } from "react-hot-toast";
 import PageHeader from "@/components/common/PageHeader";
-import DtMenuTabs from "@/components/DtMenuTabs";
-import CountdownBar from "@/components/common/CountdownBar";
-import SeasonObjectives from "@/pages/dt-dashboard/SeasonObjectives";
-import LatestNews from "@/pages/dt-dashboard/LatestNews";
-import QuickActions from "@/pages/dt-dashboard/QuickActions";
+import Card from "@/components/common/Card";
 import Spinner from "@/components/Spinner";
+import CountdownBar from "@/components/common/CountdownBar";
 import { useAuthStore } from "@/store/authStore";
 import { useDataStore } from "@/store/dataStore";
 import {
-  getMiniTable,
+  calcStreak,
   formatCurrency,
   formatDate,
-  calcStreak,
-  getTopPerformer,
-  goalsDiff,
-  yellowDiff,
-  possessionDiff,
+  getMiniTable,
 } from "@/utils/helpers";
 
-/* ▸ Google Analytics 4 */
-ReactGA.initialize("G-XXXXXXX");
-
-/* ---------- Tipos ---------- */
-type RightModuleId =
-  | "anuncios"
-  | "mercado"
-  | "logros"
-  | "ranking"
-  | "noticias"
-  | "chat"
-  | "recordatorios"
-  | "acciones";
 interface LayoutItem {
-  id: RightModuleId;
+  id: string;
   visible: boolean;
 }
-interface ChatMsg {
-  id: string;
-  user: string;
-  text: string;
-  ts: number;
-}
 
-/* =========================================================================
-   COMPONENTE PRINCIPAL
-   ========================================================================= */
-const DtDashboard: React.FC = () => {
-  /* ----- stores */
+/* ——— componente principal ——— */
+export default function DtDashboard() {
   const { user } = useAuthStore();
   const {
     club,
-    positions,
     fixtures,
+    positions,
     players,
     market,
+    news,
     tasks,
     events,
-    toggleTask,
-    news,
     dtRankings,
   } = useDataStore();
 
-  /* ----- tema claro / oscuro */
-  const [theme, setTheme] = useState<"dark" | "light">(
-    localStorage.getItem("vz_theme") === "light" ? "light" : "dark"
-  );
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("vz_theme", theme);
-  }, [theme]);
-
-  /* ----- GA4 pageview */
-  useEffect(() => {
-    ReactGA.send({ hitType: "pageview", page: "/dt-dashboard" });
-  }, []);
-
-  /* ----- datos derivados */
-  const marketOpen = market.open;
-  const nextMatch = fixtures.find((m) => !m.played);
-
-  const miniTable = useMemo(
-    () => (club ? getMiniTable(club.id, positions) : []),
-    [club, positions]
-  );
-  const streak = useMemo(
-    () => (club ? calcStreak(club.id, fixtures, positions) : []),
-    [club, fixtures, positions]
-  );
-  const performer = useMemo(
-    () => (club ? getTopPerformer(club.id, players) : null),
-    [club, players]
-  );
-
-  const bullets = useMemo(
-    () =>
-      club
-        ? [
-            goalsDiff(club.id, positions),
-            possessionDiff(club.id, positions),
-            yellowDiff(club.id, positions),
-          ]
-        : [],
-    [club, positions]
-  );
-
-  /* ----- gráfica GF vs GC (últ. 5 partidos) */
-  const recent = useMemo(
-    () =>
-      club
-        ? fixtures
-            .filter((m) => m.played)
-            .slice(-5)
-            .map((m) => ({
-              name: `J${m.round}`,
-              GF: m.homeTeam === club.name ? m.homeScore! : m.awayScore!,
-              GC: m.homeTeam === club.name ? m.awayScore! : m.homeScore!,
-            }))
-        : [],
-    [fixtures, club]
-  );
-
-  /* ----- logros */
-  const achievements = useMemo(
-    () =>
-      club
-        ? [
-            {
-              id: "invicto5",
-              name: "Invicto – 5 partidos",
-              unlocked: streak.slice(-5).every(Boolean),
-            },
-            {
-              id: "goleador10",
-              name: "Goleador +10",
-              unlocked: performer ? performer.g >= 10 : false,
-            },
-            {
-              id: "million",
-              name: "Presupuesto > 1 M €",
-              unlocked: club.budget > 1_000_000,
-            },
-          ]
-        : [],
-    [streak, performer, club]
-  );
-
-  /* ----- noticias */
-  const categories = ["Todas", "Fichajes", "Lesiones", "Declaraciones"] as const;
-  const [cat, setCat] = useState<(typeof categories)[number]>("Todas");
-  const [newsCount, setNewsCount] = useState(5);
-  const filteredNews = useMemo(
-    () =>
-      news.filter(
-        (n) =>
-          cat === "Todas" ||
-          n.category?.toLowerCase() === cat.toLowerCase()
-      ),
-    [news, cat]
-  );
-  const visibleNews = filteredNews.slice(0, newsCount);
-  const loadMoreNews = () => setNewsCount((c) => c + 5);
-
-  /* ----- chat local demo */
-  const [chat, setChat] = useState<ChatMsg[]>(() => {
-    const raw = localStorage.getItem("vz_chat_history");
-    try {
-      return raw ? (JSON.parse(raw) as ChatMsg[]) : [];
-    } catch {
-      return [];
-    }
-  });
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
-  useEffect(() => {
-    localStorage.setItem("vz_chat_history", JSON.stringify(chat));
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chat]);
-  const sendChat = (text: string) => {
-    if (!text.trim() || !user) return;
-    setChat((c) => [
-      ...c.slice(-49),
-      {
-        id: crypto.randomUUID(),
-        user: user.username,
-        text: text.trim(),
-        ts: Date.now(),
-      },
-    ]);
-  };
-
-  /* ----- PDF mensual */
-  const generateMonthlyReport = () => {
-    if (!club) return;
-    const doc = new jsPDF();
-    const monthStr = new Date().toLocaleDateString("es-ES", {
-      month: "long",
-      year: "numeric",
-    });
-    doc.setFontSize(18);
-    doc.text(`${club.name} – Informe ${monthStr}`, 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Presupuesto: ${formatCurrency(club.budget)}`, 14, 32);
-    doc.text(`Plantilla: ${club.players.length} jugadores`, 14, 40);
-    doc.text(`Táctica base: ${club.formation}`, 14, 48);
-    // @ts-expect-error jsPDF types lack autoTable
-    doc.autoTable({
-      head: [["Jornada", "GF", "GC"]],
-      body: recent.map((r) => [r.name, r.GF, r.GC]),
-      startY: 60,
-    });
-    doc.save(`Informe_${club.slug}_${monthStr}.pdf`);
-    toast.success("Informe descargado");
-  };
-
-  /* =========================================================================
-     PERSONALIZACIÓN  (drag-and-drop + visibilidad)
-     ========================================================================= */
-  const RIGHT_MODULES = [
-    {
-      id: "anuncios",
-      title: "Anuncios",
-      render: () => (
-        <Card className="p-4" aria-label="Anuncios" aria-live="polite">
-          <h3 className="mb-3 font-semibold">Anuncios</h3>
-          {events.length === 0 ? (
-            <EmptyState label="No hay anuncios" />
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {events.slice(0, 3).map((ev) => (
-                <li key={ev.id} className="flex justify-between">
-                  <span>{ev.message}</span>
-                  <span className="text-xs text-gray-300">
-                    {formatDate(ev.date)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      ),
-    },
-    {
-      id: "mercado",
-      title: "Mercado",
-      render: () => (
-        <Card className="p-4" aria-label="Mercado">
-          <h3 className="mb-3 font-semibold">Mercado</h3>
-          <div className="flex items-center gap-2">
-            <span
-              className={`h-3 w-3 rounded-full ${
-                marketOpen ? "bg-green-500" : "bg-red-500"
-              }`}
-            />
-            <span>{marketOpen ? "Abierto" : "Cerrado"}</span>
-          </div>
-          <ul className="mt-3 space-y-1 text-xs text-primary">
-            <li>Máx. 3 traspasos salientes</li>
-            <li>Límite salarial activo</li>
-          </ul>
-        </Card>
-      ),
-    },
-    {
-      id: "logros",
-      title: "Logros",
-      render: () => (
-        <Card className="p-4" aria-label="Logros">
-          <h3 className="mb-3 font-semibold">Logros</h3>
-          <ul className="space-y-2 text-sm">
-            {achievements.map((a) => (
-              <li
-                key={a.id}
-                className={`flex items-center gap-2 ${
-                  a.unlocked ? "" : "opacity-40"
-                }`}
-              >
-                <Award
-                  size={18}
-                  className={a.unlocked ? "text-accent" : "text-gray-400"}
-                />
-                <span>{a.name}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ),
-    },
-    {
-      id: "ranking",
-      title: "Ranking DT",
-      render: () => (
-        <Card className="p-4" aria-label="Ranking DT">
-          <h3 className="mb-3 font-semibold">Ranking de Entrenadores</h3>
-          {dtRankings.length === 0 ? (
-            <EmptyState label="Sin datos de ranking" />
-          ) : (
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-gray-400">
-                  <th className="text-left">#</th>
-                  <th className="text-left">DT</th>
-                  <th className="text-center">Club</th>
-                  <th className="text-right">Elo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dtRankings.slice(0, 10).map((d, idx) => (
-                  <tr key={d.id} className="border-t border-white/10">
-                    <td>{idx + 1}</td>
-                    <td>{d.username}</td>
-                    <td className="flex items-center justify-center gap-1">
-                      <img
-                        src={d.clubLogo}
-                        alt={d.clubName}
-                        className="h-4 w-4"
-                      />
-                    </td>
-                    <td className="text-right">{d.elo}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </Card>
-      ),
-    },
-    {
-      id: "noticias",
-      title: "Noticias",
-      render: () => (
-        <Card className="p-4" aria-label="Noticias">
-          <h3 className="mb-4 flex items-center gap-2 font-semibold">
-            <MessagesSquare size={18} />
-            Noticias
-          </h3>
-          {/* filtros */}
-          <div className="mb-4 flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => {
-                  setCat(c);
-                  setNewsCount(5);
-                }}
-                className={`rounded-full px-3 py-1 text-xs ${
-                  cat === c
-                    ? "bg-accent text-black"
-                    : "bg-white/10 text-gray-300 hover:bg-white/20"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-          {/* lista */}
-          {visibleNews.length === 0 ? (
-            <EmptyState label="Sin noticias en esta categoría" />
-          ) : (
-            <ul className="space-y-3 text-sm">
-              {visibleNews.map((n) => (
-                <li key={n.id} className="rounded bg-white/5 p-2">
-                  <p className="font-medium">{n.title}</p>
-                  <p className="text-xs text-gray-400">
-                    {formatDate(n.date ?? n.publishDate)} • {n.category}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-          {/* cargar más */}
-          {visibleNews.length < filteredNews.length && (
-            <button
-              onClick={loadMoreNews}
-              className="mt-4 w-full rounded bg-white/10 py-2 text-xs hover:bg-white/20"
-            >
-              Cargar más
-            </button>
-          )}
-        </Card>
-      ),
-    },
-    {
-      id: "chat",
-      title: "Chat",
-      render: () => (
-        <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />
-      ),
-    },
-    {
-      id: "recordatorios",
-      title: "Recordatorios",
-      render: () => (
-        <Card className="p-4" aria-label="Recordatorios">
-          <h3 className="mb-3 font-semibold">Recordatorios</h3>
-          {tasks.length === 0 ? (
-            <EmptyState label="No hay recordatorios" />
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {tasks.map((t) => (
-                <li key={t.id} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="accent-accent"
-                    checked={t.done}
-                    onChange={() => toggleTask(t.id)}
-                    aria-label={t.text}
-                  />
-                  <span className={t.done ? "line-through opacity-60" : ""}>
-                    {t.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      ),
-    },
-    {
-      id: "acciones",
-      title: "Acciones rápidas",
-      render: () => <QuickActions marketOpen={marketOpen} />,
-    },
-  ] as const;
-
-  /* ----- layout en localStorage */
-  const DEFAULT_LAYOUT: LayoutItem[] = RIGHT_MODULES.map((m) => ({
-    id: m.id,
-    visible: true,
-  }));
-  const [layout, setLayout] = useState<LayoutItem[]>(() => {
-    const raw = localStorage.getItem("vz_dashboard_layout");
-    try {
-      return raw ? (JSON.parse(raw) as LayoutItem[]) : DEFAULT_LAYOUT;
-    } catch {
-      return DEFAULT_LAYOUT;
-    }
-  });
-  const [customizing, setCustomizing] = useState(false);
-  useEffect(() => {
-    localStorage.setItem("vz_dashboard_layout", JSON.stringify(layout));
-  }, [layout]);
-
-  /* ----- drag-and-drop */
-  const sensors = useSensors(useSensor(PointerSensor));
-  const handleDragEnd = (evt: DragEndEvent) => {
-    if (!evt.over) return;
-    const oldIndex = layout.findIndex((l) => l.id === evt.active.id);
-    const newIndex = layout.findIndex((l) => l.id === evt.over!.id);
-    if (oldIndex !== newIndex) setLayout(arrayMove(layout, oldIndex, newIndex));
-  };
-  const findModule = (id: RightModuleId) =>
-    RIGHT_MODULES.find((m) => m.id === id)!;
-
-  /* =========================================================================
-     RENDER
-     ========================================================================= */
+  /* — loading skeleton — */
   if (!user || !club) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -527,374 +77,261 @@ const DtDashboard: React.FC = () => {
     );
   }
 
-  return (
-    <div className="relative transition-colors duration-300">
-      <Toaster
-        position="top-right"
-        toastOptions={{ ariaProps: { role: "status", "aria-live": "polite" } }}
-      />
-
-      {/* cabecera con imagen y rayo */}
-      <PageHeader
-        title="Tablero del DT"
-        subtitle="Vista general del club y próximas actividades."
-        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp"
-      >
-        {/* switches */}
-        <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          aria-label="Cambiar tema"
-          className="absolute right-20 top-4 rounded-full bg-white/10 p-2 backdrop-blur hover:bg-white/20"
-        >
-          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
-        <button
-          onClick={() => setCustomizing(!customizing)}
-          aria-label={customizing ? "Salir de personalización" : "Personalizar"}
-          className="absolute right-14 top-4 rounded-full bg-white/10 p-2 backdrop-blur hover:bg-white/20"
-        >
-          <Wrench size={16} />
-        </button>
-        <button
-          onClick={generateMonthlyReport}
-          aria-label="Descargar informe mensual"
-          className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-accent px-3 py-2 text-black hover:brightness-110"
-        >
-          <FileText size={16} /> <span className="hidden sm:inline">Informe</span>
-        </button>
-      </PageHeader>
-
-      <div className="container mx-auto px-4 py-8">
-        <DtMenuTabs />
-
-        {/* KPI + gráfica */}
-        <section className="mb-8 space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
-          {/* KPI grid */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <KPICard
-              title="Plantilla"
-              icon={<Users size={20} />}
-              value={`${club.players.length} jugadores`}
-            />
-            <KPICard
-              title="Táctica"
-              icon={<LayoutIcon size={20} />}
-              value={club.formation}
-            />
-            <KPICard
-              title="Finanzas"
-              icon={<DollarSign size={20} />}
-              value={formatCurrency(club.budget)}
-            />
-            <KPICard
-              title="Mercado"
-              icon={<TrendingUp size={20} />}
-              value={marketOpen ? "Abierto" : "Cerrado"}
-            />
-          </div>
-
-          {/* gráfica */}
-          <div className="h-64 w-full">
-            <ResponsiveContainer>
-              <BarChart data={recent}>
-                <XAxis dataKey="name" stroke="#AAA" />
-                <YAxis stroke="#AAA" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="GF" stackId="a" />
-                <Bar dataKey="GC" stackId="a" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
-
-        {/* Cuerpo principal */}
-        <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* ----- columna izquierda */}
-          <div className="space-y-8 lg:col-span-2">
-            {/* Próximo partido */}
-            {nextMatch && (
-              <Card className="p-4" aria-label="Próximo partido">
-                <div className="flex items-center gap-2">
-                  {nextMatch.homeTeam === club.name ? (
-                    <Home size={16} className="text-accent" />
-                  ) : (
-                    <Plane size={16} className="text-accent" />
-                  )}
-                  <h2 className="font-semibold">Próximo partido</h2>
-                </div>
-                <p className="mt-2">
-                  {nextMatch.homeTeam === club.name
-                    ? nextMatch.awayTeam
-                    : nextMatch.homeTeam}{" "}
-                  – 
-                  <span className="text-gray-300">
-                    {formatDate(nextMatch.date)}
-                  </span>
-                </p>
-                <CountdownBar date={nextMatch.date} />
-                <Link
-                  to="/liga-master/fixture"
-                  className="mt-3 inline-flex items-center gap-1 text-accent hover:underline"
-                >
-                  <Calendar size={14} /> Calendario completo
-                </Link>
-              </Card>
-            )}
-
-            {/* mini tabla + comparativa */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* mini tabla */}
-              <Card className="p-4" aria-label="Posiciones">
-                <h3 className="mb-3 font-semibold">Posiciones</h3>
-                <table className="w-full text-sm">
-                  <tbody>
-                    {miniTable.map((row) => (
-                      <tr
-                        key={row.club}
-                        className={
-                          row.club === club.id ? "text-accent font-semibold" : ""
-                        }
-                      >
-                        <td>{row.pos}</td>
-                        <td>{row.name}</td>
-                        <td className="text-right">{row.pts}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="mt-3 flex gap-1">
-                  {streak.map((w, i) => (
-                    <span
-                      key={i}
-                      className={w ? "text-green-500" : "text-red-500"}
-                    >
-                      {w ? "✔" : "✖"}
-                    </span>
-                  ))}
-                </div>
-              </Card>
-
-              {/* comparativa */}
-              <Card className="p-4" aria-label="Comparativa">
-                <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
-                <ul className="space-y-2 text-sm">
-                  {bullets.map((b) => (
-                    <li key={b.label} className="flex justify-between">
-                      <span>{b.label}</span>
-                      <span
-                        className={
-                          b.diff > 0
-                            ? "text-green-400"
-                            : b.diff < 0
-                            ? "text-red-400"
-                            : "text-gray-300"
-                        }
-                      >
-                        {b.diff > 0 && "+"}
-                        {b.diff}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                {performer && (
-                  <div className="mt-4 flex items-center gap-2 rounded bg-zinc-800 p-2">
-                    <img
-                      src={performer.avatar}
-                      alt={performer.name}
-                      className="h-8 w-8 rounded-full"
-                    />
-                    <div>
-                      <p className="text-sm">{performer.name}</p>
-                      <p className="text-xs text-gray-300">
-                        {performer.g} g – {performer.a} a
-                      </p>
-                    </div>
-                    <Trophy size={14} className="ml-auto text-yellow-400" />
-                  </div>
-                )}
-              </Card>
-            </div>
-
-            {/* objetivos & noticias breves */}
-            <SeasonObjectives />
-            <LatestNews />
-          </div>
-
-          {/* ----- columna derecha (módulos personalizables) */}
-          <RightColumn
-            customizing={customizing}
-            layout={layout}
-            setLayout={setLayout}
-            sensors={sensors}
-            handleDragEnd={handleDragEnd}
-            findModule={findModule}
-          />
-        </main>
-
-        <div className="mb-8" />
-      </div>
-    </div>
+  /* datos derivados */
+  const nextMatch = fixtures.find((m) => !m.played);
+  const miniTable = useMemo(
+    () => getMiniTable(club.id, positions),
+    [club.id, positions]
   );
-};
+  const streak = calcStreak(club.id, fixtures);
 
-export default DtDashboard;
+  const barData = fixtures
+    .filter((m) => m.played)
+    .slice(-8)
+    .map((m, i) => ({
+      idx: i + 1,
+      gf: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
+    }));
 
-/* =========================================================================
-   SUB-COMPONENTES
-   ========================================================================= */
-
-const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string }> = ({
-  title,
-  icon,
-  value,
-}) => (
-  <motion.div
-    whileHover={{ scale: 1.02, y: -2 }}
-    className="flex flex-col justify-between rounded-2xl bg-white/5 p-6 shadow-inner backdrop-blur-md"
-  >
-    <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
-      {icon} {title}
-    </div>
-    <p className="text-xl font-bold">{value}</p>
-  </motion.div>
-);
-
-const EmptyState: React.FC<{ label: string }> = ({ label }) => (
-  <p className="flex items-center gap-2 text-sm text-gray-400">
-    <Inbox size={16} /> {label}
-  </p>
-);
-
-const ChatModule: React.FC<{
-  chat: ChatMsg[];
-  sendChat: (t: string) => void;
-  endRef: React.RefObject<HTMLDivElement>;
-}> = ({ chat, sendChat, endRef }) => {
-  const [input, setInput] = useState("");
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    sendChat(input);
-    setInput("");
+  /* ———  layout personalizable (solo side-column) ——— */
+  const DEFAULT_LAYOUT: LayoutItem[] = [
+    { id: "table", visible: true },
+    { id: "next", visible: true },
+    { id: "top", visible: true },
+    { id: "actions", visible: true },
+  ];
+  const [layout, setLayout] = useState<LayoutItem[]>(DEFAULT_LAYOUT);
+  const sensors = useSensors(useSensor(PointerSensor));
+  const handleDrag = ({ active, over }: any) => {
+    if (!over) return;
+    const oldI = layout.findIndex((l) => l.id === active.id);
+    const newI = layout.findIndex((l) => l.id === over.id);
+    if (oldI !== newI) setLayout(arrayMove(layout, oldI, newI));
   };
-  return (
-    <Card className="p-4" aria-label="Chat de comunidad">
-      <h3 className="mb-3 flex items-center gap-2 font-semibold">
-        <MessageCircle size={18} /> Chat
-      </h3>
-      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs">
-        {chat.map((m) => (
-          <p key={m.id} className="mb-1">
-            <span className="font-semibold text-accent">{m.user}</span>:{" "}
-            {m.text}
-          </p>
-        ))}
-        <div ref={endRef} />
-      </div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Escribe un mensaje…"
-          className="flex-1 rounded bg-white/10 px-2 py-1 text-xs"
-        />
-        <button
-          type="submit"
-          className="rounded bg-accent px-3 text-xs font-semibold text-black hover:brightness-110"
-        >
-          Enviar
-        </button>
-      </form>
-    </Card>
-  );
-};
 
-/* ---------- RightColumn personalizable ---------- */
-
-interface RightColumnProps {
-  customizing: boolean;
-  layout: LayoutItem[];
-  setLayout: (l: LayoutItem[]) => void;
-  sensors: ReturnType<typeof useSensors>;
-  handleDragEnd: (e: DragEndEvent) => void;
-  findModule: (id: RightModuleId) => {
-    id: RightModuleId;
-    title: string;
-    render: () => JSX.Element;
-  };
-}
-const RightColumn: React.FC<RightColumnProps> = ({
-  customizing,
-  layout,
-  setLayout,
-  sensors,
-  handleDragEnd,
-  findModule,
-}) => {
-  const SortableItem: React.FC<{ id: string; children: React.ReactNode }> = ({
+  /* ——— render helpers ——— */
+  const RightCard: React.FC<{ id: string; children: React.ReactNode }> = ({
     id,
     children,
   }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } =
-      useSortable({ id });
-    const style = { transform: CSS.Transform.toString(transform), transition };
-    const item = layout.find((l) => l.id === id)!;
+    const { setNodeRef, transform } = useSortable({ id });
     return (
-      <div ref={setNodeRef} style={style}>
-        <div className="relative">
-          {customizing && (
-            <>
-              <button
-                {...attributes}
-                {...listeners}
-                className="absolute -left-2 top-2 cursor-grab text-gray-400"
-              >
-                <GripVertical size={16} />
-              </button>
-              <button
-                onClick={() =>
-                  setLayout(
-                    layout.map((l) =>
-                      l.id === id ? { ...l, visible: !l.visible } : l
-                    )
-                  )
-                }
-                className="absolute -right-2 top-2 text-gray-400"
-              >
-                {item.visible ? <Eye size={16} /> : <EyeOff size={16} />}
-              </button>
-            </>
-          )}
-          {item.visible ? children : <div className="opacity-40">{children}</div>}
-        </div>
+      <div
+        ref={setNodeRef}
+        style={{ transform: CSS.Translate.toString(transform) }}
+        className="space-y-6"
+      >
+        {children}
       </div>
     );
   };
 
+  /* =========================================================================
+     UI
+     ========================================================================= */
   return (
-    <div className="space-y-8">
-      {customizing ? (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={layout.map((l) => l.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {layout.map((l) => (
-              <SortableItem key={l.id} id={l.id}>
-                {findModule(l.id).render()}
-              </SortableItem>
-            ))}
-          </SortableContext>
-        </DndContext>
-      ) : (
-        layout
-          .filter((l) => l.visible)
-          .map((l) => <div key={l.id}>{findModule(l.id).render()}</div>)
-      )}
+    <div className="bg-gradient-to-br from-[var(--bg-gradient-from)] to-[var(--bg-gradient-to)] min-h-screen">
+      <Toaster />
+      {/* hero reutiliza tu componente global */}
+      <PageHeader
+        title="Tablero del DT"
+        subtitle="Gestiona tu club en Liga Master"
+        image="/hero-dt.jpg"
+        full
+      />
+
+      <div className="mx-auto max-w-6xl px-4 pb-20">
+        {/* KPI row ---------------------------------------------------------------- */}
+        <div className="grid grid-cols-2 gap-4 py-6 md:grid-cols-5">
+          <KPICard icon={<Calendar size={18} />} label="Partidos" value="24" />
+          <KPICard icon={<PieChart size={18} />} label="Puntos" value="67" />
+          <KPICard
+            icon={<DollarSign size={18} />}
+            label="Presupuesto"
+            value={formatCurrency(club.budget)}
+          />
+          <KPICard icon={<Trophy size={18} />} label="Posición" value="3°" />
+          <KPICard
+            icon={<LayoutGrid size={18} />}
+            label="Formación"
+            value={club.formation}
+          />
+        </div>
+
+        {/* torso: grid 2 : 1 ------------------------------------------------------ */}
+        <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+          {/* -------- columna izquierda -------- */}
+          <div className="space-y-6">
+            {/* gráfico rendimiento */}
+            <Card title="Rendimiento de la Temporada">
+              <div className="h-36 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barData} barCategoryGap={6}>
+                    <XAxis dataKey="idx" hide />
+                    <YAxis hide />
+                    <Tooltip />
+                    <Bar dataKey="gf" radius={[4, 4, 0, 0]} fill="#14b8a6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* plantilla */}
+            <Card title="Plantilla">
+              <div className="flex justify-between text-sm">
+                <div>
+                  <h4 className="mb-1 font-medium text-accent">Titulares</h4>
+                  <p>Delanteros  3</p>
+                  <p>Mediocampistas  4</p>
+                  <p>Defensores  4</p>
+                </div>
+                <div>
+                  <h4 className="mb-1 font-medium text-yellow-400">Suplentes</h4>
+                  <p>Disponibles  14</p>
+                  <p>Lesionados  2</p>
+                  <p>Suspendidos  1</p>
+                </div>
+              </div>
+            </Card>
+
+            {/* últimos partidos */}
+            <Card title="Últimos Partidos">
+              <ul className="text-sm">
+                {fixtures
+                  .filter((m) => m.played)
+                  .slice(-4)
+                  .map((m) => (
+                    <li
+                      key={m.id}
+                      className="flex justify-between py-1 odd:bg-white/5 px-2 rounded"
+                    >
+                      <span>
+                        {m.result === "W" ? "✅" : m.result === "D" ? "⚪" : "❌"}{" "}
+                        vs {m.awayTeam}
+                      </span>
+                      <span className="tabular-nums">
+                        {m.homeGoals}-{m.awayGoals}
+                      </span>
+                    </li>
+                  ))}
+              </ul>
+            </Card>
+          </div>
+
+          {/* -------- columna derecha (sortable) -------- */}
+          <DndContext sensors={sensors} onDragEnd={handleDrag}>
+            <SortableContext
+              strategy={verticalListSortingStrategy}
+              items={layout.map((l) => l.id)}
+            >
+              {layout.map((l) =>
+                l.id === "table" ? (
+                  <RightCard id="table" key="table">
+                    <Card title="Clasificación">
+                      <table className="w-full text-sm">
+                        <tbody>
+                          {miniTable.slice(0, 5).map((r) => (
+                            <tr
+                              key={r.club}
+                              className={`${
+                                r.club === club.id
+                                  ? "bg-primary/10 text-accent"
+                                  : ""
+                              }`}
+                            >
+                              <td className="w-4">{r.pos}</td>
+                              <td>{r.name}</td>
+                              <td className="text-right">{r.pts}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </Card>
+                  </RightCard>
+                ) : l.id === "next" ? (
+                  <RightCard id="next" key="next">
+                    <Card title="Próximo Partido" center>
+                      {nextMatch ? (
+                        <>
+                          <h4 className="mb-1 text-center font-bold text-accent">
+                            vs {nextMatch.awayTeam}
+                          </h4>
+                          <p className="text-center text-xs">
+                            {formatDate(nextMatch.date)} • {nextMatch.competition}
+                          </p>
+                          <CountdownBar date={nextMatch.date} compact />
+                        </>
+                      ) : (
+                        <p className="text-center text-sm text-gray-400">
+                          Sin partidos programados
+                        </p>
+                      )}
+                    </Card>
+                  </RightCard>
+                ) : l.id === "top" ? (
+                  <RightCard id="top" key="top">
+                    <Card title="Mejores Jugadores">
+                      <ul className="space-y-1 text-sm">
+                        {players
+                          .sort((a, b) => b.goals - a.goals)
+                          .slice(0, 3)
+                          .map((p, i) => (
+                            <li
+                              key={p.id}
+                              className="flex justify-between rounded px-2 py-1 odd:bg-white/5"
+                            >
+                              <span>{i + 1}.  {p.name}</span>
+                              <span className="text-accent">{p.goals}</span>
+                            </li>
+                          ))}
+                      </ul>
+                    </Card>
+                  </RightCard>
+                ) : (
+                  <RightCard id="actions" key="actions">
+                    <Card title="Acciones Rápidas">
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <button className="rounded bg-accent py-1">
+                          Ver Plantilla
+                        </button>
+                        <button className="rounded bg-pink-500 py-1">
+                          Mercado
+                        </button>
+                        <button className="rounded bg-green-500 py-1">
+                          Entrenar
+                        </button>
+                        <button className="rounded bg-orange-500 py-1">
+                          ⚙️
+                        </button>
+                      </div>
+                    </Card>
+                  </RightCard>
+                )
+              )}
+            </SortableContext>
+          </DndContext>
+        </div>
+      </div>
     </div>
   );
-};
+}
+
+/* —————————————— subcomponentes —————————————— */
+
+const KPICard = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) => (
+  <div className="rounded-lg bg-white/5 p-4 text-center shadow-[0_0_0_1px_var(--card-border)]">
+    <div className="mb-1 flex justify-center text-accent">{icon}</div>
+    <p className="text-2xl font-semibold">{value}</p>
+    <p className="text-xs text-gray-300">{label}</p>
+  </div>
+);
+
+/* Card re-export minimal if you use your own  */
