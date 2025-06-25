@@ -784,7 +784,7 @@ interface ClubInfoProps {
 
 const ClubInfoCard: React.FC<ClubInfoProps> = ({ club, manager, details }) => (
   <div
-    className="mb-8 flex items-center gap-4 rounded-3xl border bg-white/5 p-6 shadow-inner backdrop-blur-md"
+    className="relative mb-8 flex items-center gap-4 overflow-hidden rounded-3xl border bg-white/5 p-6 shadow-inner backdrop-blur-md"
     style={
       details
         ? {
@@ -795,6 +795,7 @@ const ClubInfoCard: React.FC<ClubInfoProps> = ({ club, manager, details }) => (
     }
     aria-label="Información del club"
   >
+    <span className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-radial from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
     <img
       src={club.logo}
       alt={club.name}
@@ -834,10 +835,11 @@ const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string; c
 }) => (
   <motion.div
     whileHover={{ scale: 1.02, y: -2 }}
-    className={`flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-colors ${className}`.trim()}
+    className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-all ${className}`.trim()}
   >
-    <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
-      <span className="rounded-full bg-white/10 p-1">{icon}</span>
+    <span className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-300">
+      <span className="rounded-full bg-white/10 p-1 ring-1 ring-inset ring-white/20">{icon}</span>
       {title}
     </div>
     <p className="text-xl font-bold text-white" aria-live="polite">
