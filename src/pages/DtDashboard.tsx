@@ -68,7 +68,7 @@ import PageHeader from "../components/common/PageHeader";
 import DashboardSkeleton from "../components/common/DashboardSkeleton";
 import FilterChip from "../components/common/FilterChip";
 import RankingRow from "../components/common/RankingRow";
-import { DtRanking } from "../types";
+import { DtRanking, Club, DtClub } from "../types";
 
 import { useAuthStore } from "../store/authStore";
 import { useDataStore } from "../store/dataStore";
@@ -117,6 +117,7 @@ const DtDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const {
     club,
+    clubs: allClubs,
     positions,
     fixtures,
     market,
@@ -168,6 +169,11 @@ const DtDashboard: React.FC = () => {
           ]
         : [],
     [club, positions]
+  );
+
+  const fullClub = useMemo(
+    () => allClubs.find((c) => c.id === club.id),
+    [allClubs, club.id]
   );
 
   /* ===== gráfica ===== */
@@ -565,6 +571,8 @@ const DtDashboard: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <DtMenuTabs />
 
+        <ClubInfoCard club={club} manager={user.username} details={fullClub} />
+
         {/* KPI + gráfica */}
         <section className="mb-8 space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
           <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible snap-x">
@@ -744,6 +752,52 @@ const DtDashboard: React.FC = () => {
 export default DtDashboard;
 
 /* ═════════ sub-componentes ═════════ */
+
+interface ClubInfoProps {
+  club: DtClub;
+  manager: string;
+  details?: Club;
+}
+
+const ClubInfoCard: React.FC<ClubInfoProps> = ({ club, manager, details }) => (
+  <div
+    className="mb-8 flex items-center gap-4 rounded-3xl border bg-white/5 p-6 shadow-inner backdrop-blur-md"
+    style={
+      details
+        ? {
+            borderColor: details.primaryColor,
+            backgroundImage: `linear-gradient(135deg, ${details.primaryColor}33, ${details.secondaryColor}33)`,
+          }
+        : undefined
+    }
+    aria-label="Información del club"
+  >
+    <img
+      src={club.logo}
+      alt={club.name}
+      className="h-16 w-16 rounded-2xl object-contain"
+    />
+    <div>
+      <h2 className="text-2xl font-bold" aria-live="polite">
+        {club.name}
+      </h2>
+      <p className="text-sm text-gray-300">DT: {manager}</p>
+      {details && (
+        <>
+          <p className="text-sm text-gray-400">
+            {details.stadium} • Fundado {details.foundedYear}
+          </p>
+          <div className="mt-1 flex flex-wrap gap-2 text-xs">
+            <span className="badge bg-white/20">{details.playStyle}</span>
+            <span className="badge bg-white/20">
+              {details.titles.length} títulos
+            </span>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+);
 
 const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string; className?: string }> = ({
   title,
