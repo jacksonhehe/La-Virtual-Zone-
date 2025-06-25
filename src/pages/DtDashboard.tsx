@@ -761,7 +761,15 @@ interface ClubInfoProps {
 
 const ClubInfoCard: React.FC<ClubInfoProps> = ({ club, manager, details }) => (
   <div
-    className="mb-8 flex items-center gap-4 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md"
+    className="mb-8 flex items-center gap-4 rounded-3xl border bg-white/5 p-6 shadow-inner backdrop-blur-md"
+    style={
+      details
+        ? {
+            borderColor: details.primaryColor,
+            backgroundImage: `linear-gradient(135deg, ${details.primaryColor}33, ${details.secondaryColor}33)`,
+          }
+        : undefined
+    }
     aria-label="Información del club"
   >
     <img
@@ -775,9 +783,17 @@ const ClubInfoCard: React.FC<ClubInfoProps> = ({ club, manager, details }) => (
       </h2>
       <p className="text-sm text-gray-300">DT: {manager}</p>
       {details && (
-        <p className="text-sm text-gray-400">
-          {details.stadium} • Fundado {details.foundedYear}
-        </p>
+        <>
+          <p className="text-sm text-gray-400">
+            {details.stadium} • Fundado {details.foundedYear}
+          </p>
+          <div className="mt-1 flex flex-wrap gap-2 text-xs">
+            <span className="badge bg-white/20">{details.playStyle}</span>
+            <span className="badge bg-white/20">
+              {details.titles.length} títulos
+            </span>
+          </div>
+        </>
       )}
     </div>
   </div>
