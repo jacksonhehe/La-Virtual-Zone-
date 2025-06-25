@@ -62,7 +62,7 @@ const UserPanel = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {/* Sidebar */}
         <div className="md:col-span-1">
-          <div className="card p-6 text-center mb-6">
+          <div className="card-glass p-6 text-center mb-6">
             <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden mb-4 bg-dark">
               {user.avatar ? (
                 <img 
@@ -121,7 +121,7 @@ const UserPanel = () => {
             )}
           </div>
           
-          <div className="card overflow-hidden">
+          <div className="card-glass overflow-hidden">
             <nav>
               <button
                 onClick={() => setActiveTab('profile')}
@@ -203,7 +203,7 @@ const UserPanel = () => {
           {/* Profile tab */}
           {activeTab === 'profile' && (
             <div className="space-y-6">
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h2 className="text-xl font-bold mb-4">Mi Perfil</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -276,7 +276,7 @@ const UserPanel = () => {
               </div>
               
               {user.role !== 'dt' && (
-                <div className="card p-6">
+                <div className="card-glass p-6">
                   <h3 className="text-lg font-semibold mb-3">Solicitar Club</h3>
                   <p className="text-gray-300 mb-4">
                     Para participar en la Liga Master necesitas convertirte en Director Técnico y administrar un club. Solicita un puesto para la próxima temporada.
@@ -287,7 +287,7 @@ const UserPanel = () => {
                 </div>
               )}
               
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h3 className="text-lg font-semibold mb-4">Perfil Público</h3>
                 <p className="text-gray-300 mb-4">
                   Tu perfil público muestra tu información a otros usuarios de la comunidad. Puedes personalizar lo que se muestra.
@@ -307,7 +307,7 @@ const UserPanel = () => {
           {/* Club tab (only for DT) */}
           {activeTab === 'club' && user.role === 'dt' && userClub && (
             <div className="space-y-6">
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
                   <div className="flex items-center mb-4 md:mb-0">
                     <img 
@@ -376,7 +376,7 @@ const UserPanel = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="card p-6">
+                <div className="card-glass p-6">
                   <h3 className="text-lg font-semibold mb-4">Acciones Rápidas</h3>
                   
                   <div className="grid grid-cols-2 gap-4">
@@ -418,7 +418,7 @@ const UserPanel = () => {
                   </div>
                 </div>
                 
-                <div className="card p-6">
+                <div className="card-glass p-6">
                   <h3 className="text-lg font-semibold mb-4">Temporada 2025</h3>
                   
                   <div className="space-y-4">
@@ -475,7 +475,7 @@ const UserPanel = () => {
                 </div>
               </div>
               
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h3 className="text-lg font-semibold mb-4">Jugadores Destacados</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -565,7 +565,7 @@ const UserPanel = () => {
           {/* Activity tab */}
           {activeTab === 'activity' && (
             <div className="space-y-6">
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h2 className="text-xl font-bold mb-4">Actividad Reciente</h2>
                 
                 <div className="space-y-4">
@@ -612,7 +612,7 @@ const UserPanel = () => {
                 </div>
               </div>
               
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h3 className="text-lg font-semibold mb-4">Estadísticas de Actividad</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -636,7 +636,7 @@ const UserPanel = () => {
                 </div>
               </div>
               
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h3 className="text-lg font-semibold mb-4">Notificaciones</h3>
                 
                 <div className="space-y-2">
@@ -671,7 +671,7 @@ const UserPanel = () => {
           {/* Community tab */}
           {activeTab === 'community' && (
             <div className="space-y-6">
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h2 className="text-xl font-bold mb-4">Mi Comunidad</h2>
                 
                 <div className="mb-6">
@@ -743,7 +743,7 @@ const UserPanel = () => {
                 </div>
               </div>
               
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h3 className="text-lg font-semibold mb-4">Actividad de la Comunidad</h3>
                 
                 <div className="space-y-4">
@@ -806,7 +806,7 @@ const UserPanel = () => {
           {/* Settings tab */}
           {activeTab === 'settings' && (
             <div className="space-y-6">
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h2 className="text-xl font-bold mb-4">Configuración de Cuenta</h2>
                 
                 <form className="space-y-6">
@@ -931,7 +931,7 @@ const UserPanel = () => {
                 </form>
               </div>
               
-              <div className="card p-6">
+              <div className="card-glass p-6">
                 <h3 className="text-lg font-semibold mb-3 text-red-400">Zona Peligrosa</h3>
                 <p className="text-gray-300 mb-4">
                   Estas acciones son irreversibles. Por favor, procede con precaución.

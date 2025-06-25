@@ -5,6 +5,7 @@
    ========================================================================= */
 
 import { useEffect, useMemo, useState, useRef } from "react";
+import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 import {
   Users,
@@ -422,7 +423,7 @@ const DtDashboard: React.FC = () => {
     {
       id: "chat",
       title: "Chat",
-      render: () => <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />,
+      render: () => <ChatModule />,
     },
     /* --- Recordatorios --- */
     {
@@ -761,18 +762,46 @@ const EmptyState: React.FC<{ label: string }> = ({ label }) => (
 );
 
 /* Chat módulo */
-const ChatModule: React.FC<{
-  chat: ChatMsg[];
-  sendChat: (t: string) => void;
-  endRef: React.RefObject<HTMLDivElement>;
-}> = ({ chat, sendChat, endRef }) => {
+const ChatModule: React.FC = () => {
+  const [chat, setChat] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const { user } = useAuthStore();
+  const endRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<ReturnType<typeof io> | null>(null);
+
+  useEffect(() => {
+    socketRef.current = io("http://localhost:3001");
+    socketRef.current.emit("join", "lobby");
+    socketRef.current.on("message", (msg: ChatMsg) => {
+      setChat((old) => [...old.slice(-49), msg]);
+    });
+    socketRef.current.on("goal_scored", (data) => {
+      toast.success(`¡Gol de ${data.scorer}!`);
+    });
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat]);
+
+  const sendChat = (text: string) => {
+    if (!text.trim()) return;
+    socketRef.current?.emit("message", {
+      room: "lobby",
+      user: user?.username ?? "Anon",
+      text: text.trim(),
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendChat(input);
     setInput("");
   };
+
   return (
     <Card className="p-4" aria-label="Chat de comunidad">
       <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold leading-tight">

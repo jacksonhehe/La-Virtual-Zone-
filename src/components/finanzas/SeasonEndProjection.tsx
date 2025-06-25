@@ -16,7 +16,7 @@ const SeasonEndProjection = ({ data, currentBalance }: Props) => {
   const projection = Math.round(currentBalance + avgMonthly * (12 - data.length));
 
   return (
-    <div className="card p-4 text-center">
+    <div className="card-glass p-4 text-center">
       <h4 className="font-bold mb-2">Saldo fin de temporada</h4>
       <p className="text-2xl font-bold">{projection.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</p>
       <p className="text-sm text-gray-400">Proyección basada en rendimiento actual</p>

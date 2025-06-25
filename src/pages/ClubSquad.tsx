@@ -133,7 +133,7 @@ const ClubSquad = () => {
           </div>
         </div>
         
-        <div className="card mb-8">
+        <div className="card-glass mb-8">
           <div className="p-4 bg-dark-lighter border-b border-gray-800">
             <h3 className="font-bold text-lg">Plantilla completa</h3>
           </div>
@@ -243,7 +243,7 @@ const ClubSquad = () => {
           <h3 className="text-xl font-bold mb-6">Jugadores por posición</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="card">
+            <div className="card-glass">
               <div className="p-3 bg-dark-lighter border-b border-gray-800">
                 <h4 className="font-bold flex items-center">
                   <span className="inline-block w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
@@ -277,7 +277,7 @@ const ClubSquad = () => {
               </div>
             </div>
             
-            <div className="card">
+            <div className="card-glass">
               <div className="p-3 bg-dark-lighter border-b border-gray-800">
                 <h4 className="font-bold flex items-center">
                   <span className="inline-block w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
@@ -311,7 +311,7 @@ const ClubSquad = () => {
               </div>
             </div>
             
-            <div className="card">
+            <div className="card-glass">
               <div className="p-3 bg-dark-lighter border-b border-gray-800">
                 <h4 className="font-bold flex items-center">
                   <span className="inline-block w-3 h-3 rounded-full bg-green-500 mr-2"></span>
@@ -345,7 +345,7 @@ const ClubSquad = () => {
               </div>
             </div>
             
-            <div className="card">
+            <div className="card-glass">
               <div className="p-3 bg-dark-lighter border-b border-gray-800">
                 <h4 className="font-bold flex items-center">
                   <span className="inline-block w-3 h-3 rounded-full bg-red-500 mr-2"></span>
