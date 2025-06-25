@@ -14,6 +14,7 @@ const PlayerDrawer = ({ player, onClose }: Props) => (
       <button
         onClick={onClose}
         className="text-gray-400 hover:text-white absolute right-4 top-4"
+        aria-label="Cerrar"
       >
         <X size={20} />
       </button>
