@@ -42,11 +42,12 @@ const StatsCard = ({ title, value, icon, trend, trendValue, progress }: StatsCar
   };
   
   return (
-    <div className="card-glass p-4">
+    <div className="group relative overflow-hidden card-glass p-4">
+      <span className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-gray-400 text-xs sm:text-sm mb-2">{title}</p>
-          <p className="text-xl font-bold">{value}</p>
+          <p className="mb-2 text-xs text-gray-400 sm:text-sm">{title}</p>
+          <p className="text-xl font-bold" aria-live="polite">{value}</p>
           {renderTrend()}
           {typeof progress === 'number' && (
             <div className="mt-2">
@@ -54,7 +55,7 @@ const StatsCard = ({ title, value, icon, trend, trendValue, progress }: StatsCar
             </div>
           )}
         </div>
-        <div className="bg-gray-800 p-3 rounded-lg ml-4">
+        <div className="ml-4 rounded-lg bg-gray-800 p-3 ring-1 ring-inset ring-white/20">
           {icon}
         </div>
       </div>
