@@ -38,7 +38,8 @@ npm run preview
 
 ## Audit
 
-Run Lighthouse CI against the production build:
+Run Lighthouse CI against the production build. The audit fails if
+performance is below 90 or accessibility is below 95:
 
 ```bash
 npm run audit
