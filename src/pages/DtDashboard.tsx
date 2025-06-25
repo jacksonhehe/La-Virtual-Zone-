@@ -1,7 +1,6 @@
 /* =========================================================================
    DT DASHBOARD – LIGA MASTER
-   Pulido · Gráfica · PDF · Logros · Noticias · Personalización
-   + Funciones sociales (Ranking DT + Chat)
+   Visual idéntico a la captura  –  React 18 + TS + Tailwind
    ========================================================================= */
 
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -13,6 +12,7 @@ import {
   TrendingUp,
   Home,
   Plane,
+  Check,
   Trophy,
   Calendar,
   Inbox,
@@ -27,7 +27,7 @@ import {
   EyeOff,
   GripVertical,
 } from "lucide-react";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import ReactGA from "react-ga4";
 import {
@@ -58,20 +58,16 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import Card from "../components/common/Card";
-import DtMenuTabs from "../components/DtMenuTabs";
-import CountdownBar from "../components/common/CountdownBar";
-import SeasonObjectives from "./dt-dashboard/SeasonObjectives";
-import LatestNews from "./dt-dashboard/LatestNews";
-import QuickActions from "./dt-dashboard/QuickActions";
-import PageHeader from "../components/common/PageHeader";
-import DashboardSkeleton from "../components/common/DashboardSkeleton";
-import FilterChip from "../components/common/FilterChip";
-import RankingRow from "../components/common/RankingRow";
-import { DtRanking } from "../types";
-
-import { useAuthStore } from "../store/authStore";
-import { useDataStore } from "../store/dataStore";
+import Card from "@/components/common/Card";
+import PageHeader from "@/components/common/PageHeader";
+import DtMenuTabs from "@/components/DtMenuTabs";
+import CountdownBar from "@/components/common/CountdownBar";
+import SeasonObjectives from "@/pages/dt-dashboard/SeasonObjectives";
+import LatestNews from "@/pages/dt-dashboard/LatestNews";
+import QuickActions from "@/pages/dt-dashboard/QuickActions";
+import Spinner from "@/components/Spinner";
+import { useAuthStore } from "@/store/authStore";
+import { useDataStore } from "@/store/dataStore";
 import {
   getMiniTable,
   formatCurrency,
@@ -81,13 +77,10 @@ import {
   goalsDiff,
   yellowDiff,
   possessionDiff,
-} from "../utils/helpers";
+} from "@/utils/helpers";
 
 /* ▸ Google Analytics 4 */
-const gaId = import.meta.env.VITE_GA_ID;
-if (gaId) {
-  ReactGA.initialize(gaId);
-}
+ReactGA.initialize("G-XXXXXXX");
 
 /* ---------- Tipos ---------- */
 interface LayoutItem {
@@ -101,19 +94,11 @@ interface ChatMsg {
   ts: number;
 }
 
-type RightModuleId =
-  | "chat"
-  | "anuncios"
-  | "mercado"
-  | "logros"
-  | "ranking"
-  | "noticias"
-  | "recordatorios"
-  | "acciones";
-
-/* ---------- componente principal ---------- */
+/* =========================================================================
+   COMPONENTE PRINCIPAL
+   ========================================================================= */
 const DtDashboard: React.FC = () => {
-  /* stores */
+  /* ----- stores */
   const { user } = useAuthStore();
   const {
     club,
@@ -123,12 +108,11 @@ const DtDashboard: React.FC = () => {
     tasks,
     events,
     toggleTask,
-    news, // noticias
-    dtRankings, // [{ id, username, elo, clubName, clubLogo }]
-    players,
+    news,
+    dtRankings,
   } = useDataStore();
 
-  /* ===== Tema ===== */
+  /* ----- tema claro / oscuro */
   const [theme, setTheme] = useState<"dark" | "light">(
     localStorage.getItem("vz_theme") === "light" ? "light" : "dark"
   );
@@ -137,56 +121,53 @@ const DtDashboard: React.FC = () => {
     localStorage.setItem("vz_theme", theme);
   }, [theme]);
 
-  /* ===== GA4 ===== */
+  /* ----- GA4 pageview */
   useEffect(() => {
     ReactGA.send({ hitType: "pageview", page: "/dt-dashboard" });
   }, []);
 
-  /* ===== datos derivados ===== */
+  /* ----- loading skeleton */
+  if (!user || !club) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  /* ----- datos derivados */
   const marketOpen = market.open;
   const nextMatch = fixtures.find((m) => !m.played);
 
   const miniTable = useMemo(
-    () => (club ? getMiniTable(club.id, positions) : []),
-    [club, positions]
+    () => getMiniTable(club.id, positions),
+    [club.id, positions]
   );
-  const streak = useMemo(
-    () => (club ? calcStreak(club.id, fixtures, positions) : []),
-    [club, fixtures, positions]
-  );
-  const performer = useMemo(
-    () => (club ? getTopPerformer(club.id, players) : null),
-    [club, players]
-  );
+  const streak = useMemo(() => calcStreak(club.id, fixtures), [club.id, fixtures]);
+  const performer = useMemo(() => getTopPerformer(club.id), [club.id, fixtures]);
+
   const bullets = useMemo(
-    () =>
-      club
-        ? [
-            goalsDiff(club.id, positions),
-            possessionDiff(club.id, positions),
-            yellowDiff(club.id, positions),
-          ]
-        : [],
-    [club, positions]
+    () => [goalsDiff(club.id), possessionDiff(club.id), yellowDiff(club.id)],
+    [club.id, positions]
   );
 
-  /* ===== gráfica ===== */
+  /* ----- gráfica GF vs GC (últ. 5 partidos) */
   const recent = fixtures
     .filter((m) => m.played)
     .slice(-5)
     .map((m) => ({
       name: `J${m.round}`,
-      GF: m.homeTeam === club.name ? m.homeScore ?? 0 : m.awayScore ?? 0,
-      GC: m.homeTeam === club.name ? m.awayScore ?? 0 : m.homeScore ?? 0,
+      GF: m.homeTeam === club.name ? m.homeGoals : m.awayGoals,
+      GC: m.homeTeam === club.name ? m.awayGoals : m.homeGoals,
     }));
 
-  /* ===== logros ===== */
+  /* ----- logros */
   const achievements = useMemo(
     () => [
       {
         id: "invicto5",
         name: "Invicto – 5 partidos",
-        unlocked: streak.slice(-5).every((w) => w),
+        unlocked: streak.slice(-5).every(Boolean),
       },
       {
         id: "goleador10",
@@ -196,29 +177,27 @@ const DtDashboard: React.FC = () => {
       {
         id: "million",
         name: "Presupuesto > 1 M €",
-        unlocked: club ? club.budget > 1_000_000 : false,
+        unlocked: club.budget > 1_000_000,
       },
     ],
-    [streak, performer, club]
+    [streak, performer, club.budget]
   );
 
-  /* ===== noticias ===== */
+  /* ----- noticias */
   const categories = ["Todas", "Fichajes", "Lesiones", "Declaraciones"] as const;
   const [cat, setCat] = useState<(typeof categories)[number]>("Todas");
   const [newsCount, setNewsCount] = useState(5);
-
   const filteredNews = useMemo(
     () =>
-      (news ?? []).filter((n) => {
-        const category = n.category ?? n.type;
-        return cat === "Todas" || category.toLowerCase() === cat.toLowerCase();
-      }),
+      news.filter(
+        (n) => cat === "Todas" || n.category.toLowerCase() === cat.toLowerCase()
+      ),
     [news, cat]
   );
   const visibleNews = filteredNews.slice(0, newsCount);
   const loadMoreNews = () => setNewsCount((c) => c + 5);
 
-  /* ===== chat (local demo) ===== */
+  /* ----- chat local demo */
   const [chat, setChat] = useState<ChatMsg[]>(() => {
     const raw = localStorage.getItem("vz_chat_history");
     try {
@@ -228,40 +207,39 @@ const DtDashboard: React.FC = () => {
     }
   });
   const chatEndRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     localStorage.setItem("vz_chat_history", JSON.stringify(chat));
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
-
   const sendChat = (text: string) => {
     if (!text.trim()) return;
-    const msg: ChatMsg = {
-      id: crypto.randomUUID(),
-      user: user?.username ?? 'Anon',
-      text: text.trim(),
-      ts: Date.now(),
-    };
-    setChat((old) => [...old.slice(-49), msg]); // máx 50
+    setChat((c) => [
+      ...c.slice(-49),
+      {
+        id: crypto.randomUUID(),
+        user: user.username,
+        text: text.trim(),
+        ts: Date.now(),
+      },
+    ]);
   };
 
-  /* ===== PDF mensual ===== */
+  /* ----- PDF mensual */
   const generateMonthlyReport = () => {
     const doc = new jsPDF();
-    const monthStr = new Date().toLocaleString("es-ES", {
+    const monthStr = new Date().toLocaleDateString("es-ES", {
       month: "long",
       year: "numeric",
     });
-
     doc.setFontSize(18);
     doc.text(`${club.name} – Informe ${monthStr}`, 14, 20);
     doc.setFontSize(12);
     doc.text(`Presupuesto: ${formatCurrency(club.budget)}`, 14, 32);
     doc.text(`Plantilla: ${club.players.length} jugadores`, 14, 40);
     doc.text(`Táctica base: ${club.formation}`, 14, 48);
-    // @ts-expect-error jsPDF plugin lacks types
+    // @ts-ignore
     doc.autoTable({
-      head: [["J", "GF", "GC"]],
+      head: [["Jornada", "GF", "GC"]],
       body: recent.map((r) => [r.name, r.GF, r.GC]),
       startY: 60,
     });
@@ -269,19 +247,16 @@ const DtDashboard: React.FC = () => {
     toast.success("Informe descargado");
   };
 
-  /* =======================================================================
-     PERSONALIZACIÓN (drag-and-drop + visibilidad)
-     ======================================================================= */
-
-  /* registro de módulos del lado derecho */
+  /* =========================================================================
+     PERSONALIZACIÓN  (drag-and-drop + visibilidad)
+     ========================================================================= */
   const RIGHT_MODULES = [
-    /* --- Anuncios --- */
     {
       id: "anuncios",
       title: "Anuncios",
       render: () => (
         <Card className="p-4" aria-label="Anuncios" aria-live="polite">
-          <h3 className="mb-4 text-xl font-semibold leading-tight">Anuncios</h3>
+          <h3 className="mb-3 font-semibold">Anuncios</h3>
           {events.length === 0 ? (
             <EmptyState label="No hay anuncios" />
           ) : (
@@ -299,20 +274,17 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Mercado --- */
     {
       id: "mercado",
       title: "Mercado",
       render: () => (
         <Card className="p-4" aria-label="Mercado">
-          <h3 className="mb-4 text-xl font-semibold leading-tight">Mercado</h3>
+          <h3 className="mb-3 font-semibold">Mercado</h3>
           <div className="flex items-center gap-2">
             <span
-              className={
-                marketOpen
-                  ? "h-3 w-3 rounded-full bg-green-500"
-                  : "h-3 w-3 rounded-full bg-red-500"
-              }
+              className={`h-3 w-3 rounded-full ${
+                marketOpen ? "bg-green-500" : "bg-red-500"
+              }`}
             />
             <span>{marketOpen ? "Abierto" : "Cerrado"}</span>
           </div>
@@ -323,13 +295,12 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Logros --- */
     {
       id: "logros",
       title: "Logros",
       render: () => (
         <Card className="p-4" aria-label="Logros">
-          <h3 className="mb-4 text-xl font-semibold leading-tight">Logros</h3>
+          <h3 className="mb-3 font-semibold">Logros</h3>
           <ul className="space-y-2 text-sm">
             {achievements.map((a) => (
               <li
@@ -349,13 +320,12 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Ranking DT --- */
     {
       id: "ranking",
       title: "Ranking DT",
       render: () => (
         <Card className="p-4" aria-label="Ranking DT">
-          <h3 className="mb-4 text-xl font-semibold leading-tight">Ranking de Entrenadores</h3>
+          <h3 className="mb-3 font-semibold">Ranking de Entrenadores</h3>
           {dtRankings.length === 0 ? (
             <EmptyState label="Sin datos de ranking" />
           ) : (
@@ -369,8 +339,19 @@ const DtDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {dtRankings.slice(0, 10).map((d: DtRanking, idx: number) => (
-                  <RankingRow key={d.id} rank={idx + 1} data={d} />
+                {dtRankings.slice(0, 10).map((d, idx) => (
+                  <tr key={d.id} className="border-t border-white/10">
+                    <td>{idx + 1}</td>
+                    <td>{d.username}</td>
+                    <td className="flex items-center justify-center gap-1">
+                      <img
+                        src={d.clubLogo}
+                        alt={d.clubName}
+                        className="h-4 w-4"
+                      />
+                    </td>
+                    <td className="text-right">{d.elo}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -378,7 +359,6 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Noticias --- */
     {
       id: "noticias",
       title: "Noticias",
@@ -391,15 +371,20 @@ const DtDashboard: React.FC = () => {
           {/* filtros */}
           <div className="mb-4 flex flex-wrap gap-2">
             {categories.map((c) => (
-              <FilterChip
+              <button
                 key={c}
-                label={c}
-                active={cat === c}
                 onClick={() => {
                   setCat(c);
                   setNewsCount(5);
                 }}
-              />
+                className={`rounded-full px-3 py-1 text-xs ${
+                  cat === c
+                    ? "bg-accent text-black"
+                    : "bg-white/10 text-gray-300 hover:bg-white/20"
+                }`}
+              >
+                {c}
+              </button>
             ))}
           </div>
           {/* lista */}
@@ -411,7 +396,7 @@ const DtDashboard: React.FC = () => {
                 <li key={n.id} className="rounded bg-white/5 p-2">
                   <p className="font-medium">{n.title}</p>
                   <p className="text-xs text-gray-400">
-                    {formatDate(n.date ?? n.publishDate)} • {n.category ?? n.type}
+                    {formatDate(n.date)} • {n.category}
                   </p>
                 </li>
               ))}
@@ -421,7 +406,7 @@ const DtDashboard: React.FC = () => {
           {visibleNews.length < filteredNews.length && (
             <button
               onClick={loadMoreNews}
-              className="mt-4 w-full rounded bg-white/10 py-2 text-xs hover:bg-white/20 focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-accent"
+              className="mt-4 w-full rounded bg-white/10 py-2 text-xs hover:bg-white/20"
             >
               Cargar más
             </button>
@@ -429,19 +414,19 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Chat --- */
     {
       id: "chat",
       title: "Chat",
-      render: () => <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />,
+      render: () => (
+        <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />
+      ),
     },
-    /* --- Recordatorios --- */
     {
       id: "recordatorios",
       title: "Recordatorios",
       render: () => (
         <Card className="p-4" aria-label="Recordatorios">
-          <h3 className="mb-4 text-xl font-semibold leading-tight">Recordatorios</h3>
+          <h3 className="mb-3 font-semibold">Recordatorios</h3>
           {tasks.length === 0 ? (
             <EmptyState label="No hay recordatorios" />
           ) : (
@@ -450,7 +435,7 @@ const DtDashboard: React.FC = () => {
                 <li key={t.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    className="accent-accent focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+                    className="accent-accent"
                     checked={t.done}
                     onChange={() => toggleTask(t.id)}
                     aria-label={t.text}
@@ -465,7 +450,6 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Acciones rápidas --- */
     {
       id: "acciones",
       title: "Acciones rápidas",
@@ -473,7 +457,9 @@ const DtDashboard: React.FC = () => {
     },
   ] as const;
 
-  /* layout */
+  type RightModuleId = (typeof RIGHT_MODULES)[number]["id"];
+
+  /* ----- layout en localStorage */
   const DEFAULT_LAYOUT: LayoutItem[] = RIGHT_MODULES.map((m) => ({
     id: m.id,
     visible: true,
@@ -487,157 +473,133 @@ const DtDashboard: React.FC = () => {
     }
   });
   const [customizing, setCustomizing] = useState(false);
-
   useEffect(() => {
     localStorage.setItem("vz_dashboard_layout", JSON.stringify(layout));
   }, [layout]);
 
-  const loading = !user || !club;
-
-  /* dnd sensors */
+  /* ----- drag-and-drop */
   const sensors = useSensors(useSensor(PointerSensor));
   const handleDragEnd = (evt: DragEndEvent) => {
-    const { active, over } = evt;
-    if (!over || active.id === over.id) return;
-    const oldIndex = layout.findIndex((l) => l.id === active.id);
-    const newIndex = layout.findIndex((l) => l.id === over.id);
-    setLayout(arrayMove(layout, oldIndex, newIndex));
+    if (!evt.over) return;
+    const oldIndex = layout.findIndex((l) => l.id === evt.active.id);
+    const newIndex = layout.findIndex((l) => l.id === evt.over!.id);
+    if (oldIndex !== newIndex) setLayout(arrayMove(layout, oldIndex, newIndex));
   };
   const findModule = (id: RightModuleId) =>
     RIGHT_MODULES.find((m) => m.id === id)!;
 
-  /* ═════════════════════════════════════════════════════════════ */
-  /* ------------------------------ UI --------------------------- */
-  /* ═════════════════════════════════════════════════════════════ */
-  if (loading) return <DashboardSkeleton />;
+  /* =========================================================================
+     RENDER
+     ========================================================================= */
   return (
     <div className="relative transition-colors duration-300">
-      {/* Toaster */}
       <Toaster
         position="top-right"
         toastOptions={{ ariaProps: { role: "status", "aria-live": "polite" } }}
       />
 
-      {/* Rayo */}
-      <div className="pointer-events-none absolute -top-14 left-1/2 h-[340px] w-[120%] -translate-x-1/2 bg-gradient-to-r from-transparent via-purple-700/40 to-transparent blur-3xl" />
-
-      {/* Header */}
+      {/* cabecera con imagen y rayo */}
       <PageHeader
         title="Tablero del DT"
         subtitle="Vista general del club y próximas actividades."
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp"
       >
-        {/* Theme toggle */}
+        {/* switches */}
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           aria-label="Cambiar tema"
-          className="absolute right-20 top-4 rounded-full bg-white/10 p-2 backdrop-blur transition hover:bg-white/20 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+          className="absolute right-20 top-4 rounded-full bg-white/10 p-2 backdrop-blur hover:bg-white/20"
         >
           {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </button>
-
-        {/* Customizer toggle */}
         <button
           onClick={() => setCustomizing(!customizing)}
-          aria-label={customizing ? "Salir de personalización" : "Personalizar tablero"}
-          className="absolute right-14 top-4 rounded-full bg-white/10 p-2 backdrop-blur transition hover:bg-white/20 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+          aria-label={customizing ? "Salir de personalización" : "Personalizar"}
+          className="absolute right-14 top-4 rounded-full bg-white/10 p-2 backdrop-blur hover:bg-white/20"
         >
           <Wrench size={16} />
         </button>
-
-        {/* PDF */}
         <button
           onClick={generateMonthlyReport}
           aria-label="Descargar informe mensual"
-          className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-accent px-3 py-2 text-black backdrop-blur transition hover:brightness-110 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+          className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-accent px-3 py-2 text-black hover:brightness-110"
         >
-          <FileText size={16} />
-          <span className="hidden sm:inline">Informe</span>
+          <FileText size={16} /> <span className="hidden sm:inline">Informe</span>
         </button>
       </PageHeader>
-
-      {customizing && (
-        <div className="bg-accent py-2 text-center text-sm font-semibold text-black">
-          Modo personalización activo
-        </div>
-      )}
 
       <div className="container mx-auto px-4 py-8">
         <DtMenuTabs />
 
         {/* KPI + gráfica */}
         <section className="mb-8 space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
-          <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible snap-x">
+          {/* KPI grid */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <KPICard
               title="Plantilla"
-              icon={<Users size={24} />}
+              icon={<Users size={20} />}
               value={`${club.players.length} jugadores`}
-              className="min-w-[90%] sm:min-w-0 snap-start"
             />
             <KPICard
               title="Táctica"
-              icon={<LayoutIcon size={24} />}
+              icon={<LayoutIcon size={20} />}
               value={club.formation}
-              className="min-w-[90%] sm:min-w-0 snap-start"
             />
             <KPICard
               title="Finanzas"
-              icon={<DollarSign size={24} />}
+              icon={<DollarSign size={20} />}
               value={formatCurrency(club.budget)}
-              className="min-w-[90%] sm:min-w-0 snap-start"
             />
             <KPICard
               title="Mercado"
-              icon={<TrendingUp size={24} />}
+              icon={<TrendingUp size={20} />}
               value={marketOpen ? "Abierto" : "Cerrado"}
-              className="min-w-[90%] sm:min-w-0 snap-start"
             />
           </div>
 
+          {/* gráfica */}
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer>
               <BarChart data={recent}>
                 <XAxis dataKey="name" stroke="#AAA" />
                 <YAxis stroke="#AAA" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="GF" stackId="a" fill="var(--neon-green)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="GC" stackId="a" fill="var(--neon-red)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="GF" stackId="a" />
+                <Bar dataKey="GC" stackId="a" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </section>
 
-        {/* cuerpo principal */}
+        {/* Cuerpo principal */}
         <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* izquierda */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-8 lg:col-span-2"
-          >
+          {/* ----- columna izquierda */}
+          <div className="space-y-8 lg:col-span-2">
             {/* Próximo partido */}
             {nextMatch && (
               <Card className="p-4" aria-label="Próximo partido">
                 <div className="flex items-center gap-2">
                   {nextMatch.homeTeam === club.name ? (
-                    <Home size={16} className="text-accent" aria-hidden />
+                    <Home size={16} className="text-accent" />
                   ) : (
-                    <Plane size={16} className="text-accent" aria-hidden />
+                    <Plane size={16} className="text-accent" />
                   )}
-                  <h2 className="text-xl font-semibold leading-tight">Próximo partido</h2>
+                  <h2 className="font-semibold">Próximo partido</h2>
                 </div>
                 <p className="mt-2">
                   {nextMatch.homeTeam === club.name
                     ? nextMatch.awayTeam
                     : nextMatch.homeTeam}{" "}
-                  – <span className="text-gray-300">{formatDate(nextMatch.date)}</span>
+                  – 
+                  <span className="text-gray-300">
+                    {formatDate(nextMatch.date)}
+                  </span>
                 </p>
                 <CountdownBar date={nextMatch.date} />
                 <Link
                   to="/liga-master/fixture"
-                  className="mt-3 inline-flex items-center gap-1 text-accent hover:underline focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
+                  className="mt-3 inline-flex items-center gap-1 text-accent hover:underline"
                 >
                   <Calendar size={14} /> Calendario completo
                 </Link>
@@ -646,8 +608,9 @@ const DtDashboard: React.FC = () => {
 
             {/* mini tabla + comparativa */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <Card className="p-4" aria-label="Mini tabla">
-                <h3 className="mb-4 text-xl font-semibold leading-tight">Posiciones</h3>
+              {/* mini tabla */}
+              <Card className="p-4" aria-label="Posiciones">
+                <h3 className="mb-3 font-semibold">Posiciones</h3>
                 <table className="w-full text-sm">
                   <tbody>
                     {miniTable.map((row) => (
@@ -669,7 +632,6 @@ const DtDashboard: React.FC = () => {
                     <span
                       key={i}
                       className={w ? "text-green-500" : "text-red-500"}
-                      aria-label={w ? "Victoria" : "Derrota"}
                     >
                       {w ? "✔" : "✖"}
                     </span>
@@ -677,8 +639,9 @@ const DtDashboard: React.FC = () => {
                 </div>
               </Card>
 
-              <Card className="p-4" aria-label="Comparativa liga">
-                <h3 className="mb-4 text-xl font-semibold leading-tight">Comparativa con la liga</h3>
+              {/* comparativa */}
+              <Card className="p-4" aria-label="Comparativa">
+                <h3 className="mb-3 font-semibold">Comparativa con la liga</h3>
                 <ul className="space-y-2 text-sm">
                   {bullets.map((b) => (
                     <li key={b.label} className="flex justify-between">
@@ -690,9 +653,6 @@ const DtDashboard: React.FC = () => {
                             : b.diff < 0
                             ? "text-red-400"
                             : "text-gray-300"
-                        }
-                        aria-label={
-                          b.diff > 0 ? `+${b.diff}` : b.diff.toString()
                         }
                       >
                         {b.diff > 0 && "+"}
@@ -714,17 +674,18 @@ const DtDashboard: React.FC = () => {
                         {performer.g} g – {performer.a} a
                       </p>
                     </div>
-                    <Trophy size={14} className="ml-auto text-yellow-400" aria-hidden />
+                    <Trophy size={14} className="ml-auto text-yellow-400" />
                   </div>
                 )}
               </Card>
             </div>
 
+            {/* objetivos & noticias breves */}
             <SeasonObjectives />
             <LatestNews />
-          </motion.div>
+          </div>
 
-          {/* derecha */}
+          {/* ----- columna derecha (módulos personalizables) */}
           <RightColumn
             customizing={customizing}
             layout={layout}
@@ -743,42 +704,38 @@ const DtDashboard: React.FC = () => {
 
 export default DtDashboard;
 
-/* ═════════ sub-componentes ═════════ */
+/* =========================================================================
+   SUB-COMPONENTES
+   ========================================================================= */
 
-const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string; className?: string }> = ({
+const KPICard: React.FC<{ title: string; icon: React.ReactNode; value: string }> = ({
   title,
   icon,
   value,
-  className = '',
 }) => (
   <motion.div
     whileHover={{ scale: 1.02, y: -2 }}
-    className={`flex flex-col justify-between rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-inner backdrop-blur-md hover:border-accent transition-colors ${className}`.trim()}
+    className="flex flex-col justify-between rounded-2xl bg-white/5 p-6 shadow-inner backdrop-blur-md"
   >
     <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-300">
-      <span className="rounded-full bg-white/10 p-1">{icon}</span>
-      {title}
+      {icon} {title}
     </div>
-    <p className="text-xl font-bold text-white" aria-live="polite">
-      {value}
-    </p>
+    <p className="text-xl font-bold">{value}</p>
   </motion.div>
 );
 
 const EmptyState: React.FC<{ label: string }> = ({ label }) => (
   <p className="flex items-center gap-2 text-sm text-gray-400">
-    <Inbox size={16} className="text-gray-400" /> {label}
+    <Inbox size={16} /> {label}
   </p>
 );
 
-/* Chat módulo */
 const ChatModule: React.FC<{
   chat: ChatMsg[];
   sendChat: (t: string) => void;
   endRef: React.RefObject<HTMLDivElement>;
 }> = ({ chat, sendChat, endRef }) => {
   const [input, setInput] = useState("");
-  const { user } = useAuthStore();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendChat(input);
@@ -786,31 +743,24 @@ const ChatModule: React.FC<{
   };
   return (
     <Card className="p-4" aria-label="Chat de comunidad">
-      <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold leading-tight">
+      <h3 className="mb-3 flex items-center gap-2 font-semibold">
         <MessageCircle size={18} /> Chat
       </h3>
-      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs space-y-1">
+      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs">
         {chat.map((m) => (
-          <p
-            key={m.id}
-            className={`max-w-[90%] ${
-              m.user === user?.username
-                ? 'ml-auto text-right bg-accent/20 rounded px-1'
-                : ''
-            }`}
-          >
-            <span className="font-semibold text-accent">{m.user}</span>: {m.text}
+          <p key={m.id} className="mb-1">
+            <span className="font-semibold text-accent">{m.user}</span>:{" "}
+            {m.text}
           </p>
         ))}
         <div ref={endRef} />
       </div>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
-          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escribe un mensaje…"
-          className="flex-1 rounded bg-white/10 px-2 py-1 text-xs focus:outline-none"
+          className="flex-1 rounded bg-white/10 px-2 py-1 text-xs"
         />
         <button
           type="submit"
@@ -823,7 +773,7 @@ const ChatModule: React.FC<{
   );
 };
 
-/* ═════════ PERSONALIZABLE RIGHT COLUMN ═════════ */
+/* ---------- RightColumn personalizable ---------- */
 
 interface RightColumnProps {
   customizing: boolean;
@@ -831,9 +781,12 @@ interface RightColumnProps {
   setLayout: (l: LayoutItem[]) => void;
   sensors: ReturnType<typeof useSensors>;
   handleDragEnd: (e: DragEndEvent) => void;
-  findModule: (id: RightModuleId) => { id: string; title: string; render: () => JSX.Element };
+  findModule: (id: RightModuleId) => {
+    id: RightModuleId;
+    title: string;
+    render: () => JSX.Element;
+  };
 }
-
 const RightColumn: React.FC<RightColumnProps> = ({
   customizing,
   layout,
@@ -842,7 +795,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
   handleDragEnd,
   findModule,
 }) => {
-  const SortableItem: React.FC<{ id: RightModuleId; children: React.ReactNode }> = ({
+  const SortableItem: React.FC<{ id: string; children: React.ReactNode }> = ({
     id,
     children,
   }) => {
@@ -850,18 +803,8 @@ const RightColumn: React.FC<RightColumnProps> = ({
       useSortable({ id });
     const style = { transform: CSS.Transform.toString(transform), transition };
     const item = layout.find((l) => l.id === id)!;
-    const controls = useAnimation();
-    useEffect(() => {
-      if (!transform) {
-        controls.start({
-          opacity: [0.9, 1],
-          scale: [0.98, 1],
-          transition: { type: 'spring', stiffness: 150, damping: 12 },
-        });
-      }
-    }, [transform, controls]);
     return (
-      <motion.div ref={setNodeRef} style={style} animate={controls}>
+      <div ref={setNodeRef} style={style}>
         <div className="relative">
           {customizing && (
             <>
@@ -869,7 +812,6 @@ const RightColumn: React.FC<RightColumnProps> = ({
                 {...attributes}
                 {...listeners}
                 className="absolute -left-2 top-2 cursor-grab text-gray-400"
-                aria-label="Mover módulo"
               >
                 <GripVertical size={16} />
               </button>
@@ -882,7 +824,6 @@ const RightColumn: React.FC<RightColumnProps> = ({
                   )
                 }
                 className="absolute -right-2 top-2 text-gray-400"
-                aria-label="Mostrar/ocultar"
               >
                 {item.visible ? <Eye size={16} /> : <EyeOff size={16} />}
               </button>
@@ -890,20 +831,22 @@ const RightColumn: React.FC<RightColumnProps> = ({
           )}
           {item.visible ? children : <div className="opacity-40">{children}</div>}
         </div>
-      </motion.div>
+      </div>
     );
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="space-y-8"
-    >
+    <div className="space-y-8">
       {customizing ? (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={layout.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={layout.map((l) => l.id)}
+            strategy={verticalListSortingStrategy}
+          >
             {layout.map((l) => (
               <SortableItem key={l.id} id={l.id}>
                 {findModule(l.id).render()}
@@ -916,6 +859,6 @@ const RightColumn: React.FC<RightColumnProps> = ({
           .filter((l) => l.visible)
           .map((l) => <div key={l.id}>{findModule(l.id).render()}</div>)
       )}
-    </motion.div>
+    </div>
   );
 };
