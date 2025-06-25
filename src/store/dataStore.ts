@@ -7,8 +7,6 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
-  clubs,
-  players,
   tournaments,
   transfers,
   offers,
@@ -20,15 +18,14 @@ import {
   storeItems,
   posts,
   dtClub,
-  dtFixtures,
   dtMarket,
   dtObjectives,
   dtTasks,
   dtEvents,
   dtNews,
-  dtPositions,
-  dtRankings
+  dtPositions
 } from '../data/mockData';
+import { useQuery } from '@tanstack/react-query';
 import {
   Club,
   Player,
@@ -100,11 +97,13 @@ interface DataState {
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
+  updateFixtures: (newFixtures: DtFixture[]) => void;
+  updateDtRankings: (r: DtRanking[]) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
-  clubs,
-  players,
+  clubs: [],
+  players: [],
   tournaments,
   transfers,
   offers,
@@ -116,14 +115,14 @@ export const useDataStore = create<DataState>((set) => ({
   posts,
   marketStatus,
   club: dtClub,
-  fixtures: dtFixtures,
+  fixtures: [],
   market: dtMarket,
   objectives: dtObjectives,
   tasks: dtTasks,
   events: dtEvents,
   news: dtNews,
   positions: dtPositions,
-  dtRankings,
+  dtRankings: [],
   users: getUsers(),
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
@@ -251,6 +250,10 @@ export const useDataStore = create<DataState>((set) => ({
 
   updateStandings: (newStandings) => set({ standings: newStandings }),
 
+  updateFixtures: (newFixtures) => set({ fixtures: newFixtures }),
+
+  updateDtRankings: (r) => set({ dtRankings: r }),
+
   toggleTask: (id) =>
     set((state) => ({
       tasks: state.tasks.map(t =>
@@ -258,4 +261,49 @@ export const useDataStore = create<DataState>((set) => ({
       )
     }))
 }));
- 
+
+// ---- React Query hooks ----
+const fetchWithCache = async <T>(key: string, url: string): Promise<T[]> => {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('fetch failed');
+    const data = (await res.json()) as T[];
+    localStorage.setItem(key, JSON.stringify(data));
+    return data;
+  } catch {
+    const cached = localStorage.getItem(key);
+    return cached ? (JSON.parse(cached) as T[]) : [];
+  }
+};
+
+export const useClubsQuery = () => {
+  const setClubs = useDataStore((s) => s.updateClubs);
+  return useQuery(['clubs'], () => fetchWithCache<Club>('clubs', '/clubs'), {
+    onSuccess: setClubs
+  });
+};
+
+export const usePlayersQuery = () => {
+  const setPlayers = useDataStore((s) => s.updatePlayers);
+  return useQuery(['players'], () => fetchWithCache<Player>('players', '/players'), {
+    onSuccess: setPlayers
+  });
+};
+
+export const useFixturesQuery = () => {
+  const setFixtures = useDataStore((s) => s.updateFixtures);
+  return useQuery(
+    ['fixtures'],
+    () => fetchWithCache<DtFixture>('fixtures', '/fixtures'),
+    { onSuccess: setFixtures }
+  );
+};
+
+export const useRankingsQuery = () => {
+  const setRankings = useDataStore((s) => s.updateDtRankings);
+  return useQuery(
+    ["rankings"],
+    () => fetchWithCache<DtRanking>("rankings", "/rankings"),
+    { onSuccess: setRankings }
+  );
+};
