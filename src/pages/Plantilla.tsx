@@ -4,8 +4,18 @@ import ResumenClub from '../components/plantilla/ResumenClub';
 import PlayerTable from '../components/plantilla/PlayerTable';
 import playersData from '../data/players.json';
 import { dtClub } from '../data/mockData';
-import type { Player } from '../types';
 import usePersistentState from '../hooks/usePersistentState';
+
+interface Player {
+  id: string | number;
+  number: number;
+  name: string;
+  position: string;
+  ovr: number;
+  age: number;
+  contractYears: number;
+  salary: number;
+}
 
 const PlayerDrawer = lazy(() => import('../components/plantilla/PlayerDrawer'));
 
