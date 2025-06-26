@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Calendar from 'react-calendar';
 import { Clock, MapPin, Users, Star, TrendingUp, Calendar as CalendarIcon, Trophy } from 'lucide-react';
