@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import RenewContractModal from './RenewContractModal';
+import { getPositionColor, getOverallColor } from '../../utils/helpers';
 
 interface Player {
   id: string;
@@ -106,8 +107,16 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
                   p.name
                 )}
               </td>
-              <td className="px-4 py-2 text-center">{p.position}</td>
-              <td className="px-4 py-2 text-center">{p.ovr}</td>
+              <td className="px-4 py-2 text-center">
+                <span className={`px-2 py-0.5 rounded ${getPositionColor(p.position)}`}>
+                  {p.position}
+                </span>
+              </td>
+              <td className="px-4 py-2 text-center">
+                <span className={`px-2 py-0.5 rounded ${getOverallColor(p.ovr)}`}>
+                  {p.ovr}
+                </span>
+              </td>
               <td className="px-4 py-2 text-center">{p.age}</td>
               <td className="px-4 py-2 text-center">{p.contractYears}y</td>
               <td className="px-4 py-2 text-center space-x-2">
