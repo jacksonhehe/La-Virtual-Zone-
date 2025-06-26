@@ -15,6 +15,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "types": ["node"],
+    "paths": {
+      "react-hot-toast": ["./src/stubs/react-hot-toast.ts"]
+    },
 
     /* Linting */
     "strict": true,
