@@ -423,7 +423,10 @@ const DtDashboard: React.FC = () => {
   const [layout, setLayout] = useState<LayoutItem[]>(() => {
     const raw = localStorage.getItem("vz_dashboard_layout");
     try {
-      return raw ? (JSON.parse(raw) as LayoutItem[]) : DEFAULT_LAYOUT;
+      const parsed = raw ? (JSON.parse(raw) as LayoutItem[]) : DEFAULT_LAYOUT;
+      const validIds = new Set(RIGHT_MODULES.map((m) => m.id));
+      const filtered = parsed.filter((l) => validIds.has(l.id));
+      return filtered.length > 0 ? filtered : DEFAULT_LAYOUT;
     } catch {
       return DEFAULT_LAYOUT;
     }
@@ -446,7 +449,7 @@ const DtDashboard: React.FC = () => {
     setLayout(arrayMove(layout, oldIndex, newIndex));
   };
   const findModule = (id: RightModuleId) =>
-    RIGHT_MODULES.find((m) => m.id === id)!;
+    RIGHT_MODULES.find((m) => m.id === id);
 
   /* ═════════════════════════════════════════════════════════════ */
   /* ------------------------------ UI --------------------------- */
@@ -782,7 +785,9 @@ interface RightColumnProps {
   setLayout: (l: LayoutItem[]) => void;
   sensors: ReturnType<typeof useSensors>;
   handleDragEnd: (e: DragEndEvent) => void;
-  findModule: (id: RightModuleId) => { id: string; title: string; render: () => JSX.Element };
+  findModule: (
+    id: RightModuleId
+  ) => { id: string; title: string; render: () => JSX.Element } | undefined;
 }
 
 const RightColumn: React.FC<RightColumnProps> = ({
@@ -855,17 +860,23 @@ const RightColumn: React.FC<RightColumnProps> = ({
       {customizing ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={layout.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-            {layout.map((l) => (
-              <SortableItem key={l.id} id={l.id}>
-                {findModule(l.id).render()}
-              </SortableItem>
-            ))}
+            {layout.map((l) => {
+              const mod = findModule(l.id);
+              return mod ? (
+                <SortableItem key={l.id} id={l.id}>
+                  {mod.render()}
+                </SortableItem>
+              ) : null;
+            })}
           </SortableContext>
         </DndContext>
       ) : (
         layout
           .filter((l) => l.visible)
-          .map((l) => <div key={l.id}>{findModule(l.id).render()}</div>)
+          .map((l) => {
+            const mod = findModule(l.id);
+            return mod ? <div key={l.id}>{mod.render()}</div> : null;
+          })
       )}
     </motion.div>
   );
