@@ -1,7 +1,7 @@
 /* =========================================================================
    DT DASHBOARD – LIGA MASTER
-   Pulido · Gráfica · PDF · Logros · Noticias · Personalización
-   + Funciones sociales (Ranking DT + Chat)
+   Pulido · Gráfica · Logros · Noticias · Personalización
+   + Funciones sociales (Ranking DT)
    ========================================================================= */
 
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -18,10 +18,8 @@ import {
   Inbox,
   Sun,
   Moon,
-  FileText,
   Award,
   MessagesSquare,
-  MessageCircle,
   Wrench,
   Eye,
   EyeOff,
@@ -41,8 +39,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 
 import {
   DndContext,
@@ -96,15 +92,8 @@ interface LayoutItem {
   id: RightModuleId;
   visible: boolean;
 }
-interface ChatMsg {
-  id: string;
-  user: string;
-  text: string;
-  ts: number;
-}
 
 type RightModuleId =
-  | "chat"
   | "anuncios"
   | "mercado"
   | "logros"
@@ -226,61 +215,7 @@ const DtDashboard: React.FC = () => {
   const visibleNews = filteredNews.slice(0, newsCount);
   const loadMoreNews = () => setNewsCount((c) => c + 5);
 
-  /* ===== chat (local demo) ===== */
-  const [chat, setChat] = useState<ChatMsg[]>(() => {
-    const raw = localStorage.getItem("vz_chat_history");
-    try {
-      return raw ? (JSON.parse(raw) as ChatMsg[]) : [];
-    } catch {
-      return [];
-    }
-  });
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const initialChatRender = useRef(true);
 
-  useEffect(() => {
-    localStorage.setItem("vz_chat_history", JSON.stringify(chat));
-    if (initialChatRender.current) {
-      initialChatRender.current = false;
-      return;
-    }
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chat]);
-
-  const sendChat = (text: string) => {
-    if (!text.trim()) return;
-    const msg: ChatMsg = {
-      id: crypto.randomUUID(),
-      user: user?.username ?? 'Anon',
-      text: text.trim(),
-      ts: Date.now(),
-    };
-    setChat((old) => [...old.slice(-49), msg]); // máx 50
-  };
-
-  /* ===== PDF mensual ===== */
-  const generateMonthlyReport = () => {
-    const doc = new jsPDF();
-    const monthStr = new Date().toLocaleString("es-ES", {
-      month: "long",
-      year: "numeric",
-    });
-
-    doc.setFontSize(18);
-    doc.text(`${club.name} – Informe ${monthStr}`, 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Presupuesto: ${formatCurrency(club.budget)}`, 14, 32);
-    doc.text(`Plantilla: ${club.players.length} jugadores`, 14, 40);
-    doc.text(`Táctica base: ${club.formation}`, 14, 48);
-    // @ts-expect-error jsPDF plugin lacks types
-    doc.autoTable({
-      head: [["J", "GF", "GC"]],
-      body: recent.map((r) => [r.name, r.GF, r.GC]),
-      startY: 60,
-    });
-    doc.save(`Informe_${club.slug}_${monthStr}.pdf`);
-    toast.success("Informe descargado");
-  };
 
   /* =======================================================================
      PERSONALIZACIÓN (drag-and-drop + visibilidad)
@@ -442,12 +377,6 @@ const DtDashboard: React.FC = () => {
         </Card>
       ),
     },
-    /* --- Chat --- */
-    {
-      id: "chat",
-      title: "Chat",
-      render: () => <ChatModule chat={chat} sendChat={sendChat} endRef={chatEndRef} />,
-    },
     /* --- Recordatorios --- */
     {
       id: "recordatorios",
@@ -558,15 +487,6 @@ const DtDashboard: React.FC = () => {
           <Wrench size={16} />
         </button>
 
-        {/* PDF */}
-        <button
-          onClick={generateMonthlyReport}
-          aria-label="Descargar informe mensual"
-          className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-accent px-3 py-2 text-black backdrop-blur transition hover:brightness-110 focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
-        >
-          <FileText size={16} />
-          <span className="hidden sm:inline">Informe</span>
-        </button>
       </PageHeader>
 
       {customizing && (
@@ -853,58 +773,6 @@ const EmptyState: React.FC<{ label: string }> = ({ label }) => (
     <Inbox size={16} className="text-gray-400" /> {label}
   </p>
 );
-
-/* Chat módulo */
-const ChatModule: React.FC<{
-  chat: ChatMsg[];
-  sendChat: (t: string) => void;
-  endRef: React.RefObject<HTMLDivElement>;
-}> = ({ chat, sendChat, endRef }) => {
-  const [input, setInput] = useState("");
-  const { user } = useAuthStore();
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    sendChat(input);
-    setInput("");
-  };
-  return (
-    <Card className="p-4" aria-label="Chat de comunidad">
-      <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold leading-tight">
-        <MessageCircle size={18} /> Chat
-      </h3>
-      <div className="mb-3 h-48 overflow-y-auto rounded bg-white/5 p-2 text-xs space-y-1">
-        {chat.map((m) => (
-          <p
-            key={m.id}
-            className={`max-w-[90%] ${
-              m.user === user?.username
-                ? 'ml-auto text-right bg-accent/20 rounded px-1'
-                : ''
-            }`}
-          >
-            <span className="font-semibold text-accent">{m.user}</span>: {m.text}
-          </p>
-        ))}
-        <div ref={endRef} />
-      </div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Escribe un mensaje…"
-          className="flex-1 rounded bg-white/10 px-2 py-1 text-xs focus:outline-none"
-        />
-        <button
-          type="submit"
-          className="rounded bg-accent px-3 text-xs font-semibold text-black hover:brightness-110"
-        >
-          Enviar
-        </button>
-      </form>
-    </Card>
-  );
-};
 
 /* ═════════ PERSONALIZABLE RIGHT COLUMN ═════════ */
 
