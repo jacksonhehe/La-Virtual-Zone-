@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import {
+  DndContext,
+  useDraggable,
+  useDroppable,
+  PointerSensor,
+  useSensors,
+  useSensor,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { RotateCcw, Save, Eye, Settings, Target, ArrowUp, ArrowDown } from 'lucide-react';
 
 const formations = [
@@ -26,17 +34,26 @@ const mockPlayers = [
 ];
 
 const PlayerCard = ({ player, isOnField = false }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'player',
-    item: { id: player.id, player },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging,
+  } = useDraggable({
+    id: `player-${player.id}`,
+    data: { player },
+  });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  };
 
   return (
     <div
-      ref={drag}
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
       className={`
         bg-gray-700 rounded-lg p-2 cursor-move transition-all duration-200
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}
@@ -53,18 +70,14 @@ const PlayerCard = ({ player, isOnField = false }) => {
   );
 };
 
-const FieldSlot = ({ row, col, player, onDrop }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'player',
-    drop: (item) => onDrop(item.player, row, col),
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  }));
+const FieldSlot = ({ row, col, player }) => {
+  const { isOver, setNodeRef } = useDroppable({
+    id: `slot-${row}-${col}`,
+  });
 
   return (
     <div
-      ref={drop}
+      ref={setNodeRef}
       className={`
         w-16 h-16 border-2 border-dashed border-gray-400 rounded-lg
         flex items-center justify-center transition-all duration-200
@@ -87,6 +100,17 @@ const TacticasPanel = () => {
     tempo: 50,
   });
 
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (evt: DragEndEvent) => {
+    const { active, over } = evt;
+    if (!over) return;
+    const player = active.data.current?.player;
+    if (!player) return;
+    const [row, col] = over.id.replace('slot-', '').split('-').map(Number);
+    handlePlayerDrop(player, row, col);
+  };
+
   const handlePlayerDrop = (player, row, col) => {
     const key = `${row}-${col}`;
     setFieldPlayers(prev => ({
@@ -104,7 +128,7 @@ const TacticasPanel = () => {
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
         {/* Sidebar - Players & Controls */}
         <div className="lg:col-span-1 space-y-6">
@@ -205,7 +229,6 @@ const TacticasPanel = () => {
                           row={row}
                           col={col}
                           player={player}
-                          onDrop={handlePlayerDrop}
                         />
                       );
                     })}
@@ -231,7 +254,7 @@ const TacticasPanel = () => {
           </div>
         </div>
       </div>
-    </DndProvider>
+    </DndContext>
   );
 };
 
