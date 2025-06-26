@@ -43,7 +43,7 @@ Run the Cypress test suite:
 npm run test
 ```
 
-This command lints the code, builds the project and then runs Cypress in
+This command lints the code, builds the project, and then runs Cypress in
 headless mode. To open the interactive Cypress UI instead, execute:
 
 ```bash
