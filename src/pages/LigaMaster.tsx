@@ -1,4 +1,4 @@
-import  { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Target, DollarSign, Calendar, ChevronDown, Trophy, Award, TrendingUp } from 'lucide-react';
 

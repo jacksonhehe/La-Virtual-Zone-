@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Star, Clock, TrendingUp, Users, Award } from 'lucide-react';
 
