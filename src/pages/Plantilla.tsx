@@ -15,6 +15,7 @@ const Plantilla = () => {
     playersData as Player[]
   );
   const [active, setActive] = useState<Player | null>(null);
+  const [search, setSearch] = useState('');
 
   return (
     <div>
@@ -22,7 +23,20 @@ const Plantilla = () => {
       <div className="container mx-auto px-4 py-8">
         <ResumenClub club={{ name: dtClub.name, logo: dtClub.logo }} players={players} />
         <div className="mt-6">
-          <PlayerTable players={players} setPlayers={setPlayers} onSelectPlayer={setActive} />
+          <input
+            data-cy="player-search"
+            type="text"
+            placeholder="Buscar jugador..."
+            className="mb-4 w-full max-w-xs rounded bg-zinc-800 p-2"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <PlayerTable
+            players={players}
+            search={search}
+            setPlayers={setPlayers}
+            onSelectPlayer={setActive}
+          />
         </div>
         {active && <PlayerDrawer player={active} onClose={() => setActive(null)} />}
       </div>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import RenewContractModal from './RenewContractModal';
+import { getPositionColor, getOverallColor } from '../../utils/helpers';
 
 interface Player {
   id: string;
@@ -18,9 +19,10 @@ interface Props {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   onSelectPlayer: (p: Player) => void;
+  search: string;
 }
 
-const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
+const PlayerTable = ({ players, setPlayers, onSelectPlayer, search }: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<Player | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -28,6 +30,13 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
   const [sortBy, setSortBy] = useState<keyof Player>('number');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [search, setSearch] = useState('');
+
+  const searchLower = search.toLowerCase();
+  const filteredPlayers = players.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchLower) ||
+      p.position.toLowerCase().includes(searchLower)
+  );
 
   const handleRenew = (player: Player) => {
     setSelected(player);
@@ -147,7 +156,11 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
           </tr>
         </thead>
         <tbody>
+<<<<<<< codex/add-sorting,-filtering-and-controls-to-playertable
           {sorted.map(p => (
+=======
+          {filteredPlayers.map(p => (
+>>>>>>> main
             <tr
               key={p.id}
               className="border-b border-zinc-800 hover:bg-zinc-800"
@@ -166,8 +179,16 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
                   p.name
                 )}
               </td>
-              <td className="px-4 py-2 text-center">{p.position}</td>
-              <td className="px-4 py-2 text-center">{p.ovr}</td>
+              <td className="px-4 py-2 text-center">
+                <span className={`px-2 py-0.5 rounded ${getPositionColor(p.position)}`}>
+                  {p.position}
+                </span>
+              </td>
+              <td className="px-4 py-2 text-center">
+                <span className={`px-2 py-0.5 rounded ${getOverallColor(p.ovr)}`}>
+                  {p.ovr}
+                </span>
+              </td>
               <td className="px-4 py-2 text-center">{p.age}</td>
               <td className="px-4 py-2 text-center">{p.contractYears}y</td>
               <td className="px-4 py-2 text-center space-x-2">
