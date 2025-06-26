@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import DtDashboard from './DtDashboard';
-import { useAuthStore } from '../store/authStore';
 import { 
   Trophy, 
   Users, 
@@ -19,12 +17,7 @@ import { useDataStore } from '../store/dataStore';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
-  const { user } = useAuthStore();
   const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
-
-  if (user?.role === 'dt') {
-    return <DtDashboard />;
-  }
   
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
