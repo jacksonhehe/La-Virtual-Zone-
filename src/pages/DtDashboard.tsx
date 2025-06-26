@@ -1,25 +1,29 @@
 import  { useState, useMemo, useRef, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import  { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, Play, TrendingUp, Award, Settings } from 'lucide-react'; 
+import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, TrendingUp, Award, Settings, Bell } from 'lucide-react';   
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import toast, { Toaster } from 'react-hot-toast';
 
-const  PlantillaTab = lazy(() => import('../components/dt-dashboard/PlantillaTab'));
+const   PlantillaTab = lazy(() => import('../components/dt-dashboard/PlantillaTab'));
 const TacticasTab = lazy(() => import('../components/dt-dashboard/TacticasTab'));
 const FinanzasTab = lazy(() => import('../components/dt-dashboard/FinanzasTab'));
 const CalendarioTab = lazy(() => import('../components/dt-dashboard/CalendarioTab'));
-const MercadoTab = lazy(() => import('../components/dt-dashboard/MercadoTab')); 
+const  MercadoTab = lazy(() => import('../components/dt-dashboard/MercadoTab'));
+const FixtureTab = lazy(() => import('../components/dt-dashboard/FixtureTab'));
+const FeedTab = lazy(() => import('../components/dt-dashboard/FeedTab'));   
 
-type  Tab = 'plantilla' | 'tacticas' | 'finanzas' | 'calendario' | 'mercado'; 
+type    Tab = 'plantilla' | 'tacticas' | 'finanzas' | 'fixture' | 'calendario' | 'mercado' | 'feed';   
 
-const  tabs = [
+const    tabs = [
   { id: 'plantilla' as Tab, label: 'Plantilla', icon: Users },
   { id: 'tacticas' as Tab, label: 'Tácticas', icon: Target },
   { id: 'finanzas' as Tab, label: 'Finanzas', icon: DollarSign },
-  { id: 'mercado' as Tab, label: 'Mercado', icon: ShoppingBag },
+  { id: 'fixture' as Tab, label: 'Fixture', icon: List },
   { id: 'calendario' as Tab, label: 'Calendario', icon: CalendarIcon },
-]; 
+  { id: 'mercado' as Tab, label: 'Mercado', icon: ShoppingBag },
+  { id: 'feed' as Tab, label: 'Feed', icon: Bell },
+];   
 
 export default function DtDashboard() {
   const { user } = useAuthStore();
@@ -147,8 +151,10 @@ export default function DtDashboard() {
                            {activeTab === 'plantilla' && <PlantillaTab />}
               {activeTab === 'tacticas' && <TacticasTab />}
               {activeTab === 'finanzas' && <FinanzasTab />}
+              {activeTab === 'fixture' && <FixtureTab />}
+              {activeTab === 'calendario' && <CalendarioTab />}
               {activeTab === 'mercado' && <MercadoTab />}
-              {activeTab === 'calendario' && <CalendarioTab />} 
+              {activeTab === 'feed' && <FeedTab />} 
             </Suspense>
           </motion.div>
         </AnimatePresence>
