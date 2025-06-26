@@ -18,13 +18,21 @@ interface Props {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   onSelectPlayer: (p: Player) => void;
+  search: string;
 }
 
-const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
+const PlayerTable = ({ players, setPlayers, onSelectPlayer, search }: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<Player | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+
+  const searchLower = search.toLowerCase();
+  const filteredPlayers = players.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchLower) ||
+      p.position.toLowerCase().includes(searchLower)
+  );
 
   const handleRenew = (player: Player) => {
     setSelected(player);
@@ -87,7 +95,7 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {players.map(p => (
+          {filteredPlayers.map(p => (
             <tr
               key={p.id}
               className="border-b border-zinc-800 hover:bg-zinc-800"

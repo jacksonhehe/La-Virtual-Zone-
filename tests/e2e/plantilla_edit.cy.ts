@@ -13,4 +13,12 @@ describe('Plantilla editing', () => {
       expect(players).to.contain('Updated Name');
     });
   });
+
+  it('filters players by search', () => {
+    cy.visit('/liga-master/plantilla');
+
+    cy.get('[data-cy="player-search"]').type('Juan');
+    cy.get('tbody tr').should('have.length', 1);
+    cy.contains('td', 'Juan Pérez');
+  });
 });
