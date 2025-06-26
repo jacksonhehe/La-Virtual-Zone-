@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import slugify from '../../utils/slugify';
+import { slugify } from '../../utils/slugify';
 
 const LeagueStandings = () => {
   const { standings, clubs } = useDataStore();

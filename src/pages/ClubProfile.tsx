@@ -129,8 +129,8 @@ const ClubProfile = () => {
               </p>
               
               <div className="flex justify-center space-x-4 mb-6">
-                {club.titles.map((title, index) => (
-                  <div key={index} className="flex flex-col items-center">
+                {club.titles.map((title) => (
+                  <div key={title.id} className="flex flex-col items-center">
                     <Trophy size={24} className="text-yellow-400 mb-1" />
                     <span className="text-sm">{title.name}</span>
                     <span className="text-xs text-gray-400">{title.year}</span>
@@ -318,8 +318,8 @@ const ClubProfile = () => {
                       <h3 className="text-lg font-bold mb-4">Títulos y Logros</h3>
                       {club.titles.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                          {club.titles.map((title, index) => (
-                            <div key={index} className="p-4 bg-gray-800 rounded-lg flex items-center">
+                          {club.titles.map((title) => (
+                            <div key={title.id} className="p-4 bg-gray-800 rounded-lg flex items-center">
                               <Trophy size={24} className="text-yellow-400 mr-3" />
                               <div>
                                 <p className="font-medium">{title.name}</p>
