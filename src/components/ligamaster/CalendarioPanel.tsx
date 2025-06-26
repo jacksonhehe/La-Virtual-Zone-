@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Calendar from 'react-calendar';
+import SimpleCalendar from '../common/SimpleCalendar';
 import { Clock, MapPin, Users, Star, TrendingUp, Calendar as CalendarIcon, Trophy } from 'lucide-react';
 
 const mockMatches = [
@@ -255,7 +255,7 @@ const CalendarioPanel = () => {
           {/* Calendar */}
           <div className="lg:col-span-2 bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
             <h3 className="text-white font-semibold mb-6">Calendario de Eventos</h3>
-            <Calendar
+            <SimpleCalendar
               onChange={setSelectedDate}
               value={selectedDate}
               tileContent={tileContent}
