@@ -10,11 +10,6 @@ Before running the project, make sure you have **Node.js** installed. Install th
 npm install
 ```
 
-> **Important**: run `npm install` before executing `npm run lint` or
-> `npm run test` to ensure all dependencies are installed. In CI
-> environments, provide network access or use an offline npm cache so
-> that this installation step succeeds.
-
 After the packages are installed you can start the development server.
 
 ## Development
