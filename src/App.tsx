@@ -37,6 +37,7 @@ const Analisis = lazy(() => import("./pages/Analisis"));
 const ClubProfile = lazy(() => import("./pages/ClubProfile"));
 const ClubFinances = lazy(() => import("./pages/ClubFinances"));
 const ClubSquad = lazy(() => import("./pages/ClubSquad"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
             <Route path="registro" element={<Register />} />
             <Route path="usuario" element={<UserPanel />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
+            <Route path="admin" element={<Admin />} />
 
             <Route path="torneos">
               <Route index element={<Tournaments />} />
