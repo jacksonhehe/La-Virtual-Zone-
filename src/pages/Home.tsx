@@ -1,4 +1,4 @@
-import HeroSection from '../components/Home/HeroSection';
+import  HeroSection from '../components/Home/HeroSection';
 import LeagueStandings from '../components/Home/LeagueStandings';
 import FeaturedTournaments from '../components/Home/FeaturedTournaments';
 import LatestNews from '../components/Home/LatestNews';

@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ResumenClub = ({ club, players }: Props) => {
-  const totalSalary = players.reduce((sum, p) => sum + p.contract.salary, 0);
+   const totalSalary = players.reduce((sum, p) => sum + (p.contract?.salary || 0), 0); 
   const budget = dtClub.budget;
   const salaryPercent = budget > 0 ? Math.round((totalSalary / budget) * 100) : null;
 
