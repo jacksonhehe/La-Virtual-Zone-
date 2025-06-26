@@ -29,10 +29,9 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer, search }: Props) => 
   const [editingName, setEditingName] = useState('');
   const [sortBy, setSortBy] = useState<keyof Player>('number');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [search, setSearch] = useState('');
 
   const searchLower = search.toLowerCase();
-  const filteredPlayers = players.filter(
+  const filtered = players.filter(
     (p) =>
       p.name.toLowerCase().includes(searchLower) ||
       p.position.toLowerCase().includes(searchLower)
@@ -79,12 +78,6 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer, search }: Props) => 
     setEditingId(null);
   };
 
-  const filtered = players.filter(
-    p =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.position.toLowerCase().includes(search.toLowerCase())
-  );
-
   const sorted = [...filtered].sort((a, b) => {
     const aVal = a[sortBy];
     const bVal = b[sortBy];
@@ -95,15 +88,6 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer, search }: Props) => 
 
   return (
     <div className="overflow-x-auto">
-      <div className="mb-2 text-right">
-        <input
-          data-cy="player-search"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar..."
-          className="rounded bg-zinc-800 p-1 text-sm"
-        />
-      </div>
       <table className="min-w-[640px] w-full text-sm">
         <thead>
           <tr className="bg-zinc-900">
@@ -156,11 +140,7 @@ const PlayerTable = ({ players, setPlayers, onSelectPlayer, search }: Props) => 
           </tr>
         </thead>
         <tbody>
-<<<<<<< codex/add-sorting,-filtering-and-controls-to-playertable
           {sorted.map(p => (
-=======
-          {filteredPlayers.map(p => (
->>>>>>> main
             <tr
               key={p.id}
               className="border-b border-zinc-800 hover:bg-zinc-800"
