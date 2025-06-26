@@ -4,7 +4,7 @@
    + Funciones sociales (Ranking DT)
    ========================================================================= */
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Users,
@@ -28,7 +28,7 @@ import {
   Smile,
 } from "lucide-react";
 import { motion, useAnimation } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import ReactGA from "react-ga4";
 import {
   BarChart,
