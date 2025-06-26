@@ -22,7 +22,7 @@ const LigaMaster = () => {
   const { user } = useAuthStore();
   const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
 
-  if (user?.role === 'dt' && (user.club || user.clubId)) {
+  if (user?.role === 'dt') {
     return <DtDashboard />;
   }
   
