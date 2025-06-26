@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, getOverallColor } from '../utils/helpers';
 import { useState } from 'react';
 
 const ClubSquad = () => {
@@ -396,12 +396,6 @@ const getPositionColor = (position: string) => {
   }
 };
 
-const getOverallColor = (overall: number) => {
-  if (overall >= 85) return 'bg-green-500/20 text-green-500';
-  if (overall >= 80) return 'bg-blue-500/20 text-blue-400';
-  if (overall >= 75) return 'bg-yellow-500/20 text-yellow-500';
-  return 'bg-gray-500/20 text-gray-400';
-};
 
 export default ClubSquad;
  

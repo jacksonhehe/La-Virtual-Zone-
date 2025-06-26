@@ -50,6 +50,13 @@ export const getPositionColor = (position: string): string => {
   }
 };
 
+export const getOverallColor = (overall: number): string => {
+  if (overall >= 85) return 'bg-green-500/20 text-green-500';
+  if (overall >= 80) return 'bg-blue-500/20 text-blue-400';
+  if (overall >= 75) return 'bg-yellow-500/20 text-yellow-500';
+  return 'bg-gray-500/20 text-gray-400';
+};
+
 // Get transfer status badge
 export const getStatusBadge = (status: string): string => {
   switch(status) {
