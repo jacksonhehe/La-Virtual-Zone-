@@ -26,11 +26,14 @@ const Rankings = () => {
     .map(standing => {
       const club = clubs.find(c => c.id === standing.clubId);
       return {
+        id: standing.clubId,
         name: club?.manager || 'Unknown',
         club: club?.name || 'Unknown',
         clubLogo: club?.logo || '',
         points: standing.points,
-        winRate: standing.played > 0 ? Math.round((standing.won / standing.played) * 100) : 0
+        winRate: standing.played > 0
+          ? Math.round((standing.won / standing.played) * 100)
+          : 0
       };
     });
   
@@ -339,7 +342,7 @@ const Rankings = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {topManagers.map((manager, index) => (
-                    <tr key={index} className="hover:bg-gray-800/50">
+                    <tr key={manager.id} className="hover:bg-gray-800/50">
                       <td className="p-4 text-center">
                         <span className={`
                           inline-block w-6 h-6 rounded-full font-medium text-sm flex items-center justify-center

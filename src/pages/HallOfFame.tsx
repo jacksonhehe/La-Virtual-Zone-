@@ -246,8 +246,8 @@ const HallOfFame = () => {
                       <div className="mb-4">
                         <h4 className="font-bold mb-2">Títulos</h4>
                         <ul className="space-y-1">
-                          {club.titles.map((title, index) => (
-                            <li key={index} className="flex items-center">
+                          {club.titles.map((title) => (
+                            <li key={title.id} className="flex items-center">
                               <Trophy size={16} className="text-yellow-400 mr-2" />
                               <span>{title.name} {title.year}</span>
                             </li>
