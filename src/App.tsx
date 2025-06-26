@@ -26,6 +26,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Gallery = lazy(() => import("./pages/Gallery"));
 const Store = lazy(() => import("./pages/Store"));
 const Help = lazy(() => import("./pages/Help"));
+const DtDashboard = lazy(() => import("./pages/DtDashboard"));
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Register />} />
             <Route path="usuario" element={<UserPanel />} />
+            <Route path="dt-dashboard" element={<DtDashboard />} />
 
             <Route path="torneos">
               <Route index element={<Tournaments />} />
