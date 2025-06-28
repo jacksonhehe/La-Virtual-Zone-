@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import SidebarAdmin from './components/SidebarAdmin';
 
@@ -62,7 +61,6 @@ const AdminLayout = () => {
           </Routes>
         </Suspense>
       </main>
-      <Toaster position="top-right" />
     </div>
   );
 };
