@@ -1,9 +1,20 @@
 import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Users, Globe, User, ShoppingBag } from 'lucide-react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { useGlobalStore } from '../../store/globalStore';
 
 const Dashboard = () => {
   const { users, clubs, players, transfers, activities } = useGlobalStore();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const kpiData = [
     { name: 'Ene', users: 4, revenue: 2400 },
