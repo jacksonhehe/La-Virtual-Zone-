@@ -1,5 +1,20 @@
-import  { create } from 'zustand';
-import { User, Club, Player, Tournament, NewsItem, Transfer, Standing, ActivityLog, Comment } from '../types';
+import { create } from 'zustand';
+import {
+  User,
+  Club,
+  Player,
+  Tournament,
+  NewsItem,
+  Transfer,
+  Standing,
+  ActivityLog,
+  Comment
+} from '../types';
+import {
+  loadAdminData,
+  saveAdminData,
+  AdminData
+} from '../utils/adminStorage';
 
 interface GlobalStore {
   users: User[];
@@ -48,7 +63,7 @@ interface GlobalStore {
   addActivity: (activity: ActivityLog) => void;
 }
 
-export  const useGlobalStore = create<GlobalStore>((set) => ({
+const defaultData: AdminData = {
   users: [
     {
       id: '1',
@@ -106,7 +121,8 @@ export  const useGlobalStore = create<GlobalStore>((set) => ({
     {
       id: '1',
       title: 'Inicio de la nueva temporada',
-      content: 'La Liga Virtual arranca con grandes expectativas para todos los equipos participantes.',
+      content:
+        'La Liga Virtual arranca con grandes expectativas para todos los equipos participantes.',
       author: 'Admin',
       publishedAt: '2023-12-01T00:00:00.000Z',
       status: 'published'
@@ -148,131 +164,196 @@ export  const useGlobalStore = create<GlobalStore>((set) => ({
       status: 'pending',
       createdAt: '2023-12-09T00:00:00.000Z'
     }
-  ],
-  loading: false, 
+  ]
+};
 
-  setLoading: (loading) => set({ loading }),
+export const useGlobalStore = create<GlobalStore>((set, get) => {
+  const initial = loadAdminData(defaultData);
 
-  addUser: (user) => set((state) => ({ 
-    users: [...state.users, user],
-    activities: [...state.activities, {
-      id: Date.now().toString(),
-      userId: 'admin',
-      action: 'User Created',
-      details: `Created user: ${user.username}`,
-      date: new Date().toISOString()
-    }]
-  })),
+  const persist = () =>
+    saveAdminData({
+      users: get().users,
+      clubs: get().clubs,
+      players: get().players,
+      tournaments: get().tournaments,
+      newsItems: get().newsItems,
+      transfers: get().transfers,
+      standings: get().standings,
+      activities: get().activities,
+      comments: get().comments
+    });
 
-  updateUser: (user) => set((state) => ({ 
-    users: state.users.map(u => u.id === user.id ? user : u),
-    activities: [...state.activities, {
-      id: Date.now().toString(),
-      userId: 'admin',
-      action: 'User Updated',
-      details: `Updated user: ${user.username}`,
-      date: new Date().toISOString()
-    }]
-  })),
+  return {
+    ...initial,
+    loading: false,
 
-  removeUser: (id) => set((state) => ({ 
-    users: state.users.filter(u => u.id !== id),
-    activities: [...state.activities, {
-      id: Date.now().toString(),
-      userId: 'admin',
-      action: 'User Deleted',
-      details: `Deleted user with ID: ${id}`,
-      date: new Date().toISOString()
-    }]
-  })),
+    setLoading: loading => set({ loading }),
 
-  addClub: (club) => set((state) => ({ 
-    clubs: [...state.clubs, club],
-    activities: [...state.activities, {
-      id: Date.now().toString(),
-      userId: 'admin',
-      action: 'Club Created',
-      details: `Created club: ${club.name}`,
-      date: new Date().toISOString()
-    }]
-  })),
+    addUser: user => {
+      set(state => ({
+        users: [...state.users, user],
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'User Created',
+            details: `Created user: ${user.username}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
+      persist();
+    },
 
-  updateClub: (club) => set((state) => ({ 
-    clubs: state.clubs.map(c => c.id === club.id ? club : c)
-  })),
+    updateUser: user => {
+      set(state => ({
+        users: state.users.map(u => (u.id === user.id ? user : u)),
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'User Updated',
+            details: `Updated user: ${user.username}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
+      persist();
+    },
 
-  removeClub: (id) => set((state) => ({ 
-    clubs: state.clubs.filter(c => c.id !== id)
-  })),
+    removeUser: id => {
+      set(state => ({
+        users: state.users.filter(u => u.id !== id),
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'User Deleted',
+            details: `Deleted user with ID: ${id}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
+      persist();
+    },
 
-  addPlayer: (player) => set((state) => ({ 
-    players: [...state.players, player]
-  })),
+    addClub: club => {
+      set(state => ({
+        clubs: [...state.clubs, club],
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'Club Created',
+            details: `Created club: ${club.name}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
+      persist();
+    },
 
-  updatePlayer: (player) => set((state) => ({ 
-    players: state.players.map(p => p.id === player.id ? player : p)
-  })),
+    updateClub: club => {
+      set(state => ({ clubs: state.clubs.map(c => (c.id === club.id ? club : c)) }));
+      persist();
+    },
 
-  removePlayer: (id) => set((state) => ({ 
-    players: state.players.filter(p => p.id !== id)
-  })),
+    removeClub: id => {
+      set(state => ({ clubs: state.clubs.filter(c => c.id !== id) }));
+      persist();
+    },
 
-  approveTransfer: (id) => set((state) => ({ 
-    transfers: state.transfers.map(t => 
-      t.id === id ? { ...t, status: 'approved' as const } : t
-    ),
-    activities: [...state.activities, {
-      id: Date.now().toString(),
-      userId: 'admin',
-      action: 'Transfer Approved',
-      details: `Approved transfer with ID: ${id}`,
-      date: new Date().toISOString()
-    }]
-  })),
+    addPlayer: player => {
+      set(state => ({ players: [...state.players, player] }));
+      persist();
+    },
 
-  rejectTransfer: (id, reason) => set((state) => ({ 
-    transfers: state.transfers.map(t => 
-      t.id === id ? { ...t, status: 'rejected' as const } : t
-    ),
-    activities: [...state.activities, {
-      id: Date.now().toString(),
-      userId: 'admin',
-      action: 'Transfer Rejected',
-      details: `Rejected transfer: ${reason}`,
-      date: new Date().toISOString()
-    }]
-  })),
+    updatePlayer: player => {
+      set(state => ({ players: state.players.map(p => (p.id === player.id ? player : p)) }));
+      persist();
+    },
 
-  addNewsItem: (item) => set((state) => ({ 
-    newsItems: [...state.newsItems, item]
-  })),
+    removePlayer: id => {
+      set(state => ({ players: state.players.filter(p => p.id !== id) }));
+      persist();
+    },
 
-  updateNewsItem: (item) => set((state) => ({ 
-    newsItems: state.newsItems.map(n => n.id === item.id ? item : n)
-  })),
+    approveTransfer: id => {
+      set(state => ({
+        transfers: state.transfers.map(t => (t.id === id ? { ...t, status: 'approved' as const } : t)),
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'Transfer Approved',
+            details: `Approved transfer with ID: ${id}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
+      persist();
+    },
 
-  removeNewsItem: (id) => set((state) => ({ 
-    newsItems: state.newsItems.filter(n => n.id !== id)
-  })),
+    rejectTransfer: (id, reason) => {
+      set(state => ({
+        transfers: state.transfers.map(t => (t.id === id ? { ...t, status: 'rejected' as const } : t)),
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'Transfer Rejected',
+            details: `Rejected transfer: ${reason}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
+      persist();
+    },
 
-  approveComment: (id) => set((state) => ({ 
-    comments: state.comments.map(c => 
-      c.id === id ? { ...c, status: 'approved' as const } : c
-    )
-  })),
+    addNewsItem: item => {
+      set(state => ({ newsItems: [...state.newsItems, item] }));
+      persist();
+    },
 
-  hideComment: (id) => set((state) => ({ 
-    comments: state.comments.map(c => 
-      c.id === id ? { ...c, status: 'hidden' as const } : c
-    )
-  })),
+    updateNewsItem: item => {
+      set(state => ({ newsItems: state.newsItems.map(n => (n.id === item.id ? item : n)) }));
+      persist();
+    },
 
-  deleteComment: (id) => set((state) => ({ 
-    comments: state.comments.filter(c => c.id !== id)
-  })),
+    removeNewsItem: id => {
+      set(state => ({ newsItems: state.newsItems.filter(n => n.id !== id) }));
+      persist();
+    },
 
-  addActivity: (activity) => set((state) => ({ 
-    activities: [...state.activities, activity]
-  }))
-}));
+    approveComment: id => {
+      set(state => ({
+        comments: state.comments.map(c => (c.id === id ? { ...c, status: 'approved' as const } : c))
+      }));
+      persist();
+    },
+
+    hideComment: id => {
+      set(state => ({
+        comments: state.comments.map(c => (c.id === id ? { ...c, status: 'hidden' as const } : c))
+      }));
+      persist();
+    },
+
+    deleteComment: id => {
+      set(state => ({ comments: state.comments.filter(c => c.id !== id) }));
+      persist();
+    },
+
+    addActivity: activity => {
+      set(state => ({ activities: [...state.activities, activity] }));
+      persist();
+    }
+  };
+});
  
