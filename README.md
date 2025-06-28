@@ -59,6 +59,16 @@ npx cypress run --spec tests/e2e/admin_user_flow.cy.ts
 Ensure the development server is running on `http://localhost:5173` before
 starting the E2E tests.
 
+### Accessibility Test
+
+Run the WCAG A and AA accessibility check with [axe-core](https://github.com/dequelabs/axe-core):
+
+```bash
+npm run test:a11y
+```
+
+This command executes a Vitest script that fails if any violations above level AA are found on the main page.
+
 ## Admin Panel
 
 To access the administrator interface:
