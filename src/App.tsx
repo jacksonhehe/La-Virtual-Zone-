@@ -16,6 +16,7 @@ const Calendario = lazy(() => import("./pages/Calendario"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const UserPanel = lazy(() => import("./pages/UserPanel"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
 
 const Tournaments = lazy(() => import("./pages/Tournaments"));
 const TournamentDetail = lazy(() => import("./pages/TournamentDetail"));
