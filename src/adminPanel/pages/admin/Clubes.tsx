@@ -8,25 +8,32 @@ import ConfirmDeleteModal from '../../components/admin/ConfirmDeleteModal';
 import { Club } from '../../types';
 
 const Clubes = () => {
-  const { clubs, addClub, updateClub, removeClub, setLoading } = useGlobalStore();
+  const { clubs, users, addClub, updateClub, removeClub, setLoading } = useGlobalStore();
   const [showNew, setShowNew] = useState(false);
   const [editClub, setEditClub] = useState<Club | null>(null);
   const [deleteClub, setDeleteClub] = useState<Club | null>(null);
   const [search, setSearch] = useState(''); 
 
-   const filteredClubs = clubs.filter(club =>
+  const getManagerName = (club: Club) => {
+    const m = users.find(u => u.id === club.managerId);
+    return m ? m.username : club.manager;
+  };
+
+  const filteredClubs = clubs.filter(club =>
     club.name.toLowerCase().includes(search.toLowerCase()) ||
-    club.manager.toLowerCase().includes(search.toLowerCase())
+    getManagerName(club).toLowerCase().includes(search.toLowerCase())
   );
 
   const handleCreateClub = async (clubData: Partial<Club>) => {
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
+    const managerUser = users.find(u => u.id === clubData.managerId);
     const newClub: Club = {
       id: Date.now().toString(),
       name: clubData.name || '',
-      manager: clubData.manager || '',
+      manager: managerUser ? managerUser.username : '',
+      managerId: clubData.managerId,
       budget: clubData.budget || 1000000,
       createdAt: new Date().toISOString()
     };
@@ -40,8 +47,14 @@ const Clubes = () => {
   const handleUpdateClub = async (clubData: Club) => {
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500));
-    
-    updateClub(clubData);
+
+    const managerUser = users.find(u => u.id === clubData.managerId);
+    const updatedClub: Club = {
+      ...clubData,
+      manager: managerUser ? managerUser.username : ''
+    };
+
+    updateClub(updatedClub);
     setEditClub(null);
     setLoading(false);
     toast.success('Club actualizado exitosamente');
@@ -104,7 +117,7 @@ const Clubes = () => {
               filteredClubs.map((club) => (
                 <tr key={club.id} className="border-t border-gray-700">
                   <td className="table-cell font-medium">{club.name}</td>
-                  <td className="table-cell">{club.manager}</td>
+                  <td className="table-cell">{getManagerName(club)}</td>
                   <td className="table-cell">${club.budget.toLocaleString()}</td>
                   <td className="table-cell">
                     {new Date(club.createdAt).toLocaleDateString()}

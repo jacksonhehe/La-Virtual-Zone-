@@ -79,7 +79,8 @@ const defaultData: AdminData = {
       email: 'manager@club1.com',
       role: 'dt',
       status: 'active',
-      createdAt: '2023-06-15T00:00:00.000Z'
+      createdAt: '2023-06-15T00:00:00.000Z',
+      clubId: '1'
     }
   ],
   clubs: [
@@ -87,6 +88,7 @@ const defaultData: AdminData = {
       id: '1',
       name: 'Barcelona FC',
       manager: 'Xavi Hernández',
+      managerId: '2',
       budget: 50000000,
       createdAt: '2023-01-01T00:00:00.000Z'
     },
@@ -241,29 +243,60 @@ export const useGlobalStore = create<GlobalStore>((set, get) => {
     },
 
     addClub: club => {
-      set(state => ({
-        clubs: [...state.clubs, club],
-        activities: [
-          ...state.activities,
-          {
-            id: Date.now().toString(),
-            userId: 'admin',
-            action: 'Club Created',
-            details: `Created club: ${club.name}`,
-            date: new Date().toISOString()
-          }
-        ]
-      }));
+      set(state => {
+        const updatedUsers = state.users.map(u =>
+          u.id === club.managerId ? { ...u, clubId: club.id } : u
+        );
+        return {
+          users: updatedUsers,
+          clubs: [...state.clubs, club],
+          activities: [
+            ...state.activities,
+            {
+              id: Date.now().toString(),
+              userId: 'admin',
+              action: 'Club Created',
+              details: `Created club: ${club.name}`,
+              date: new Date().toISOString()
+            }
+          ]
+        };
+      });
       persist();
     },
 
     updateClub: club => {
-      set(state => ({ clubs: state.clubs.map(c => (c.id === club.id ? club : c)) }));
+      set(state => {
+        const prev = state.clubs.find(c => c.id === club.id);
+        let updatedUsers = state.users;
+        if (prev?.managerId && prev.managerId !== club.managerId) {
+          updatedUsers = updatedUsers.map(u =>
+            u.id === prev.managerId ? { ...u, clubId: undefined } : u
+          );
+        }
+        if (club.managerId) {
+          updatedUsers = updatedUsers.map(u =>
+            u.id === club.managerId ? { ...u, clubId: club.id } : u
+          );
+        }
+        return {
+          users: updatedUsers,
+          clubs: state.clubs.map(c => (c.id === club.id ? club : c))
+        };
+      });
       persist();
     },
 
     removeClub: id => {
-      set(state => ({ clubs: state.clubs.filter(c => c.id !== id) }));
+      set(state => {
+        const club = state.clubs.find(c => c.id === id);
+        const updatedUsers = club?.managerId
+          ? state.users.map(u =>
+              u.id === club.managerId ? { ...u, clubId: undefined } : u
+            )
+          : state.users;
+        return { users: updatedUsers, clubs: state.clubs.filter(c => c.id !== id) };
+      });
       persist();
     },
 
