@@ -28,7 +28,7 @@ const LoginForm = () => {
   };
 
   const handleDemoLogin = () => {
-    login('admin', 'admin');
+    login('admin', 'password');
     navigate('/usuario');
   };
 
