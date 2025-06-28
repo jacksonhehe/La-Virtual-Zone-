@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { X, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -15,13 +16,15 @@ interface OfferModalProps {
 const OfferModal = ({ player, onClose }: OfferModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  const [closing, setClosing] = useState(false);
+  const handleClose = () => setClosing(true);
   const [offerAmount, setOfferAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
     };
     document.addEventListener('keydown', handleKeyDown);
     dialogRef.current?.focus();
@@ -101,25 +104,33 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
       setError(result);
     } else {
       setSuccess(true);
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      setTimeout(handleClose, 1500);
     }
   };
-  
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose}></div>
+      <motion.div
+        className="absolute inset-0 bg-black/70"
+        onClick={handleClose}
+        variants={{ open: { opacity: 1 }, closed: { opacity: 0 } }}
+        initial="closed"
+        animate={closing ? 'closed' : 'open'}
+      />
 
-      <div
+      <motion.div
         className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="offer-modal-title"
         ref={dialogRef}
+        variants={{ open: { opacity: 1, scale: 1 }, closed: { opacity: 0, scale: 0.95 } }}
+        initial="closed"
+        animate={closing ? 'closed' : 'open'}
+        onAnimationComplete={() => closing && onClose()}
       >
-        <button 
-          onClick={onClose}
+        <button
+          onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white"
         >
           <X size={24} />

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import useFocusTrap from '../../hooks/useFocusTrap';
 
@@ -9,11 +10,13 @@ interface Props {
 const RequestFundsModal = ({ onClose }: Props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  const [closing, setClosing] = useState(false);
+  const handleClose = () => setClosing(true);
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
     };
     document.addEventListener('keydown', handleKeyDown);
     dialogRef.current?.focus();
@@ -23,20 +26,30 @@ const RequestFundsModal = ({ onClose }: Props) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSent(true);
-    setTimeout(onClose, 1500);
+    setTimeout(handleClose, 1500);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose}></div>
-      <div
+      <motion.div
+        className="absolute inset-0 bg-black/70"
+        onClick={handleClose}
+        variants={{ open: { opacity: 1 }, closed: { opacity: 0 } }}
+        initial="closed"
+        animate={closing ? 'closed' : 'open'}
+      />
+      <motion.div
         className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-sm p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="request-funds-title"
         ref={dialogRef}
+        variants={{ open: { opacity: 1, scale: 1 }, closed: { opacity: 0, scale: 0.95 } }}
+        initial="closed"
+        animate={closing ? 'closed' : 'open'}
+        onAnimationComplete={() => closing && onClose()}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
           <X size={24} />
         </button>
         {sent ? (
