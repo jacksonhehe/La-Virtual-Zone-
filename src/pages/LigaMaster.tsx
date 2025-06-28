@@ -15,6 +15,7 @@ import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import ClubListItem from '../components/common/ClubListItem';
 import DashboardSkeleton from '../components/common/DashboardSkeleton';
+import ProgressBar from '../components/common/ProgressBar';
 import { useDataStore } from '../store/dataStore';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
@@ -163,7 +164,7 @@ const topScorers = [...players]
               
               <div className="overflow-x-auto min-w-[640px]">
                 <table className="w-full">
-                  <thead>
+                  <thead className="sticky top-0 bg-gray-900 z-10">
                     <tr className="text-xs text-gray-400 border-b border-gray-800">
                       <th scope="col" className="font-medium p-4 text-left">Pos</th>
                       <th scope="col" className="font-medium p-4 text-left">Club</th>
@@ -234,7 +235,7 @@ const topScorers = [...players]
                 </div>
               </div>
               
-              <div className="divide-y divide-gray-800">
+              <div className="p-4 space-y-4">
                 {upcomingMatches.map((match) => {
                   const homeClub = clubs.find(c => c.name === match.homeTeam);
                   const awayClub = clubs.find(c => c.name === match.awayTeam);
@@ -242,12 +243,12 @@ const topScorers = [...players]
                   return (
                     <div
                       key={match.id}
-                      className="p-4 bg-gradient-to-br from-dark to-gray-800 border border-gray-700 rounded-lg"
+                      className="card p-4 bg-gradient-to-br from-dark to-gray-800 border border-gray-700"
                     >
                       <div className="text-sm text-gray-400 text-center mb-3">
                         {formatDate(match.date)} • Jornada {match.round}
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col items-center w-2/5">
                           <img
@@ -268,6 +269,12 @@ const topScorers = [...players]
                           />
                           <span className="font-medium text-center">{awayClub?.name}</span>
                         </div>
+                      </div>
+
+                      <div className="mt-4 text-center">
+                        <Link to="/liga-master/fixture" className="btn-secondary text-sm">
+                          Ver detalles
+                        </Link>
                       </div>
                     </div>
                   );
@@ -401,6 +408,11 @@ const topScorers = [...players]
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Jornadas totales</p>
                   <p className="font-medium">{ligaMaster ? ligaMaster.rounds : 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 text-sm mb-1">Progreso de temporada</p>
+                  <ProgressBar value={seasonProgress} />
+                  <p className="text-xs text-gray-400 mt-1">{playedMatches}/{totalMatches} partidos</p>
                 </div>
               </div>
             </div>
