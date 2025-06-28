@@ -1,22 +1,22 @@
 import  { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar } from 'lucide-react';
-import { useGlobalStore, subscribe as subscribeGlobal } from '../store/globalStore';
+import { useGlobalStore } from '../store/globalStore';
+import { useAuth } from '../contexts/AuthContext';
 
 const SidebarAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const transfers = useGlobalStore(state => state.transfers);
-  const [pendingTransfers, setPendingTransfers] = useState(
-    transfers.filter(t => t.status === 'pending').length
-  );
+  const { transfers } = useGlobalStore();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const pendingTransfers = transfers.filter(t => t.status === 'pending').length;
 
   useEffect(() => {
-    const unsub = subscribeGlobal(
-      state => state.transfers.filter(t => t.status === 'pending').length,
-      setPendingTransfers
-    );
-    return () => unsub();
-  }, []);
+    if (!isAuthenticated) {
+      navigate('/login', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: Home },
