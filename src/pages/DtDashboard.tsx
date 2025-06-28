@@ -27,12 +27,28 @@ const    tabs = [
 
 export default function DtDashboard() {
   const { user } = useAuthStore();
-  const { club, fixtures } = useDataStore();
+  const { clubs, tournaments } = useDataStore();
+  const club = useMemo(
+    () => clubs.find(c => c.id === user?.clubId),
+    [clubs, user?.clubId]
+  );
+  const fixtures = useMemo(() => {
+    const matches = tournaments[0]?.matches || [];
+    return matches
+      .filter(m =>
+        club ? m.homeTeam === club.name || m.awayTeam === club.name : false
+      )
+      .slice(0, 6)
+      .map(m => ({ ...m, played: m.status === 'finished' }));
+  }, [tournaments, club]);
   const [activeTab, setActiveTab] = useState<Tab>('plantilla');
   const tabsRef = useRef<HTMLDivElement>(null);
 
-  const nextMatch = useMemo(() => 
-    fixtures.find(m => !m.played && (m.homeTeam === club?.name || m.awayTeam === club?.name)),
+  const nextMatch = useMemo(
+    () =>
+      fixtures.find(
+        m => !m.played && (m.homeTeam === club?.name || m.awayTeam === club?.name)
+      ),
     [fixtures, club?.name]
   );
 

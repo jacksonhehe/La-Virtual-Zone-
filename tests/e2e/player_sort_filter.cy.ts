@@ -1,8 +1,25 @@
 /// <reference types="cypress" />
 
+const dtUser = {
+  id: '3',
+  username: 'entrenador',
+  role: 'dt',
+  xp: 500,
+  clubId: 'club4',
+  status: 'active',
+  notifications: true,
+  lastLogin: new Date().toISOString(),
+  followers: 0,
+  following: 0
+};
+
 describe('Player table sorting and filtering', () => {
   beforeEach(() => {
-    cy.visit('/liga-master/plantilla');
+    cy.visit('/liga-master/plantilla', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('vz_current_user', JSON.stringify(dtUser));
+      }
+    });
   });
 
   it('filters players by search term', () => {
