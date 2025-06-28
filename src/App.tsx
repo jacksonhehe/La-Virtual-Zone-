@@ -39,6 +39,7 @@ const ClubFinances = lazy(() => import("./pages/ClubFinances"));
 const ClubSquad = lazy(() => import("./pages/ClubSquad"));
 const Admin = lazy(() => import("./pages/Admin"));
 const StyleGuide = lazy(() => import("./pages/StyleGuide"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Register />} />
             <Route path="usuario" element={<UserPanel />} />
+            <Route path="usuarios/:username" element={<UserProfile />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
             <Route path="admin/*" element={<Admin />} />
 
