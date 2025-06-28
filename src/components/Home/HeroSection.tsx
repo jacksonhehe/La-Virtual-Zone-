@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Users, TrendingUp, Trophy } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface HeroSectionProps {
   videoSrc?: string;
@@ -41,24 +42,39 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-display neon-text-blue">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-display neon-text-blue"
+          >
             LA VIRTUAL ZONE
-          </h1>
-          
-          <h2 className="text-2xl md:text-3xl font-medium mb-6 text-gray-100">
+          </motion.h1>
+
+          <motion.h2
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-2xl md:text-3xl font-medium mb-6 text-gray-100"
+          >
             La Premier League virtual del gaming competitivo
-          </h2>
+          </motion.h2>
           
           <p className="text-gray-300 text-lg mb-8">
             Gestiona tu club en la Liga Master, ficha jugadores estrella, 
             compite en torneos, y conviértete en una leyenda del fútbol virtual.
           </p>
           
-          <div className="mt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-8"
+          >
             <Link to="/registro" className="btn-primary text-xl py-3 px-6">
               Únete a la Liga Master
             </Link>
-          </div>
+          </motion.div>
           
           {/* Key features */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
