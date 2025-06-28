@@ -1,19 +1,28 @@
-import  { useState } from 'react';
+import  { useState, useEffect } from 'react';
 import { Check, X, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useGlobalStore } from '../../store/globalStore';
+import { useGlobalStore, subscribe as subscribeGlobal } from '../../store/globalStore';
 
 const Mercado = () => {
   const { transfers, approveTransfer, rejectTransfer } = useGlobalStore();
   const [filter, setFilter] = useState('pending');
   const [rejectModal, setRejectModal] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
-
-  const filteredTransfers = transfers.filter(transfer => 
-    filter === 'all' || transfer.status === filter
+  const [pendingCount, setPendingCount] = useState(
+    transfers.filter(t => t.status === 'pending').length
   );
 
-  const pendingCount = transfers.filter(t => t.status === 'pending').length;
+  useEffect(() => {
+    const unsub = subscribeGlobal(
+      state => state.transfers.filter(t => t.status === 'pending').length,
+      setPendingCount
+    );
+    return () => unsub();
+  }, []);
+
+  const filteredTransfers = transfers.filter(transfer =>
+    filter === 'all' || transfer.status === filter
+  );
 
   const handleApprove = (id: string) => {
     approveTransfer(id);

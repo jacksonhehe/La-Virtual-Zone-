@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 import {
   User,
   Club,
@@ -169,7 +170,8 @@ const defaultData: AdminData = {
   ]
 };
 
-export const useGlobalStore = create<GlobalStore>((set, get) => {
+export const useGlobalStore = create<GlobalStore>()(
+  subscribeWithSelector<GlobalStore>((set, get) => {
   const initial = loadAdminData(defaultData);
 
   const persist = () =>
@@ -388,5 +390,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => {
       persist();
     }
   };
-});
+}));
+
+export const subscribe = useGlobalStore.subscribe;
  
