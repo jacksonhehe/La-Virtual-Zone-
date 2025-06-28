@@ -1,8 +1,11 @@
 import { useParams, Link } from 'react-router-dom';
 import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
+import CircularProgress from '../components/common/CircularProgress';
+import LineupWidget from '../components/profile/LineupWidget';
+import FinancesWidget from '../components/profile/FinancesWidget';
 import { useDataStore } from '../store/dataStore';
-import { slugify } from '../utils/helpers';
+import { slugify, xpForNextLevel } from '../utils/helpers';
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -42,6 +45,10 @@ const UserProfile = () => {
   
   // Find club
   const club = clubs.find(c => c.name === user.club);
+
+  const currentLevelXp = xpForNextLevel(user.level - 1);
+  const nextLevelXp = xpForNextLevel(user.level);
+  const levelProgress = ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
   
   if (!username) {
     return (
@@ -98,17 +105,8 @@ const UserProfile = () => {
                 <button className="btn-outline text-sm px-3 py-1">Mensaje</button>
               </div>
               
-              <div className="bg-dark-lighter rounded-lg p-3 mb-4">
-                <div className="flex justify-between mb-1 text-sm">
-                  <span className="text-gray-400">Nivel {user.level}</span>
-                  <span className="text-gray-400">{user.xp} XP</span>
-                </div>
-                <div className="w-full h-2 bg-dark rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-primary to-secondary"
-                    style={{ width: `${(user.xp / (user.level * 1000)) * 100}%` }}
-                  ></div>
-                </div>
+              <div className="mb-4 flex justify-center">
+                <CircularProgress value={levelProgress} label={`Lvl ${user.level}`} />
               </div>
               
               <div className="space-y-2 text-sm text-left">
@@ -435,24 +433,27 @@ const UserProfile = () => {
                       </div>
                     </div>
                     
-                    <div className="bg-dark-lighter p-3 rounded-lg">
-                      <h4 className="font-medium mb-2">Formación habitual</h4>
-                      <p className="text-center text-xl font-bold">4-3-3</p>
-                      <div className="flex justify-center mt-2">
-                        <div className="text-xs text-gray-400">
-                          Estilo ofensivo con extremos abiertos
-                        </div>
-                      </div>
-                    </div>
+              <div className="bg-dark-lighter p-3 rounded-lg">
+                <h4 className="font-medium mb-2">Formación habitual</h4>
+                <p className="text-center text-xl font-bold">4-3-3</p>
+                <div className="flex justify-center mt-2">
+                  <div className="text-xs text-gray-400">
+                    Estilo ofensivo con extremos abiertos
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        {user.role === 'dt' && club && (
+          <LineupWidget clubId={club.id} />
+        )}
+        <FinancesWidget />
       </div>
     </div>
-  );
+  </div>
+</div>
+);
 };
 
 // Helper functions
