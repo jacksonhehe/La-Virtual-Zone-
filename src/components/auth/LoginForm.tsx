@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, User, Lock } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
@@ -6,29 +7,32 @@ import { useAuthStore } from '../../store/authStore';
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
     if (!username || !password) {
-      setError('Por favor, ingresa todos los campos');
+      toast.error('Por favor, ingresa todos los campos');
       return;
     }
     
     try {
       login(username, password);
+      toast.success('Inicio de sesión exitoso');
       navigate('/usuario');
-    } catch {
-      setError('Credenciales incorrectas');
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error('Credenciales incorrectas');
+      }
     }
   };
 
   const handleDemoLogin = () => {
     login('admin', 'password');
+    toast.success('Inicio de sesión exitoso');
     navigate('/usuario');
   };
 
@@ -41,12 +45,6 @@ const LoginForm = () => {
       </div>
       
       <h2 className="text-2xl font-bold text-center mb-6">Iniciar Sesión</h2>
-      
-      {error && (
-        <div className="bg-red-500/20 border border-red-500 text-red-500 rounded-md p-3 mb-4">
-          {error}
-        </div>
-      )}
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

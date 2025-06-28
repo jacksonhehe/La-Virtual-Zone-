@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, CheckCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
@@ -8,29 +9,31 @@ const RegisterForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { register } = useAuthStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
     if (!username || !email || !password || !confirmPassword) {
-      setError('Por favor, completa todos los campos');
+      toast.error('Por favor, completa todos los campos');
       return;
     }
-    
+
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      toast.error('Las contraseñas no coinciden');
       return;
     }
     
     try {
       register(email, username, password);
+      toast.success('Registro exitoso');
       navigate('/usuario');
-    } catch {
-      setError('Error al registrarse');
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error('Error al registrarse');
+      }
     }
   };
 
@@ -43,12 +46,6 @@ const RegisterForm = () => {
       </div>
       
       <h2 className="text-2xl font-bold text-center mb-6">Registro de Usuario</h2>
-      
-      {error && (
-        <div className="bg-red-500/20 border border-red-500 text-red-500 rounded-md p-3 mb-4">
-          {error}
-        </div>
-      )}
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
