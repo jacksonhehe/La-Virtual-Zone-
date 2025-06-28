@@ -3,7 +3,8 @@ import PageHeader from '../components/common/PageHeader';
 import ResumenClub from '../components/plantilla/ResumenClub';
 import PlayerTable from '../components/plantilla/PlayerTable';
 import playersData from '../data/players.json';
-import { dtClub } from '../data/mockData';
+import { useAuthStore } from '../store/authStore';
+import { useDataStore } from '../store/dataStore';
 import usePersistentState from '../hooks/usePersistentState';
 
 interface Player {
@@ -24,6 +25,9 @@ const Plantilla = () => {
     'vz_players',
     playersData as Player[]
   );
+  const { user } = useAuthStore();
+  const { clubs } = useDataStore();
+  const club = clubs.find(c => c.id === user?.clubId);
   const [active, setActive] = useState<Player | null>(null);
   const [search, setSearch] = useState('');
 
@@ -31,7 +35,7 @@ const Plantilla = () => {
     <div>
       <PageHeader title="Plantilla" subtitle="Jugadores registrados en tu plantilla." />
       <div className="container mx-auto px-4 py-8">
-        <ResumenClub club={{ name: dtClub.name, logo: dtClub.logo }} players={players} />
+        <ResumenClub club={club} players={players} />
         <div className="mt-6">
           <input
             data-cy="player-search"

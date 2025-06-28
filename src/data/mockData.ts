@@ -1035,18 +1035,8 @@ export const storeItems: StoreItem[] = [
 ];
 
 // --- Datos para el tablero del DT ---
-export const dtClub: DtClub = {
-  id: 'club1',
-  name: 'Rayo Digital FC',
-  slug: 'rayo-digital-fc',
-  logo: clubs[0].logo,
-  formation: '4-3-3',
-  budget: clubs[0].budget,
-  players: players.filter(p => p.clubId === 'club1')
-};
-
 export const dtFixtures: DtFixture[] = tournaments[0].matches
-  .filter(m => m.homeTeam === dtClub.name || m.awayTeam === dtClub.name)
+  .filter(m => m.homeTeam === clubs[0].name || m.awayTeam === clubs[0].name)
   .slice(0, 6)
   .map(m => ({ ...m, played: m.status === 'finished' }));
 

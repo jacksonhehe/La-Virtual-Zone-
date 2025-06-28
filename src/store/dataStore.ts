@@ -18,8 +18,6 @@ import {
   faqs,
   storeItems,
   posts,
-  dtClub,
-  dtFixtures,
   dtMarket,
   dtObjectives,
   dtTasks,
@@ -50,6 +48,23 @@ import {
   DtEvent,
   DtRanking
 } from '../types';
+
+const initialClubs = getClubs();
+const initialUser = useAuthStore.getState().user;
+const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
+const initialClub: DtClub = {
+  id: baseClub.id,
+  name: baseClub.name,
+  slug: baseClub.slug,
+  logo: baseClub.logo,
+  formation: '4-3-3',
+  budget: baseClub.budget,
+  players: players.filter(p => p.clubId === baseClub.id)
+};
+const initialFixtures = tournaments[0].matches
+  .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
+  .slice(0, 6)
+  .map(m => ({ ...m, played: m.status === 'finished' }));
 
 interface DataState {
   clubs: Club[];
@@ -103,7 +118,7 @@ interface DataState {
 }
 
 export const useDataStore = create<DataState>((set) => ({
-  clubs: getClubs(),
+  clubs: initialClubs,
   players,
   tournaments,
   transfers,
@@ -115,8 +130,8 @@ export const useDataStore = create<DataState>((set) => ({
   storeItems,
   posts,
   marketStatus,
-  club: dtClub,
-  fixtures: dtFixtures,
+  club: initialClub,
+  fixtures: initialFixtures,
   market: dtMarket,
   objectives: dtObjectives,
   tasks: dtTasks,
