@@ -44,18 +44,18 @@ const AdminLayout = () => {
           </div>
         }>
           <Routes>
-            <Route path="/admin" element={<Dashboard />} />
-            <Route path="/admin/usuarios" element={<Usuarios />} />
-            <Route path="/admin/clubes" element={<Clubes />} />
-            <Route path="/admin/jugadores" element={<Jugadores />} />
-            <Route path="/admin/mercado" element={<Mercado />} />
-            <Route path="/admin/torneos" element={<Torneos />} />
-            <Route path="/admin/noticias" element={<Noticias />} />
-            <Route path="/admin/comentarios" element={<Comentarios />} />
-            <Route path="/admin/actividad" element={<Actividad />} />
-            <Route path="/admin/estadisticas" element={<Estadisticas />} />
-            <Route path="/admin/calendario" element={<Calendario />} />
-            <Route path="/" element={<Navigate to="/admin" replace />} />
+            <Route index element={<Dashboard />} />
+            <Route path="usuarios" element={<Usuarios />} />
+            <Route path="clubes" element={<Clubes />} />
+            <Route path="jugadores" element={<Jugadores />} />
+            <Route path="mercado" element={<Mercado />} />
+            <Route path="torneos" element={<Torneos />} />
+            <Route path="noticias" element={<Noticias />} />
+            <Route path="comentarios" element={<Comentarios />} />
+            <Route path="actividad" element={<Actividad />} />
+            <Route path="estadisticas" element={<Estadisticas />} />
+            <Route path="calendario" element={<Calendario />} />
+            <Route path="*" element={<Navigate to="." replace />} />
           </Routes>
         </Suspense>
       </main>
