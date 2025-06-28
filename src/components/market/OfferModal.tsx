@@ -18,6 +18,15 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
   const [offerAmount, setOfferAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    dialogRef.current?.focus();
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
   
   const { user } = useAuthStore();
   const { clubs } = useDataStore();
