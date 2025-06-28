@@ -3,23 +3,35 @@
 @tailwind utilities;
 
 :root {
-  --primary: #7f39fb;
+  /* Design tokens */
+  --vz-primary: #7f39fb;
+  --vz-accent: #3ff;
+  --vz-bg-surface: #18181f;
+  --vz-bg-overlay: rgba(255, 255, 255, 0.05);
+  --vz-text-main: #fff;
+
+  /* Backwards compatibility */
+  --primary: var(--vz-primary);
   --primary-light: #9f65fd;
   --primary-dark: #5f2cb8;
+  --accent: var(--vz-accent);
+  --bg-surface: var(--vz-bg-surface);
+  --bg-overlay: var(--vz-bg-overlay);
+  --text-main: var(--vz-text-main);
   --neon-red: #ff003c;
   --neon-blue: #00b3ff;
   --neon-green: #00ff8f;
   --neon-yellow: #ffe600;
-  --accent: #3ff;
-  --bg-surface: #18181f;
-  --bg-overlay: rgba(255, 255, 255, 0.05);
-  --text-main: #fff;
 }
 
 html:not(.dark) {
-  --bg-surface: #f4f4f5; /* zinc-100 */
-  --bg-overlay: rgba(0, 0, 0, 0.05);
-  --text-main: #27272a; /* zinc-800 */
+  --vz-bg-surface: #f4f4f5; /* zinc-100 */
+  --vz-bg-overlay: rgba(0, 0, 0, 0.05);
+  --vz-text-main: #27272a; /* zinc-800 */
+  /* mirror to legacy vars */
+  --bg-surface: var(--vz-bg-surface);
+  --bg-overlay: var(--vz-bg-overlay);
+  --text-main: var(--vz-text-main);
 }
 
 body {

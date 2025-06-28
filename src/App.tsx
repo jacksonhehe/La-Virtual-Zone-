@@ -38,6 +38,7 @@ const ClubProfile = lazy(() => import("./pages/ClubProfile"));
 const ClubFinances = lazy(() => import("./pages/ClubFinances"));
 const ClubSquad = lazy(() => import("./pages/ClubSquad"));
 const Admin = lazy(() => import("./pages/Admin"));
+const StyleGuide = lazy(() => import("./pages/StyleGuide"));
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
             <Route path="galeria" element={<Gallery />} />
             <Route path="tienda" element={<Store />} />
             <Route path="ayuda" element={<Help />} />
+            <Route path="styleguide" element={<StyleGuide />} />
 
             <Route path="liga-master" element={<LigaMaster />} />
             <Route path="liga-master/plantilla" element={<Plantilla />} />
