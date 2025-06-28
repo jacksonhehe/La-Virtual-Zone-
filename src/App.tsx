@@ -52,7 +52,7 @@ function App() {
             <Route path="registro" element={<Register />} />
             <Route path="usuario" element={<UserPanel />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
-            <Route path="admin" element={<Admin />} />
+            <Route path="admin/*" element={<Admin />} />
 
             <Route path="torneos">
               <Route index element={<Tournaments />} />
