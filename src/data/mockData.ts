@@ -61,7 +61,7 @@ export const clubs: Club[] = [
     foundedYear: 2023,
     stadium: 'Pixel Arena',
     budget: 22000000,
-    manager: 'DT Pixel',
+    manager: 'jackso',
     playStyle: 'Contraataque',
     primaryColor: '#3b82f6',
     secondaryColor: '#ffffff',
@@ -1084,7 +1084,7 @@ export const dtRankings: DtRanking[] = [
   },
   {
     id: 'r3',
-    username: 'DT Pixel',
+    username: 'jackso',
     clubName: clubs[1].name,
     clubLogo: clubs[1].logo,
     elo: 1450
