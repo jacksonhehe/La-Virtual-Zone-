@@ -1,21 +1,36 @@
 import { Link } from 'react-router-dom';
 import { Users, TrendingUp, Trophy } from 'lucide-react';
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  videoSrc?: string;
+}
+const HeroSection = ({ videoSrc }: HeroSectionProps) => {
   return (
     <div className="relative min-h-[80vh] flex items-center bg-gray-900 overflow-hidden">
-      {/* Background image with overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-black"
-        style={{
-          backgroundImage: `linear-gradient(rgba(26, 26, 36, 0.4), rgba(17, 24, 39, 0.9)), url(https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0)`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        {/* Animated overlay */}
-        <div className="absolute inset-0 animated-bg opacity-50"></div>
-      </div>
+      {videoSrc ? (
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <video
+            src={videoSrc}
+            autoPlay
+            muted
+            loop
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 animated-bg opacity-50" />
+        </div>
+      ) : (
+        <div
+          className="absolute inset-0 z-0 bg-black"
+          style={{
+            backgroundImage: `linear-gradient(rgba(26, 26, 36, 0.4), rgba(17, 24, 39, 0.9)), url(https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          {/* TODO mock */}
+          <div className="absolute inset-0 animated-bg opacity-50" />
+        </div>
+      )}
       
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
@@ -39,12 +54,9 @@ const HeroSection = () => {
             compite en torneos, y conviértete en una leyenda del fútbol virtual.
           </p>
           
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link to="/registro" className="btn-primary">
-              Crear Cuenta
-            </Link>
-            <Link to="/liga-master" className="btn-secondary">
-              Explorar Liga Master
+          <div className="mt-8">
+            <Link to="/registro" className="btn-primary text-xl py-3 px-6">
+              Únete a la Liga Master
             </Link>
           </div>
           

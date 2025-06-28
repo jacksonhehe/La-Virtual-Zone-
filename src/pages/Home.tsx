@@ -1,4 +1,5 @@
 import  HeroSection from '../components/Home/HeroSection';
+import HowItWorks from '../components/Home/HowItWorks';
 import LeagueStandings from '../components/Home/LeagueStandings';
 import FeaturedTournaments from '../components/Home/FeaturedTournaments';
 import LatestNews from '../components/Home/LatestNews';
@@ -10,7 +11,8 @@ const Home = () => {
   return (
     <div>
       <HeroSection />
-      
+      <HowItWorks />
+
       <div className="container mx-auto px-4 py-12 md:py-20">
         <FeaturedTournaments />
       </div>
