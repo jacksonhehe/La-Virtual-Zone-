@@ -1,0 +1,116 @@
+{
+  "clubs": [
+    {
+      "id": "club1",
+      "slug": "rayo-digital-fc",
+      "name": "Rayo Digital FC",
+      "logo": "https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true",
+      "foundedYear": 2023,
+      "stadium": "Estadio Cyber Arena",
+      "budget": 25000000,
+      "manager": "coach",
+      "playStyle": "Posesión",
+      "primaryColor": "#ef4444",
+      "secondaryColor": "#000000",
+      "description": "Club fundador de la Liga Master, conocido por su juego de posesión y formación de talento joven.",
+      "titles": [
+        { "id": "title1", "name": "Liga Master", "year": 2023, "type": "league" },
+        { "id": "title2", "name": "Copa PES", "year": 2024, "type": "cup" }
+      ],
+      "reputation": 85,
+      "fanBase": 10000,
+      "morale": 75
+    },
+    {
+      "id": "club2",
+      "slug": "atletico-pixelado",
+      "name": "Atlético Pixelado",
+      "logo": "https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true",
+      "foundedYear": 2023,
+      "stadium": "Pixel Arena",
+      "budget": 22000000,
+      "manager": "DT Pixel",
+      "playStyle": "Contraataque",
+      "primaryColor": "#3b82f6",
+      "secondaryColor": "#ffffff",
+      "description": "Club histórico con un estilo de juego agresivo y rápido, especializado en contraataques letales.",
+      "titles": [
+        { "id": "title3", "name": "Supercopa Digital", "year": 2024, "type": "supercup" }
+      ],
+      "reputation": 80,
+      "fanBase": 8500,
+      "morale": 70
+    }
+  ],
+  "players": [
+    {
+      "id": 1,
+      "number": 1,
+      "name": "Juan Pérez",
+      "position": "GK",
+      "ovr": 82,
+      "age": 28,
+      "contractYears": 2,
+      "salary": 5000
+    },
+    {
+      "id": 2,
+      "number": 9,
+      "name": "Carlos Sánchez",
+      "position": "ST",
+      "ovr": 85,
+      "age": 25,
+      "contractYears": 3,
+      "salary": 7000
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "match1",
+      "category": "partido",
+      "title": "Rayo Digital FC vs Atlético Pixelado",
+      "start": "2025-02-02T18:00:00",
+      "homeTeam": "Rayo Digital FC",
+      "homeLogo": "https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true",
+      "awayTeam": "Atlético Pixelado",
+      "awayLogo": "https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true",
+      "venue": "Estadio Cyber Arena",
+      "weather": "Soleado",
+      "moral": "Alta"
+    },
+    {
+      "id": "training1",
+      "category": "entrenamiento",
+      "title": "Entrenamiento matutino",
+      "start": "2025-02-04T10:00:00",
+      "venue": "Campo de entrenamiento",
+      "weather": "Parcialmente nublado",
+      "moral": "Media"
+    },
+    {
+      "id": "finance1",
+      "category": "finanzas",
+      "title": "Revisión financiera",
+      "start": "2025-02-10T12:00:00"
+    },
+    {
+      "id": "match2",
+      "category": "partido",
+      "title": "Neón FC vs Rayo Digital FC",
+      "start": "2025-02-12T20:00:00",
+      "homeTeam": "Neón FC",
+      "homeLogo": "https://ui-avatars.com/api/?name=NFC&background=ec4899&color=fff&size=128&bold=true",
+      "awayTeam": "Rayo Digital FC",
+      "awayLogo": "https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true",
+      "venue": "Estadio Luminoso",
+      "weather": "Lluvia",
+      "moral": "Alta"
+    },
+    {
+      "id": "marketEnd",
+      "category": "mercado",
+      "title": "Fin de mercado",
+      "start": "2025-02-15"
+    }
+  ]
+}
