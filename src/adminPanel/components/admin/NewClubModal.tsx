@@ -1,5 +1,6 @@
 import  { useState, useRef, useEffect } from 'react';
 import { Club } from '../../types';
+import { useGlobalStore } from '../../store/globalStore';
 
 interface Props {
   onClose: () => void;
@@ -9,10 +10,11 @@ interface Props {
 const NewClubModal = ({ onClose, onSave }: Props) => {
   const [formData, setFormData] = useState({
     name: '',
-    manager: '',
+    managerId: '',
     budget: 1000000
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const users = useGlobalStore(state => state.users);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Nombre requerido';
-    if (!formData.manager.trim()) newErrors.manager = 'Entrenador requerido';
+    if (!formData.managerId) newErrors.managerId = 'Entrenador requerido';
     if (formData.budget <= 0) newErrors.budget = 'Presupuesto debe ser mayor a 0';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -59,13 +61,19 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
           <div>
-            <input
-              className={`input w-full ${errors.manager ? 'border-red-500' : ''}`}
-              placeholder="Entrenador"
-              value={formData.manager}
-              onChange={(e) => setFormData({...formData, manager: e.target.value})}
-            />
-            {errors.manager && <p className="text-red-500 text-sm mt-1">{errors.manager}</p>}
+            <select
+              className={`input w-full ${errors.managerId ? 'border-red-500' : ''}`}
+              value={formData.managerId}
+              onChange={e => setFormData({ ...formData, managerId: e.target.value })}
+            >
+              <option value="">Seleccionar DT</option>
+              {users.filter(u => u.role === 'dt' && !u.clubId).map(u => (
+                <option key={u.id} value={u.id}>{u.username}</option>
+              ))}
+            </select>
+            {errors.managerId && (
+              <p className="text-red-500 text-sm mt-1">{errors.managerId}</p>
+            )}
           </div>
           <div>
             <input

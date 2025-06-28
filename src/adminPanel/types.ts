@@ -5,12 +5,14 @@ export  interface User {
   role: 'admin' | 'dt' | 'user';
   status: 'active' | 'inactive';
   createdAt: string;
+  clubId?: string;
 }
 
 export interface Club {
   id: string;
   name: string;
   manager: string;
+  managerId?: string;
   budget: number;
   createdAt: string;
 }
