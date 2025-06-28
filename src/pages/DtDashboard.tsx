@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, TrendingUp, Award, Settings, Bell } from 'lucide-react';   
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const   PlantillaTab = lazy(() => import('../components/dt-dashboard/PlantillaTab'));
 const TacticasTab = lazy(() => import('../components/dt-dashboard/TacticasTab'));
@@ -67,7 +67,6 @@ export default function DtDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       
       {/* Header */}
       <motion.div 
