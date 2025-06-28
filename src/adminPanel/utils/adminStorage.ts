@@ -1,3 +1,9 @@
+import {
+  VZ_USERS_KEY,
+  VZ_CLUBS_KEY,
+  VZ_PLAYERS_KEY
+} from '../../utils/storageKeys';
+
 export interface AdminData {
   users: import('../types').User[];
   clubs: import('../types').Club[];
@@ -12,7 +18,8 @@ export interface AdminData {
 
 const PREFIX = 'vz_';
 
-const keys = {
+// Keys previously used by older admin panel versions
+const OLD_KEYS = {
   users: `${PREFIX}users_admin`,
   clubs: `${PREFIX}clubs_admin`,
   players: `${PREFIX}players_admin`,
@@ -22,10 +29,39 @@ const keys = {
   standings: `${PREFIX}standings_admin`,
   activities: `${PREFIX}activities_admin`,
   comments: `${PREFIX}comments_admin`
+} as const;
+
+// Updated keys aligned with the main application
+const keys = {
+  users: VZ_USERS_KEY,
+  clubs: VZ_CLUBS_KEY,
+  players: VZ_PLAYERS_KEY,
+  tournaments: OLD_KEYS.tournaments,
+  newsItems: OLD_KEYS.newsItems,
+  transfers: OLD_KEYS.transfers,
+  standings: OLD_KEYS.standings,
+  activities: OLD_KEYS.activities,
+  comments: OLD_KEYS.comments
+} as const;
+
+const migrateOldKeys = () => {
+  Object.entries(OLD_KEYS).forEach(([prop, oldKey]) => {
+    const newKey = (keys as any)[prop];
+    if (oldKey !== newKey) {
+      const oldVal = localStorage.getItem(oldKey);
+      if (oldVal && !localStorage.getItem(newKey)) {
+        localStorage.setItem(newKey, oldVal);
+      }
+      if (oldVal) {
+        localStorage.removeItem(oldKey);
+      }
+    }
+  });
 };
 
 export const loadAdminData = (defaults: AdminData): AdminData => {
   const data: AdminData = { ...defaults };
+  migrateOldKeys();
   Object.entries(keys).forEach(([prop, key]) => {
     const json = localStorage.getItem(key);
     if (json) {
