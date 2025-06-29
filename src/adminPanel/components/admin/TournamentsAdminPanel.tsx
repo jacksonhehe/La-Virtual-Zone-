@@ -4,8 +4,13 @@ import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 
 const TournamentsAdminPanel = () => {
-  const { tournaments } = useGlobalStore();
+  const { tournaments, updateTournamentStatus } = useGlobalStore();
   const [showNew, setShowNew] = useState(false);
+  const [selected, setSelected] = useState<Tournament | null>(null);
+
+  const handleView = (t: Tournament) => setSelected(t);
+  const handleStart = (id: string) => updateTournamentStatus(id, 'active');
+  const handlePause = (id: string) => updateTournamentStatus(id, 'upcoming');
 
   return (
        <div className="space-y-8">
@@ -52,13 +57,26 @@ const TournamentsAdminPanel = () => {
               </div>
               
               <div className="flex space-x-2 mt-4">
-                <button className="btn-primary flex-1 text-sm">
+                <button
+                  className="btn-primary flex-1 text-sm"
+                  onClick={() => handleView(tournament)}
+                >
                   <Award size={16} className="mr-1" />
                   Ver
                 </button>
-                {tournament.status === 'active' && (
-                  <button className="btn-outline text-sm">
+                {tournament.status === 'active' ? (
+                  <button
+                    className="btn-outline text-sm"
+                    onClick={() => handlePause(tournament.id)}
+                  >
                     <Pause size={16} />
+                  </button>
+                ) : (
+                  <button
+                    className="btn-outline text-sm"
+                    onClick={() => handleStart(tournament.id)}
+                  >
+                    <Play size={16} />
                   </button>
                 )}
               </div>
@@ -113,9 +131,32 @@ const TournamentsAdminPanel = () => {
           </div>
         </div>
       </div>
+      {selected && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">{selected.name}</h3>
+            <p className="text-gray-400 mb-2">
+              Estado:{' '}
+              {selected.status === 'active'
+                ? 'Activo'
+                : selected.status === 'completed'
+                ? 'Completado'
+                : 'Próximo'}
+            </p>
+            <p className="text-gray-400 mb-4">
+              Jornada: {selected.currentRound} / {selected.totalRounds}
+            </p>
+            <div className="flex justify-end">
+              <button className="btn-outline" onClick={() => setSelected(null)}>
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}; 
+};
 
 export default TournamentsAdminPanel;
  

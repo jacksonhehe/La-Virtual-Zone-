@@ -48,11 +48,10 @@ interface GlobalStore {
   // Players
   addPlayer: (player: Player) => void;
   updatePlayer: (player: Player) => void;
-  removePlayer: (id: string) => void;
+    removePlayer: (id: string) => void;
 
-  // Matches
-  addMatch: (match: Match) => void;
-  updateMatch: (match: Match) => void;
+    // Tournaments
+    updateTournamentStatus: (id: string, status: Tournament['status']) => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -366,13 +365,12 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
 
-    addMatch: match => {
-      set(state => ({ matches: [...state.matches, match] }));
-      persist();
-    },
-
-    updateMatch: match => {
-      set(state => ({ matches: state.matches.map(m => (m.id === match.id ? match : m)) }));
+    updateTournamentStatus: (id, status) => {
+      set(state => ({
+        tournaments: state.tournaments.map(t =>
+          t.id === id ? { ...t, status } : t
+        )
+      }));
       persist();
     },
 
