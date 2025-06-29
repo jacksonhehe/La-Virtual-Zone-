@@ -48,10 +48,15 @@ interface GlobalStore {
   // Players
   addPlayer: (player: Player) => void;
   updatePlayer: (player: Player) => void;
-    removePlayer: (id: string) => void;
+  removePlayer: (id: string) => void;
 
-    // Tournaments
-    updateTournamentStatus: (id: string, status: Tournament['status']) => void;
+  // Matches
+  addMatch: (match: Match) => void;
+  updateMatch: (match: Match) => void;
+  removeMatch: (id: string) => void;
+
+  // Tournaments
+  updateTournamentStatus: (id: string, status: Tournament['status']) => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -126,8 +131,6 @@ const defaultData: AdminData = {
       price: 20000000
     }
   ],
-  matches: [],
-  tournaments: [],
   matches: [
     {
       id: 'match1',
@@ -166,6 +169,7 @@ const defaultData: AdminData = {
       status: 'scheduled'
     }
   ],
+  tournaments: [],
   newsItems: [
     {
       id: '1',
@@ -221,19 +225,18 @@ export const useGlobalStore = create<GlobalStore>()(
   const initial = loadAdminData(defaultData);
 
   const persist = () =>
-    saveAdminData({
-      users: get().users,
-      clubs: get().clubs,
-      players: get().players,
-      matches: get().matches,
-      tournaments: get().tournaments,
-      matches: get().matches,
-      newsItems: get().newsItems,
-      transfers: get().transfers,
-      standings: get().standings,
-      activities: get().activities,
-      comments: get().comments
-    });
+      saveAdminData({
+        users: get().users,
+        clubs: get().clubs,
+        players: get().players,
+        matches: get().matches,
+        tournaments: get().tournaments,
+        newsItems: get().newsItems,
+        transfers: get().transfers,
+        standings: get().standings,
+        activities: get().activities,
+        comments: get().comments
+      });
 
   return {
     ...initial,
@@ -362,6 +365,21 @@ export const useGlobalStore = create<GlobalStore>()(
 
     removePlayer: id => {
       set(state => ({ players: state.players.filter(p => p.id !== id) }));
+      persist();
+    },
+
+    addMatch: match => {
+      set(state => ({ matches: [...state.matches, match] }));
+      persist();
+    },
+
+    updateMatch: match => {
+      set(state => ({ matches: state.matches.map(m => (m.id === match.id ? match : m)) }));
+      persist();
+    },
+
+    removeMatch: id => {
+      set(state => ({ matches: state.matches.filter(m => m.id !== id) }));
       persist();
     },
 
