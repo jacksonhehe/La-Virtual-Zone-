@@ -1,5 +1,7 @@
 import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Users, Globe, User, ShoppingBag } from 'lucide-react';
+import Card from '../../components/ui/Card';
+import StatsCard from '../../components/admin/StatsCard';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -100,34 +102,34 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart */}
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-4">Usuarios por Mes</h3>
+        <Card className="p-6">
+          <h3 className="text-lg font-heading mb-4">Usuarios por Mes</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={kpiData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="name" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--vz-bg-overlay)" />
+              <XAxis dataKey="name" stroke="var(--vz-text-main)" />
+              <YAxis stroke="var(--vz-text-main)" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--vz-bg-surface)',
+                  border: '1px solid var(--vz-bg-overlay)',
                   borderRadius: '8px',
-                  color: '#F3F4F6'
-                }} 
+                  color: 'var(--vz-text-main)'
+                }}
               />
-              <Bar dataKey="users" fill="#3B82F6" />
+              <Bar dataKey="users" fill="var(--vz-primary)" />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
 
         {/* Activity Timeline */}
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-4">Actividad Reciente</h3>
+        <Card className="p-6">
+          <h3 className="text-lg font-heading mb-4">Actividad Reciente</h3>
           <div className="space-y-3">
             {recentActivities.length > 0 ? (
               recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div key={activity.id} className="flex items-center space-x-3 p-3 bg-vz-overlay rounded">
+                  <div className="w-2 h-2 bg-neon-blue rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">{activity.action}</p>
                     <p className="text-xs text-secondary">{activity.details}</p>
@@ -139,27 +141,28 @@ const Dashboard = () => {
               <p className="text-secondary text-center py-4">No hay actividad reciente</p>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* System Status */}
-      <div className="card">
-        <h3 className="text-lg font-semibold mb-4">Estado del Sistema</h3>
+      <Card className="p-6">
+        <h3 className="text-lg font-heading mb-4">Estado del Sistema</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center justify-between p-3 bg-green-900/20 border border-green-800 rounded-lg">
-            <span className="text-sm">Mercado</span>
-            <span className="text-green-400 text-sm font-medium">Abierto</span>
+          <div className="flex items-center justify-between p-3 bg-neon-green/20 border border-neon-green rounded">
+            <span className="text-sm font-heading">Mercado</span>
+            <span className="text-neon-green text-sm font-medium">Abierto</span>
           </div>
-          <div className="flex items-center justify-between p-3 bg-blue-900/20 border border-blue-800 rounded-lg">
-            <span className="text-sm">Jornada Actual</span>
-            <span className="text-blue-400 text-sm font-medium">15</span>
+          <div className="flex items-center justify-between p-3 bg-neon-blue/20 border border-neon-blue rounded">
+            <span className="text-sm font-heading">Jornada Actual</span>
+            <span className="text-neon-blue text-sm font-medium">15</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-gray-800 border border-dark-light rounded-lg">
             <span className="text-sm">Último Backup</span>
             <span className="text-secondary text-sm">Hace 2h</span>
+
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

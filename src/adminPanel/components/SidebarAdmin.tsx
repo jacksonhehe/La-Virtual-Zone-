@@ -47,7 +47,7 @@ const SidebarAdmin = () => {
       {/* Mobile toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 rounded-lg"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-vz-surface rounded-lg"
         aria-label="Toggle sidebar"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -63,12 +63,12 @@ const SidebarAdmin = () => {
 
       {/* Sidebar */}
            <div className={`
-        fixed md:static top-0 left-0 h-full w-72 bg-gradient-to-b from-gray-800/95 to-gray-900/95 border-r border-gray-700/50 backdrop-blur-xl z-50 transform transition-all duration-300 ease-in-out
+        fixed md:static top-0 left-0 h-full w-72 bg-vz-surface border-r border-vz-overlay backdrop-blur-xl z-50 transform transition-all duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 border-b border-gray-700/50">
+        <div className="p-6 border-b border-vz-overlay">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-vz-primary rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-lg">VZ</span>
             </div>
             <div>
@@ -85,22 +85,22 @@ const SidebarAdmin = () => {
               to={item.href}
               end={item.href === '/admin'}
               className={({ isActive }) =>
-                `sidebar-link ${isActive ? 'active' : ''}`
+                `sidebar-link ${isActive ? 'bg-vz-primary text-white shadow-lg' : ''}`
               }
               onClick={() => setIsOpen(false)}
               aria-label={item.name}
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-700/50 group-hover:bg-gray-600/50 transition-colors">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-vz-overlay text-vz-text group-hover:bg-vz-surface transition-colors">
                 <item.icon size={18} />
               </div>
               <span className="font-medium">{item.name}</span>
               {item.badge && item.badge > 0 && (
-                <span className="ml-auto bg-gradient-to-r from-red-600 to-pink-600 text-white text-xs rounded-full px-2.5 py-1 font-bold shadow-lg animate-pulse">
+                <span className="ml-auto bg-vz-overlay text-vz-text text-xs rounded-full px-2.5 py-1 font-bold shadow-lg animate-pulse">
                   {item.badge}
                 </span>
               )}
             </NavLink>
-          ))} 
+          ))}
         </nav>
       </div>
     </>
