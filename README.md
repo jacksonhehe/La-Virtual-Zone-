@@ -82,3 +82,7 @@ Within the admin panel you will find management sections for:
 ## Data Persistence
 
 User accounts and login state are stored in the browser using `localStorage`. Clearing your browser data resets this information. Other league data (clubs, players, tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
