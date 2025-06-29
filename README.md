@@ -37,7 +37,7 @@ npm run preview
 ```
 ## Tests
 
-Run the Cypress test suite (which now includes an admin user flow test):
+Run the Cypress test suite (which now includes admin user flow and club creation tests):
 
 ```bash
 npm run test
