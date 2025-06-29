@@ -23,7 +23,7 @@ export interface Player {
   position: string;
   clubId: string;
   overall: number;
-  price: number;
+  price?: number;
 }
 
 export interface Tournament {
