@@ -53,6 +53,18 @@ export interface Transfer {
   createdAt: string;
 }
 
+export interface Match {
+  id: string;
+  home: string;
+  away: string;
+  date: string;
+  time: string;
+  round: number;
+  status: 'scheduled' | 'live' | 'finished';
+  homeScore?: number;
+  awayScore?: number;
+}
+
 export interface Standing {
   id: string;
   clubId: string;

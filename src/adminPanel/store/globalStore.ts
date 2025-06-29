@@ -9,7 +9,8 @@ import {
   Transfer,
   Standing,
   ActivityLog,
-  Comment
+  Comment,
+  Match
 } from '../types';
 import {
   loadAdminData,
@@ -21,6 +22,7 @@ interface GlobalStore {
   users: User[];
   clubs: Club[];
   players: Player[];
+  matches: Match[];
   tournaments: Tournament[];
   newsItems: NewsItem[];
   transfers: Transfer[];
@@ -45,6 +47,11 @@ interface GlobalStore {
   addPlayer: (player: Player) => void;
   updatePlayer: (player: Player) => void;
   removePlayer: (id: string) => void;
+
+  // Matches
+  addMatch: (match: Match) => void;
+  updateMatch: (match: Match) => void;
+  removeMatch: (id: string) => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -119,6 +126,7 @@ const defaultData: AdminData = {
       price: 20000000
     }
   ],
+  matches: [],
   tournaments: [],
   newsItems: [
     {
@@ -179,6 +187,7 @@ export const useGlobalStore = create<GlobalStore>()(
       users: get().users,
       clubs: get().clubs,
       players: get().players,
+      matches: get().matches,
       tournaments: get().tournaments,
       newsItems: get().newsItems,
       transfers: get().transfers,
@@ -314,6 +323,21 @@ export const useGlobalStore = create<GlobalStore>()(
 
     removePlayer: id => {
       set(state => ({ players: state.players.filter(p => p.id !== id) }));
+      persist();
+    },
+
+    addMatch: match => {
+      set(state => ({ matches: [...state.matches, match] }));
+      persist();
+    },
+
+    updateMatch: match => {
+      set(state => ({ matches: state.matches.map(m => (m.id === match.id ? match : m)) }));
+      persist();
+    },
+
+    removeMatch: id => {
+      set(state => ({ matches: state.matches.filter(m => m.id !== id) }));
       persist();
     },
 

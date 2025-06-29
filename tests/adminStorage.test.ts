@@ -6,6 +6,7 @@ const defaults: AdminData = {
   users: [],
   clubs: [],
   players: [],
+  matches: [],
   tournaments: [],
   newsItems: [],
   transfers: [],
