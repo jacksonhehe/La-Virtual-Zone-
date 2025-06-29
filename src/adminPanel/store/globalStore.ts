@@ -18,6 +18,7 @@ import {
   saveAdminData,
   AdminData
 } from '../utils/adminStorage';
+import { savePlayers } from '../../utils/playerService';
 
 interface GlobalStore {
   users: User[];
@@ -224,7 +225,7 @@ export const useGlobalStore = create<GlobalStore>()(
   subscribeWithSelector<GlobalStore>((set, get) => {
   const initial = loadAdminData(defaultData);
 
-  const persist = () =>
+  const persist = () => {
       saveAdminData({
         users: get().users,
         clubs: get().clubs,
@@ -237,6 +238,8 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: get().activities,
         comments: get().comments
       });
+      savePlayers(get().players);
+  };
 
   return {
     ...initial,
