@@ -51,6 +51,7 @@ interface GlobalStore {
     removePlayer: (id: string) => void;
 
     // Tournaments
+    addTournament: (tournament: Tournament) => void;
     updateTournamentStatus: (id: string, status: Tournament['status']) => void;
   
   // Transfers
@@ -362,6 +363,11 @@ export const useGlobalStore = create<GlobalStore>()(
 
     removePlayer: id => {
       set(state => ({ players: state.players.filter(p => p.id !== id) }));
+      persist();
+    },
+
+    addTournament: tournament => {
+      set(state => ({ tournaments: [...state.tournaments, tournament] }));
       persist();
     },
 
