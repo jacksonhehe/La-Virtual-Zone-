@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Match } from '../../types';
+import { Fixture } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 
 interface Props {
   onClose: () => void;
-  onSave: (data: Partial<Match>) => void;
+  onSave: (data: Partial<Fixture>) => void;
 }
 
 const NewMatchModal = ({ onClose, onSave }: Props) => {

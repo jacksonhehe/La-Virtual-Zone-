@@ -9,9 +9,9 @@ export interface AdminData {
   users: import('../types').User[];
   clubs: import('../types').Club[];
   players: import('../types').Player[];
-  matches: import('../types').Match[];
+  matches: import('../types').Fixture[];
   tournaments: import('../types').Tournament[];
-  matches: import('../types').Match[];
+  matches: import('../types').Fixture[];
   newsItems: import('../types').NewsItem[];
   transfers: import('../types').Transfer[];
   standings: import('../types').Standing[];

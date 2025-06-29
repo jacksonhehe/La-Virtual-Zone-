@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import { useGlobalStore } from '../../store/globalStore';
-import { Match } from '../../types';
+import { Fixture } from '../../types';
 import NewMatchModal from './NewMatchModal';
 import EditMatchModal from './EditMatchModal';
 import ResultMatchModal from './ResultMatchModal';
@@ -12,7 +12,7 @@ const CalendarAdminPanel = () => {
 
   const { matches, addMatch, updateMatch } = useGlobalStore();
   const [showNew, setShowNew] = useState(false);
-  const [editing, setEditing] = useState<null | { match: Match; reschedule?: boolean }>(null);
+  const [editing, setEditing] = useState<null | { match: Fixture; reschedule?: boolean }>(null);
   const [showResults, setShowResults] = useState(false);
 
   const roundMatches = matches.filter(m => m.round === selectedRound);
@@ -146,7 +146,7 @@ const CalendarAdminPanel = () => {
               status: 'scheduled',
               ...data,
               date: `${data.date}T${data.time}`
-            } as Match);
+            } as Fixture);
             setShowNew(false);
           }}
         />

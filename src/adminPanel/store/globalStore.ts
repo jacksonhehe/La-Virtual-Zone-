@@ -5,13 +5,13 @@ import {
   Club,
   Player,
   Tournament,
-  Match,
+  Fixture,
   NewsItem,
   Transfer,
   Standing,
   ActivityLog,
   Comment,
-  Match
+  Fixture
 } from '../types';
 import {
   loadAdminData,
@@ -23,9 +23,9 @@ interface GlobalStore {
   users: User[];
   clubs: Club[];
   players: Player[];
-  matches: Match[];
+  matches: Fixture[];
   tournaments: Tournament[];
-  matches: Match[];
+  matches: Fixture[];
   newsItems: NewsItem[];
   transfers: Transfer[];
   standings: Standing[];

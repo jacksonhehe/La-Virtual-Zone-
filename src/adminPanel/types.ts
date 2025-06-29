@@ -90,7 +90,7 @@ export interface Comment {
   createdAt: string;
 }
 
-export interface Match {
+export interface Fixture {
   id: string;
   tournamentId: string;
   round: number;
