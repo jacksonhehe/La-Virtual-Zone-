@@ -32,9 +32,21 @@ const Clubes = () => {
     const newClub: Club = {
       id: Date.now().toString(),
       name: clubData.name || '',
+      slug: clubData.slug || '',
+      logo: clubData.logo || '',
+      foundedYear: clubData.foundedYear || new Date().getFullYear(),
+      stadium: clubData.stadium || '',
+      budget: clubData.budget || 1000000,
       manager: managerUser ? managerUser.username : '',
       managerId: clubData.managerId,
-      budget: clubData.budget || 1000000,
+      playStyle: clubData.playStyle || '',
+      primaryColor: clubData.primaryColor || '#ffffff',
+      secondaryColor: clubData.secondaryColor || '#000000',
+      description: clubData.description || '',
+      titles: [],
+      reputation: 50,
+      fanBase: 0,
+      morale: 50,
       createdAt: new Date().toISOString()
     };
     
