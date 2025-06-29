@@ -89,4 +89,16 @@ export interface Comment {
   status: 'approved' | 'pending' | 'hidden';
   createdAt: string;
 }
+
+export interface Match {
+  id: string;
+  tournamentId: string;
+  round: number;
+  date: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore?: number;
+  awayScore?: number;
+  status: 'scheduled' | 'live' | 'finished';
+}
  
