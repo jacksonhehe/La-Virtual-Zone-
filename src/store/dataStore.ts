@@ -145,7 +145,10 @@ export const useDataStore = create<DataState>((set) => ({
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
   
-  updatePlayers: (newPlayers) => set({ players: newPlayers }),
+  updatePlayers: (newPlayers) => {
+    savePlayers(newPlayers);
+    set({ players: newPlayers });
+  },
   
   updateTournaments: (newTournaments) => set({ tournaments: newTournaments }),
   
