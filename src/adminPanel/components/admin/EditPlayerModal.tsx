@@ -12,10 +12,16 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
   const { clubs } = useGlobalStore();
   const [formData, setFormData] = useState({
     name: player.name,
+    age: player.age,
+    nationality: player.nationality,
+    dorsal: player.dorsal,
     position: player.position,
     clubId: player.clubId,
     overall: player.overall,
-    price: player.price
+    potential: player.potential,
+    price: player.value,
+    contractExpires: player.contract.expires,
+    salary: player.contract.salary
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const modalRef = useRef<HTMLDivElement>(null);
@@ -32,6 +38,8 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Nombre requerido';
+    if (!formData.nationality.trim()) newErrors.nationality = 'Nacionalidad requerida';
+    if (formData.age < 15) newErrors.age = 'Edad inválida';
     if (!formData.clubId) newErrors.clubId = 'Club requerido';
     if (formData.overall < 40 || formData.overall > 99) newErrors.overall = 'Overall debe estar entre 40-99';
     if (formData.price <= 0) newErrors.price = 'Precio debe ser mayor a 0';
@@ -42,7 +50,14 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSave({ ...player, ...formData });
+      const image = player.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=1e293b&color=fff&size=128`;
+      onSave({
+        ...player,
+        ...formData,
+        image,
+        contract: { expires: formData.contractExpires, salary: formData.salary },
+        value: formData.price
+      });
     }
   };
 
@@ -63,6 +78,34 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
               onChange={(e) => setFormData({...formData, name: e.target.value})}
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          </div>
+          <div>
+            <input
+              type="number"
+              className={`input w-full ${errors.age ? 'border-red-500' : ''}`}
+              placeholder="Edad"
+              value={formData.age}
+              onChange={e => setFormData({ ...formData, age: Number(e.target.value) })}
+            />
+            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+          </div>
+          <div>
+            <input
+              className={`input w-full ${errors.nationality ? 'border-red-500' : ''}`}
+              placeholder="Nacionalidad"
+              value={formData.nationality}
+              onChange={e => setFormData({ ...formData, nationality: e.target.value })}
+            />
+            {errors.nationality && <p className="text-red-500 text-sm mt-1">{errors.nationality}</p>}
+          </div>
+          <div>
+            <input
+              type="number"
+              className="input w-full"
+              placeholder="Dorsal"
+              value={formData.dorsal}
+              onChange={e => setFormData({ ...formData, dorsal: Number(e.target.value) })}
+            />
           </div>
           <select
             className="input w-full"
@@ -102,12 +145,38 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
           <div>
             <input
               type="number"
+              className="input w-full"
+              placeholder="Potencial"
+              value={formData.potential}
+              onChange={e => setFormData({ ...formData, potential: Number(e.target.value) })}
+            />
+          </div>
+          <div>
+            <input
+              type="number"
               className={`input w-full ${errors.price ? 'border-red-500' : ''}`}
               placeholder="Precio"
               value={formData.price}
               onChange={(e) => setFormData({...formData, price: Number(e.target.value)})}
             />
             {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+          </div>
+          <div>
+            <input
+              className="input w-full"
+              placeholder="Contrato hasta"
+              value={formData.contractExpires}
+              onChange={e => setFormData({ ...formData, contractExpires: e.target.value })}
+            />
+          </div>
+          <div>
+            <input
+              type="number"
+              className="input w-full"
+              placeholder="Salario"
+              value={formData.salary}
+              onChange={e => setFormData({ ...formData, salary: Number(e.target.value) })}
+            />
           </div>
           <div className="flex space-x-3 justify-end mt-6">
             <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>

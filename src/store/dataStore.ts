@@ -7,6 +7,7 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
+  players as seedPlayers,
   tournaments,
   transfers,
   offers,

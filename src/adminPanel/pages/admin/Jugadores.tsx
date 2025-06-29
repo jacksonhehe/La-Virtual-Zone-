@@ -35,10 +35,37 @@ const Jugadores = () => {
     const newPlayer: Player = {
       id: Date.now().toString(),
       name: playerData.name || '',
+      age: playerData.age || 18,
+      nationality: playerData.nationality || '',
+      dorsal: playerData.dorsal || 1,
       position: playerData.position || 'DEL',
       clubId: playerData.clubId || '',
       overall: playerData.overall || 75,
-      price: playerData.price || 100000
+      potential: playerData.potential || 80,
+      transferListed: false,
+      matches: 0,
+      transferValue: playerData.price || 0,
+      value: playerData.price || 0,
+      image:
+        playerData.image ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(playerData.name || '')}&background=1e293b&color=fff&size=128`,
+      attributes: {
+        pace: 50,
+        shooting: 50,
+        passing: 50,
+        dribbling: 50,
+        defending: 50,
+        physical: 50
+      },
+      contract: {
+        expires: playerData.contract?.expires || '',
+        salary: playerData.contract?.salary || 0
+      },
+      form: 1,
+      goals: 0,
+      assists: 0,
+      appearances: 0,
+      price: playerData.price || 0
     };
     
     addPlayer(newPlayer);

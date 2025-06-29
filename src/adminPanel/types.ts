@@ -11,19 +11,67 @@ export  interface User {
 export interface Club {
   id: string;
   name: string;
+  slug: string;
+  logo: string;
+  foundedYear: number;
+  stadium: string;
+  budget: number;
   manager: string;
   managerId?: string;
-  budget: number;
-  createdAt: string;
+  playStyle: string;
+  primaryColor: string;
+  secondaryColor: string;
+  description: string;
+  titles: Title[];
+  reputation: number;
+  fanBase: number;
+  morale: number;
+  createdAt?: string;
+}
+
+export interface Title {
+  id: string;
+  name: string;
+  year: number;
+  type: 'league' | 'cup' | 'supercup' | 'other';
 }
 
 export interface Player {
   id: string;
   name: string;
+  age: number;
   position: string;
+  nationality: string;
+  dorsal: number;
   clubId: string;
   overall: number;
+  potential: number;
+  transferListed: boolean;
+  matches: number;
+  transferValue: number;
+  value: number;
+  image: string;
+  attributes: PlayerAttributes;
+  contract: PlayerContract;
+  form: number;
+  goals: number;
+  assists: number;
+  appearances: number;
   price?: number;
+}
+
+export interface PlayerAttributes {
+  pace: number;
+  shooting: number;
+  passing: number;
+  dribbling: number;
+  defending: number;
+  physical: number;
+}
+
+export interface PlayerContract {
+  expires: string;
+  salary: number;
 }
 
 export interface Tournament {
