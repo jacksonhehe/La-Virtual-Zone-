@@ -74,23 +74,23 @@ const Clubes = () => {
 
   return (
        <div className="p-8 space-y-8">
-      <header className="flex justify-between items-center bg-vz-surface p-6 rounded">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-heading font-bold gradient-text">Clubes</h1>
-          <p className="text-secondary mt-2">Administra todos los clubes de la liga</p>
+          <h1 className="text-4xl font-bold gradient-text">Clubes</h1>
+          <p className="text-gray-400 mt-2">Administra todos los clubes de la liga</p>
         </div>
-        <button
+        <button 
           className="btn-primary flex items-center space-x-2"
           onClick={() => setShowNew(true)}
         >
           <Plus size={20} />
           <span>Nuevo Club</span>
         </button>
-      </header>
+      </div> 
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         <input
           type="text"
           placeholder="Buscar clubes..."
@@ -101,9 +101,9 @@ const Clubes = () => {
       </div>
 
       {/* Clubs Table */}
-      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-vz-overlay">
+      <div className="bg-gray-800 rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-700">
             <tr>
               <th className="table-header">Club</th>
               <th className="table-header">Entrenador</th>
@@ -115,7 +115,7 @@ const Clubes = () => {
           <tbody>
             {filteredClubs.length > 0 ? (
               filteredClubs.map((club) => (
-                <tr key={club.id} className="border-t border-vz-overlay even:bg-vz-overlay/50">
+                <tr key={club.id} className="border-t border-gray-700">
                   <td className="table-cell font-medium">{club.name}</td>
                   <td className="table-cell">{getManagerName(club)}</td>
                   <td className="table-cell">${club.budget.toLocaleString()}</td>
@@ -142,7 +142,7 @@ const Clubes = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="table-cell text-center py-8 text-secondary">
+                <td colSpan={5} className="table-cell text-center py-8 text-gray-400">
                   No se encontraron clubes
                 </td>
               </tr>

@@ -73,24 +73,24 @@ const Usuarios = () => {
 
   return (
        <div className="p-8 space-y-8">
-      <header className="flex justify-between items-center bg-vz-surface p-6 rounded">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-heading font-bold gradient-text">Usuarios</h1>
-          <p className="text-secondary mt-2">Gestiona todos los usuarios del sistema</p>
+          <h1 className="text-4xl font-bold gradient-text">Usuarios</h1>
+          <p className="text-gray-400 mt-2">Gestiona todos los usuarios del sistema</p>
         </div>
-        <button
+        <button 
           className="btn-primary flex items-center space-x-2"
           onClick={() => setShowNew(true)}
         >
           <Plus size={20} />
           <span>Nuevo Usuario</span>
         </button>
-      </header>
+      </div> 
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
             placeholder="Buscar usuarios..."
@@ -112,9 +112,9 @@ const Usuarios = () => {
       </div>
 
       {/* Users Table */}
-      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-vz-overlay">
+      <div className="bg-gray-800 rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-700">
             <tr>
               <th className="table-header">Usuario</th>
               <th className="table-header">Email</th>
@@ -127,7 +127,7 @@ const Usuarios = () => {
           <tbody>
             {paginatedUsers.length > 0 ? (
               paginatedUsers.map((user) => (
-                <tr key={user.id} className="border-t border-vz-overlay even:bg-vz-overlay/50">
+                <tr key={user.id} className="border-t border-gray-700">
                   <td className="table-cell font-medium">{user.username}</td>
                   <td className="table-cell">{user.email}</td>
                   <td className="table-cell">
@@ -136,7 +136,7 @@ const Usuarios = () => {
                         ? 'bg-red-900/20 text-red-300' 
                         : user.role === 'dt'
                         ? 'bg-blue-900/20 text-blue-300'
-                        : 'bg-dark-light text-secondary'
+                        : 'bg-gray-700 text-gray-300'
                     }`}>
                       {user.role.toUpperCase()}
                     </span>
@@ -173,7 +173,7 @@ const Usuarios = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="table-cell text-center py-8 text-secondary">
+                <td colSpan={6} className="table-cell text-center py-8 text-gray-400">
                   No se encontraron usuarios
                 </td>
               </tr>
@@ -190,8 +190,8 @@ const Usuarios = () => {
               key={page}
               className={`px-3 py-1 rounded ${
                 currentPage === page 
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-dark-light text-secondary hover:bg-dark-lighter'
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
               onClick={() => setCurrentPage(page)}
             >

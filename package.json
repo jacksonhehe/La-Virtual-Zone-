@@ -10,7 +10,6 @@
     "preview": "vite preview",
     "cypress:open": "cypress open",
     "test:unit": "vitest run",
-    "test:a11y": "vitest run tests/a11y.test.ts",
     "test": "npm run lint && npm run build && npm run test:unit && (npx cypress run || echo \"Skipping e2e tests: Cypress not installed\")"
   },
   "dependencies": {
@@ -52,8 +51,6 @@
     "vite": "^6.3.5",
     "vitest": "^3.2.4",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/jest-dom": "^6.1.4",
-    "axe-core": "^4.7.2",
-    "jsdom": "^23.2.0"
+    "@testing-library/jest-dom": "^6.1.4"
   }
 }

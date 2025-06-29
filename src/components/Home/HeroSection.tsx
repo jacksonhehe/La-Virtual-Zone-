@@ -1,37 +1,21 @@
 import { Link } from 'react-router-dom';
 import { Users, TrendingUp, Trophy } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-interface HeroSectionProps {
-  videoSrc?: string;
-}
-const HeroSection = ({ videoSrc }: HeroSectionProps) => {
+const HeroSection = () => {
   return (
     <div className="relative min-h-[80vh] flex items-center bg-gray-900 overflow-hidden">
-      {videoSrc ? (
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <video
-            src={videoSrc}
-            autoPlay
-            muted
-            loop
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 animated-bg opacity-50" />
-        </div>
-      ) : (
-        <div
-          className="absolute inset-0 z-0 bg-black"
-          style={{
-            backgroundImage: `linear-gradient(rgba(26, 26, 36, 0.4), rgba(17, 24, 39, 0.9)), url(https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        >
-          {/* TODO mock */}
-          <div className="absolute inset-0 animated-bg opacity-50" />
-        </div>
-      )}
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-black"
+        style={{
+          backgroundImage: `linear-gradient(rgba(26, 26, 36, 0.4), rgba(17, 24, 39, 0.9)), url(https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        {/* Animated overlay */}
+        <div className="absolute inset-0 animated-bg opacity-50"></div>
+      </div>
       
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
@@ -42,39 +26,27 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
             </span>
           </div>
           
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-display neon-text-blue"
-          >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-display neon-text-blue">
             LA VIRTUAL ZONE
-          </motion.h1>
-
-          <motion.h2
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-2xl md:text-3xl font-medium mb-6 text-gray-100"
-          >
+          </h1>
+          
+          <h2 className="text-2xl md:text-3xl font-medium mb-6 text-gray-100">
             La Premier League virtual del gaming competitivo
-          </motion.h2>
+          </h2>
           
           <p className="text-gray-300 text-lg mb-8">
             Gestiona tu club en la Liga Master, ficha jugadores estrella, 
             compite en torneos, y conviértete en una leyenda del fútbol virtual.
           </p>
           
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-8"
-          >
-            <Link to="/registro" className="btn-primary text-xl py-3 px-6">
-              Únete a la Liga Master
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <Link to="/registro" className="btn-primary">
+              Crear Cuenta
             </Link>
-          </motion.div>
+            <Link to="/liga-master" className="btn-secondary">
+              Explorar Liga Master
+            </Link>
+          </div>
           
           {/* Key features */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">

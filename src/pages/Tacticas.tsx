@@ -2,7 +2,8 @@ import { lazy, Suspense, useState, useEffect } from 'react';
 import FormationSelector from '../components/tacticas/FormationSelector';
 import TeamInstructions from '../components/tacticas/TeamInstructions';
 import SetPiecesManager from '../components/tacticas/SetPiecesManager';
-import Skeleton from '../components/common/Skeleton';
+import CanvasSkeleton from '../components/CanvasSkeleton';
+import Spinner from '../components/Spinner';
 import usePersistentState from '../hooks/usePersistentState';
 import { useDataStore } from '../store/dataStore';
 import type { TacticsState } from '../components/tacticas/PitchCanvas';
@@ -43,9 +44,9 @@ const Tacticas = () => {
       <div>
         <FormationSelector value={state.formation} onChange={f => updateState({ formation: f })} />
       </div>
-      <Suspense fallback={<Skeleton className="h-96" />}>
+      <Suspense fallback={<Spinner />}>
         {loading ? (
-          <Skeleton className="h-[460px]" />
+          <CanvasSkeleton />
         ) : (
           <div className="relative">
             <PitchCanvas players={players} state={state} onChange={setState} />

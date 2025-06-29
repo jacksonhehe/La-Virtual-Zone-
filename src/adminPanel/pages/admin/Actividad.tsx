@@ -17,14 +17,14 @@ const Actividad = () => {
 
   return (
        <div className="p-8 space-y-8">
-      <header className="bg-vz-surface p-6 rounded">
-        <h1 className="text-4xl font-heading font-bold gradient-text">Actividad del Sistema</h1>
-        <p className="text-secondary mt-2">Monitorea todas las acciones en tiempo real</p>
-      </header>
+      <div>
+        <h1 className="text-4xl font-bold gradient-text">Actividad del Sistema</h1>
+        <p className="text-gray-400 mt-2">Monitorea todas las acciones en tiempo real</p>
+      </div> 
       
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative">
-          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="date"
             className="input pl-10"
@@ -53,19 +53,19 @@ const Actividad = () => {
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h4 className="font-medium">{activity.action}</h4>
-                    <span className="text-sm text-secondary">
+                    <span className="text-sm text-gray-400">
                       {new Date(activity.date).toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-secondary text-sm mt-1">{activity.details}</p>
-                  <p className="text-xs text-secondary mt-2">Usuario: {activity.userId}</p>
+                  <p className="text-gray-400 text-sm mt-1">{activity.details}</p>
+                  <p className="text-xs text-gray-500 mt-2">Usuario: {activity.userId}</p>
                 </div>
               </div>
             </div>
           ))
         ) : (
           <div className="card text-center py-8">
-            <p className="text-secondary">No se encontró actividad para los filtros seleccionados</p>
+            <p className="text-gray-400">No se encontró actividad para los filtros seleccionados</p>
           </div>
         )}
       </div>

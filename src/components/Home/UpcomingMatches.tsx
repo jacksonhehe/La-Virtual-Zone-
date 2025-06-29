@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate, formatTime } from '../../utils/helpers';
 
@@ -50,18 +49,12 @@ const UpcomingMatches = () => {
       </div>
       
       <div className="divide-y divide-gray-800">
-        {upcomingMatches.map((match, index) => {
+        {upcomingMatches.map((match) => {
           const homeClub = clubs.find(c => c.name === match.homeTeam);
           const awayClub = clubs.find(c => c.name === match.awayTeam);
           
           return (
-            <motion.div
-              key={match.id}
-              className="p-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
+            <div key={match.id} className="p-4">
               <div className="text-sm text-gray-300">
                 {formatDate(match.date)} - {formatTime(match.date)}
               </div>
@@ -89,7 +82,7 @@ const UpcomingMatches = () => {
               <div className="text-xs text-gray-400 text-center">
                 Jornada {match.round} • {activeTournament.name}
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>

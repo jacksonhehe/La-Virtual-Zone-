@@ -71,24 +71,24 @@ const Jugadores = () => {
 
   return (
        <div className="p-8 space-y-8">
-      <header className="flex justify-between items-center bg-vz-surface p-6 rounded">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-heading font-bold gradient-text">Jugadores</h1>
-          <p className="text-secondary mt-2">Base de datos completa de jugadores</p>
+          <h1 className="text-4xl font-bold gradient-text">Jugadores</h1>
+          <p className="text-gray-400 mt-2">Base de datos completa de jugadores</p>
         </div>
-        <button
+        <button 
           className="btn-primary flex items-center space-x-2"
           onClick={() => setShowNew(true)}
         >
           <Plus size={20} />
           <span>Nuevo Jugador</span>
         </button>
-      </header>
+      </div> 
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
             placeholder="Buscar jugadores..."
@@ -121,9 +121,9 @@ const Jugadores = () => {
       </div>
 
       {/* Players Table */}
-      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-vz-overlay">
+      <div className="bg-gray-800 rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-700">
             <tr>
               <th className="table-header">Nombre</th>
               <th className="table-header">Posición</th>
@@ -136,7 +136,7 @@ const Jugadores = () => {
           <tbody>
             {filteredPlayers.length > 0 ? (
               filteredPlayers.map((player) => (
-                <tr key={player.id} className="border-t border-vz-overlay even:bg-vz-overlay/50">
+                <tr key={player.id} className="border-t border-gray-700">
                   <td className="table-cell font-medium">{player.name}</td>
                   <td className="table-cell">
                     <span className={`px-2 py-1 rounded-full text-xs ${
@@ -156,7 +156,7 @@ const Jugadores = () => {
                     <span className={`font-medium ${
                       player.overall >= 85 ? 'text-green-400' :
                       player.overall >= 75 ? 'text-yellow-400' :
-                      'text-secondary'
+                      'text-gray-400'
                     }`}>
                       {player.overall}
                     </span>
@@ -182,7 +182,7 @@ const Jugadores = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="table-cell text-center py-8 text-secondary">
+                <td colSpan={6} className="table-cell text-center py-8 text-gray-400">
                   No se encontraron jugadores
                 </td>
               </tr>

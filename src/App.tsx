@@ -2,7 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { Toaster } from "react-hot-toast";
-import Skeleton from "./components/common/Skeleton";
+import Spinner from "./components/Spinner";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
@@ -16,7 +16,6 @@ const Calendario = lazy(() => import("./pages/Calendario"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const UserPanel = lazy(() => import("./pages/UserPanel"));
-const UserProfile = lazy(() => import("./pages/UserProfile"));
 
 const Tournaments = lazy(() => import("./pages/Tournaments"));
 const TournamentDetail = lazy(() => import("./pages/TournamentDetail"));
@@ -39,13 +38,12 @@ const ClubProfile = lazy(() => import("./pages/ClubProfile"));
 const ClubFinances = lazy(() => import("./pages/ClubFinances"));
 const ClubSquad = lazy(() => import("./pages/ClubSquad"));
 const Admin = lazy(() => import("./pages/Admin"));
-const StyleGuide = lazy(() => import("./pages/StyleGuide"));
 
 function App() {
   return (
-    <div className="min-h-screen bg-[var(--bg-surface)] text-white">
+    <div className="min-h-screen bg-[#18181f] text-white">
       <Toaster position="top-right" />
-      <Suspense fallback={<Skeleton className="p-8" />}>
+      <Suspense fallback={<Spinner />}>
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<Home />} />
@@ -53,7 +51,6 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Register />} />
             <Route path="usuario" element={<UserPanel />} />
-            <Route path="usuarios/:username" element={<UserProfile />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
             <Route path="admin/*" element={<Admin />} />
 
@@ -70,7 +67,6 @@ function App() {
             <Route path="galeria" element={<Gallery />} />
             <Route path="tienda" element={<Store />} />
             <Route path="ayuda" element={<Help />} />
-            <Route path="styleguide" element={<StyleGuide />} />
 
             <Route path="liga-master" element={<LigaMaster />} />
             <Route path="liga-master/plantilla" element={<Plantilla />} />

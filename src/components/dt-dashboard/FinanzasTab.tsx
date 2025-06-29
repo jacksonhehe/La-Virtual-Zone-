@@ -22,10 +22,10 @@ export default function FinanzasTab() {
   ];
 
   const expenseBreakdown = [
-    { category: 'Salarios', amount: totalSalaries, color: 'var(--neon-red)' },
-    { category: 'Fichajes', amount: 5000000, color: 'var(--neon-blue)' },
-    { category: 'Infraestructura', amount: 1200000, color: 'var(--neon-yellow)' },
-    { category: 'Operaciones', amount: 800000, color: 'var(--neon-green)' },
+    { category: 'Salarios', amount: totalSalaries, color: '#ff6b6b' },
+    { category: 'Fichajes', amount: 5000000, color: '#4ecdc4' },
+    { category: 'Infraestructura', amount: 1200000, color: '#45b7d1' },
+    { category: 'Operaciones', amount: 800000, color: '#96ceb4' },
   ];
 
   const kpiCards = [
@@ -114,31 +114,31 @@ export default function FinanzasTab() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyData}>
-                <XAxis dataKey="month" stroke="var(--vz-text-main)" />
-                <YAxis stroke="var(--vz-text-main)" tickFormatter={(value) => `€${value / 1000000}M`} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--vz-bg-surface)',
-                    border: '1px solid var(--vz-bg-overlay)',
+                <XAxis dataKey="month" stroke="#9CA3AF" />
+                <YAxis stroke="#9CA3AF" tickFormatter={(value) => `€${value / 1000000}M`} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
                     borderRadius: '12px',
-                    color: 'var(--vz-text-main)'
+                    color: '#F9FAFB'
                   }}
                   formatter={(value: number) => [formatCurrency(value), '']}
                 />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="var(--neon-green)"
+                <Line 
+                  type="monotone" 
+                  dataKey="income" 
+                  stroke="#10B981" 
                   strokeWidth={3}
-                  dot={{ fill: 'var(--neon-green)', strokeWidth: 2, r: 6 }}
+                  dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }}
                   name="Ingresos"
                 />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="var(--neon-red)"
+                <Line 
+                  type="monotone" 
+                  dataKey="expenses" 
+                  stroke="#EF4444" 
                   strokeWidth={3}
-                  dot={{ fill: 'var(--neon-red)', strokeWidth: 2, r: 6 }}
+                  dot={{ fill: '#EF4444', strokeWidth: 2, r: 6 }}
                   name="Gastos"
                 />
               </LineChart>
@@ -156,14 +156,14 @@ export default function FinanzasTab() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={expenseBreakdown} layout="horizontal">
-                <XAxis type="number" stroke="var(--vz-text-main)" tickFormatter={(value) => `€${value / 1000000}M`} />
-                <YAxis type="category" dataKey="category" stroke="var(--vz-text-main)" width={80} />
+                <XAxis type="number" stroke="#9CA3AF" tickFormatter={(value) => `€${value / 1000000}M`} />
+                <YAxis type="category" dataKey="category" stroke="#9CA3AF" width={80} />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--vz-bg-surface)',
-                    border: '1px solid var(--vz-bg-overlay)',
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
                     borderRadius: '12px',
-                    color: 'var(--vz-text-main)'
+                    color: '#F9FAFB'
                   }}
                   formatter={(value: number) => [formatCurrency(value), 'Gasto']}
                 />

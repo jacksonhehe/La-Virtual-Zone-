@@ -1,5 +1,4 @@
 import  { LucideIcon } from 'lucide-react';
-import Card from '../../../components/ui/Card';
 
 interface Props {
   title: string;
@@ -11,28 +10,24 @@ interface Props {
 }
 
 const StatsCard = ({ title, value, change, changeType = 'neutral', icon: Icon, gradient }: Props) => {
-  const changeColor =
-    changeType === 'positive'
-      ? 'text-neon-green'
-      : changeType === 'negative'
-        ? 'text-neon-red'
-        : 'text-vz-text';
+  const changeColor = changeType === 'positive' ? 'text-emerald-400' : 
+                     changeType === 'negative' ? 'text-red-400' : 'text-gray-400';
 
   return (
-    <Card className="kpi-card group p-6">
+    <div className="kpi-card group">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-heading text-vz-text">{title}</p>
-          <p className="text-3xl font-heading gradient-text">{value}</p>
+          <p className="text-gray-400 text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold gradient-text">{value}</p>
           {change && (
             <p className={`text-xs mt-1 ${changeColor}`}>{change}</p>
           )}
         </div>
-        <div className={`p-3 ${gradient} rounded shadow-lg group-hover:scale-110 transition-transform`}>
-          <Icon className="text-vz-text" size={28} />
+        <div className={`p-3 ${gradient} rounded-2xl shadow-lg group-hover:scale-110 transition-transform`}>
+          <Icon className="text-white" size={28} />
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

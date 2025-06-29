@@ -96,7 +96,7 @@ const Navbar = () => {
                 <div>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center text-sm rounded-full focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset-2"
+                    className="flex items-center text-sm rounded-full focus:outline-none"
                   >
                     <img 
                       src={user?.avatar} 
@@ -113,7 +113,7 @@ const Navbar = () => {
                 
                 {/* User dropdown menu */}
                 {userMenuOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                     <div className="py-1">
                       <Link
                         to="/usuario"
@@ -208,7 +208,7 @@ const Navbar = () => {
             <div className="flex md:hidden ml-3">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
               >
                 <span className="sr-only">Open main menu</span>
                 {isOpen ? (
