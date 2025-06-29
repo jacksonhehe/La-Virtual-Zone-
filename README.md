@@ -37,7 +37,7 @@ npm run preview
 ```
 ## Tests
 
-Run the Cypress test suite (which now includes an admin user flow test):
+Run the Cypress test suite (which now includes admin user flow and club creation tests):
 
 ```bash
 npm run test
@@ -54,6 +54,10 @@ To execute only the admin user flow test, specify its path:
 ```bash
 npx cypress run --spec tests/e2e/admin_user_flow.cy.ts
 ```
+To execute only the admin club creation test, run:
+
+```bash
+npx cypress run --spec tests/e2e/admin_club_creation.cy.ts
 ```
 
 Ensure the development server is running on `http://localhost:5173` before
