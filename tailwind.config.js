@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'vz-primary': 'var(--vz-primary)',
+        'vz-primary': 'rgb(var(--vz-primary-rgb) / <alpha-value>)',
         'vz-accent': 'var(--vz-accent)',
         'vz-bg': 'var(--vz-bg-surface)',
         'vz-surface': 'var(--vz-bg-surface)',
@@ -14,7 +14,7 @@ export default {
         'neon-blue': 'var(--neon-blue)',
         'neon-green': 'var(--neon-green)',
         'neon-yellow': 'var(--neon-yellow)',
-        primary: 'var(--primary)',
+        primary: 'rgb(var(--primary-rgb) / <alpha-value>)',
         'primary-light': 'var(--primary-light)',
         'primary-dark': 'var(--primary-dark)',
         dark: '#1a1a24',

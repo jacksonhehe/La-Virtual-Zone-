@@ -5,6 +5,7 @@
 :root {
   /* Design tokens */
   --vz-primary: #7f39fb;
+  --vz-primary-rgb: 127 57 251;
   --vz-accent: #3ff;
   --vz-bg-surface: #18181f;
   --vz-bg-overlay: rgba(255, 255, 255, 0.05);
@@ -12,6 +13,7 @@
 
   /* Backwards compatibility */
   --primary: var(--vz-primary);
+  --primary-rgb: var(--vz-primary-rgb);
   --primary-light: #9f65fd;
   --primary-dark: #5f2cb8;
   --accent: var(--vz-accent);
