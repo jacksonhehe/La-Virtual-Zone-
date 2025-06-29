@@ -40,11 +40,10 @@ const ClubFinances = lazy(() => import("./pages/ClubFinances"));
 const ClubSquad = lazy(() => import("./pages/ClubSquad"));
 const Admin = lazy(() => import("./pages/Admin"));
 const StyleGuide = lazy(() => import("./pages/StyleGuide"));
-const UserProfile = lazy(() => import("./pages/UserProfile"));
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#18181f] text-white">
+    <div className="min-h-screen bg-[var(--bg-surface)] text-white">
       <Toaster position="top-right" />
       <Suspense fallback={<Skeleton className="p-8" />}>
         <Routes>
