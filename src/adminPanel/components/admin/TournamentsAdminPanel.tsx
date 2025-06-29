@@ -2,9 +2,10 @@ import  { useState } from 'react';
 import { Plus, Play, Pause, Award } from 'lucide-react';
 import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
+import NewTournamentModal from './NewTournamentModal';
 
 const TournamentsAdminPanel = () => {
-  const { tournaments, updateTournamentStatus } = useGlobalStore();
+  const { tournaments, updateTournamentStatus, addTournament } = useGlobalStore();
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<Tournament | null>(null);
 
@@ -131,6 +132,15 @@ const TournamentsAdminPanel = () => {
           </div>
         </div>
       </div>
+      {showNew && (
+        <NewTournamentModal
+          onClose={() => setShowNew(false)}
+          onSave={(data) => {
+            addTournament({ id: Date.now().toString(), ...data });
+            setShowNew(false);
+          }}
+        />
+      )}
       {selected && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg max-w-sm w-full mx-4">
