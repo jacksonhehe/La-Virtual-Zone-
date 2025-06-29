@@ -2,7 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { Toaster } from "react-hot-toast";
-import Spinner from "./components/Spinner";
+import Skeleton from "./components/common/Skeleton";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
@@ -46,7 +46,7 @@ function App() {
   return (
     <div className="min-h-screen bg-[#18181f] text-white">
       <Toaster position="top-right" />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton className="p-8" />}>
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<Home />} />
