@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Match } from '../../types';
+import { Fixture } from '../../types';
 
 interface Props {
-  matches: Match[];
+  matches: Fixture[];
   onClose: () => void;
-  onSave: (match: Match) => void;
+  onSave: (match: Fixture) => void;
 }
 
 const ResultMatchModal = ({ matches, onClose, onSave }: Props) => {

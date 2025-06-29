@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Match } from '../../types';
+import { Fixture } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 
 interface Props {
-  match: Match;
+  match: Fixture;
   onClose: () => void;
-  onSave: (match: Match) => void;
+  onSave: (match: Fixture) => void;
   allowDateEdit?: boolean;
 }
 
