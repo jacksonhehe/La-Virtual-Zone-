@@ -1,6 +1,6 @@
 import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Users, Globe, User, ShoppingBag } from 'lucide-react';
-import Card from '../../components/ui/Card';
+import Card from '../../../components/ui/Card';
 import StatsCard from '../../components/admin/StatsCard';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
