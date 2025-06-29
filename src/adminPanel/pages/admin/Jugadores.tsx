@@ -161,7 +161,7 @@ const Jugadores = () => {
                       {player.overall}
                     </span>
                   </td>
-                  <td className="table-cell">${player.price.toLocaleString()}</td>
+                  <td className="table-cell">{player.price !== undefined ? player.price.toLocaleString() : '-'}</td>
                   <td className="table-cell text-center">
                     <div className="flex justify-center space-x-2">
                       <button 
