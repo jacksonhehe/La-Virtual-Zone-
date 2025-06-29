@@ -41,6 +41,19 @@
     "moral": "Alta"
   },
   {
+    "id": "match3",
+    "category": "partido",
+    "title": "Real Madrid vs Atlético Pixelado",
+    "start": "2025-02-20T20:00:00",
+    "homeTeam": "Real Madrid",
+    "homeLogo": "https://ui-avatars.com/api/?name=RM&background=ffffff&color=000000&size=128&bold=true",
+    "awayTeam": "Atlético Pixelado",
+    "awayLogo": "https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true",
+    "venue": "Santiago Bernabéu",
+    "weather": "Soleado",
+    "moral": "Alta"
+  },
+  {
     "id": "marketEnd",
     "category": "mercado",
     "title": "Fin de mercado",
