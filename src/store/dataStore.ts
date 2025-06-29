@@ -7,7 +7,6 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
-  players,
   tournaments,
   transfers,
   offers,
@@ -27,6 +26,7 @@ import {
   dtRankings
 } from '../data/mockData';
 import { getClubs, saveClubs } from '../utils/clubService';
+import { getPlayers, savePlayers } from '../utils/playerService';
 import {
   Club,
   Player,
@@ -50,6 +50,7 @@ import {
 } from '../types';
 
 const initialClubs = getClubs();
+const initialPlayers = getPlayers();
 const initialUser = useAuthStore.getState().user;
 const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
 const initialClub: DtClub = {
@@ -59,7 +60,7 @@ const initialClub: DtClub = {
   logo: baseClub.logo,
   formation: '4-3-3',
   budget: baseClub.budget,
-  players: players.filter(p => p.clubId === baseClub.id)
+  players: initialPlayers.filter(p => p.clubId === baseClub.id)
 };
 const initialFixtures = tournaments[0].matches
   .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
@@ -119,7 +120,7 @@ interface DataState {
 
 export const useDataStore = create<DataState>((set) => ({
   clubs: initialClubs,
-  players,
+  players: initialPlayers,
   tournaments,
   transfers,
   offers,
@@ -143,7 +144,10 @@ export const useDataStore = create<DataState>((set) => ({
   
   updateClubs: (newClubs) => set({ clubs: newClubs }),
   
-  updatePlayers: (newPlayers) => set({ players: newPlayers }),
+  updatePlayers: (newPlayers) => {
+    savePlayers(newPlayers);
+    set({ players: newPlayers });
+  },
   
   updateTournaments: (newTournaments) => set({ tournaments: newTournaments }),
   
@@ -194,9 +198,12 @@ export const useDataStore = create<DataState>((set) => ({
       return { clubs: updated };
     }),
 
-  addPlayer: (player) => set((state) => ({
-    players: [...state.players, player]
-  })),
+  addPlayer: (player) =>
+    set((state) => {
+      const updated = [...state.players, player];
+      savePlayers(updated);
+      return { players: updated };
+    }),
 
   updateUserEntry: (user) =>
     set((state) => {
@@ -248,13 +255,19 @@ export const useDataStore = create<DataState>((set) => ({
       return { clubs: updated };
     }),
 
-  updatePlayerEntry: (player) => set((state) => ({
-    players: state.players.map(p => (p.id === player.id ? player : p))
-  })),
+  updatePlayerEntry: (player) =>
+    set((state) => {
+      const updated = state.players.map(p => (p.id === player.id ? player : p));
+      savePlayers(updated);
+      return { players: updated };
+    }),
 
-  removePlayer: (id) => set((state) => ({
-    players: state.players.filter(p => p.id !== id)
-  })),
+  removePlayer: (id) =>
+    set((state) => {
+      const updated = state.players.filter(p => p.id !== id);
+      savePlayers(updated);
+      return { players: updated };
+    }),
 
   addTournament: (tournament) =>
     set((state) => {
