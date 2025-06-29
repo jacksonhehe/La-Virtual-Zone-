@@ -14,12 +14,12 @@ const StatsAdminPanel = () => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Estadísticas</h2>
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <table className="w-full">
+      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
+        <table className="min-w-full text-sm">
           <tbody>
             {standings.map(row => (
-              <tr key={row.clubId}>
-                <td className="px-4 py-3">
+              <tr key={row.clubId} className="border-t border-vz-overlay even:bg-vz-overlay/50">
+                <td className="table-cell">
                   <input
                     type="number"
                     className="input w-20 text-center"

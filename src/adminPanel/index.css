@@ -78,11 +78,11 @@ html:not(.dark) {
   }
 
   .table-header {
-    @apply bg-vz-surface text-left text-xs font-bold text-vz-text uppercase tracking-wider px-6 py-4 rounded-t-xl font-heading;
+    @apply px-s-3 py-s-2 text-left font-heading;
   }
 
   .table-cell {
-    @apply px-6 py-4 whitespace-nowrap text-sm text-vz-text border-b border-vz-overlay font-body;
+    @apply px-s-3 py-s-2 text-sm border-b border-vz-overlay;
   }
 
   .kpi-card {

@@ -121,9 +121,9 @@ const Jugadores = () => {
       </div>
 
       {/* Players Table */}
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-700">
+      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-vz-overlay">
             <tr>
               <th className="table-header">Nombre</th>
               <th className="table-header">Posición</th>
@@ -136,7 +136,7 @@ const Jugadores = () => {
           <tbody>
             {filteredPlayers.length > 0 ? (
               filteredPlayers.map((player) => (
-                <tr key={player.id} className="border-t border-dark-light">
+                <tr key={player.id} className="border-t border-vz-overlay even:bg-vz-overlay/50">
                   <td className="table-cell font-medium">{player.name}</td>
                   <td className="table-cell">
                     <span className={`px-2 py-1 rounded-full text-xs ${
