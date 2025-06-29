@@ -23,7 +23,17 @@ const LigaMaster = () => {
   const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
 
   if (user?.role === 'dt') {
-    return <DtDashboard />;
+    if (user.clubId) {
+      const assignedClub = clubs.find(c => c.id === user.clubId);
+      if (assignedClub) {
+        return <DtDashboard />;
+      }
+    }
+    return (
+      <div className="p-8 text-center">
+        <p>No tienes un club asignado. Contacta a un administrador.</p>
+      </div>
+    );
   }
   
   // Get active tournament (Liga Master)
