@@ -10,7 +10,8 @@ import {
   Transfer,
   Standing,
   ActivityLog,
-  Comment
+  Comment,
+  Match
 } from '../types';
 import {
   loadAdminData,
@@ -22,6 +23,7 @@ interface GlobalStore {
   users: User[];
   clubs: Club[];
   players: Player[];
+  matches: Match[];
   tournaments: Tournament[];
   matches: Match[];
   newsItems: NewsItem[];
@@ -125,6 +127,7 @@ const defaultData: AdminData = {
       price: 20000000
     }
   ],
+  matches: [],
   tournaments: [],
   matches: [
     {
@@ -223,6 +226,7 @@ export const useGlobalStore = create<GlobalStore>()(
       users: get().users,
       clubs: get().clubs,
       players: get().players,
+      matches: get().matches,
       tournaments: get().tournaments,
       matches: get().matches,
       newsItems: get().newsItems,
