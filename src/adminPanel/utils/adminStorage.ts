@@ -26,7 +26,7 @@ const OLD_KEYS = {
   clubs: `${PREFIX}clubs_admin`,
   players: `${PREFIX}players_admin`,
   tournaments: `${PREFIX}tournaments_admin`,
-  matches: `${PREFIX}matches_admin`,
+  matches: `${PREFIX}fixtures_admin`,
   newsItems: `${PREFIX}news_admin`,
   transfers: `${PREFIX}transfers_admin`,
   standings: `${PREFIX}standings_admin`,
