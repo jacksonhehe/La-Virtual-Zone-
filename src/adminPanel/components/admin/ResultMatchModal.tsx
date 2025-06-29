@@ -1,18 +1,17 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Match } from '../../types';
 
 interface Props {
-  match: Match;
+  matches: Match[];
   onClose: () => void;
   onSave: (match: Match) => void;
 }
 
-const ResultMatchModal = ({ match, onClose, onSave }: Props) => {
-  const [formData, setFormData] = useState({
-    homeScore: match.homeScore ?? 0,
-    awayScore: match.awayScore ?? 0,
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+const ResultMatchModal = ({ matches, onClose, onSave }: Props) => {
+  const [selectedId, setSelectedId] = useState(matches[0]?.id || '');
+  const match = matches.find(m => m.id === selectedId)!;
+  const [homeScore, setHomeScore] = useState(match.homeScore ?? 0);
+  const [awayScore, setAwayScore] = useState(match.awayScore ?? 0);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,57 +23,35 @@ const ResultMatchModal = ({ match, onClose, onSave }: Props) => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (formData.homeScore < 0) newErrors.homeScore = 'Inválido';
-    if (formData.awayScore < 0) newErrors.awayScore = 'Inválido';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  useEffect(() => {
+    const m = matches.find(m => m.id === selectedId);
+    if (m) {
+      setHomeScore(m.homeScore ?? 0);
+      setAwayScore(m.awayScore ?? 0);
+    }
+  }, [selectedId, matches]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      onSave({
-        ...match,
-        homeScore: formData.homeScore,
-        awayScore: formData.awayScore,
-        status: 'finished',
-      });
-    }
+    onSave({ ...match, homeScore, awayScore, status: 'finished' });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div
-        ref={modalRef}
-        className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4"
-        tabIndex={-1}
-      >
-        <h3 className="text-lg font-semibold mb-4">Resultado del Partido</h3>
-        <p className="text-center mb-4 text-gray-300">
-          {match.homeTeam} vs {match.awayTeam}
-        </p>
+      <div ref={modalRef} className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4" tabIndex={-1}>
+        <h3 className="text-lg font-semibold mb-4">Registrar Resultado</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="number"
-              className={`input w-full ${errors.homeScore ? 'border-red-500' : ''}`}
-              value={formData.homeScore}
-              onChange={(e) => setFormData({ ...formData, homeScore: Number(e.target.value) })}
-              placeholder={`${match.homeTeam}`}
-            />
-            {errors.homeScore && <p className="text-red-500 text-sm mt-1">{errors.homeScore}</p>}
-          </div>
-          <div>
-            <input
-              type="number"
-              className={`input w-full ${errors.awayScore ? 'border-red-500' : ''}`}
-              value={formData.awayScore}
-              onChange={(e) => setFormData({ ...formData, awayScore: Number(e.target.value) })}
-              placeholder={`${match.awayTeam}`}
-            />
-            {errors.awayScore && <p className="text-red-500 text-sm mt-1">{errors.awayScore}</p>}
+          <select className="input w-full" value={selectedId} onChange={e => setSelectedId(e.target.value)}>
+            {matches.map(m => (
+              <option key={m.id} value={m.id}>
+                {m.homeTeam} vs {m.awayTeam}
+              </option>
+            ))}
+          </select>
+          <div className="flex items-center space-x-2">
+            <input type="number" className="input flex-1" value={homeScore} onChange={e => setHomeScore(Number(e.target.value))} />
+            <span>-</span>
+            <input type="number" className="input flex-1" value={awayScore} onChange={e => setAwayScore(Number(e.target.value))} />
           </div>
           <div className="flex space-x-3 justify-end mt-6">
             <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>

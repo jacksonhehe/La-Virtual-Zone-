@@ -11,6 +11,7 @@ export interface AdminData {
   players: import('../types').Player[];
   matches: import('../types').Match[];
   tournaments: import('../types').Tournament[];
+  matches: import('../types').Match[];
   newsItems: import('../types').NewsItem[];
   transfers: import('../types').Transfer[];
   standings: import('../types').Standing[];
@@ -26,6 +27,7 @@ const OLD_KEYS = {
   clubs: `${PREFIX}clubs_admin`,
   players: `${PREFIX}players_admin`,
   tournaments: `${PREFIX}tournaments_admin`,
+  matches: `${PREFIX}matches_admin`,
   newsItems: `${PREFIX}news_admin`,
   transfers: `${PREFIX}transfers_admin`,
   standings: `${PREFIX}standings_admin`,
@@ -41,6 +43,7 @@ const keys = {
   players: VZ_PLAYERS_KEY,
   matches: VZ_FIXTURES_KEY,
   tournaments: OLD_KEYS.tournaments,
+  matches: OLD_KEYS.matches,
   newsItems: OLD_KEYS.newsItems,
   transfers: OLD_KEYS.transfers,
   standings: OLD_KEYS.standings,
