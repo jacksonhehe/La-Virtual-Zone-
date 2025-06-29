@@ -48,16 +48,12 @@ headless mode. To open the interactive Cypress UI instead, execute:
 
 ```bash
 npx cypress open
+```
 
 To execute only the admin user flow test, specify its path:
 
 ```bash
 npx cypress run --spec tests/e2e/admin_user_flow.cy.ts
-```
-To execute only the admin club creation test, run:
-
-```bash
-npx cypress run --spec tests/e2e/admin_club_creation.cy.ts
 ```
 
 Ensure the development server is running on `http://localhost:5173` before
