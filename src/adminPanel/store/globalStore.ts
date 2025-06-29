@@ -11,7 +11,6 @@ import {
   Standing,
   ActivityLog,
   Comment,
-  Fixture
 } from '../types';
 import {
   loadAdminData,
@@ -27,7 +26,6 @@ interface GlobalStore {
   players: Player[];
   matches: Fixture[];
   tournaments: Tournament[];
-  matches: Fixture[];
   newsItems: NewsItem[];
   transfers: Transfer[];
   standings: Standing[];
