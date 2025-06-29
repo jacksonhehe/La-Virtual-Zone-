@@ -60,6 +60,9 @@ const migrateOldKeys = () => {
 };
 
 export const loadAdminData = (defaults: AdminData): AdminData => {
+  if (typeof localStorage === 'undefined') {
+    return defaults;
+  }
   const data: AdminData = { ...defaults };
   migrateOldKeys();
   Object.entries(keys).forEach(([prop, key]) => {
@@ -76,6 +79,9 @@ export const loadAdminData = (defaults: AdminData): AdminData => {
 };
 
 export const saveAdminData = (data: AdminData): void => {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
   Object.entries(keys).forEach(([prop, key]) => {
     const value = (data as any)[prop];
     try {
