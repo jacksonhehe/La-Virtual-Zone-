@@ -57,10 +57,18 @@ export default function DtDashboard() {
     toast.dismiss();
   };
 
-  if (!user || !club) {
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (!club) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 text-center">
+        <p>No tienes un club asignado. Contacta a un administrador.</p>
       </div>
     );
   }
