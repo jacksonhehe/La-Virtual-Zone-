@@ -5,6 +5,7 @@ import {
   Club,
   Player,
   Tournament,
+  Match,
   NewsItem,
   Transfer,
   Standing,
@@ -22,6 +23,7 @@ interface GlobalStore {
   clubs: Club[];
   players: Player[];
   tournaments: Tournament[];
+  matches: Match[];
   newsItems: NewsItem[];
   transfers: Transfer[];
   standings: Standing[];
@@ -45,6 +47,10 @@ interface GlobalStore {
   addPlayer: (player: Player) => void;
   updatePlayer: (player: Player) => void;
   removePlayer: (id: string) => void;
+
+  // Matches
+  addMatch: (match: Match) => void;
+  updateMatch: (match: Match) => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -120,6 +126,44 @@ const defaultData: AdminData = {
     }
   ],
   tournaments: [],
+  matches: [
+    {
+      id: 'match1',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-15T20:00:00Z',
+      homeTeam: 'Barcelona',
+      awayTeam: 'Real Madrid',
+      status: 'scheduled'
+    },
+    {
+      id: 'match2',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-16T18:30:00Z',
+      homeTeam: 'Liverpool',
+      awayTeam: 'Manchester City',
+      status: 'scheduled'
+    },
+    {
+      id: 'match3',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-17T15:30:00Z',
+      homeTeam: 'Bayern Munich',
+      awayTeam: 'Dortmund',
+      status: 'scheduled'
+    },
+    {
+      id: 'match4',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-17T21:00:00Z',
+      homeTeam: 'PSG',
+      awayTeam: 'Marseille',
+      status: 'scheduled'
+    }
+  ],
   newsItems: [
     {
       id: '1',
@@ -180,6 +224,7 @@ export const useGlobalStore = create<GlobalStore>()(
       clubs: get().clubs,
       players: get().players,
       tournaments: get().tournaments,
+      matches: get().matches,
       newsItems: get().newsItems,
       transfers: get().transfers,
       standings: get().standings,
@@ -314,6 +359,16 @@ export const useGlobalStore = create<GlobalStore>()(
 
     removePlayer: id => {
       set(state => ({ players: state.players.filter(p => p.id !== id) }));
+      persist();
+    },
+
+    addMatch: match => {
+      set(state => ({ matches: [...state.matches, match] }));
+      persist();
+    },
+
+    updateMatch: match => {
+      set(state => ({ matches: state.matches.map(m => (m.id === match.id ? match : m)) }));
       persist();
     },
 

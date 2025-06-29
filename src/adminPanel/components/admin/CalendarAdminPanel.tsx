@@ -1,17 +1,21 @@
 import  { useState } from 'react';
+import { useGlobalStore } from '../../store/globalStore';
+import { Match } from '../../types';
+import NewMatchModal from './NewMatchModal';
+import EditMatchModal from './EditMatchModal';
+import ResultMatchModal from './ResultMatchModal';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 
 const CalendarAdminPanel = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedRound, setSelectedRound] = useState(15);
 
-  const matches = [
-    { id: 1, home: 'Barcelona', away: 'Real Madrid', date: '2023-12-15', time: '20:00', round: 15 },
-    { id: 2, home: 'Liverpool', away: 'Manchester City', date: '2023-12-16', time: '18:30', round: 15 },
-    { id: 3, home: 'Bayern Munich', away: 'Dortmund', date: '2023-12-17', time: '15:30', round: 15 },
-    { id: 4, home: 'PSG', away: 'Marseille', date: '2023-12-17', time: '21:00', round: 15 }
-  ];
+  const { matches, addMatch, updateMatch } = useGlobalStore();
+  const [showNew, setShowNew] = useState(false);
+  const [editing, setEditing] = useState<null | { match: Match; reschedule?: boolean }>(null);
+  const [showResults, setShowResults] = useState(false);
 
+  const roundMatches = matches.filter(m => m.round === selectedRound);
   const rounds = Array.from({ length: 38 }, (_, i) => i + 1);
 
   const nextWeek = () => {
@@ -70,29 +74,31 @@ const CalendarAdminPanel = () => {
 
       {/* Matches Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {matches.map((match) => (
+        {roundMatches.map((match) => (
           <div key={match.id} className="card">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 flex-1">
                 <div className="text-right flex-1">
-                  <p className="font-medium">{match.home}</p>
+                  <p className="font-medium">{match.homeTeam}</p>
                 </div>
                 <div className="text-center px-4">
-                  <div className="text-xs text-gray-400">{match.time}</div>
+                  <div className="text-xs text-gray-400">
+                    {new Date(match.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                  </div>
                   <div className="text-lg font-bold">vs</div>
                   <div className="text-xs text-gray-400">
-                    {new Date(match.date).toLocaleDateString('es-ES', { 
+                    {new Date(match.date).toLocaleDateString('es-ES', {
                       day: '2-digit',
                       month: '2-digit'
                     })}
                   </div>
                 </div>
                 <div className="text-left flex-1">
-                  <p className="font-medium">{match.away}</p>
+                  <p className="font-medium">{match.awayTeam}</p>
                 </div>
               </div>
               <div className="ml-4">
-                <button className="btn-outline text-xs">
+                <button className="btn-outline text-xs" onClick={() => setEditing({ match })}>
                   Editar
                 </button>
               </div>
@@ -103,27 +109,74 @@ const CalendarAdminPanel = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button className="card text-center hover:bg-gray-700 transition-colors">
+        <button
+          className="card text-center hover:bg-gray-700 transition-colors"
+          onClick={() => setShowNew(true)}
+        >
           <CalendarIcon className="mx-auto mb-2 text-blue-500" size={24} />
           <p className="font-medium">Programar Jornada</p>
           <p className="text-xs text-gray-400">Crear nuevos partidos</p>
         </button>
-        
-        <button className="card text-center hover:bg-gray-700 transition-colors">
+
+        <button
+          className="card text-center hover:bg-gray-700 transition-colors"
+          onClick={() => setShowResults(true)}
+        >
           <CalendarIcon className="mx-auto mb-2 text-green-500" size={24} />
           <p className="font-medium">Resultados</p>
           <p className="text-xs text-gray-400">Cargar resultados</p>
         </button>
-        
-        <button className="card text-center hover:bg-gray-700 transition-colors">
+
+        <button
+          className="card text-center hover:bg-gray-700 transition-colors"
+          onClick={() => setEditing({ match: roundMatches[0], reschedule: true })}
+        >
           <CalendarIcon className="mx-auto mb-2 text-purple-500" size={24} />
           <p className="font-medium">Reprogramar</p>
           <p className="text-xs text-gray-400">Cambiar fechas</p>
         </button>
       </div>
+      {showNew && (
+        <NewMatchModal
+          onClose={() => setShowNew(false)}
+          onSave={(data) => {
+            addMatch({
+              id: Date.now().toString(),
+              tournamentId: 'tournament1',
+              status: 'scheduled',
+              ...data,
+              date: `${data.date}T${data.time}`
+            } as Match);
+            setShowNew(false);
+          }}
+        />
+      )}
+
+      {editing && (
+        <EditMatchModal
+          match={editing.match}
+          allowDateEdit={editing.reschedule}
+          onClose={() => setEditing(null)}
+          onSave={(m) => {
+            updateMatch(m);
+            setEditing(null);
+          }}
+        />
+      )}
+
+      {showResults && (
+        <ResultMatchModal
+          matches={matches}
+          onClose={() => setShowResults(false)}
+          onSave={(m) => {
+            updateMatch(m);
+            setShowResults(false);
+          }}
+        />
+      )}
     </div>
   );
-}; 
+};
 
 export default CalendarAdminPanel;
  

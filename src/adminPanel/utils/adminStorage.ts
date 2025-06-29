@@ -1,7 +1,8 @@
 import {
   VZ_USERS_KEY,
   VZ_CLUBS_KEY,
-  VZ_PLAYERS_KEY
+  VZ_PLAYERS_KEY,
+  VZ_FIXTURES_KEY
 } from '../../utils/storageKeys';
 
 export interface AdminData {
@@ -9,6 +10,7 @@ export interface AdminData {
   clubs: import('../types').Club[];
   players: import('../types').Player[];
   tournaments: import('../types').Tournament[];
+  matches: import('../types').Match[];
   newsItems: import('../types').NewsItem[];
   transfers: import('../types').Transfer[];
   standings: import('../types').Standing[];
@@ -24,6 +26,7 @@ const OLD_KEYS = {
   clubs: `${PREFIX}clubs_admin`,
   players: `${PREFIX}players_admin`,
   tournaments: `${PREFIX}tournaments_admin`,
+  matches: `${PREFIX}matches_admin`,
   newsItems: `${PREFIX}news_admin`,
   transfers: `${PREFIX}transfers_admin`,
   standings: `${PREFIX}standings_admin`,
@@ -37,6 +40,7 @@ const keys = {
   clubs: VZ_CLUBS_KEY,
   players: VZ_PLAYERS_KEY,
   tournaments: OLD_KEYS.tournaments,
+  matches: OLD_KEYS.matches,
   newsItems: OLD_KEYS.newsItems,
   transfers: OLD_KEYS.transfers,
   standings: OLD_KEYS.standings,
