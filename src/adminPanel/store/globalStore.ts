@@ -5,11 +5,13 @@ import {
   Club,
   Player,
   Tournament,
+  Match,
   NewsItem,
   Transfer,
   Standing,
   ActivityLog,
-  Comment
+  Comment,
+  Match
 } from '../types';
 import {
   loadAdminData,
@@ -21,7 +23,9 @@ interface GlobalStore {
   users: User[];
   clubs: Club[];
   players: Player[];
+  matches: Match[];
   tournaments: Tournament[];
+  matches: Match[];
   newsItems: NewsItem[];
   transfers: Transfer[];
   standings: Standing[];
@@ -122,7 +126,46 @@ const defaultData: AdminData = {
       price: 20000000
     }
   ],
+  matches: [],
   tournaments: [],
+  matches: [
+    {
+      id: 'match1',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-15T20:00:00Z',
+      homeTeam: 'Barcelona',
+      awayTeam: 'Real Madrid',
+      status: 'scheduled'
+    },
+    {
+      id: 'match2',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-16T18:30:00Z',
+      homeTeam: 'Liverpool',
+      awayTeam: 'Manchester City',
+      status: 'scheduled'
+    },
+    {
+      id: 'match3',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-17T15:30:00Z',
+      homeTeam: 'Bayern Munich',
+      awayTeam: 'Dortmund',
+      status: 'scheduled'
+    },
+    {
+      id: 'match4',
+      tournamentId: 'tournament1',
+      round: 15,
+      date: '2023-12-17T21:00:00Z',
+      homeTeam: 'PSG',
+      awayTeam: 'Marseille',
+      status: 'scheduled'
+    }
+  ],
   newsItems: [
     {
       id: '1',
@@ -182,7 +225,9 @@ export const useGlobalStore = create<GlobalStore>()(
       users: get().users,
       clubs: get().clubs,
       players: get().players,
+      matches: get().matches,
       tournaments: get().tournaments,
+      matches: get().matches,
       newsItems: get().newsItems,
       transfers: get().transfers,
       standings: get().standings,
