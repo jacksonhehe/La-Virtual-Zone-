@@ -242,6 +242,37 @@ export const clubs: Club[] = [
     reputation: 82,
     fanBase: 9000,
     morale: 85
+  },
+  {
+    id: 'club11',
+    slug: slugify('Real Madrid'),
+    name: 'Real Madrid',
+    logo: 'https://ui-avatars.com/api/?name=RM&background=ffffff&color=000000&size=128&bold=true',
+    foundedYear: 1902,
+    stadium: 'Santiago Bernabéu',
+    budget: 60000000,
+    manager: 'Ancelotti',
+    playStyle: 'Posesión',
+    primaryColor: '#ffffff',
+    secondaryColor: '#00529f',
+    description: 'Uno de los clubes más laureados del mundo, conocido por su estilo ofensivo y mentalidad ganadora.',
+    titles: [
+      {
+        id: 'title7',
+        name: 'Liga',
+        year: 2024,
+        type: 'league'
+      },
+      {
+        id: 'title8',
+        name: 'Champions',
+        year: 2024,
+        type: 'cup'
+      }
+    ],
+    reputation: 95,
+    fanBase: 20000,
+    morale: 90
   }
 ];
 
