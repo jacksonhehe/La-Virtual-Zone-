@@ -29,10 +29,10 @@ const Estadisticas = () => {
 
    return (
     <div className="p-8 space-y-8">
-      <div className="flex justify-between items-center">
+      <header className="flex justify-between items-center bg-vz-surface p-6 rounded">
         <div>
-          <h1 className="text-4xl font-bold gradient-text">Estadísticas</h1>
-          <p className="text-gray-400 mt-2">Análisis detallado del rendimiento del sistema</p>
+          <h1 className="text-4xl font-heading font-bold gradient-text">Estadísticas</h1>
+          <p className="text-secondary mt-2">Análisis detallado del rendimiento del sistema</p>
         </div>
         <div className="glass-panel p-3">
           <select
@@ -51,22 +51,22 @@ const Estadisticas = () => {
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="card text-center">
-          <h3 className="text-lg font-semibold text-gray-400">Total Usuarios</h3>
+          <h3 className="text-lg font-semibold text-secondary">Total Usuarios</h3>
           <p className="text-3xl font-bold text-blue-500 mt-2">{users.length}</p>
         </div>
         <div className="card text-center">
-          <h3 className="text-lg font-semibold text-gray-400">Total Clubes</h3>
+          <h3 className="text-lg font-semibold text-secondary">Total Clubes</h3>
           <p className="text-3xl font-bold text-green-500 mt-2">{clubs.length}</p>
         </div>
         <div className="card text-center">
-          <h3 className="text-lg font-semibold text-gray-400">Total Jugadores</h3>
+          <h3 className="text-lg font-semibold text-secondary">Total Jugadores</h3>
           <p className="text-3xl font-bold text-purple-500 mt-2">{players.length}</p>
         </div>
         <div className="card text-center">
-          <h3 className="text-lg font-semibold text-gray-400">Transferencias</h3>
+          <h3 className="text-lg font-semibold text-secondary">Transferencias</h3>
           <p className="text-3xl font-bold text-orange-500 mt-2">{transfers.length}</p>
         </div>
-      </div>
+      </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Users by Role */}

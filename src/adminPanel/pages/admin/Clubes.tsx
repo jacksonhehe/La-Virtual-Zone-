@@ -74,23 +74,23 @@ const Clubes = () => {
 
   return (
        <div className="p-8 space-y-8">
-      <div className="flex justify-between items-center">
+      <header className="flex justify-between items-center bg-vz-surface p-6 rounded">
         <div>
-          <h1 className="text-4xl font-bold gradient-text">Clubes</h1>
-          <p className="text-gray-400 mt-2">Administra todos los clubes de la liga</p>
+          <h1 className="text-4xl font-heading font-bold gradient-text">Clubes</h1>
+          <p className="text-secondary mt-2">Administra todos los clubes de la liga</p>
         </div>
-        <button 
+        <button
           className="btn-primary flex items-center space-x-2"
           onClick={() => setShowNew(true)}
         >
           <Plus size={20} />
           <span>Nuevo Club</span>
         </button>
-      </div> 
+      </header>
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
         <input
           type="text"
           placeholder="Buscar clubes..."
@@ -142,7 +142,7 @@ const Clubes = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="table-cell text-center py-8 text-gray-400">
+                <td colSpan={5} className="table-cell text-center py-8 text-secondary">
                   No se encontraron clubes
                 </td>
               </tr>

@@ -2,49 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Design tokens */
+  --vz-primary: #7f39fb;
+  --vz-accent: #3ff;
+  --vz-bg-surface: #18181f;
+  --vz-bg-overlay: rgba(255, 255, 255, 0.05);
+  --vz-text-main: #fff;
+
+  /* Backwards compatibility */
+  --primary: var(--vz-primary);
+  --primary-light: #9f65fd;
+  --primary-dark: #5f2cb8;
+  --accent: var(--vz-accent);
+  --bg-surface: var(--vz-bg-surface);
+  --bg-overlay: var(--vz-bg-overlay);
+  --text-main: var(--vz-text-main);
+  --neon-red: #ff003c;
+  --neon-blue: #00b3ff;
+  --neon-green: #00ff8f;
+  --neon-yellow: #ffe600;
+}
+
+html:not(.dark) {
+  --vz-bg-surface: #f4f4f5; /* zinc-100 */
+  --vz-bg-overlay: rgba(0, 0, 0, 0.05);
+  --vz-text-main: #27272a; /* zinc-800 */
+  /* mirror to legacy vars */
+  --bg-surface: var(--vz-bg-surface);
+  --bg-overlay: var(--vz-bg-overlay);
+  --text-main: var(--vz-text-main);
+}
+
 @layer base {
   body {
-    @apply bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white;
+    @apply bg-vz-surface text-vz-text font-body;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-500/25 hover:scale-105;
+    @apply bg-vz-primary hover:bg-vz-primary/90 text-white px-6 py-3 rounded-xl font-heading font-semibold transition-all duration-300 shadow-lg hover:shadow-vz-primary/25 hover:scale-105;
   }
-  
+
   .btn-outline {
-    @apply border border-gray-600 hover:border-purple-500 text-gray-300 hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600;
+    @apply border border-vz-overlay hover:border-vz-primary text-vz-text hover:text-white px-6 py-3 rounded-xl font-heading font-semibold transition-all duration-300 hover:bg-vz-overlay;
   }
-  
+
   .btn-danger {
-    @apply bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-red-500/25;
+    @apply bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-heading font-semibold transition-all duration-300 shadow-lg hover:shadow-red-500/25;
   }
-  
+
   .btn-success {
-    @apply bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-green-500/25;
+    @apply bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-heading font-semibold transition-all duration-300 shadow-lg hover:shadow-green-500/25;
   }
-  
+
   .input {
-    @apply bg-gray-800/50 border border-gray-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300;
+    @apply bg-vz-overlay border border-vz-overlay text-vz-text px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-vz-primary focus:border-transparent backdrop-blur-sm transition-all duration-300 font-body;
   }
   
    .sidebar-link {
-    @apply flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 transition-all duration-300;
-  } 
-  
+    @apply flex items-center space-x-3 px-4 py-3 rounded-xl text-vz-text hover:text-white hover:bg-vz-overlay transition-all duration-300 font-heading;
+  }
+
   .sidebar-link.active {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/20;
+    @apply bg-vz-primary text-white shadow-lg shadow-vz-primary/20;
   }
-  
+
   .card {
-    @apply bg-gradient-to-br from-gray-800/90 to-gray-900/90 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300;
+    @apply bg-vz-surface border border-vz-overlay rounded-2xl p-6 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300;
   }
-  
+
   .card-highlight {
-    @apply bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-2xl p-6 backdrop-blur-sm shadow-xl;
+    @apply bg-vz-primary/20 border border-vz-primary/30 rounded-2xl p-6 backdrop-blur-sm shadow-xl;
   }
-  
+
   .table-header {
     @apply px-s-3 py-s-2 text-left font-heading;
   }
@@ -52,21 +84,21 @@
   .table-cell {
     @apply px-s-3 py-s-2 text-sm border-b border-vz-overlay;
   }
-  
+
   .kpi-card {
-    @apply bg-gradient-to-br from-gray-800/90 to-gray-900/90 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105;
+    @apply bg-vz-surface border border-vz-overlay rounded-2xl p-6 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105;
   }
-  
+
   .gradient-text {
-    @apply bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent;
+    @apply text-vz-primary font-heading;
   }
-  
+
   .glass-panel {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+    @apply bg-vz-overlay backdrop-blur-md border border-vz-overlay rounded-2xl;
   }
-  
+
   .floating-action {
-    @apply fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-110 z-50;
+    @apply fixed bottom-6 right-6 bg-vz-primary text-white p-4 rounded-full shadow-2xl hover:shadow-vz-primary/25 transition-all duration-300 hover:scale-110 z-50;
   }
 } 
  
