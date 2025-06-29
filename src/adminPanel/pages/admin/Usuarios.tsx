@@ -112,9 +112,9 @@ const Usuarios = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-700">
+      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-vz-overlay">
             <tr>
               <th className="table-header">Usuario</th>
               <th className="table-header">Email</th>
@@ -127,7 +127,7 @@ const Usuarios = () => {
           <tbody>
             {paginatedUsers.length > 0 ? (
               paginatedUsers.map((user) => (
-                <tr key={user.id} className="border-t border-gray-700">
+                <tr key={user.id} className="border-t border-vz-overlay even:bg-vz-overlay/50">
                   <td className="table-cell font-medium">{user.username}</td>
                   <td className="table-cell">{user.email}</td>
                   <td className="table-cell">

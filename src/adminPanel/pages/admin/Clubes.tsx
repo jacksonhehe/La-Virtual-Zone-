@@ -101,9 +101,9 @@ const Clubes = () => {
       </div>
 
       {/* Clubs Table */}
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-700">
+      <div className="rounded-lg border border-vz-overlay overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-vz-overlay">
             <tr>
               <th className="table-header">Club</th>
               <th className="table-header">Entrenador</th>
@@ -115,7 +115,7 @@ const Clubes = () => {
           <tbody>
             {filteredClubs.length > 0 ? (
               filteredClubs.map((club) => (
-                <tr key={club.id} className="border-t border-gray-700">
+                <tr key={club.id} className="border-t border-vz-overlay even:bg-vz-overlay/50">
                   <td className="table-cell font-medium">{club.name}</td>
                   <td className="table-cell">{getManagerName(club)}</td>
                   <td className="table-cell">${club.budget.toLocaleString()}</td>
