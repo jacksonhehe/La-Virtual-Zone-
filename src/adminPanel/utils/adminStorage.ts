@@ -11,7 +11,6 @@ export interface AdminData {
   players: import('../types').Player[];
   matches: import('../types').Fixture[];
   tournaments: import('../types').Tournament[];
-  matches: import('../types').Fixture[];
   newsItems: import('../types').NewsItem[];
   transfers: import('../types').Transfer[];
   standings: import('../types').Standing[];
