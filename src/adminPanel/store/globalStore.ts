@@ -51,8 +51,8 @@ interface GlobalStore {
   removePlayer: (id: string) => void;
 
   // Matches
-  addMatch: (match: Match) => void;
-  updateMatch: (match: Match) => void;
+  addMatch: (match: Fixture) => void;
+  updateMatch: (match: Fixture) => void;
   removeMatch: (id: string) => void;
 
   // Tournaments
