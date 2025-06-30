@@ -72,6 +72,26 @@ const TEST_USERS = [
       players: []
     },
     password: TEST_PASSWORD
+  },
+  {
+    id: '4',
+    username: 'jacksonhehe11',
+    email: 'jacksonhehe11@test.com',
+    role: 'dt',
+    level: 5,
+    xp: 500,
+    club: 'Real Madrid',
+    clubId: 'club11',
+    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    joinDate: new Date().toISOString(),
+    status: 'active',
+    achievements: ['first_win', 'first_transfer'],
+    following: {
+      users: [],
+      clubs: ['Rayo Digital FC'],
+      players: []
+    },
+    password: TEST_PASSWORD
   }
 ];
 
