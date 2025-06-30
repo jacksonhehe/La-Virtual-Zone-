@@ -20,6 +20,7 @@ import {
 } from '../utils/adminStorage';
 import { saveClubs } from '../../utils/clubService';
 import { savePlayers } from '../../utils/playerService';
+import { useDataStore } from '../../store/dataStore';
 
 interface GlobalStore {
   users: User[];
@@ -368,6 +369,7 @@ export const useGlobalStore = create<GlobalStore>()(
         savePlayers(updated);
         return { players: updated };
       });
+      useDataStore.getState().addPlayer(player);
       persist();
     },
 
@@ -377,6 +379,7 @@ export const useGlobalStore = create<GlobalStore>()(
         savePlayers(updated);
         return { players: updated };
       });
+      useDataStore.getState().updatePlayerEntry(player);
       persist();
     },
 
@@ -386,6 +389,7 @@ export const useGlobalStore = create<GlobalStore>()(
         savePlayers(updated);
         return { players: updated };
       });
+      useDataStore.getState().removePlayer(id);
       persist();
     },
 

@@ -68,6 +68,9 @@ const initialFixtures = tournaments[0].matches
   .slice(0, 6)
   .map(m => ({ ...m, played: m.status === 'finished' }));
 
+const refreshClubPlayers = (players: Player[], clubId: string) =>
+  players.filter(p => p.clubId === clubId);
+
 interface DataState {
   clubs: Club[];
   players: Player[];
@@ -147,7 +150,13 @@ export const useDataStore = create<DataState>((set) => ({
   
   updatePlayers: (newPlayers) => {
     savePlayers(newPlayers);
-    set({ players: newPlayers });
+    set(state => ({
+      players: newPlayers,
+      club: {
+        ...state.club,
+        players: refreshClubPlayers(newPlayers, state.club.id)
+      }
+    }));
   },
   
   updateTournaments: (newTournaments) => set({ tournaments: newTournaments }),
@@ -201,9 +210,15 @@ export const useDataStore = create<DataState>((set) => ({
 
   addPlayer: (player) =>
     set((state) => {
-      const updated = [...state.players, player];
-      savePlayers(updated);
-      return { players: updated };
+      const players = [...state.players, player];
+      savePlayers(players);
+      return {
+        players,
+        club: {
+          ...state.club,
+          players: refreshClubPlayers(players, state.club.id)
+        }
+      };
     }),
 
   updateUserEntry: (user) =>
@@ -258,16 +273,28 @@ export const useDataStore = create<DataState>((set) => ({
 
   updatePlayerEntry: (player) =>
     set((state) => {
-      const updated = state.players.map(p => (p.id === player.id ? player : p));
-      savePlayers(updated);
-      return { players: updated };
+      const players = state.players.map(p => (p.id === player.id ? player : p));
+      savePlayers(players);
+      return {
+        players,
+        club: {
+          ...state.club,
+          players: refreshClubPlayers(players, state.club.id)
+        }
+      };
     }),
 
   removePlayer: (id) =>
     set((state) => {
-      const updated = state.players.filter(p => p.id !== id);
-      savePlayers(updated);
-      return { players: updated };
+      const players = state.players.filter(p => p.id !== id);
+      savePlayers(players);
+      return {
+        players,
+        club: {
+          ...state.club,
+          players: refreshClubPlayers(players, state.club.id)
+        }
+      };
     }),
 
   addTournament: (tournament) =>
