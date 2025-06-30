@@ -335,6 +335,42 @@ function generatePlayers(): Player[] {
 // Generate players
 export const players = generatePlayers();
 
+// Add legendary player Cristiano Ronaldo to the generated list
+players.push({
+  id: `player${players.length + 1}`,
+  name: 'Cristiano Ronaldo',
+  age: 39,
+  position: 'ST',
+  nationality: 'Portugal',
+  dorsal: 7,
+  clubId: 'club11',
+  club: 'Real Madrid',
+  overall: 90,
+  potential: 90,
+  transferListed: false,
+  matches: 0,
+  transferValue: 45000000,
+  value: 45000000,
+  marketValue: 45000000,
+  image: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg',
+  attributes: {
+    pace: 89,
+    shooting: 93,
+    passing: 82,
+    dribbling: 88,
+    defending: 35,
+    physical: 80
+  },
+  contract: {
+    expires: '2025-06-30',
+    salary: 2000000
+  },
+  form: 5,
+  goals: 0,
+  assists: 0,
+  appearances: 0
+});
+
 // Function to generate matches for a tournament
 function generateMatches(teams: string[], tournamentId: string, preseason: boolean = false): Match[] {
   const matches: Match[] = [];
