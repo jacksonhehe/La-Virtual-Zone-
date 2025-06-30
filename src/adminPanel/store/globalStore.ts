@@ -437,7 +437,19 @@ export const useGlobalStore = create<GlobalStore>()(
     },
 
     removeTournament: id => {
-      set(state => ({ tournaments: state.tournaments.filter(t => t.id !== id) }));
+      set(state => ({
+        tournaments: state.tournaments.filter(t => t.id !== id),
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'Tournament Deleted',
+            details: `Deleted tournament with ID: ${id}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
       persist();
     },
 
