@@ -81,7 +81,7 @@ Within the admin panel you will find management sections for:
 
 ## Data Persistence
 
-User accounts and login state are stored in the browser using `localStorage`. Clearing your browser data resets this information. Other league data (clubs, players, tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
+User accounts, login state, clubs, and players are stored in the browser using `localStorage`. Clubs are saved under `VZ_CLUBS_KEY` and players under `VZ_PLAYERS_KEY`. Clearing your browser data resets this information. Other league data (tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
 
 ## License
 
