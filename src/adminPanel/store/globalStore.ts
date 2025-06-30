@@ -56,6 +56,7 @@ interface GlobalStore {
   removeMatch: (id: string) => void;
 
   // Tournaments
+  addTournament: (tournament: Tournament) => void;
   updateTournamentStatus: (id: string, status: Tournament['status']) => void;
   
   // Transfers
@@ -403,6 +404,23 @@ export const useGlobalStore = create<GlobalStore>()(
 
     removeMatch: id => {
       set(state => ({ matches: state.matches.filter(m => m.id !== id) }));
+      persist();
+    },
+
+    addTournament: tournament => {
+      set(state => ({
+        tournaments: [...state.tournaments, tournament],
+        activities: [
+          ...state.activities,
+          {
+            id: Date.now().toString(),
+            userId: 'admin',
+            action: 'Tournament Created',
+            details: `Created tournament: ${tournament.name}`,
+            date: new Date().toISOString()
+          }
+        ]
+      }));
       persist();
     },
 
