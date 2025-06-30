@@ -17,7 +17,7 @@ interface MarketOffer {
 
 export default function MercadoTab() {
   const { user } = useAuthStore();
-  const { players, club } = useDataStore();
+  const { players, club, clubs } = useDataStore();
   const [search, setSearch] = useState('');
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
@@ -44,7 +44,7 @@ export default function MercadoTab() {
 
   const availablePlayers = useMemo(() => {
     return players
-      .filter(p => p.club !== club?.name)
+      .filter(p => p.clubId !== club?.id)
       .filter(p => positionFilter === 'all' || p.position === positionFilter)
       .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
       .sort((a, b) => {
@@ -55,7 +55,12 @@ export default function MercadoTab() {
           default: return 0;
         }
       });
-  }, [players, club?.name, positionFilter, search, sortBy]);
+  }, [players, club?.id, positionFilter, search, sortBy]);
+
+  const getClubName = (clubId: string) => {
+    const found = clubs.find(c => c.id === clubId);
+    return found ? found.name : 'Desconocido';
+  };
 
   const handleMakeOffer = (player: Player) => {
     toast.success(`Oferta enviada por ${player.name}`);
@@ -180,7 +185,7 @@ export default function MercadoTab() {
                 
                 <div className="p-4">
                   <h3 className="font-bold text-lg mb-1">{player.name}</h3>
-                  <p className="text-sm text-gray-400 mb-3">{player.club} • {player.age} años</p>
+                  <p className="text-sm text-gray-400 mb-3">{getClubName(player.clubId)} • {player.age} años</p>
                   
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-primary font-bold">

@@ -8,7 +8,7 @@ const formatCurrency= (amount: number) => `€${amount.toLocaleString()}`;
 export default function FinanzasTab() {
   const { club, players } = useDataStore();
 
-  const clubPlayers = players.filter(p => p.club === club?.name);
+  const clubPlayers = players.filter(p => p.clubId === club?.id);
   const totalSalaries = clubPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
   const avgPlayerValue = clubPlayers.reduce((sum, p) => sum + p.marketValue, 0) / clubPlayers.length || 0;
 

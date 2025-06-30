@@ -33,7 +33,7 @@ export default function TacticasTab() {
   const [draggedPlayer, setDraggedPlayer] = useState<number | null>(null);
   const pitchRef = useRef<HTMLDivElement>(null);
 
-  const clubPlayers = players.filter(p => p.club === club?.name);
+  const clubPlayers = players.filter(p => p.clubId === club?.id);
   const startingEleven = clubPlayers.slice(0, 11);
 
   useEffect(() => {
