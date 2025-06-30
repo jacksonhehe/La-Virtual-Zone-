@@ -83,6 +83,10 @@ Within the admin panel you will find management sections for:
 
 User accounts, login state, clubs, and players are stored in the browser using `localStorage`. Clubs are saved under `VZ_CLUBS_KEY` and players under `VZ_PLAYERS_KEY`. Clearing your browser data resets this information. Other league data (tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
 
+## Personalización de datos
+
+El archivo `src/data/seed.json` contiene los valores iniciales de clubes, jugadores y fixtures que se copian en `localStorage` la primera vez que se abre la aplicación. Tras modificar este archivo, incrementa la constante `SEED_VERSION` en `src/main.tsx` para forzar la reseed al cargar la app.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
