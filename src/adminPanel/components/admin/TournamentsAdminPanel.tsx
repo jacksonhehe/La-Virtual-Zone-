@@ -5,6 +5,7 @@ import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
+import { generateId } from '../../utils/id';
 
 const TournamentsAdminPanel = () => {
   const { tournaments, updateTournamentStatus, addTournament, removeTournament } = useGlobalStore();
@@ -152,7 +153,7 @@ const TournamentsAdminPanel = () => {
         <NewTournamentModal
           onClose={() => setShowNew(false)}
           onSave={(data) => {
-            addTournament({ id: Date.now().toString(), ...data });
+            addTournament({ id: generateId(), ...data });
             setShowNew(false);
           }}
         />

@@ -19,6 +19,7 @@ import {
 import { saveClubs } from '../../utils/clubService';
 import { savePlayers } from '../../utils/playerService';
 import { useDataStore } from '../../store/dataStore';
+import { generateId } from '../../utils/id';
 
 interface GlobalStore {
   users: User[];
@@ -254,7 +255,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: Date.now().toString(),
+            id: generateId(),
             userId: 'admin',
             action: 'User Created',
             details: `Created user: ${user.username}`,
@@ -271,7 +272,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: Date.now().toString(),
+            id: generateId(),
             userId: 'admin',
             action: 'User Updated',
             details: `Updated user: ${user.username}`,
@@ -288,7 +289,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: Date.now().toString(),
+            id: generateId(),
             userId: 'admin',
             action: 'User Deleted',
             details: `Deleted user with ID: ${id}`,
@@ -312,7 +313,7 @@ export const useGlobalStore = create<GlobalStore>()(
           activities: [
             ...state.activities,
             {
-              id: Date.now().toString(),
+              id: generateId(),
               userId: 'admin',
               action: 'Club Created',
               details: `Created club: ${club.name}`,
@@ -414,7 +415,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: Date.now().toString(),
+            id: generateId(),
             userId: 'admin',
             action: 'Tournament Created',
             details: `Created tournament: ${tournament.name}`,
@@ -445,7 +446,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: Date.now().toString(),
+            id: generateId(),
             userId: 'admin',
             action: 'Transfer Approved',
             details: `Approved transfer with ID: ${id}`,
@@ -462,7 +463,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: Date.now().toString(),
+            id: generateId(),
             userId: 'admin',
             action: 'Transfer Rejected',
             details: `Rejected transfer: ${reason}`,
