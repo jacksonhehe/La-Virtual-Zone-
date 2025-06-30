@@ -5,7 +5,7 @@ import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-import { generateId } from '../../utils/id';
+import { generateId } from '../../../utils/id';
 
 const TournamentsAdminPanel = () => {
   const { tournaments, updateTournamentStatus, addTournament, removeTournament } = useGlobalStore();
