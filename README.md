@@ -98,7 +98,13 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 ## Data Persistence
 
-User accounts, login state, clubs, and players are stored in the browser using `localStorage`. Clubs are saved under `VZ_CLUBS_KEY` and players under `VZ_PLAYERS_KEY`. Clearing your browser data resets this information. Other league data (tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
+The application now stores persistent data in **Supabase** rather than relying on the browser's `localStorage`. Configure your Supabase project credentials in `.env` and the app will load users, clubs and players from the hosted database. If Supabase is unreachable the app falls back to the previous local storage behaviour.
+
+### Supabase Setup
+
+1. Create a project at [supabase.com](https://supabase.com/) and note the **URL** and **anon key**.
+2. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` with your project values.
+3. Run `npm install` to ensure `@supabase/supabase-js` is available.
 
 ## Personalización de datos
 
