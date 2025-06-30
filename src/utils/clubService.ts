@@ -1,5 +1,5 @@
 import seed from '../data/seed.json';
-import { Club } from '../types';
+import { Club } from '../types/shared';
 import { VZ_CLUBS_KEY } from './storageKeys';
 
 export const getClubs = (): Club[] => {

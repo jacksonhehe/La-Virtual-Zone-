@@ -2,7 +2,7 @@ import  { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, Save, Settings } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 
 const formations = [
   { name: '4-4-2', positions: [

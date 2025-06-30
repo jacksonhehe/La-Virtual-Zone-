@@ -29,9 +29,6 @@ import {
 import { getClubs, saveClubs } from '../utils/clubService';
 import { getPlayers, savePlayers } from '../utils/playerService';
 import {
-  Club,
-  Player,
-  User,
   Tournament,
   Transfer,
   TransferOffer,
@@ -49,6 +46,7 @@ import {
   DtEvent,
   DtRanking
 } from '../types';
+import { Club, Player, User } from '../types/shared';
 
 const initialClubs = getClubs();
 const initialPlayers = getPlayers();

@@ -5,7 +5,7 @@ import { useGlobalStore } from '../../store/globalStore';
 import NewClubModal from '../../components/admin/NewClubModal';
 import EditClubModal from '../../components/admin/EditClubModal';
 import ConfirmDeleteModal from '../../components/admin/ConfirmDeleteModal';
-import { Club } from '../../types';
+import { Club } from '../../types/shared';
 
 const Clubes = () => {
   const { clubs, users, addClub, updateClub, removeClub, setLoading } = useGlobalStore();

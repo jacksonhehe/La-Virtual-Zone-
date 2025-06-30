@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 import { formatCurrency, formatDate } from '../../utils/helpers';
 import useFocusTrap from '../../hooks/useFocusTrap';
 

@@ -1,4 +1,5 @@
-import { Match, Standing, Player } from '../types';
+import { Match, Standing } from '../types';
+import { Player } from '../types/shared';
 export { slugify } from './slugify';
 
 //  Format currency

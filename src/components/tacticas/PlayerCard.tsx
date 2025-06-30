@@ -1,4 +1,4 @@
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 
 interface PlayerCardProps {
   player: Player;

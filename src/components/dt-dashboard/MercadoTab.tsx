@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Star, TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 import toast from 'react-hot-toast';
 
 interface MarketOffer {

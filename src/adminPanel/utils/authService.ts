@@ -1,4 +1,4 @@
-import  { User } from '../types';
+import  { User } from '../types/shared';
 
 export const addUser = (email: string, username: string, role: 'user' | 'dt' | 'admin'): User => {
   return {

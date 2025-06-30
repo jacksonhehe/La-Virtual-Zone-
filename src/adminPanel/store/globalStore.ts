@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import {
-  User,
-  Club,
-  Player,
   Tournament,
   Fixture,
   Match,
@@ -13,6 +10,7 @@ import {
   ActivityLog,
   Comment,
 } from '../types';
+import { User, Club, Player } from '../types/shared';
 import {
   loadAdminData,
   saveAdminData,

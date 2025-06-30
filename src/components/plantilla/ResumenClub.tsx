@@ -1,5 +1,5 @@
 import { formatCurrency } from '../../utils/helpers';
-import { Player, Club } from '../../types';
+import { Player, Club } from '../../types/shared';
 import ProgressBar from '../common/ProgressBar';
 
 interface Props {

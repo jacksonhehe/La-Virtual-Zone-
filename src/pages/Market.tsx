@@ -2,7 +2,7 @@ import { useState } from 'react';
 import usePersistentState from '../hooks/usePersistentState';
 import { Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
-import { Player } from '../types';
+import { Player } from '../types/shared';
 import PageHeader from '../components/common/PageHeader';
 import OfferModal from '../components/market/OfferModal';
 import OffersPanel from '../components/market/OffersPanel';

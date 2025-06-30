@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuthStore } from '../../store/authStore';
-import { User } from '../../types';
+import { User } from '../../types/shared';
 
 export interface AuthContextType {
   user: User | null;

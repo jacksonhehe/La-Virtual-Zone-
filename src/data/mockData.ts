@@ -1,6 +1,4 @@
 import {
-  Club,
-  Player,
   Tournament,
   Match,
   Transfer,
@@ -18,6 +16,7 @@ import {
   DtTask,
   DtEvent
 } from '../types';
+import { Club, Player } from '../types/shared';
 import { slugify } from '../utils/slugify';
 
 // Mock Clubs Data

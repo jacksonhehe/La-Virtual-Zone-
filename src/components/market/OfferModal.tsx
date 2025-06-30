@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 import { makeOffer, getMinOfferAmount, getMaxOfferAmount } from '../../utils/transferService';
 import { formatCurrency } from '../../utils/helpers';
 import useFocusTrap from '../../hooks/useFocusTrap';

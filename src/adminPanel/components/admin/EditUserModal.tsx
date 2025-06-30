@@ -1,5 +1,5 @@
 import  { useState, useRef, useEffect } from 'react';
-import { User } from '../../types';
+import { User } from '../../types/shared';
 
 interface Props {
   user: User;

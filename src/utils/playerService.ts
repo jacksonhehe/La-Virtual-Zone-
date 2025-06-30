@@ -1,4 +1,4 @@
-import { Player } from '../types';
+import { Player } from '../types/shared';
 import { VZ_PLAYERS_KEY } from './storageKeys';
 import { players as defaultPlayers } from '../data/mockData';
 

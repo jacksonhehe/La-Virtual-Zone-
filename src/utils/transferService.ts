@@ -1,4 +1,5 @@
-import { Player, TransferOffer, Transfer } from '../types';
+import { TransferOffer, Transfer } from '../types';
+import { Player } from '../types/shared';
 import { useDataStore } from '../store/dataStore';
 
 export interface MakeOfferParams {

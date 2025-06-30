@@ -6,9 +6,9 @@ import {
 } from '../../utils/storageKeys';
 
 export interface AdminData {
-  users: import('../types').User[];
-  clubs: import('../types').Club[];
-  players: import('../types').Player[];
+  users: import('../types/shared').User[];
+  clubs: import('../types/shared').Club[];
+  players: import('../types/shared').Player[];
   matches: import('../types').Fixture[];
   tournaments: import('../types').Tournament[];
   newsItems: import('../types').NewsItem[];

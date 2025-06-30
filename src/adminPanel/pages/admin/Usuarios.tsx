@@ -5,7 +5,7 @@ import { useGlobalStore } from '../../store/globalStore';
 import NewUserModal from '../../components/admin/NewUserModal';
 import EditUserModal from '../../components/admin/EditUserModal';
 import ConfirmDeleteModal from '../../components/admin/ConfirmDeleteModal';
-import { User } from '../../types';
+import { User } from '../../types/shared';
 
 const Usuarios = () => {
   const { users, addUser, updateUser, removeUser, setLoading } = useGlobalStore();

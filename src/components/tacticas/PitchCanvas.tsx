@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 import usePersistentState from '../../hooks/usePersistentState';
 import PlayerCard from './PlayerCard';
 import SynergyIndicator from './SynergyIndicator';
