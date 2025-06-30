@@ -422,6 +422,7 @@ export const useGlobalStore = create<GlobalStore>()(
           }
         ]
       }));
+      useDataStore.getState().addTournament(tournament);
       persist();
     },
 
