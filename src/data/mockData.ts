@@ -272,6 +272,24 @@ export const clubs: Club[] = [
     reputation: 95,
     fanBase: 20000,
     morale: 90
+  },
+  {
+    id: 'club12',
+    slug: slugify('Quantum Rangers'),
+    name: 'Quantum Rangers',
+    logo: 'https://ui-avatars.com/api/?name=QR&background=ff5722&color=fff&size=128&bold=true',
+    foundedYear: 2023,
+    stadium: 'Quantum Dome',
+    budget: 21000000,
+    manager: 'DT Quantum',
+    playStyle: 'Presión',
+    primaryColor: '#ff5722',
+    secondaryColor: '#212121',
+    description: 'Club experimental con énfasis en la analítica y alta presión.',
+    titles: [],
+    reputation: 80,
+    fanBase: 7500,
+    morale: 70
   }
 ];
 
