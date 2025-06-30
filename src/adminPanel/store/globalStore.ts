@@ -6,6 +6,7 @@ import {
   Player,
   Tournament,
   Fixture,
+  Match,
   NewsItem,
   Transfer,
   Standing,
