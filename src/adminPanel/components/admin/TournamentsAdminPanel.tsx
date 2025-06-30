@@ -1,17 +1,26 @@
 import  { useState } from 'react';
-import { Plus, Play, Pause, Award } from 'lucide-react';
+import { Plus, Play, Pause, Award, Trash } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 import NewTournamentModal from './NewTournamentModal';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 const TournamentsAdminPanel = () => {
-  const { tournaments, updateTournamentStatus, addTournament } = useGlobalStore();
+  const { tournaments, updateTournamentStatus, addTournament, removeTournament } = useGlobalStore();
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<Tournament | null>(null);
+  const [deleteTournament, setDeleteTournament] = useState<Tournament | null>(null);
 
   const handleView = (t: Tournament) => setSelected(t);
   const handleStart = (id: string) => updateTournamentStatus(id, 'active');
   const handlePause = (id: string) => updateTournamentStatus(id, 'upcoming');
+  const handleDelete = () => {
+    if (!deleteTournament) return;
+    removeTournament(deleteTournament.id);
+    setDeleteTournament(null);
+    toast.success('Torneo eliminado');
+  };
 
   return (
        <div className="space-y-8">
@@ -80,6 +89,13 @@ const TournamentsAdminPanel = () => {
                     <Play size={16} />
                   </button>
                 )}
+                <button
+                  className="text-red-400 hover:text-red-300"
+                  onClick={() => setDeleteTournament(tournament)}
+                  title="Eliminar"
+                >
+                  <Trash size={16} />
+                </button>
               </div>
             </div>
           ))
@@ -163,6 +179,13 @@ const TournamentsAdminPanel = () => {
             </div>
           </div>
         </div>
+      )}
+      {deleteTournament && (
+        <ConfirmDeleteModal
+          message={`¿Estás seguro de eliminar el torneo "${deleteTournament.name}"?`}
+          onConfirm={handleDelete}
+          onClose={() => setDeleteTournament(null)}
+        />
       )}
     </div>
   );
