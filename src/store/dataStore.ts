@@ -6,6 +6,26 @@ import {
   updateUser as persistUser,
   deleteUser as persistDeleteUser
 } from '../utils/authService';
+import {
+  players as seedPlayers,
+  tournaments,
+  transfers,
+  offers,
+  marketStatus,
+  leagueStandings,
+  newsItems,
+  mediaItems,
+  faqs,
+  storeItems,
+  posts,
+  dtMarket,
+  dtObjectives,
+  dtTasks,
+  dtEvents,
+  dtNews,
+  dtPositions,
+  dtRankings
+} from '../data/mockData';
 import { getClubs, saveClubs } from '../utils/clubService';
 import { getPlayers, savePlayers } from '../utils/playerService';
 import {
@@ -28,38 +48,10 @@ import {
 } from '../types';
 import { Club, Player, User } from '../types/shared';
 
-const tournaments: Tournament[] = [];
-const transfers: Transfer[] = [];
-const offers: TransferOffer[] = [];
-const marketStatus = false;
-const leagueStandings: Standing[] = [];
-const newsItems: NewsItem[] = [];
-const mediaItems: MediaItem[] = [];
-const faqs: FAQ[] = [];
-const storeItems: StoreItem[] = [];
-const posts: Post[] = [];
-const dtMarket: DtMarket = { open: false };
-const dtObjectives: DtObjectives = { position: null, fairplay: null };
-const dtTasks: DtTask[] = [];
-const dtEvents: DtEvent[] = [];
-const dtNews: NewsItem[] = [];
-const dtPositions: Standing[] = [];
-const dtRankings: DtRanking[] = [];
-
 const initialClubs = getClubs();
 const initialPlayers = getPlayers();
 const initialUser = useAuthStore.getState().user;
-const fallbackClub = {
-  id: '',
-  name: '',
-  slug: '',
-  logo: '',
-  budget: 0
-};
-const baseClub =
-  initialClubs.find(c => c.id === initialUser?.clubId) ||
-  initialClubs[0] ||
-  fallbackClub;
+const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
 const initialClub: DtClub = {
   id: baseClub.id,
   name: baseClub.name,
@@ -69,17 +61,10 @@ const initialClub: DtClub = {
   budget: baseClub.budget,
   players: initialPlayers.filter(p => p.clubId === baseClub.id)
 };
-const initialFixtures =
-  tournaments.length > 0
-    ? tournaments[0].matches
-        .filter(
-          m =>
-            m.homeTeam === initialClub.name ||
-            m.awayTeam === initialClub.name
-        )
-        .slice(0, 6)
-        .map(m => ({ ...m, played: m.status === 'finished' }))
-    : [];
+const initialFixtures = tournaments[0].matches
+  .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
+  .slice(0, 6)
+  .map(m => ({ ...m, played: m.status === 'finished' }));
 
 const refreshClubPlayers = (players: Player[], clubId: string) =>
   players.filter(p => p.clubId === clubId);

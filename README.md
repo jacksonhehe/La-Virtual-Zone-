@@ -98,11 +98,11 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 ## Data Persistence
 
-User accounts, login state, clubs and players are stored in the browser using `localStorage`. Clubs are saved under `VZ_CLUBS_KEY` and players under `VZ_PLAYERS_KEY`. If these keys are missing the application will attempt to load data from the backend or start with empty lists. Clearing your browser data resets the stored information.
+User accounts, login state, clubs, and players are stored in the browser using `localStorage`. Clubs are saved under `VZ_CLUBS_KEY` and players under `VZ_PLAYERS_KEY`. Clearing your browser data resets this information. Other league data (tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
 
 ## Personalización de datos
 
-Ya no se incluyen datos de ejemplo en el repositorio. Cuando `localStorage` está vacío la aplicación mostrará listas vacías o intentará obtener la información de un servicio backend. Puedes poblar el almacenamiento manualmente o adaptar tu propio sistema de persistencia según tus necesidades.
+El archivo `src/data/seed.json` contiene los valores iniciales de clubes, jugadores y fixtures que se copian en `localStorage` la primera vez que se abre la aplicación. Tras modificar este archivo, incrementa la constante `SEED_VERSION` en `src/main.tsx` para forzar la reseed al cargar la app.
 
 ## License
 

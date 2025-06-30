@@ -1,0 +1,62 @@
+[
+  {
+    "id": "match1",
+    "category": "partido",
+    "title": "Rayo Digital FC vs Atlético Pixelado",
+    "start": "2025-02-02T18:00:00",
+    "homeTeam": "Rayo Digital FC",
+    "homeLogo": "https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true",
+    "awayTeam": "Atlético Pixelado",
+    "awayLogo": "https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true",
+    "venue": "Estadio Cyber Arena",
+    "weather": "Soleado",
+    "moral": "Alta"
+  },
+  {
+    "id": "training1",
+    "category": "entrenamiento",
+    "title": "Entrenamiento matutino",
+    "start": "2025-02-04T10:00:00",
+    "venue": "Campo de entrenamiento",
+    "weather": "Parcialmente nublado",
+    "moral": "Media"
+  },
+  {
+    "id": "finance1",
+    "category": "finanzas",
+    "title": "Revisión financiera",
+    "start": "2025-02-10T12:00:00"
+  },
+  {
+    "id": "match2",
+    "category": "partido",
+    "title": "Neón FC vs Rayo Digital FC",
+    "start": "2025-02-12T20:00:00",
+    "homeTeam": "Neón FC",
+    "homeLogo": "https://ui-avatars.com/api/?name=NFC&background=ec4899&color=fff&size=128&bold=true",
+    "awayTeam": "Rayo Digital FC",
+    "awayLogo": "https://ui-avatars.com/api/?name=RD&background=ef4444&color=fff&size=128&bold=true",
+    "venue": "Estadio Luminoso",
+    "weather": "Lluvia",
+    "moral": "Alta"
+  },
+  {
+    "id": "match3",
+    "category": "partido",
+    "title": "Real Madrid vs Atlético Pixelado",
+    "start": "2025-02-20T20:00:00",
+    "homeTeam": "Real Madrid",
+    "homeLogo": "https://ui-avatars.com/api/?name=RM&background=ffffff&color=000000&size=128&bold=true",
+    "awayTeam": "Atlético Pixelado",
+    "awayLogo": "https://ui-avatars.com/api/?name=AP&background=3b82f6&color=fff&size=128&bold=true",
+    "venue": "Santiago Bernabéu",
+    "weather": "Soleado",
+    "moral": "Alta"
+  },
+  {
+    "id": "marketEnd",
+    "category": "mercado",
+    "title": "Fin de mercado",
+    "start": "2025-02-15"
+  }
+]
