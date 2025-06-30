@@ -301,6 +301,8 @@ function generatePlayers(): Player[] {
         position,
         nationality,
         dorsal: i,
+        club: club.name,
+        marketValue: transferValue,
         clubId: club.id,
         overall,
         potential: overall + Math.floor(Math.random() * 10),
