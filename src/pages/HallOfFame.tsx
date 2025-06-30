@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useDataStore } from '../store/dataStore';
 import { Link } from 'react-router-dom';
 import { Award, ChevronLeft, Star, Shield, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 
 const HallOfFame = () => {
   const [activeSection, setActiveSection] = useState('clubs');
+  const { clubs } = useDataStore();
   
   // Mock legendary clubs
   const legendaryClubs = [
@@ -54,7 +56,7 @@ const HallOfFame = () => {
       name: 'Carlos García',
       image: 'https://ui-avatars.com/api/?name=CG&background=1e293b&color=fff&size=128',
       position: 'ST',
-      club: 'Rayo Digital FC',
+      clubId: 'club1',
       nationality: 'España',
       activeYears: '2023-Presente',
       achievements: 'Máximo goleador histórico con 42 goles. Bicampeón de la Liga Master.',
@@ -65,7 +67,7 @@ const HallOfFame = () => {
       name: 'Diego López',
       image: 'https://ui-avatars.com/api/?name=DL&background=1e293b&color=fff&size=128',
       position: 'CAM',
-      club: 'Neón FC',
+      clubId: 'club4',
       nationality: 'Argentina',
       activeYears: '2023-Presente',
       achievements: 'MVP de la temporada 2024. Campeón de Liga Master.',
@@ -76,7 +78,7 @@ const HallOfFame = () => {
       name: 'Victor Pérez',
       image: 'https://ui-avatars.com/api/?name=VP&background=1e293b&color=fff&size=128',
       position: 'CB',
-      club: 'Glitchers 404',
+      clubId: 'club6',
       nationality: 'España',
       activeYears: '2023-Presente',
       achievements: 'Defensa del año en 2023 y 2024. Campeón de Copa.',
@@ -87,7 +89,7 @@ const HallOfFame = () => {
       name: 'Lucas Sánchez',
       image: 'https://ui-avatars.com/api/?name=LS&background=1e293b&color=fff&size=128',
       position: 'GK',
-      club: 'Pixel Galaxy',
+      clubId: 'club10',
       nationality: 'México',
       activeYears: '2023-Presente',
       achievements: 'Portero con más porterías a cero (24). Supercampeón 2023.',
@@ -98,13 +100,18 @@ const HallOfFame = () => {
       name: 'Marcos Rodríguez',
       image: 'https://ui-avatars.com/api/?name=MR&background=1e293b&color=fff&size=128',
       position: 'CDM',
-      club: 'Atlético Pixelado',
+      clubId: 'club2',
       nationality: 'Colombia',
       activeYears: '2023-Presente',
       achievements: 'Centrocampista con más recuperaciones. Finalista de Copa 2024.',
       stats: { goals: 12, assists: 18, matches: 52 }
     }
   ];
+
+  const getClubName = (clubId: string) => {
+    const club = clubs.find(c => c.id === clubId);
+    return club ? club.name : 'Desconocido';
+  };
   
   // Mock legendary managers
   const legendaryManagers = [
@@ -311,7 +318,7 @@ const HallOfFame = () => {
                     <div className="p-6">
                       <div className="flex items-center mb-4">
                         <span className="text-gray-400 mr-1">Club:</span>
-                        <span className="font-medium">{player.club}</span>
+                        <span className="font-medium">{getClubName(player.clubId)}</span>
                       </div>
                       
                       <p className="text-gray-300 mb-4">

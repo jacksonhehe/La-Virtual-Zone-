@@ -16,9 +16,10 @@ export default function PlantillaTab() {
     return players.filter(player => {
       const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
       const matchesPosition = selectedPosition === 'all' || player.position === selectedPosition;
-      return matchesSearch && matchesPosition && player.club === club?.name;
+      const matchesClub = player.clubId === club?.id;
+      return matchesSearch && matchesPosition && matchesClub;
     });
-  }, [players, search, selectedPosition, club?.name]);
+  }, [players, search, selectedPosition, club?.id]);
 
   const handlePlayerClick = (player: Player) => {
     setSelectedPlayer(player);
