@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import financeHistory from "../../data/financeHistory.json";
+import { VZ_FINANCE_HISTORY_KEY } from "../../utils/storageKeys";
 
 export interface FinanceHistoryEntry {
   month: string;
@@ -27,10 +27,23 @@ const ranges = {
   "12m": 12,
 } as const;
 
+const loadHistory = (): FinanceHistoryEntry[] => {
+  if (typeof localStorage === 'undefined') return [];
+  const json = localStorage.getItem(VZ_FINANCE_HISTORY_KEY);
+  if (json) {
+    try {
+      return JSON.parse(json) as FinanceHistoryEntry[];
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return [];
+};
+
 const IncomeVsExpensesChart: React.FC<Props> = ({ data }) => {
   const [range, setRange] = useState<"3m" | "6m" | "12m">("6m");
 
-  const source = data ?? financeHistory;
+  const source = data ?? loadHistory();
   const chartData = source.slice(-ranges[range]);
 
   return (

@@ -1,20 +1,17 @@
-import seed from '../data/seed.json';
 import { Club } from '../types/shared';
 import { VZ_CLUBS_KEY } from './storageKeys';
 
 export const getClubs = (): Club[] => {
-  const json =
-    typeof localStorage === 'undefined'
-      ? null
-      : localStorage.getItem(VZ_CLUBS_KEY);
+  if (typeof localStorage === 'undefined') return [];
+  const json = localStorage.getItem(VZ_CLUBS_KEY);
   if (json) {
     try {
       return JSON.parse(json) as Club[];
     } catch {
-      // ignore parse errors and fall back to seed
+      // ignore parse errors
     }
   }
-  return seed.clubs as Club[];
+  return [];
 };
 
 export const saveClubs = (clubs: Club[]): void => {

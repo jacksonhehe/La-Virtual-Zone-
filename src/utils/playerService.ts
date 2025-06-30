@@ -1,17 +1,17 @@
 import { Player } from '../types/shared';
 import { VZ_PLAYERS_KEY } from './storageKeys';
-import { players as defaultPlayers } from '../data/mockData';
 
 export const getPlayers = (): Player[] => {
+  if (typeof localStorage === 'undefined') return [];
   const json = localStorage.getItem(VZ_PLAYERS_KEY);
   if (json) {
     try {
       return JSON.parse(json) as Player[];
     } catch {
-      // ignore
+      // ignore parse errors
     }
   }
-  return defaultPlayers as Player[];
+  return [];
 };
 
 export const savePlayers = (data: Player[]): void => {
