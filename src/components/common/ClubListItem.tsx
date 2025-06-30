@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Club } from '../../types';
+import { Club } from '../../types/shared';
 
 interface ClubListItemProps {
   club: Club;

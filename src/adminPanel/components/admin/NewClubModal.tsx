@@ -1,5 +1,5 @@
 import  { useState, useRef, useEffect } from 'react';
-import { Club } from '../../types';
+import { Club } from '../../types/shared';
 import { useGlobalStore } from '../../store/globalStore';
 import { slugify } from '../../utils/helpers';
 

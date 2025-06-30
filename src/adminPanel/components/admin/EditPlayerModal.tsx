@@ -1,5 +1,5 @@
 import  { useState, useRef, useEffect } from 'react';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 import { useGlobalStore } from '../../store/globalStore';
 
 interface Props {

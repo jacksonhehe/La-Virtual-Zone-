@@ -2,7 +2,7 @@ import  { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Star, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 
 export default function PlantillaTab() {
   const { club, players } = useDataStore();

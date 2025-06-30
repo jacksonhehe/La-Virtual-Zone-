@@ -1,4 +1,4 @@
-import { User } from '../types';
+import { User } from '../types/shared';
 import {
   VZ_USERS_KEY,
   VZ_CURRENT_USER_KEY
