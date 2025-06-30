@@ -5,10 +5,22 @@ import interactionPlugin from '@fullcalendar/interaction';
 import DtMenuTabs from '../components/DtMenuTabs';
 import EventModal, { CalendarEvent } from '../components/calendar/EventModal';
 import CardSkeleton from '../components/common/CardSkeleton';
-import fixtures from '../data/fixtures.json';
-import { VZ_CALENDAR_PREFS_KEY } from '../utils/storageKeys';
+import { VZ_CALENDAR_PREFS_KEY, VZ_FIXTURES_KEY } from '../utils/storageKeys';
 
 const FullCalendar = lazy(() => import('@fullcalendar/react'));
+
+const loadFixtures = (): CalendarEvent[] => {
+  if (typeof localStorage === 'undefined') return [];
+  const json = localStorage.getItem(VZ_FIXTURES_KEY);
+  if (json) {
+    try {
+      return JSON.parse(json) as CalendarEvent[];
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return [];
+};
 
 interface Filters {
   partidos: boolean;
@@ -25,6 +37,7 @@ const defaultFilters: Filters = {
 };
 
 const Calendario = () => {
+  const fixtures = loadFixtures();
   const [filters, setFilters] = useState<Filters>(() => {
     const saved = localStorage.getItem(VZ_CALENDAR_PREFS_KEY);
     return saved ? JSON.parse(saved) : defaultFilters;
