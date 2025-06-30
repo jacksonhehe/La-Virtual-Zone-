@@ -11,13 +11,14 @@ import {
   Standing,
   ActivityLog,
   Comment,
-  Fixture
 } from '../types';
 import {
   loadAdminData,
   saveAdminData,
   AdminData
 } from '../utils/adminStorage';
+import { saveClubs } from '../../utils/clubService';
+import { savePlayers } from '../../utils/playerService';
 
 interface GlobalStore {
   users: User[];
@@ -25,7 +26,6 @@ interface GlobalStore {
   players: Player[];
   matches: Fixture[];
   tournaments: Tournament[];
-  matches: Fixture[];
   newsItems: NewsItem[];
   transfers: Transfer[];
   standings: Standing[];
@@ -51,8 +51,8 @@ interface GlobalStore {
   removePlayer: (id: string) => void;
 
   // Matches
-  addMatch: (match: Match) => void;
-  updateMatch: (match: Match) => void;
+  addMatch: (match: Fixture) => void;
+  updateMatch: (match: Fixture) => void;
   removeMatch: (id: string) => void;
 
   // Tournaments
@@ -224,7 +224,7 @@ export const useGlobalStore = create<GlobalStore>()(
   subscribeWithSelector<GlobalStore>((set, get) => {
   const initial = loadAdminData(defaultData);
 
-  const persist = () =>
+  const persist = () => {
       saveAdminData({
         users: get().users,
         clubs: get().clubs,
@@ -237,6 +237,8 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: get().activities,
         comments: get().comments
       });
+      savePlayers(get().players);
+  };
 
   return {
     ...initial,
@@ -300,9 +302,11 @@ export const useGlobalStore = create<GlobalStore>()(
         const updatedUsers = state.users.map(u =>
           u.id === club.managerId ? { ...u, clubId: club.id } : u
         );
+        const updatedClubs = [...state.clubs, club];
+        saveClubs(updatedClubs);
         return {
           users: updatedUsers,
-          clubs: [...state.clubs, club],
+          clubs: updatedClubs,
           activities: [
             ...state.activities,
             {
@@ -332,9 +336,11 @@ export const useGlobalStore = create<GlobalStore>()(
             u.id === club.managerId ? { ...u, clubId: club.id } : u
           );
         }
+        const updatedClubs = state.clubs.map(c => (c.id === club.id ? club : c));
+        saveClubs(updatedClubs);
         return {
           users: updatedUsers,
-          clubs: state.clubs.map(c => (c.id === club.id ? club : c))
+          clubs: updatedClubs
         };
       });
       persist();
@@ -348,23 +354,37 @@ export const useGlobalStore = create<GlobalStore>()(
               u.id === club.managerId ? { ...u, clubId: undefined } : u
             )
           : state.users;
-        return { users: updatedUsers, clubs: state.clubs.filter(c => c.id !== id) };
+        const updatedClubs = state.clubs.filter(c => c.id !== id);
+        saveClubs(updatedClubs);
+        return { users: updatedUsers, clubs: updatedClubs };
       });
       persist();
     },
 
     addPlayer: player => {
-      set(state => ({ players: [...state.players, player] }));
+      set(state => {
+        const updated = [...state.players, player];
+        savePlayers(updated);
+        return { players: updated };
+      });
       persist();
     },
 
     updatePlayer: player => {
-      set(state => ({ players: state.players.map(p => (p.id === player.id ? player : p)) }));
+      set(state => {
+        const updated = state.players.map(p => (p.id === player.id ? player : p));
+        savePlayers(updated);
+        return { players: updated };
+      });
       persist();
     },
 
     removePlayer: id => {
-      set(state => ({ players: state.players.filter(p => p.id !== id) }));
+      set(state => {
+        const updated = state.players.filter(p => p.id !== id);
+        savePlayers(updated);
+        return { players: updated };
+      });
       persist();
     },
 
@@ -468,4 +488,3 @@ export const useGlobalStore = create<GlobalStore>()(
 }));
 
 export const subscribe = useGlobalStore.subscribe;
- 

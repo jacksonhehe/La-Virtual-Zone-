@@ -3,7 +3,10 @@ import { Club } from '../types';
 import { VZ_CLUBS_KEY } from './storageKeys';
 
 export const getClubs = (): Club[] => {
-  const json = localStorage.getItem(VZ_CLUBS_KEY);
+  const json =
+    typeof localStorage === 'undefined'
+      ? null
+      : localStorage.getItem(VZ_CLUBS_KEY);
   if (json) {
     try {
       return JSON.parse(json) as Club[];
@@ -15,5 +18,6 @@ export const getClubs = (): Club[] => {
 };
 
 export const saveClubs = (clubs: Club[]): void => {
+  if (typeof localStorage === 'undefined') return;
   localStorage.setItem(VZ_CLUBS_KEY, JSON.stringify(clubs));
 };

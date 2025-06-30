@@ -9,7 +9,7 @@ import { VZ_CLUBS_KEY, VZ_PLAYERS_KEY, VZ_FIXTURES_KEY } from './utils/storageKe
 
 // Update this value when modifying seed.json to force re-seeding
 const SEED_VERSION_KEY = 'vz_seed_version';
-const SEED_VERSION = '1';
+const SEED_VERSION = '2';
 
 if (typeof localStorage !== 'undefined') {
   const storedVersion = localStorage.getItem(SEED_VERSION_KEY);
