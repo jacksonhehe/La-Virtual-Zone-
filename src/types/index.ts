@@ -53,6 +53,8 @@ export interface Player {
   position: string;
   nationality: string;
   dorsal: number;
+  club?: string;
+  marketValue?: number;
   clubId: string;
   overall: number;
   potential: number;
