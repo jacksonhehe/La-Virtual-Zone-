@@ -7,8 +7,13 @@ import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { generateId } from '../../../utils/id';
 
-const TournamentsAdminPanel = () => {
+interface Props {
+  status?: Tournament['status'];
+}
+
+const TournamentsAdminPanel = ({ status }: Props) => {
   const { tournaments, updateTournamentStatus, addTournament, removeTournament } = useGlobalStore();
+  const filtered = status ? tournaments.filter(t => t.status === status) : tournaments;
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<Tournament | null>(null);
   const [deleteTournament, setDeleteTournament] = useState<Tournament | null>(null);
@@ -40,8 +45,8 @@ const TournamentsAdminPanel = () => {
       </div> 
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tournaments.length > 0 ? (
-          tournaments.map((tournament) => (
+        {filtered.length > 0 ? (
+          filtered.map((tournament) => (
             <div key={tournament.id} className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-lg">{tournament.name}</h3>
@@ -102,7 +107,7 @@ const TournamentsAdminPanel = () => {
           ))
         ) : (
           <div className="col-span-full card text-center py-8">
-            <p className="text-gray-400">No hay torneos creados</p>
+            <p className="text-gray-400">No hay torneos</p>
           </div>
         )}
       </div>
