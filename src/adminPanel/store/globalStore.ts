@@ -147,7 +147,9 @@ const defaultData: AdminData = {
       date: '2023-12-15T20:00:00Z',
       homeTeam: 'Barcelona',
       awayTeam: 'Real Madrid',
-      status: 'scheduled'
+      homeScore: 2,
+      awayScore: 1,
+      status: 'pending_review'
     },
     {
       id: 'match2',

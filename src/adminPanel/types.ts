@@ -77,6 +77,6 @@ export interface Fixture {
   awayTeam: string;
   homeScore?: number;
   awayScore?: number;
-  status: 'scheduled' | 'live' | 'finished';
+  status: 'scheduled' | 'live' | 'finished' | 'pending_review';
 }
  
