@@ -1,6 +1,7 @@
 import  { create } from 'zustand';
 import { Tournament, NewsItem, Transfer, Standing } from '../types';
-import { User, Club, Player } from '../types/shared';
+import { User, Club } from '../types/shared';
+import { Player } from '../types';
 
 interface DataStore {
   users: User[];
