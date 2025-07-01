@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
-import { generateId } from '../../utils/id';
+import { generateId } from '../../../utils/id';
 import StepBasics from './Steps/StepBasics';
 import StepFormat from './Steps/StepFormat';
 import StepSchedule from './Steps/StepSchedule';
