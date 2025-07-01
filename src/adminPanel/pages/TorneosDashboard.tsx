@@ -5,16 +5,35 @@ import { useGlobalStore } from '../store/globalStore';
 
 const TorneosDashboard = () => {
   const navigate = useNavigate();
-  const { getUpcoming, getActive, getFinished, tournaments } = useGlobalStore();
 
-  const upcoming = getUpcoming();
-  const active = getActive();
-  const finished = getFinished();
+  const tournaments = useGlobalStore(state => state.tournaments);
+  const upcoming = useGlobalStore(state => state.getUpcoming());
+  const active = useGlobalStore(state => state.getActive());
+  const finished = useGlobalStore(state => state.getFinished());
 
   return (
     <div className="p-8 space-y-8">
       <div>
         <h1 className="text-4xl font-bold gradient-text">Torneos</h1>
+        {tournaments.length > 0 && (
+          <div className="flex items-center gap-2 mt-2">
+            {upcoming.length > 0 && (
+              <span className="bg-white/5 text-xs px-2 py-1 rounded-full">
+                {upcoming.length} próximos
+              </span>
+            )}
+            {active.length > 0 && (
+              <span className="bg-white/5 text-xs px-2 py-1 rounded-full">
+                {active.length} en juego
+              </span>
+            )}
+            {finished.length > 0 && (
+              <span className="bg-white/5 text-xs px-2 py-1 rounded-full">
+                {finished.length} cerrados
+              </span>
+            )}
+          </div>
+        )}
         <p className="text-gray-400 mt-2">Resumen general de torneos</p>
       </div>
 
