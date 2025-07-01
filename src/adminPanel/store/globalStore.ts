@@ -10,7 +10,8 @@ import {
   ActivityLog,
   Comment,
 } from '../types';
-import { User, Club, Player } from '../types/shared';
+import { User, Club } from '../types/shared';
+import { Player } from '../types';
 import {
   loadAdminData,
   saveAdminData,
@@ -128,7 +129,8 @@ const defaultData: AdminData = {
       position: 'DEL',
       clubId: '1',
       overall: 93,
-      price: 25000000
+      price: 25000000,
+      createdAt: '2023-01-01T00:00:00.000Z'
     },
     {
       id: '2',
@@ -136,7 +138,8 @@ const defaultData: AdminData = {
       position: 'DEL',
       clubId: '2',
       overall: 91,
-      price: 20000000
+      price: 20000000,
+      createdAt: '2023-01-01T00:00:00.000Z'
     }
   ],
   matches: [
