@@ -107,48 +107,6 @@ const TournamentsAdminPanel = () => {
         )}
       </div>
 
-      {/* Sample tournaments for demo */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-lg">Liga Profesional</h3>
-            <span className="px-2 py-1 rounded-full text-xs bg-green-900/20 text-green-300">
-              Activo
-            </span>
-          </div>
-          <div className="space-y-2 text-sm text-gray-400">
-            <p>Jornada: 15 / 38</p>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full" style={{ width: '39%' }}></div>
-            </div>
-          </div>
-          <div className="flex space-x-2 mt-4">
-            <button className="btn-primary flex-1 text-sm">
-              <Award size={16} className="mr-1" />
-              Ver Tabla
-            </button>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-lg">Copa Nacional</h3>
-            <span className="px-2 py-1 rounded-full text-xs bg-yellow-900/20 text-yellow-300">
-              Próximo
-            </span>
-          </div>
-          <div className="space-y-2 text-sm text-gray-400">
-            <p>Fase: Octavos de Final</p>
-            <p>Fecha de inicio: 15/12/2023</p>
-          </div>
-          <div className="flex space-x-2 mt-4">
-            <button className="btn-outline flex-1 text-sm">
-              <Play size={16} className="mr-1" />
-              Iniciar
-            </button>
-          </div>
-        </div>
-      </div>
       {showNew && (
         <NewTournamentModal
           onClose={() => setShowNew(false)}
