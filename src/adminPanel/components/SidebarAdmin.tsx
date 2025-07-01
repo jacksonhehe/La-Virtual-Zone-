@@ -1,6 +1,6 @@
 import  { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar } from 'lucide-react';
+import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar, CheckCircle } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -24,6 +24,7 @@ const SidebarAdmin = () => {
     { name: 'Clubes', href: '/admin/clubes', icon: Globe },
     { name: 'Jugadores', href: '/admin/jugadores', icon: User },
     { name: 'Mercado', href: '/admin/mercado', icon: ShoppingBag, badge: pendingTransfers },
+    { name: 'Resultados', href: '/admin/resultados', icon: CheckCircle },
     { name: 'Torneos', href: '/admin/torneos', icon: Award },
     { name: 'Noticias', href: '/admin/noticias', icon: FileText },
     { name: 'Comentarios', href: '/admin/comentarios', icon: MessageCircle },
