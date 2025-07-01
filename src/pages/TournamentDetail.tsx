@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';
@@ -6,6 +6,11 @@ import { useDataStore } from '../store/dataStore';
 import { Match } from '../types';
 import { formatDate, slugify } from '../utils/helpers';
 import ClubListItem from '../components/common/ClubListItem';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import CardSkeleton from '../components/common/CardSkeleton';
+
+const FullCalendar = lazy(() => import('@fullcalendar/react'));
 
 const TournamentDetail = () => {
   const { tournamentName } = useParams<{ tournamentName: string }>();
@@ -31,8 +36,16 @@ const TournamentDetail = () => {
   // Get tournament clubs
   const tournamentClubs = clubs.filter(c => tournament.participants.includes(c.name));
   
-  // Mock tournament matches (no matches data available yet)
-  const tournamentMatches: Match[] = [];
+  // Matches for this tournament
+  const tournamentMatches: Match[] = tournaments
+    .flatMap(t => t.matches)
+    .filter(match => match.tournamentId === tournament.id);
+
+  const calendarEvents = tournamentMatches.map(match => ({
+    id: match.id,
+    title: `${match.homeTeam} vs ${match.awayTeam}`,
+    date: match.date
+  }));
   
   // Mock top scorers
   const topScorers = [
@@ -76,13 +89,19 @@ const TournamentDetail = () => {
                 >
                   Participantes
                 </button>
-                <button 
+                <button
                   onClick={() => setActiveTab('fixture')}
                   className={`px-4 py-3 text-sm font-medium ${activeTab === 'fixture' ? 'bg-primary text-white' : 'hover:bg-dark-lighter'}`}
                 >
                   Fixture
                 </button>
-                <button 
+                <button
+                  onClick={() => setActiveTab('calendar')}
+                  className={`px-4 py-3 text-sm font-medium ${activeTab === 'calendar' ? 'bg-primary text-white' : 'hover:bg-dark-lighter'}`}
+                >
+                  Calendario
+                </button>
+                <button
                   onClick={() => setActiveTab('scorers')}
                   className={`px-4 py-3 text-sm font-medium ${activeTab === 'scorers' ? 'bg-primary text-white' : 'hover:bg-dark-lighter'}`}
                 >
@@ -332,10 +351,23 @@ const TournamentDetail = () => {
                                 </tbody>
                               </table>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+                {activeTab === 'calendar' && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-6">Calendario</h3>
+                    <Suspense fallback={<CardSkeleton lines={4} /> }>
+                      <FullCalendar
+                        plugins={[dayGridPlugin, interactionPlugin]}
+                        initialView="dayGridMonth"
+                        events={calendarEvents}
+                      />
+                    </Suspense>
+                  </div>
+                )}
                   </div>
                 )}
                 
