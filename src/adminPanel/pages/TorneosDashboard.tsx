@@ -1,10 +1,21 @@
-import { Clock, Play, Award, Trophy } from 'lucide-react';
+import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatsCard from '../components/admin/StatsCard';
+import DropdownMenu from '../components/admin/DropdownMenu';
+import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
 
 const TorneosDashboard = () => {
   const navigate = useNavigate();
+  const {
+    getUpcoming,
+    getActive,
+    getFinished,
+    duplicateLastTournament,
+    generateTournamentsReport,
+    tournaments
+  } = useGlobalStore();
+  const canModify = useCan(['super', 'gestor']);
 
   const tournaments = useGlobalStore(state => state.tournaments);
   const upcoming = useGlobalStore(state => state.getUpcoming());
@@ -55,7 +66,7 @@ const TorneosDashboard = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div
-            className="cursor-pointer"
+            className="group relative cursor-pointer"
             onClick={() => navigate('/admin/torneos/list?status=upcoming')}
           >
             <StatsCard
@@ -64,9 +75,25 @@ const TorneosDashboard = () => {
               icon={Clock}
               gradient="bg-gradient-to-r from-gray-600 to-gray-800"
             />
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Ver lista completa',
+                  onSelect: () => navigate('/admin/torneos/list?status=upcoming')
+                }
+              ]}
+            >
+              <button
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
+                aria-label="Más opciones"
+              >
+                <MoreHorizontal size={16} />
+              </button>
+            </DropdownMenu>
           </div>
           <div
-            className="cursor-pointer"
+            className="group relative cursor-pointer"
             onClick={() => navigate('/admin/torneos/list?status=active')}
           >
             <StatsCard
@@ -75,9 +102,29 @@ const TorneosDashboard = () => {
               icon={Play}
               gradient="bg-gradient-to-r from-emerald-600 to-green-600"
             />
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Ver lista completa',
+                  onSelect: () => navigate('/admin/torneos/list?status=active')
+                },
+                {
+                  label: 'Ir a resultados pendientes',
+                  onSelect: () => navigate('/admin/resultados-pendientes')
+                }
+              ]}
+            >
+              <button
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
+                aria-label="Más opciones"
+              >
+                <MoreHorizontal size={16} />
+              </button>
+            </DropdownMenu>
           </div>
           <div
-            className="cursor-pointer"
+            className="group relative cursor-pointer"
             onClick={() => navigate('/admin/torneos/list?status=completed')}
           >
             <StatsCard
@@ -86,6 +133,32 @@ const TorneosDashboard = () => {
               icon={Award}
               gradient="bg-gradient-to-r from-blue-600 to-purple-600"
             />
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Ver lista completa',
+                  onSelect: () => navigate('/admin/torneos/list?status=completed')
+                },
+                {
+                  label: 'Duplicar último torneo',
+                  onSelect: duplicateLastTournament,
+                  hidden: !canModify
+                },
+                {
+                  label: 'Generar reporte PDF',
+                  onSelect: generateTournamentsReport,
+                  hidden: !canModify
+                }
+              ]}
+            >
+              <button
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
+                aria-label="Más opciones"
+              >
+                <MoreHorizontal size={16} />
+              </button>
+            </DropdownMenu>
           </div>
         </div>
       )}

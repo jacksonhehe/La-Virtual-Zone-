@@ -67,10 +67,9 @@ interface GlobalStore {
   getActive: () => Tournament[];
   getFinished: () => Tournament[];
 
-  // Dashboard selectors
-  getPlayersRegisteredToday: () => User[];
-  getMatchesScheduledTomorrow: () => Fixture[];
-  getAvgGoalsLast7Days: () => number;
+  // Extras
+  duplicateLastTournament: () => void;
+  generateTournamentsReport: () => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -573,6 +572,38 @@ export const useGlobalStore = create<GlobalStore>()(
     deleteComment: id => {
       set(state => ({ comments: state.comments.filter(c => c.id !== id) }));
       persist();
+    },
+
+    duplicateLastTournament: () => {
+      set(state => {
+        const last = [...state.tournaments].reverse().find(t => t.status === 'completed');
+        if (!last) return state;
+        const copy = {
+          ...last,
+          id: generateId(),
+          name: `${last.name} (copia)`,
+          status: 'upcoming' as const,
+          currentRound: 0
+        };
+        return {
+          tournaments: [...state.tournaments, copy],
+          activities: [
+            ...state.activities,
+            {
+              id: generateId(),
+              userId: 'admin',
+              action: 'Tournament Duplicated',
+              details: `Duplicated tournament: ${last.name}`,
+              date: new Date().toISOString()
+            }
+          ]
+        };
+      });
+      persist();
+    },
+
+    generateTournamentsReport: () => {
+      console.log('Generating tournaments PDF report...');
     },
 
     addActivity: activity => {
