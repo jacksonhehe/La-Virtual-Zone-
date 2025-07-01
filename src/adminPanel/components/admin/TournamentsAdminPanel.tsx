@@ -3,16 +3,15 @@ import { Plus, Play, Pause, Award, Trash } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
-import NewTournamentModal from './NewTournamentModal';
+import CreateTournamentWizard from '../../wizards/CreateTournament';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-import { generateId } from '../../../utils/id';
 
 interface Props {
   status?: Tournament['status'];
 }
 
 const TournamentsAdminPanel = ({ status }: Props) => {
-  const { tournaments, updateTournamentStatus, addTournament, removeTournament } = useGlobalStore();
+  const { tournaments, updateTournamentStatus, removeTournament } = useGlobalStore();
   const filtered = status ? tournaments.filter(t => t.status === status) : tournaments;
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<Tournament | null>(null);
@@ -113,13 +112,7 @@ const TournamentsAdminPanel = ({ status }: Props) => {
       </div>
 
       {showNew && (
-        <NewTournamentModal
-          onClose={() => setShowNew(false)}
-          onSave={(data) => {
-            addTournament({ id: generateId(), ...data });
-            setShowNew(false);
-          }}
-        />
+        <CreateTournamentWizard onClose={() => setShowNew(false)} />
       )}
       {selected && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
