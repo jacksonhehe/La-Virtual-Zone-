@@ -10,7 +10,8 @@ import {
   ActivityLog,
   Comment,
 } from '../types';
-import { User, Club, Player } from '../types/shared';
+import { User, Club } from '../types/shared';
+import { Player } from '../types';
 import {
   loadAdminData,
   saveAdminData,
@@ -65,6 +66,10 @@ interface GlobalStore {
   getUpcoming: () => Tournament[];
   getActive: () => Tournament[];
   getFinished: () => Tournament[];
+
+  // Extras
+  duplicateLastTournament: () => void;
+  generateTournamentsReport: () => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -128,7 +133,8 @@ const defaultData: AdminData = {
       position: 'DEL',
       clubId: '1',
       overall: 93,
-      price: 25000000
+      price: 25000000,
+      createdAt: '2023-01-01T00:00:00.000Z'
     },
     {
       id: '2',
@@ -136,7 +142,8 @@ const defaultData: AdminData = {
       position: 'DEL',
       clubId: '2',
       overall: 91,
-      price: 20000000
+      price: 20000000,
+      createdAt: '2023-01-01T00:00:00.000Z'
     }
   ],
   matches: [
@@ -464,6 +471,41 @@ export const useGlobalStore = create<GlobalStore>()(
     getActive: () => get().tournaments.filter(t => t.status === 'active'),
     getFinished: () => get().tournaments.filter(t => t.status === 'completed'),
 
+    getPlayersRegisteredToday: () => {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+      return get().users.filter(u => {
+        if (!u.createdAt) return false;
+        const d = new Date(u.createdAt);
+        return d >= start && d <= end && u.role === 'user';
+      });
+    },
+
+    getMatchesScheduledTomorrow: () => {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
+      return get().matches.filter(m => {
+        const d = new Date(m.date);
+        return d >= start && d < end;
+      });
+    },
+
+    getAvgGoalsLast7Days: () => {
+      const now = Date.now();
+      const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+      const recent = get().matches.filter(m => {
+        const d = new Date(m.date).getTime();
+        return d >= weekAgo && d <= now &&
+          typeof m.homeScore === 'number' && typeof m.awayScore === 'number';
+      });
+      if (recent.length === 0) return 0;
+      const totalGoals = recent.reduce((sum, m) => sum + (m.homeScore ?? 0) + (m.awayScore ?? 0), 0);
+      return totalGoals / recent.length;
+    },
+
     approveTransfer: id => {
       set(state => ({
         transfers: state.transfers.map(t => (t.id === id ? { ...t, status: 'approved' as const } : t)),
@@ -532,6 +574,38 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
 
+    duplicateLastTournament: () => {
+      set(state => {
+        const last = [...state.tournaments].reverse().find(t => t.status === 'completed');
+        if (!last) return state;
+        const copy = {
+          ...last,
+          id: generateId(),
+          name: `${last.name} (copia)`,
+          status: 'upcoming' as const,
+          currentRound: 0
+        };
+        return {
+          tournaments: [...state.tournaments, copy],
+          activities: [
+            ...state.activities,
+            {
+              id: generateId(),
+              userId: 'admin',
+              action: 'Tournament Duplicated',
+              details: `Duplicated tournament: ${last.name}`,
+              date: new Date().toISOString()
+            }
+          ]
+        };
+      });
+      persist();
+    },
+
+    generateTournamentsReport: () => {
+      console.log('Generating tournaments PDF report...');
+    },
+
     addActivity: activity => {
       set(state => ({ activities: [...state.activities, activity] }));
       persist();
@@ -540,3 +614,9 @@ export const useGlobalStore = create<GlobalStore>()(
 }));
 
 export const subscribe = useGlobalStore.subscribe;
+export const getPlayersRegisteredToday = () =>
+  useGlobalStore.getState().getPlayersRegisteredToday();
+export const getMatchesScheduledTomorrow = () =>
+  useGlobalStore.getState().getMatchesScheduledTomorrow();
+export const getAvgGoalsLast7Days = () =>
+  useGlobalStore.getState().getAvgGoalsLast7Days();

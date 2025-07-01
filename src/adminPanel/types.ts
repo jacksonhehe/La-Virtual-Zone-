@@ -2,12 +2,16 @@ import {
   User as SharedUser,
   Club,
   Title,
-  Player,
+  Player as SharedPlayer,
   PlayerAttributes,
   PlayerContract,
 } from '../types/shared';
 
-export { Club, Title, Player, PlayerAttributes, PlayerContract } from '../types/shared';
+export { Club, Title, PlayerAttributes, PlayerContract } from '../types/shared';
+
+export interface Player extends SharedPlayer {
+  createdAt?: string;
+}
 
 export interface User extends SharedUser {
   role: 'admin' | 'dt' | 'user';
