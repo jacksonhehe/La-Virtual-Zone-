@@ -60,6 +60,11 @@ interface GlobalStore {
   addTournament: (tournament: Tournament) => void;
   updateTournamentStatus: (id: string, status: Tournament['status']) => void;
   removeTournament: (id: string) => void;
+
+  // Tournament selectors
+  getUpcoming: () => Tournament[];
+  getActive: () => Tournament[];
+  getFinished: () => Tournament[];
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -452,6 +457,10 @@ export const useGlobalStore = create<GlobalStore>()(
       }));
       persist();
     },
+
+    getUpcoming: () => get().tournaments.filter(t => t.status === 'upcoming'),
+    getActive: () => get().tournaments.filter(t => t.status === 'active'),
+    getFinished: () => get().tournaments.filter(t => t.status === 'completed'),
 
     approveTransfer: id => {
       set(state => ({

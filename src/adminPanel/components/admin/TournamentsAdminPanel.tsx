@@ -3,12 +3,16 @@ import { Plus, Play, Pause, Award, Trash } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Tournament } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
-import NewTournamentModal from './NewTournamentModal';
+import CreateTournamentWizard from '../../wizards/CreateTournament';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-import { generateId } from '../../../utils/id';
 
-const TournamentsAdminPanel = () => {
-  const { tournaments, updateTournamentStatus, addTournament, removeTournament } = useGlobalStore();
+interface Props {
+  status?: Tournament['status'];
+}
+
+const TournamentsAdminPanel = ({ status }: Props) => {
+  const { tournaments, updateTournamentStatus, removeTournament } = useGlobalStore();
+  const filtered = status ? tournaments.filter(t => t.status === status) : tournaments;
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<Tournament | null>(null);
   const [deleteTournament, setDeleteTournament] = useState<Tournament | null>(null);
@@ -40,8 +44,8 @@ const TournamentsAdminPanel = () => {
       </div> 
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tournaments.length > 0 ? (
-          tournaments.map((tournament) => (
+        {filtered.length > 0 ? (
+          filtered.map((tournament) => (
             <div key={tournament.id} className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-lg">{tournament.name}</h3>
@@ -102,19 +106,13 @@ const TournamentsAdminPanel = () => {
           ))
         ) : (
           <div className="col-span-full card text-center py-8">
-            <p className="text-gray-400">No hay torneos creados</p>
+            <p className="text-gray-400">No hay torneos</p>
           </div>
         )}
       </div>
 
       {showNew && (
-        <NewTournamentModal
-          onClose={() => setShowNew(false)}
-          onSave={(data) => {
-            addTournament({ id: generateId(), ...data });
-            setShowNew(false);
-          }}
-        />
+        <CreateTournamentWizard onClose={() => setShowNew(false)} />
       )}
       {selected && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
