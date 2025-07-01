@@ -5,6 +5,7 @@ import NewMatchModal from './NewMatchModal';
 import EditMatchModal from './EditMatchModal';
 import ResultMatchModal from './ResultMatchModal';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import CalendarScheduler from './CalendarScheduler';
 
 const CalendarAdminPanel = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -72,40 +73,11 @@ const CalendarAdminPanel = () => {
         </button>
       </div>
 
-      {/* Matches Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {roundMatches.map((match) => (
-          <div key={match.id} className="card">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4 flex-1">
-                <div className="text-right flex-1">
-                  <p className="font-medium">{match.homeTeam}</p>
-                </div>
-                <div className="text-center px-4">
-                  <div className="text-xs text-gray-400">
-                    {new Date(match.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                  <div className="text-lg font-bold">vs</div>
-                  <div className="text-xs text-gray-400">
-                    {new Date(match.date).toLocaleDateString('es-ES', {
-                      day: '2-digit',
-                      month: '2-digit'
-                    })}
-                  </div>
-                </div>
-                <div className="text-left flex-1">
-                  <p className="font-medium">{match.awayTeam}</p>
-                </div>
-              </div>
-              <div className="ml-4">
-                <button className="btn-outline text-xs" onClick={() => setEditing({ match })}>
-                  Editar
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <CalendarScheduler
+        matches={roundMatches}
+        weekStart={currentDate}
+        onEdit={(m) => setEditing({ match: m })}
+      />
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
