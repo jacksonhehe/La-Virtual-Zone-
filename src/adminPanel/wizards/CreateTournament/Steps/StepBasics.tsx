@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tournament } from '../../../types';
 
 interface Props {
@@ -12,6 +12,11 @@ const StepBasics = ({ data, onNext }: Props) => {
     (data.status as Tournament['status']) || 'upcoming'
   );
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setName(data.name || '');
+    setStatus((data.status as Tournament['status']) || 'upcoming');
+  }, [data]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
