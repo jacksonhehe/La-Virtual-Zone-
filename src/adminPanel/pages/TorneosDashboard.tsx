@@ -9,6 +9,7 @@ import {
   useActiveTournaments,
   useFinishedTournaments,
 } from '../hooks/useTournamentFilters';
+import { isToday, isTomorrow, average } from '../utils/fechas';
 
 const TorneosDashboard = () => {
   const navigate = useNavigate();
@@ -19,14 +20,40 @@ const TorneosDashboard = () => {
   const canModify = useCan(['super', 'gestor']);
 
   const tournaments = useGlobalStore(state => state.tournaments);
+  const players = useGlobalStore(state => state.players);
+  const matches = useGlobalStore(state => state.matches);
   const upcoming = useUpcomingTournaments();
   const active = useActiveTournaments();
   const finished = useFinishedTournaments();
+
+  const hoyInscritos = players.filter(p => isToday(p.createdAt)).length;
+  const partidosManana = matches.filter(m => isTomorrow(m.date)).length;
+  const matchesLast7Days = matches.filter(m => {
+    const d = new Date(m.date);
+    const now = new Date();
+    const diff = now.getTime() - d.getTime();
+    return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
+  });
+  const mediaGolesValue = average(
+    matchesLast7Days.map(m => (m.homeScore ?? 0) + (m.awayScore ?? 0))
+  );
+  const mediaGoles = Number.isNaN(mediaGolesValue)
+    ? '0.0'
+    : mediaGolesValue.toFixed(1);
+  const showKpis =
+    hoyInscritos > 0 || partidosManana > 0 || (!Number.isNaN(mediaGolesValue) && mediaGolesValue > 0);
 
   return (
     <div className="p-8 space-y-8">
       <div className="relative">
         <h1 className="text-4xl font-bold gradient-text">Torneos</h1>
+        {showKpis && (
+          <div className="flex items-center gap-2 mt-2">
+            <span className="kpi-chip">{hoyInscritos} inscritos hoy</span>
+            <span className="kpi-chip">{partidosManana} partidos mañana</span>
+            <span className="kpi-chip">{mediaGoles} goles/partido (7 días)</span>
+          </div>
+        )}
         {canModify && (
           <Link
             to="/admin/torneos/nuevo"
