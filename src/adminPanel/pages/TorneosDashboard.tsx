@@ -133,23 +133,7 @@ const TorneosDashboard = () => {
               icon={Clock}
               gradient="bg-gradient-to-r from-gray-600 to-gray-800"
             />
-            <DropdownMenu
-              items={[
-                {
-                  label: 'Ver lista completa',
-                  onSelect: () => {
-                    addActivity({
-                      id: generateId(),
-                      userId: 'admin',
-                      action: 'Tournament List Viewed',
-                      details: 'Viewed upcoming tournaments list',
-                      date: new Date().toISOString(),
-                    });
-                    navigate('/admin/torneos/list?status=upcoming');
-                  }
-                }
-              ]}
-            >
+            <DropdownMenu>
               <DropdownMenuTrigger>
                 <button
                   className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
@@ -176,36 +160,7 @@ const TorneosDashboard = () => {
               icon={Play}
               gradient="bg-gradient-to-r from-emerald-600 to-green-600"
             />
-            <DropdownMenu
-              items={[
-                {
-                  label: 'Ver lista completa',
-                  onSelect: () => {
-                    addActivity({
-                      id: generateId(),
-                      userId: 'admin',
-                      action: 'Tournament List Viewed',
-                      details: 'Viewed active tournaments list',
-                      date: new Date().toISOString(),
-                    });
-                    navigate('/admin/torneos/list?status=active');
-                  }
-                },
-                {
-                  label: 'Ir a resultados pendientes',
-                  onSelect: () => {
-                    addActivity({
-                      id: generateId(),
-                      userId: 'admin',
-                      action: 'Results Pending Viewed',
-                      details: 'Visited pending match results',
-                      date: new Date().toISOString(),
-                    });
-                    navigate('/admin/resultados-pendientes');
-                  }
-                }
-              ]}
-            >
+            <DropdownMenu>
               <DropdownMenuTrigger>
                 <button
                   className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
@@ -237,33 +192,7 @@ const TorneosDashboard = () => {
               icon={Award}
               gradient="bg-gradient-to-r from-blue-600 to-purple-600"
             />
-            <DropdownMenu
-              items={[
-                {
-                  label: 'Ver lista completa',
-                  onSelect: () => {
-                    addActivity({
-                      id: generateId(),
-                      userId: 'admin',
-                      action: 'Tournament List Viewed',
-                      details: 'Viewed completed tournaments list',
-                      date: new Date().toISOString(),
-                    });
-                    navigate('/admin/torneos/list?status=completed');
-                  }
-                },
-                {
-                  label: 'Duplicar último torneo',
-                  onSelect: handleDuplicate,
-                  hidden: !canModify
-                },
-                {
-                  label: 'Generar reporte PDF',
-                  onSelect: generateTournamentsReport,
-                  hidden: !canModify
-                }
-              ]}
-            >
+            <DropdownMenu>
               <DropdownMenuTrigger>
                 <button
                   className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
