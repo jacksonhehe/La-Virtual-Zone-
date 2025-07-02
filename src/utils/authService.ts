@@ -1,13 +1,15 @@
 import { User } from '../types/shared';
+import { randomBytes } from 'crypto';
 import {
   VZ_USERS_KEY,
-  VZ_CURRENT_USER_KEY
+  VZ_CURRENT_USER_KEY,
+  VZ_RESET_TOKENS_KEY
 } from './storageKeys';
 
 // Simulated backend - using localStorage for persistence
 
 // Simple base64 "hash" for demo purposes
-const hashPassword = (pwd: string): string => {
+export const hashPassword = (pwd: string): string => {
   if (typeof btoa !== 'undefined') {
     return btoa(pwd);
   }
@@ -448,5 +450,71 @@ export const deleteUser = (id: string): void => {
   if (currentUser && currentUser.id === id) {
     saveCurrentUser(null);
   }
+};
+
+// Password reset token handling
+interface ResetToken {
+  token: string;
+  userId: string;
+  expiresAt: number;
+}
+
+const getResetTokens = (): ResetToken[] => {
+  const json = localStorage.getItem(VZ_RESET_TOKENS_KEY);
+  return json ? JSON.parse(json) : [];
+};
+
+const saveResetTokens = (tokens: ResetToken[]): void => {
+  localStorage.setItem(VZ_RESET_TOKENS_KEY, JSON.stringify(tokens));
+};
+
+const generateToken = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const arr = new Uint8Array(32);
+    crypto.getRandomValues(arr);
+    return Array.from(arr)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+  return randomBytes(32).toString('hex');
+};
+
+const sendResetEmail = (email: string, token: string): void => {
+  const apiKey = import.meta.env.VITE_SMTP_API_KEY;
+  if (!apiKey) {
+    console.log('SMTP service not configured');
+    return;
+  }
+  console.log(`Reset link for ${email}: /reset/${token}`);
+};
+
+export const requestPasswordReset = (email: string): void => {
+  const users = getUsers();
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  const tokens = getResetTokens().filter(t => t.expiresAt > Date.now());
+
+  if (user) {
+    const token = generateToken();
+    tokens.push({ token, userId: user.id, expiresAt: Date.now() + 60 * 60 * 1000 });
+    saveResetTokens(tokens);
+    sendResetEmail(email, token);
+  }
+};
+
+export const resetPassword = (token: string, password: string): boolean => {
+  const tokens = getResetTokens();
+  const entry = tokens.find(t => t.token === token);
+  if (!entry || entry.expiresAt < Date.now()) {
+    return false;
+  }
+  const users = getUsers();
+  const user = users.find(u => u.id === entry.userId);
+  if (!user) {
+    return false;
+  }
+  user.password = hashPassword(password);
+  saveUsers(users);
+  saveResetTokens(tokens.filter(t => t.token !== token));
+  return true;
 };
  
