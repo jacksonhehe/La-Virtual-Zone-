@@ -121,7 +121,7 @@ const TorneosDashboard = () => {
               ]}
             >
               <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
                 onClick={e => e.stopPropagation()}
                 aria-label="Más opciones"
               >
@@ -152,7 +152,7 @@ const TorneosDashboard = () => {
               ]}
             >
               <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
                 onClick={e => e.stopPropagation()}
                 aria-label="Más opciones"
               >
@@ -189,7 +189,7 @@ const TorneosDashboard = () => {
               ]}
             >
               <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
                 onClick={e => e.stopPropagation()}
                 aria-label="Más opciones"
               >
