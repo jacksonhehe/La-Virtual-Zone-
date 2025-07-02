@@ -23,7 +23,7 @@ const SidebarAdmin = () => {
     { name: 'Usuarios', href: '/admin/usuarios', icon: Users },
     { name: 'Clubes', href: '/admin/clubes', icon: Globe },
     { name: 'Jugadores', href: '/admin/jugadores', icon: User },
-    { name: 'Mercado', href: '/admin/mercado', icon: ShoppingBag, badge: pendingTransfers },
+    { name: 'Mercado', href: '/admin/mercado', icon: ShoppingBag, badge: pendingTransfers || undefined },
     { name: 'Torneos', href: '/admin/torneos', icon: Award },
     { name: 'Noticias', href: '/admin/noticias', icon: FileText },
     { name: 'Comentarios', href: '/admin/comentarios', icon: MessageCircle },
