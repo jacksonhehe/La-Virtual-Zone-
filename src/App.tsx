@@ -16,6 +16,10 @@ const Calendario = lazy(() => import("./pages/Calendario"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const UserPanel = lazy(() => import("./pages/UserPanel"));
+const RecoverPassword = lazy(() => import("./pages/RecoverPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 
 const Tournaments = lazy(() => import("./pages/Tournaments"));
 const TournamentDetail = lazy(() => import("./pages/TournamentDetail"));
@@ -50,6 +54,10 @@ function App() {
 
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Register />} />
+            <Route path="recuperar-password" element={<RecoverPassword />} />
+            <Route path="reset/:token" element={<ResetPassword />} />
+            <Route path="terminos" element={<Terms />} />
+            <Route path="privacidad" element={<Privacy />} />
             <Route path="usuario" element={<UserPanel />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
             <Route path="admin/*" element={<Admin />} />
