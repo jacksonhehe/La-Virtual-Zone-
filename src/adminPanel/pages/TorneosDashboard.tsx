@@ -1,7 +1,10 @@
 import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import StatsCard from '../components/admin/StatsCard';
-import DropdownMenu from '../components/admin/DropdownMenu';
+import DropdownMenu, {
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from '../../components/common/DropdownMenu';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
 import {
@@ -112,21 +115,18 @@ const TorneosDashboard = () => {
               icon={Clock}
               gradient="bg-gradient-to-r from-gray-600 to-gray-800"
             />
-            <DropdownMenu
-              items={[
-                {
-                  label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=upcoming')
-                }
-              ]}
-            >
-              <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                onClick={e => e.stopPropagation()}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=upcoming')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
             </DropdownMenu>
           </div>
           <div
@@ -139,25 +139,23 @@ const TorneosDashboard = () => {
               icon={Play}
               gradient="bg-gradient-to-r from-emerald-600 to-green-600"
             />
-            <DropdownMenu
-              items={[
-                {
-                  label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=active')
-                },
-                {
-                  label: 'Ir a resultados pendientes',
-                  onSelect: () => navigate('/admin/resultados-pendientes')
-                }
-              ]}
-            >
-              <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                onClick={e => e.stopPropagation()}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=active')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/resultados-pendientes')}
+              >
+                Ir a resultados pendientes
+              </DropdownMenuItem>
             </DropdownMenu>
           </div>
           <div
@@ -170,31 +168,28 @@ const TorneosDashboard = () => {
               icon={Award}
               gradient="bg-gradient-to-r from-blue-600 to-purple-600"
             />
-            <DropdownMenu
-              items={[
-                {
-                  label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=completed')
-                },
-                {
-                  label: 'Duplicar último torneo',
-                  onSelect: duplicateLastTournament,
-                  hidden: !canModify
-                },
-                {
-                  label: 'Generar reporte PDF',
-                  onSelect: generateTournamentsReport,
-                  hidden: !canModify
-                }
-              ]}
-            >
-              <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                onClick={e => e.stopPropagation()}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=completed')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
+              {canModify && (
+                <DropdownMenuItem onSelect={duplicateLastTournament}>
+                  Duplicar último torneo
+                </DropdownMenuItem>
+              )}
+              {canModify && (
+                <DropdownMenuItem onSelect={generateTournamentsReport}>
+                  Generar reporte PDF
+                </DropdownMenuItem>
+              )}
             </DropdownMenu>
           </div>
         </div>
