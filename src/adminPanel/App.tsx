@@ -11,6 +11,7 @@ const Jugadores = lazy(() => import('./pages/admin/Jugadores'));
 const Mercado = lazy(() => import('./pages/admin/Mercado'));
 const TorneosDashboard = lazy(() => import('./pages/TorneosDashboard'));
 const Torneos = lazy(() => import('./pages/admin/Torneos'));
+const NuevoTorneo = lazy(() => import('./pages/admin/NuevoTorneo'));
 const ResultadosPendientes = lazy(() => import('./pages/ResultadosPendientes'));
 const Noticias = lazy(() => import('./pages/admin/Noticias'));
 const Comentarios = lazy(() => import('./pages/admin/Comentarios'));
@@ -56,6 +57,7 @@ const AdminLayout = () => {
             <Route path="mercado" element={<Mercado />} />
             <Route path="resultados" element={<ResultadosPendientes />} />
             <Route path="torneos" element={<TorneosDashboard />} />
+            <Route path="torneos/nuevo" element={<NuevoTorneo />} />
             <Route path="torneos/list" element={<Torneos />} />
             <Route path="noticias" element={<Noticias />} />
             <Route path="comentarios" element={<Comentarios />} />
