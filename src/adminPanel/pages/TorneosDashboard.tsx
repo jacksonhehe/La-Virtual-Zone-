@@ -2,6 +2,7 @@ import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import StatsCard from '../components/admin/StatsCard';
+import Card from '../../components/common/Card';
 import DropdownMenu from '../components/admin/DropdownMenu';
 import CreateTournamentWizard from '../wizards/CreateTournament';
 import { Tournament } from '../types';
@@ -119,9 +120,9 @@ const TorneosDashboard = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div
-            className="group relative cursor-pointer"
+          <Card
             onClick={() => navigate('/admin/torneos/list?status=upcoming')}
+            className="group relative cursor-pointer"
           >
             <StatsCard
               title="Próximos"
@@ -159,10 +160,10 @@ const TorneosDashboard = () => {
                 Ver lista completa
               </DropdownMenuItem>
             </DropdownMenu>
-          </div>
-          <div
-            className="group relative cursor-pointer"
+          </Card>
+          <Card
             onClick={() => navigate('/admin/torneos/list?status=active')}
+            className="group relative cursor-pointer"
           >
             <StatsCard
               title="En Juego"
@@ -218,10 +219,10 @@ const TorneosDashboard = () => {
                 Ir a resultados pendientes
               </DropdownMenuItem>
             </DropdownMenu>
-          </div>
-          <div
-            className="group relative cursor-pointer"
+          </Card>
+          <Card
             onClick={() => navigate('/admin/torneos/list?status=completed')}
+            className="group relative cursor-pointer"
           >
             <StatsCard
               title="Cerrados"
@@ -279,7 +280,7 @@ const TorneosDashboard = () => {
                 </DropdownMenuItem>
               )}
             </DropdownMenu>
-          </div>
+          </Card>
         </div>
         {duplicateData && (
           <CreateTournamentWizard
