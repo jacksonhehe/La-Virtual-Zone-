@@ -7,6 +7,7 @@ import CreateTournamentWizard from '../wizards/CreateTournament';
 import { Tournament } from '../types';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
+import { generateId } from '../../utils/id';
 import {
   useUpcomingTournaments,
   useActiveTournaments,
@@ -19,6 +20,7 @@ const TorneosDashboard = () => {
   const {
     duplicateLastTournament,
     generateTournamentsReport,
+    addActivity,
   } = useGlobalStore();
   const canModify = useCan(['super', 'gestor']);
 
@@ -131,7 +133,16 @@ const TorneosDashboard = () => {
               items={[
                 {
                   label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=upcoming')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed upcoming tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=upcoming');
+                  }
                 }
               ]}
             >
@@ -141,7 +152,12 @@ const TorneosDashboard = () => {
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=upcoming')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
             </DropdownMenu>
           </div>
           <div
@@ -158,11 +174,29 @@ const TorneosDashboard = () => {
               items={[
                 {
                   label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=active')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed active tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=active');
+                  }
                 },
                 {
                   label: 'Ir a resultados pendientes',
-                  onSelect: () => navigate('/admin/resultados-pendientes')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Results Pending Viewed',
+                      details: 'Visited pending match results',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/resultados-pendientes');
+                  }
                 }
               ]}
             >
@@ -172,7 +206,17 @@ const TorneosDashboard = () => {
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=active')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/resultados-pendientes')}
+              >
+                Ir a resultados pendientes
+              </DropdownMenuItem>
             </DropdownMenu>
           </div>
           <div
@@ -189,7 +233,16 @@ const TorneosDashboard = () => {
               items={[
                 {
                   label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=completed')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed completed tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=completed');
+                  }
                 },
                 {
                   label: 'Duplicar último torneo',
@@ -209,7 +262,22 @@ const TorneosDashboard = () => {
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=completed')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
+              {canModify && (
+                <DropdownMenuItem onSelect={duplicateLastTournament}>
+                  Duplicar último torneo
+                </DropdownMenuItem>
+              )}
+              {canModify && (
+                <DropdownMenuItem onSelect={generateTournamentsReport}>
+                  Generar reporte PDF
+                </DropdownMenuItem>
+              )}
             </DropdownMenu>
           </div>
         </div>
