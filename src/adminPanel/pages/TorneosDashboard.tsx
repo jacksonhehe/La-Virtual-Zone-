@@ -24,7 +24,7 @@ const TorneosDashboard = () => {
     duplicateLastTournament,
     generateTournamentsReport,
   } = useGlobalStore();
-  const canModify = useCan(['super', 'gestor']);
+  const hasPermission = useCan(['super', 'gestor']);
 
   const [duplicateData, setDuplicateData] = useState<Partial<Tournament> | null>(
     null
@@ -65,22 +65,24 @@ const TorneosDashboard = () => {
 
   return (
     <div className="p-8 space-y-8">
-      <div className="relative">
+      <header className="relative mb-6 flex items-center">
         <h1 className="text-4xl font-bold gradient-text">Torneos</h1>
+        {hasPermission && (
+          <Link
+            to="/admin/torneos/nuevo"
+            className="btn-primary absolute right-6 top-4 lg:static lg:ml-auto lg:mt-0 mt-4"
+          >
+            + Nuevo torneo
+          </Link>
+        )}
+      </header>
+      <div className="relative">
         {showKpis && (
           <div className="flex items-center gap-2 mt-2">
             <span className="kpi-chip">{hoyInscritos} inscritos hoy</span>
             <span className="kpi-chip">{partidosManana} partidos mañana</span>
             <span className="kpi-chip">{mediaGoles} goles/partido (7 días)</span>
           </div>
-        )}
-        {canModify && (
-          <Link
-            to="/admin/torneos/nuevo"
-            className="btn-primary w-full mt-2 sm:w-auto sm:mt-0 lg:absolute lg:top-0 lg:right-0"
-          >
-            + Nuevo torneo
-          </Link>
         )}
         {tournaments.length > 0 && (
           <div className="flex items-center gap-2 mt-2">
@@ -200,12 +202,12 @@ const TorneosDashboard = () => {
               >
                 Ver lista completa
               </DropdownMenuItem>
-              {canModify && (
+              {hasPermission && (
                 <DropdownMenuItem onSelect={handleDuplicate}>
                   Duplicar último torneo
                 </DropdownMenuItem>
               )}
-              {canModify && (
+              {hasPermission && (
                 <DropdownMenuItem onSelect={generateTournamentsReport}>
                   Generar reporte PDF
                 </DropdownMenuItem>
