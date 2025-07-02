@@ -11,7 +11,6 @@ import CreateTournamentWizard from '../wizards/CreateTournament';
 import { Tournament } from '../types';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
-import { generateId } from '../../utils/id';
 import {
   useUpcomingTournaments,
   useActiveTournaments,
@@ -24,7 +23,6 @@ const TorneosDashboard = () => {
   const {
     duplicateLastTournament,
     generateTournamentsReport,
-    addActivity,
   } = useGlobalStore();
   const canModify = useCan(['super', 'gestor']);
 
@@ -208,7 +206,7 @@ const TorneosDashboard = () => {
                 Ver lista completa
               </DropdownMenuItem>
               {canModify && (
-                <DropdownMenuItem onSelect={duplicateLastTournament}>
+                <DropdownMenuItem onSelect={handleDuplicate}>
                   Duplicar último torneo
                 </DropdownMenuItem>
               )}
