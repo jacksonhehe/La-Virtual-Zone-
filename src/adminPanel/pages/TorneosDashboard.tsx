@@ -7,6 +7,7 @@ import DropdownMenu, {
 } from '../../components/common/DropdownMenu';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
+import { generateId } from '../../utils/id';
 import {
   useUpcomingTournaments,
   useActiveTournaments,
@@ -19,6 +20,7 @@ const TorneosDashboard = () => {
   const {
     duplicateLastTournament,
     generateTournamentsReport,
+    addActivity,
   } = useGlobalStore();
   const canModify = useCan(['super', 'gestor']);
 
@@ -115,9 +117,26 @@ const TorneosDashboard = () => {
               icon={Clock}
               gradient="bg-gradient-to-r from-gray-600 to-gray-800"
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Ver lista completa',
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed upcoming tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=upcoming');
+                  }
+                }
+              ]}
+            >
+              <button
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
@@ -139,9 +158,39 @@ const TorneosDashboard = () => {
               icon={Play}
               gradient="bg-gradient-to-r from-emerald-600 to-green-600"
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Ver lista completa',
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed active tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=active');
+                  }
+                },
+                {
+                  label: 'Ir a resultados pendientes',
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Results Pending Viewed',
+                      details: 'Visited pending match results',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/resultados-pendientes');
+                  }
+                }
+              ]}
+            >
+              <button
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
@@ -168,9 +217,36 @@ const TorneosDashboard = () => {
               icon={Award}
               gradient="bg-gradient-to-r from-blue-600 to-purple-600"
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Ver lista completa',
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed completed tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=completed');
+                  }
+                },
+                {
+                  label: 'Duplicar último torneo',
+                  onSelect: duplicateLastTournament,
+                  hidden: !canModify
+                },
+                {
+                  label: 'Generar reporte PDF',
+                  onSelect: generateTournamentsReport,
+                  hidden: !canModify
+                }
+              ]}
+            >
+              <button
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
