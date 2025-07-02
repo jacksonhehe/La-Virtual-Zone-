@@ -133,14 +133,12 @@ const TorneosDashboard = () => {
               gradient="bg-gradient-to-r from-gray-600 to-gray-800"
             />
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <button
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                  onClick={e => e.stopPropagation()}
-                  aria-label="Más opciones"
-                >
-                  <MoreHorizontal size={16} />
-                </button>
+              <DropdownMenuTrigger
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
+                aria-label="Más opciones"
+              >
+                <MoreHorizontal size={16} />
               </DropdownMenuTrigger>
               <DropdownMenuItem
                 onSelect={() => navigate('/admin/torneos/list?status=upcoming')}
@@ -160,14 +158,12 @@ const TorneosDashboard = () => {
               gradient="bg-gradient-to-r from-emerald-600 to-green-600"
             />
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <button
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                  onClick={e => e.stopPropagation()}
-                  aria-label="Más opciones"
-                >
-                  <MoreHorizontal size={16} />
-                </button>
+              <DropdownMenuTrigger
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
+                aria-label="Más opciones"
+              >
+                <MoreHorizontal size={16} />
               </DropdownMenuTrigger>
               <DropdownMenuItem
                 onSelect={() => navigate('/admin/torneos/list?status=active')}
@@ -192,14 +188,12 @@ const TorneosDashboard = () => {
               gradient="bg-gradient-to-r from-blue-600 to-purple-600"
             />
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <button
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                  onClick={e => e.stopPropagation()}
-                  aria-label="Más opciones"
-                >
-                  <MoreHorizontal size={16} />
-                </button>
+              <DropdownMenuTrigger
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                onClick={e => e.stopPropagation()}
+                aria-label="Más opciones"
+              >
+                <MoreHorizontal size={16} />
               </DropdownMenuTrigger>
               <DropdownMenuItem
                 onSelect={() => navigate('/admin/torneos/list?status=completed')}

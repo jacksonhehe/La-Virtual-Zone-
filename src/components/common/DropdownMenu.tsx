@@ -47,24 +47,37 @@ export const DropdownMenu = ({ children }: DropdownMenuProps) => {
   );
 };
 
-interface DropdownMenuTriggerProps {
+interface DropdownMenuTriggerProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   className?: string;
 }
 
-export const DropdownMenuTrigger = ({ children, className }: DropdownMenuTriggerProps) => {
+export const DropdownMenuTrigger = ({
+  children,
+  className,
+  onClick,
+  ...props
+}: DropdownMenuTriggerProps) => {
   const context = useContext(DropdownMenuContext);
   if (!context) {
     throw new Error('DropdownMenuTrigger must be used within DropdownMenu');
   }
   const { open, setOpen } = context;
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(e);
+    if (!e.defaultPrevented) {
+      setOpen(!open);
+    }
+  };
   return (
     <button
       type="button"
-      onClick={() => setOpen(!open)}
+      onClick={handleClick}
       className={className}
       aria-haspopup="true"
       aria-expanded={open}
+      {...props}
     >
       {children}
     </button>
