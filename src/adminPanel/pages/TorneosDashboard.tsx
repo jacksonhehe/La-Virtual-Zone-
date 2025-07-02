@@ -147,12 +147,14 @@ const TorneosDashboard = () => {
                 }
               ]}
             >
-              <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                onClick={e => e.stopPropagation()}
-                aria-label="Más opciones"
-              >
-                <MoreHorizontal size={16} />
+              <DropdownMenuTrigger>
+                <button
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                  onClick={e => e.stopPropagation()}
+                  aria-label="Más opciones"
+                >
+                  <MoreHorizontal size={16} />
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuItem
                 onSelect={() => navigate('/admin/torneos/list?status=upcoming')}
@@ -201,12 +203,14 @@ const TorneosDashboard = () => {
                 }
               ]}
             >
-              <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                onClick={e => e.stopPropagation()}
-                aria-label="Más opciones"
-              >
-                <MoreHorizontal size={16} />
+              <DropdownMenuTrigger>
+                <button
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                  onClick={e => e.stopPropagation()}
+                  aria-label="Más opciones"
+                >
+                  <MoreHorizontal size={16} />
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuItem
                 onSelect={() => navigate('/admin/torneos/list?status=active')}
@@ -257,12 +261,14 @@ const TorneosDashboard = () => {
                 }
               ]}
             >
-              <button
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
-                onClick={e => e.stopPropagation()}
-                aria-label="Más opciones"
-              >
-                <MoreHorizontal size={16} />
+              <DropdownMenuTrigger>
+                <button
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-700"
+                  onClick={e => e.stopPropagation()}
+                  aria-label="Más opciones"
+                >
+                  <MoreHorizontal size={16} />
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuItem
                 onSelect={() => navigate('/admin/torneos/list?status=completed')}
