@@ -1,7 +1,10 @@
 import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import StatsCard from '../components/admin/StatsCard';
-import DropdownMenu from '../components/admin/DropdownMenu';
+import DropdownMenu, {
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from '../../components/common/DropdownMenu';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
 import { generateId } from '../../utils/id';
@@ -137,7 +140,12 @@ const TorneosDashboard = () => {
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=upcoming')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
             </DropdownMenu>
           </div>
           <div
@@ -186,7 +194,17 @@ const TorneosDashboard = () => {
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=active')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/resultados-pendientes')}
+              >
+                Ir a resultados pendientes
+              </DropdownMenuItem>
             </DropdownMenu>
           </div>
           <div
@@ -232,7 +250,22 @@ const TorneosDashboard = () => {
                 aria-label="Más opciones"
               >
                 <MoreHorizontal size={16} />
-              </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuItem
+                onSelect={() => navigate('/admin/torneos/list?status=completed')}
+              >
+                Ver lista completa
+              </DropdownMenuItem>
+              {canModify && (
+                <DropdownMenuItem onSelect={duplicateLastTournament}>
+                  Duplicar último torneo
+                </DropdownMenuItem>
+              )}
+              {canModify && (
+                <DropdownMenuItem onSelect={generateTournamentsReport}>
+                  Generar reporte PDF
+                </DropdownMenuItem>
+              )}
             </DropdownMenu>
           </div>
         </div>
