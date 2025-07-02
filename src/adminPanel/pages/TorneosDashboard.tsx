@@ -8,12 +8,8 @@ import { useGlobalStore } from '../store/globalStore';
 const TorneosDashboard = () => {
   const navigate = useNavigate();
   const {
-    getUpcoming,
-    getActive,
-    getFinished,
     duplicateLastTournament,
     generateTournamentsReport,
-    tournaments
   } = useGlobalStore();
   const canModify = useCan(['super', 'gestor']);
 
