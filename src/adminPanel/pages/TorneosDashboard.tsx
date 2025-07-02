@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import StatsCard from '../components/admin/StatsCard';
 import Card from '../../components/common/Card';
-import DropdownMenu from '../components/admin/DropdownMenu';
+import DropdownMenu from '../../components/common/DropdownMenu';
 import CreateTournamentWizard from '../wizards/CreateTournament';
 import { Tournament } from '../types';
 import useCan from '../../hooks/useCan';
