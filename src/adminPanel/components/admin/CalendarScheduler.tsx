@@ -98,6 +98,7 @@ const CalendarScheduler = ({ matches, weekStart, onEdit }: SchedulerProps) => {
     const conflict = matches.some(m => {
       if (m.id === match.id) return false;
       if (m.homeTeam === match.homeTeam || m.homeTeam === match.awayTeam || m.awayTeam === match.homeTeam || m.awayTeam === match.awayTeam) {
+        if (!m.date) return false;
         const diff = Math.abs(new Date(m.date).getTime() - overDate.getTime());
         return diff < 2 * 60 * 60 * 1000; // 2 hours overlap
       }
@@ -119,7 +120,7 @@ const CalendarScheduler = ({ matches, weekStart, onEdit }: SchedulerProps) => {
       <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
         {days.map(day => (
           <DroppableDay key={dayId(day)} date={day}>
-            {matches.filter(m => isSameDay(new Date(m.date), day)).map(m => (
+            {matches.filter(m => m.date && isSameDay(new Date(m.date), day)).map(m => (
               <DraggableMatch key={m.id} match={m} onEdit={onEdit} />
             ))}
           </DroppableDay>
