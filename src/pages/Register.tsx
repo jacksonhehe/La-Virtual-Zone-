@@ -153,13 +153,23 @@ const Register = () => {
             <div className="mt-6 pt-6 border-t border-gray-800">
               <p className="text-xs text-gray-500 text-center">
                 Al registrarte, aceptas nuestros{' '}
-                <Link to="/terminos" className="text-primary hover:text-primary-light">
+                <a
+                  href="/terminos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary-light"
+                >
                   Términos y Condiciones
-                </Link>{' '}
+                </a>{' '}
                 y{' '}
-                <Link to="/privacidad" className="text-primary hover:text-primary-light">
+                <a
+                  href="/privacidad"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary-light"
+                >
                   Política de Privacidad
-                </Link>
+                </a>
               </p>
             </div>
           </div>
