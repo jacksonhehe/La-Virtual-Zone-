@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tournament } from '../../../types';
 
 interface Props {
@@ -10,6 +10,10 @@ interface Props {
 const StepFormat = ({ data, onNext, onBack }: Props) => {
   const [totalRounds, setTotalRounds] = useState(data.totalRounds || 1);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setTotalRounds(data.totalRounds || 1);
+  }, [data.totalRounds]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

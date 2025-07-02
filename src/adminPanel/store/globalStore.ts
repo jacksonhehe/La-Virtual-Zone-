@@ -65,7 +65,7 @@ interface GlobalStore {
   // Tournament selectors
 
   // Extras
-  duplicateLastTournament: () => void;
+  duplicateLastTournament: () => Tournament | undefined;
   generateTournamentsReport: () => void;
   
   // Transfers
@@ -569,31 +569,18 @@ export const useGlobalStore = create<GlobalStore>()(
     },
 
     duplicateLastTournament: () => {
-      set(state => {
-        const last = [...state.tournaments].reverse().find(t => t.status === 'completed');
-        if (!last) return state;
-        const copy = {
-          ...last,
-          id: generateId(),
-          name: `${last.name} (copia)`,
-          status: 'upcoming' as const,
-          currentRound: 0
-        };
-        return {
-          tournaments: [...state.tournaments, copy],
-          activities: [
-            ...state.activities,
-            {
-              id: generateId(),
-              userId: 'admin',
-              action: 'Tournament Duplicated',
-              details: `Duplicated tournament: ${last.name}`,
-              date: new Date().toISOString()
-            }
-          ]
-        };
-      });
-      persist();
+      const last = [...get().tournaments]
+        .reverse()
+        .find(t => t.status === 'completed');
+      if (!last) return undefined;
+      const copy: Tournament = {
+        ...last,
+        id: generateId(),
+        name: `${last.name} (copia)`,
+        status: 'upcoming',
+        currentRound: 0
+      };
+      return copy;
     },
 
     generateTournamentsReport: () => {

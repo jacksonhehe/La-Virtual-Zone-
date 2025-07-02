@@ -1,7 +1,10 @@
 import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
 import StatsCard from '../components/admin/StatsCard';
 import DropdownMenu from '../components/admin/DropdownMenu';
+import CreateTournamentWizard from '../wizards/CreateTournament';
+import { Tournament } from '../types';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
 import {
@@ -18,6 +21,18 @@ const TorneosDashboard = () => {
     generateTournamentsReport,
   } = useGlobalStore();
   const canModify = useCan(['super', 'gestor']);
+
+  const [duplicateData, setDuplicateData] = useState<Partial<Tournament> | null>(
+    null
+  );
+
+  const handleDuplicate = () => {
+    const copy = duplicateLastTournament();
+    if (copy) {
+      const { id, ...rest } = copy;
+      setDuplicateData(rest);
+    }
+  };
 
   const tournaments = useGlobalStore(state => state.tournaments);
   const players = useGlobalStore(state => state.players);
@@ -178,7 +193,7 @@ const TorneosDashboard = () => {
                 },
                 {
                   label: 'Duplicar último torneo',
-                  onSelect: duplicateLastTournament,
+                  onSelect: handleDuplicate,
                   hidden: !canModify
                 },
                 {
@@ -198,6 +213,12 @@ const TorneosDashboard = () => {
             </DropdownMenu>
           </div>
         </div>
+        {duplicateData && (
+          <CreateTournamentWizard
+            initialData={duplicateData}
+            onClose={() => setDuplicateData(null)}
+          />
+        )}
     </div>
   );
 };

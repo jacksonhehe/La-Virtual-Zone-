@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tournament } from '../../../types';
 
 interface Props {
@@ -11,6 +11,10 @@ const StepSchedule = ({ data, onNext, onBack }: Props) => {
   const [status, setStatus] = useState<Tournament['status']>(
     (data.status as Tournament['status']) || 'upcoming'
   );
+
+  useEffect(() => {
+    setStatus((data.status as Tournament['status']) || 'upcoming');
+  }, [data.status]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

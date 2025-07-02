@@ -9,20 +9,24 @@ import StepConfirm from './Steps/StepConfirm';
 
 interface Props {
   onClose: () => void;
+  initialData?: Partial<Tournament>;
 }
 
 const STORAGE_KEY = 'wizard.tournament.draft';
 
-const CreateTournamentWizard = ({ onClose }: Props) => {
+const CreateTournamentWizard = ({ onClose, initialData }: Props) => {
   const addTournament = useGlobalStore(state => state.addTournament);
   const [step, setStep] = useState(0);
-  const [data, setData] = useState<Partial<Tournament>>({
-    name: '',
-    totalRounds: 1,
-    status: 'upcoming',
-  });
+  const [data, setData] = useState<Partial<Tournament>>(() =>
+    initialData || {
+      name: '',
+      totalRounds: 1,
+      status: 'upcoming',
+    }
+  );
 
   useEffect(() => {
+    if (initialData) return;
     const json = localStorage.getItem(STORAGE_KEY);
     if (json) {
       try {
@@ -32,11 +36,13 @@ const CreateTournamentWizard = ({ onClose }: Props) => {
         // ignore
       }
     }
-  }, []);
+  }, [initialData]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [data]);
+    if (!initialData) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+  }, [data, initialData]);
 
   const handleFinish = () => {
     addTournament({
@@ -46,7 +52,9 @@ const CreateTournamentWizard = ({ onClose }: Props) => {
       status: (data.status as Tournament['status']) || 'upcoming',
       currentRound: 0,
     });
-    localStorage.removeItem(STORAGE_KEY);
+    if (!initialData) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
     onClose();
   };
 
