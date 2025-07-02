@@ -1,4 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import * as Sentry from '@sentry/react';
 
 interface Props {
   children: ReactNode;
@@ -16,7 +17,7 @@ class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('App crashed:', error, errorInfo);
+    Sentry.captureException(error, { extra: errorInfo });
     this.setState({ hasError: true, error });
   }
 

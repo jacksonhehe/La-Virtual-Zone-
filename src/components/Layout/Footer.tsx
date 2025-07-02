@@ -133,12 +133,22 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} La Virtual Zone. Todos los derechos reservados.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link to="/terminos" className="text-gray-400 hover:text-white text-sm">
+            <a
+              href="/terminos"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white text-sm"
+            >
               Términos de Servicio
-            </Link>
-            <Link to="/privacidad" className="text-gray-400 hover:text-white text-sm">
+            </a>
+            <a
+              href="/privacidad"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white text-sm"
+            >
               Política de Privacidad
-            </Link>
+            </a>
           </div>
         </div>
       </div>
