@@ -117,7 +117,7 @@ Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podr�
 
 ## Páginas legales
 
-Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad](/privacidad) están disponibles como páginas MDX.
+Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad](/privacidad) se procesan como componentes React mediante un plugin MDX ligero incluido en `scripts/mdxPlugin.ts`.
 
 ## Comunidad
 
@@ -127,21 +127,11 @@ Visita `/usuarios` para explorar a otros participantes de La Virtual Zone. Cada 
 
 Si intentas acceder a una URL inexistente verás una página 404 con un botón que te devuelve al inicio.
 
-## Recuperar contraseña
-
-Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.
-
-## Páginas legales
-
-Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad](/privacidad) están disponibles como páginas MDX.
-
-## Comunidad
+El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
 El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
 
 ## Health Checks
-
-El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
 ## CI/CD
 
