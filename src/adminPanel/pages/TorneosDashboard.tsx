@@ -4,6 +4,7 @@ import StatsCard from '../components/admin/StatsCard';
 import DropdownMenu from '../components/admin/DropdownMenu';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
+import { generateId } from '../../utils/id';
 import {
   useUpcomingTournaments,
   useActiveTournaments,
@@ -16,6 +17,7 @@ const TorneosDashboard = () => {
   const {
     duplicateLastTournament,
     generateTournamentsReport,
+    addActivity,
   } = useGlobalStore();
   const canModify = useCan(['super', 'gestor']);
 
@@ -116,7 +118,16 @@ const TorneosDashboard = () => {
               items={[
                 {
                   label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=upcoming')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed upcoming tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=upcoming');
+                  }
                 }
               ]}
             >
@@ -143,11 +154,29 @@ const TorneosDashboard = () => {
               items={[
                 {
                   label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=active')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed active tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=active');
+                  }
                 },
                 {
                   label: 'Ir a resultados pendientes',
-                  onSelect: () => navigate('/admin/resultados-pendientes')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Results Pending Viewed',
+                      details: 'Visited pending match results',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/resultados-pendientes');
+                  }
                 }
               ]}
             >
@@ -174,7 +203,16 @@ const TorneosDashboard = () => {
               items={[
                 {
                   label: 'Ver lista completa',
-                  onSelect: () => navigate('/admin/torneos/list?status=completed')
+                  onSelect: () => {
+                    addActivity({
+                      id: generateId(),
+                      userId: 'admin',
+                      action: 'Tournament List Viewed',
+                      details: 'Viewed completed tournaments list',
+                      date: new Date().toISOString(),
+                    });
+                    navigate('/admin/torneos/list?status=completed');
+                  }
                 },
                 {
                   label: 'Duplicar último torneo',
