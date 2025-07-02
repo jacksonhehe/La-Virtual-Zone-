@@ -127,13 +127,11 @@ Visita `/usuarios` para explorar a otros participantes de La Virtual Zone. Cada 
 
 Si intentas acceder a una URL inexistente verás una página 404 con un botón que te devuelve al inicio.
 
-## Personalización de datos
+El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
 El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
 
 ## Health Checks
-
-El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
 ## CI/CD
 
