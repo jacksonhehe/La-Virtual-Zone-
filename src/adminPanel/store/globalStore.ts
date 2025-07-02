@@ -482,6 +482,7 @@ export const useGlobalStore = create<GlobalStore>()(
       const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
       const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
       return get().matches.filter(m => {
+        if (!m.date) return false;
         const d = new Date(m.date);
         return d >= start && d < end;
       });
@@ -491,6 +492,7 @@ export const useGlobalStore = create<GlobalStore>()(
       const now = Date.now();
       const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
       const recent = get().matches.filter(m => {
+        if (!m.date) return false;
         const d = new Date(m.date).getTime();
         return d >= weekAgo && d <= now &&
           typeof m.homeScore === 'number' && typeof m.awayScore === 'number';
