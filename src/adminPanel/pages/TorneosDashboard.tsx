@@ -1,6 +1,6 @@
 import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import StatsCard from '../components/admin/StatsCard';
 import Card from '../../components/common/Card';
 import DropdownMenu, {
@@ -16,7 +16,12 @@ import {
   useActiveTournaments,
   useFinishedTournaments,
 } from '../hooks/useTournamentFilters';
-import { isToday, isTomorrow, average } from '../utils/fechas';
+import {
+  differenceInCalendarDays,
+  isToday,
+  isTomorrow,
+} from 'date-fns';
+import { average as avg } from '../utils/fechas';
 
 const TorneosDashboard = () => {
   const navigate = useNavigate();
@@ -45,23 +50,18 @@ const TorneosDashboard = () => {
   const active = useActiveTournaments();
   const finished = useFinishedTournaments();
 
-  const hoyInscritos = players.filter(p => p.createdAt && isToday(p.createdAt)).length;
-  const partidosManana = matches.filter(m => m.date && isTomorrow(m.date)).length;
-  const matchesLast7Days = matches.filter(m => {
-    if (!m.date) return false;
-    const d = new Date(m.date);
-    const now = new Date();
-    const diff = now.getTime() - d.getTime();
-    return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
-  });
-  const mediaGolesValue = average(
-    matchesLast7Days.map(m => (m.homeScore ?? 0) + (m.awayScore ?? 0))
-  );
-  const mediaGoles = Number.isNaN(mediaGolesValue)
-    ? '0.0'
-    : mediaGolesValue.toFixed(1);
-  const showKpis =
-    hoyInscritos > 0 || partidosManana > 0 || (!Number.isNaN(mediaGolesValue) && mediaGolesValue > 0);
+  const { hoyInscritos, partidosManana, mediaGoles } = useMemo(() => {
+    const hoyInscritos = players.filter(p => isToday(new Date(p.createdAt))).length;
+    const partidosManana = matches.filter(m => isTomorrow(new Date(m.date))).length;
+    const ultimos7 = matches.filter(
+      m => differenceInCalendarDays(new Date(), new Date(m.date)) < 7
+    );
+    const mediaGoles =
+      avg(ultimos7.map(m => (m.homeScore ?? 0) + (m.awayScore ?? 0))) || 0;
+    return { hoyInscritos, partidosManana, mediaGoles };
+  }, [players, matches]);
+
+  const showKpis = hoyInscritos > 0 || partidosManana > 0 || mediaGoles > 0;
 
   return (
     <div className="p-8 space-y-8">
@@ -78,10 +78,16 @@ const TorneosDashboard = () => {
       </header>
       <div className="relative">
         {showKpis && (
-          <div className="flex items-center gap-2 mt-2">
-            <span className="kpi-chip">{hoyInscritos} inscritos hoy</span>
-            <span className="kpi-chip">{partidosManana} partidos mañana</span>
-            <span className="kpi-chip">{mediaGoles} goles/partido (7 días)</span>
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="kpi-chip font-medium text-slate-300">
+              {hoyInscritos} inscritos hoy
+            </span>
+            <span className="kpi-chip font-medium text-slate-300">
+              {partidosManana} partidos mañana
+            </span>
+            <span className="kpi-chip font-medium text-slate-300">
+              {mediaGoles.toFixed(1)} goles/partido (últimos 7 días)
+            </span>
           </div>
         )}
         {tournaments.length > 0 && (
