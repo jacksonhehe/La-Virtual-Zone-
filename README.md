@@ -35,6 +35,7 @@ Serve the production build locally to verify the output:
 ```bash
 npm run preview
 ```
+
 ## Tests
 
 Run the Cypress test suite (which now includes an admin user flow test):
@@ -83,18 +84,18 @@ Within the admin panel you will find management sections for:
 
 The application seeds fictional manager users for the demo clubs. All DT accounts use the password `password`.
 
-| Usuario | Club |
-|---------|-----------------------|
+| Usuario    | Club               |
+| ---------- | ------------------ |
 | dtdefensor | Defensores del Lag |
-| dtneon | Neón FC |
-| dthax | Haxball United |
-| dtglitch | Glitchers 404 |
-| dtcyber | Cyber Warriors |
-| dtbinary | Binary Strikers |
-| dtconnect | Connection FC |
-| dtgalaxy | Pixel Galaxy |
-| dtmadrid | Real Madrid |
-| dtquantum | Quantum Rangers |
+| dtneon     | Neón FC            |
+| dthax      | Haxball United     |
+| dtglitch   | Glitchers 404      |
+| dtcyber    | Cyber Warriors     |
+| dtbinary   | Binary Strikers    |
+| dtconnect  | Connection FC      |
+| dtgalaxy   | Pixel Galaxy       |
+| dtmadrid   | Real Madrid        |
+| dtquantum  | Quantum Rangers    |
 
 ## Data Persistence
 
@@ -111,6 +112,10 @@ Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad]
 ## Comunidad
 
 Visita `/usuarios` para explorar a otros participantes de La Virtual Zone. Cada perfil público muestra avatar, biografía y estadísticas básicas.
+
+## Página no encontrada
+
+Si intentas acceder a una URL inexistente verás una página 404 con un botón que te devuelve al inicio.
 
 ## Personalización de datos
 
