@@ -16,6 +16,8 @@ const Calendario = lazy(() => import("./pages/Calendario"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const UserPanel = lazy(() => import("./pages/UserPanel"));
+const Users = lazy(() => import("./pages/Users"));
+const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const RecoverPassword = lazy(() => import("./pages/RecoverPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -58,6 +60,8 @@ function App() {
             <Route path="reset/:token" element={<ResetPassword />} />
             <Route path="terminos" element={<Terms />} />
             <Route path="privacidad" element={<Privacy />} />
+            <Route path="usuarios" element={<Users />} />
+            <Route path="usuarios/:username" element={<PublicProfile />} />
             <Route path="usuario" element={<UserPanel />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
             <Route path="admin/*" element={<Admin />} />
