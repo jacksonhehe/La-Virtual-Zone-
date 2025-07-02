@@ -47,7 +47,7 @@ const TorneosDashboard = () => {
   const active = useActiveTournaments();
   const finished = useFinishedTournaments();
 
-  const hoyInscritos = players.filter(p => isToday(p.createdAt)).length;
+  const hoyInscritos = players.filter(p => p.createdAt && isToday(p.createdAt)).length;
   const partidosManana = matches.filter(m => isTomorrow(m.date)).length;
   const matchesLast7Days = matches.filter(m => {
     const d = new Date(m.date);
