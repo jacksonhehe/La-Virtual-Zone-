@@ -4,6 +4,7 @@ export interface User {
   email: string;
   role: 'user' | 'dt' | 'admin';
   avatar?: string;
+  bio?: string;
   level?: number;
   xp?: number;
   club?: string;

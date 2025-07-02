@@ -1,13 +1,15 @@
 import { User } from '../types/shared';
+import { randomBytes } from 'crypto';
 import {
   VZ_USERS_KEY,
-  VZ_CURRENT_USER_KEY
+  VZ_CURRENT_USER_KEY,
+  VZ_RESET_TOKENS_KEY
 } from './storageKeys';
 
 // Simulated backend - using localStorage for persistence
 
 // Simple base64 "hash" for demo purposes
-const hashPassword = (pwd: string): string => {
+export const hashPassword = (pwd: string): string => {
   if (typeof btoa !== 'undefined') {
     return btoa(pwd);
   }
@@ -26,6 +28,7 @@ const TEST_USERS = [
     level: 10,
     xp: 1000,
     avatar: 'https://ui-avatars.com/api/?name=Admin&background=9f65fd&color=fff&size=128&bold=true',
+    bio: 'Fundador y administrador de La Virtual Zone.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['founder'],
@@ -43,6 +46,7 @@ const TEST_USERS = [
     role: 'user',
     level: 1,
     xp: 0,
+    bio: 'Jugador casual que disfruta los torneos online.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: [],
@@ -63,6 +67,7 @@ const TEST_USERS = [
     club: 'Neón FC',
     clubId: 'club4',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Apasionado entrenador de Neón FC.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -83,6 +88,7 @@ const TEST_USERS = [
     club: 'Real Madrid',
     clubId: 'club11',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'DT madridista con experiencia en torneos virtuales.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -103,6 +109,7 @@ const TEST_USERS = [
     club: 'Defensores del Lag',
     clubId: 'club3',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Especialista en defensas sólidas y tácticas cerradas.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -119,6 +126,7 @@ const TEST_USERS = [
     club: 'Neón FC',
     clubId: 'club4',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Fanático del juego ofensivo con tácticas de presión alta.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -135,6 +143,7 @@ const TEST_USERS = [
     club: 'Haxball United',
     clubId: 'club5',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Jugador experimentado en Haxball ahora en PES.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -151,6 +160,7 @@ const TEST_USERS = [
     club: 'Glitchers 404',
     clubId: 'club6',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Amante de la tecnología y los glitches.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -167,6 +177,7 @@ const TEST_USERS = [
     club: 'Cyber Warriors',
     clubId: 'club7',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Estratega con enfoque en ciencia ficción y ciberespacio.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -183,6 +194,7 @@ const TEST_USERS = [
     club: 'Binary Strikers',
     clubId: 'club8',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Analítico y preciso, amante de los datos y binarios.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -199,6 +211,7 @@ const TEST_USERS = [
     club: 'Connection FC',
     clubId: 'club9',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Entusiasta de la conectividad y las comunidades online.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -215,6 +228,7 @@ const TEST_USERS = [
     club: 'Pixel Galaxy',
     clubId: 'club10',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Explorador del universo virtual y fan de la ciencia ficción.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -231,6 +245,7 @@ const TEST_USERS = [
     club: 'Real Madrid',
     clubId: 'club11',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Hincha merengue con amplia trayectoria en ligas virtuales.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -247,6 +262,7 @@ const TEST_USERS = [
     club: 'Quantum Rangers',
     clubId: 'club12',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Siempre buscando la próxima frontera táctica.',
     joinDate: new Date().toISOString(),
     status: 'active',
     achievements: ['first_win', 'first_transfer'],
@@ -448,5 +464,71 @@ export const deleteUser = (id: string): void => {
   if (currentUser && currentUser.id === id) {
     saveCurrentUser(null);
   }
+};
+
+// Password reset token handling
+interface ResetToken {
+  token: string;
+  userId: string;
+  expiresAt: number;
+}
+
+const getResetTokens = (): ResetToken[] => {
+  const json = localStorage.getItem(VZ_RESET_TOKENS_KEY);
+  return json ? JSON.parse(json) : [];
+};
+
+const saveResetTokens = (tokens: ResetToken[]): void => {
+  localStorage.setItem(VZ_RESET_TOKENS_KEY, JSON.stringify(tokens));
+};
+
+const generateToken = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const arr = new Uint8Array(32);
+    crypto.getRandomValues(arr);
+    return Array.from(arr)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+  return randomBytes(32).toString('hex');
+};
+
+const sendResetEmail = (email: string, token: string): void => {
+  const apiKey = import.meta.env.VITE_SMTP_API_KEY;
+  if (!apiKey) {
+    console.log('SMTP service not configured');
+    return;
+  }
+  console.log(`Reset link for ${email}: /reset/${token}`);
+};
+
+export const requestPasswordReset = (email: string): void => {
+  const users = getUsers();
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  const tokens = getResetTokens().filter(t => t.expiresAt > Date.now());
+
+  if (user) {
+    const token = generateToken();
+    tokens.push({ token, userId: user.id, expiresAt: Date.now() + 60 * 60 * 1000 });
+    saveResetTokens(tokens);
+    sendResetEmail(email, token);
+  }
+};
+
+export const resetPassword = (token: string, password: string): boolean => {
+  const tokens = getResetTokens();
+  const entry = tokens.find(t => t.token === token);
+  if (!entry || entry.expiresAt < Date.now()) {
+    return false;
+  }
+  const users = getUsers();
+  const user = users.find(u => u.id === entry.userId);
+  if (!user) {
+    return false;
+  }
+  user.password = hashPassword(password);
+  saveUsers(users);
+  saveResetTokens(tokens.filter(t => t.token !== token));
+  return true;
 };
  

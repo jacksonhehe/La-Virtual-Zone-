@@ -18,7 +18,12 @@ Run the development server with hot reload:
 
 ```bash
 npm run dev
+
+To start the API server run:
+```bash
+(cd server && npm install && npm run start:dev)
 ```
+
 
 ## Build
 
@@ -35,6 +40,7 @@ Serve the production build locally to verify the output:
 ```bash
 npm run preview
 ```
+
 ## Tests
 
 Run the Cypress test suite (which now includes an admin user flow test):
@@ -64,6 +70,11 @@ starting the E2E tests.
 To access the administrator interface:
 
 1. Start the development server with `npm run dev`.
+nTo start the API server run:
+```bash
+(cd server && npm install && npm run start:dev)
+```
+
 2. Open the app in your browser and log in using the demo admin account (`admin` / `password`).
 3. Click on your avatar in the navigation bar and choose **Panel Admin** or navigate directly to `/admin`.
 
@@ -83,27 +94,40 @@ Within the admin panel you will find management sections for:
 
 The application seeds fictional manager users for the demo clubs. All DT accounts use the password `password`.
 
-| Usuario | Club |
-|---------|-----------------------|
+| Usuario    | Club               |
+| ---------- | ------------------ |
 | dtdefensor | Defensores del Lag |
-| dtneon | Neón FC |
-| dthax | Haxball United |
-| dtglitch | Glitchers 404 |
-| dtcyber | Cyber Warriors |
-| dtbinary | Binary Strikers |
-| dtconnect | Connection FC |
-| dtgalaxy | Pixel Galaxy |
-| dtmadrid | Real Madrid |
-| dtquantum | Quantum Rangers |
+| dtneon     | Neón FC            |
+| dthax      | Haxball United     |
+| dtglitch   | Glitchers 404      |
+| dtcyber    | Cyber Warriors     |
+| dtbinary   | Binary Strikers    |
+| dtconnect  | Connection FC      |
+| dtgalaxy   | Pixel Galaxy       |
+| dtmadrid   | Real Madrid        |
+| dtquantum  | Quantum Rangers    |
 
 ## Data Persistence
 
-User accounts, login state, clubs, and players are stored in the browser using `localStorage`. Clubs are saved under `VZ_CLUBS_KEY` and players under `VZ_PLAYERS_KEY`. Clearing your browser data resets this information. Other league data (tournaments, etc.) comes from mock files and is kept in memory only, so changes are lost on page refresh.
+The platform now stores all data in a PostgreSQL database managed by Prisma. Run `npm run start:dev` inside `server/` to start the API.
+
+## Recuperar contraseña
+
+Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.
+
+## Páginas legales
+
+Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad](/privacidad) están disponibles como páginas MDX.
+
+## Comunidad
+
+Visita `/usuarios` para explorar a otros participantes de La Virtual Zone. Cada perfil público muestra avatar, biografía y estadísticas básicas.
+
+## Página no encontrada
+
+Si intentas acceder a una URL inexistente verás una página 404 con un botón que te devuelve al inicio.
 
 ## Personalización de datos
 
-El archivo `src/data/seed.json` contiene los valores iniciales de clubes, jugadores y fixtures que se copian en `localStorage` la primera vez que se abre la aplicación. Tras modificar este archivo, incrementa la constante `SEED_VERSION` en `src/main.tsx` para forzar la reseed al cargar la app.
+El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
