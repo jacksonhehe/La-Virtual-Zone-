@@ -137,13 +137,14 @@ Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad]
 
 ## Comunidad
 
-Visita `/usuarios` para explorar a otros participantes de La Virtual Zone. Cada perfil público muestra avatar, biografía y estadísticas básicas.
-
-## Página no encontrada
-
-Si intentas acceder a una URL inexistente verás una página 404 con un botón que te devuelve al inicio.
-
-## Personalización de datos
-
 El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
+
+## Health Checks
+
+El back end expone `GET /healthz` para comprobar que el servicio está en línea.
+
+## CI/CD
+
+El proyecto se despliega automáticamente mediante **GitHub Actions**. El flujo ejecuta `npm run test` y las pruebas de `server/`, mide el rendimiento con Lighthouse CI y publica el front end en **Vercel** y el back end en **Fly.io**.
+Se requiere definir los secretos `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `FLY_API_TOKEN` y `FLY_APP` en los ajustes del repositorio. También se recomienda configurar `SENTRY_DSN` para el seguimiento de errores.
 
