@@ -2,16 +2,12 @@ import {
   User as SharedUser,
   Club,
   Title,
-  Player as SharedPlayer,
+  Player,
   PlayerAttributes,
   PlayerContract,
 } from '../types/shared';
 
-export { Club, Title, PlayerAttributes, PlayerContract } from '../types/shared';
-
-export interface Player extends SharedPlayer {
-  createdAt?: string;
-}
+export { Club, Title, Player, PlayerAttributes, PlayerContract } from '../types/shared';
 
 export interface User extends SharedUser {
   role: 'admin' | 'dt' | 'user';
@@ -81,6 +77,6 @@ export interface Fixture {
   awayTeam: string;
   homeScore?: number;
   awayScore?: number;
-  status: 'scheduled' | 'live' | 'finished' | 'pending_review';
+  status: 'scheduled' | 'live' | 'finished';
 }
  

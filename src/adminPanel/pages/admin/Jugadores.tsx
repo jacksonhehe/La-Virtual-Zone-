@@ -5,7 +5,7 @@ import { useGlobalStore } from '../../store/globalStore';
 import NewPlayerModal from '../../components/admin/NewPlayerModal';
 import EditPlayerModal from '../../components/admin/EditPlayerModal';
 import ConfirmDeleteModal from '../../components/admin/ConfirmDeleteModal';
-import { Player } from '../../types';
+import { Player } from '../../types/shared';
 
 const Jugadores = () => {
   const { players, clubs, addPlayer, updatePlayer, removePlayer, setLoading } = useGlobalStore();
@@ -65,8 +65,7 @@ const Jugadores = () => {
       goals: 0,
       assists: 0,
       appearances: 0,
-      price: playerData.price || 0,
-      createdAt: new Date().toISOString()
+      price: playerData.price || 0
     };
     
     addPlayer(newPlayer);

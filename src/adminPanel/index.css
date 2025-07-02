@@ -56,10 +56,6 @@
   .kpi-card {
     @apply bg-gradient-to-br from-gray-800/90 to-gray-900/90 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105;
   }
-
-  .kpi-chip {
-    @apply bg-white/5 text-xs px-3 py-1 rounded-full;
-  }
   
   .gradient-text {
     @apply bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent;

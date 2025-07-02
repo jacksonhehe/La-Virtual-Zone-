@@ -15,6 +15,5 @@ export const getPlayers = (): Player[] => {
 };
 
 export const savePlayers = (data: Player[]): void => {
-  if (typeof localStorage === 'undefined') return;
   localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(data));
 };

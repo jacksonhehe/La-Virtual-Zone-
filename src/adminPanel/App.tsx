@@ -9,10 +9,7 @@ const Usuarios = lazy(() => import('./pages/admin/Usuarios'));
 const Clubes = lazy(() => import('./pages/admin/Clubes'));
 const Jugadores = lazy(() => import('./pages/admin/Jugadores'));
 const Mercado = lazy(() => import('./pages/admin/Mercado'));
-const TorneosDashboard = lazy(() => import('./pages/TorneosDashboard'));
 const Torneos = lazy(() => import('./pages/admin/Torneos'));
-const NuevoTorneo = lazy(() => import('./pages/admin/NuevoTorneo'));
-const ResultadosPendientes = lazy(() => import('./pages/ResultadosPendientes'));
 const Noticias = lazy(() => import('./pages/admin/Noticias'));
 const Comentarios = lazy(() => import('./pages/admin/Comentarios'));
 const Actividad = lazy(() => import('./pages/admin/Actividad'));
@@ -55,10 +52,7 @@ const AdminLayout = () => {
             <Route path="clubes" element={<Clubes />} />
             <Route path="jugadores" element={<Jugadores />} />
             <Route path="mercado" element={<Mercado />} />
-            <Route path="resultados" element={<ResultadosPendientes />} />
-            <Route path="torneos" element={<TorneosDashboard />} />
-            <Route path="torneos/nuevo" element={<NuevoTorneo />} />
-            <Route path="torneos/list" element={<Torneos />} />
+            <Route path="torneos" element={<Torneos />} />
             <Route path="noticias" element={<Noticias />} />
             <Route path="comentarios" element={<Comentarios />} />
             <Route path="actividad" element={<Actividad />} />

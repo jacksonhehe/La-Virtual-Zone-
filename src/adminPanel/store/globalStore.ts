@@ -10,8 +10,7 @@ import {
   ActivityLog,
   Comment,
 } from '../types';
-import { User, Club } from '../types/shared';
-import { Player } from '../types';
+import { User, Club, Player } from '../types/shared';
 import {
   loadAdminData,
   saveAdminData,
@@ -20,7 +19,6 @@ import {
 import { saveClubs } from '../../utils/clubService';
 import { savePlayers } from '../../utils/playerService';
 import { useDataStore } from '../../store/dataStore';
-import { generateId } from '../../utils/id';
 
 interface GlobalStore {
   users: User[];
@@ -58,15 +56,7 @@ interface GlobalStore {
   removeMatch: (id: string) => void;
 
   // Tournaments
-  addTournament: (tournament: Tournament) => void;
   updateTournamentStatus: (id: string, status: Tournament['status']) => void;
-  removeTournament: (id: string) => void;
-
-  // Tournament selectors
-
-  // Extras
-  duplicateLastTournament: () => Tournament | undefined;
-  generateTournamentsReport: () => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -130,8 +120,7 @@ const defaultData: AdminData = {
       position: 'DEL',
       clubId: '1',
       overall: 93,
-      price: 25000000,
-      createdAt: '2023-01-01T00:00:00.000Z'
+      price: 25000000
     },
     {
       id: '2',
@@ -139,8 +128,7 @@ const defaultData: AdminData = {
       position: 'DEL',
       clubId: '2',
       overall: 91,
-      price: 20000000,
-      createdAt: '2023-01-01T00:00:00.000Z'
+      price: 20000000
     }
   ],
   matches: [
@@ -151,9 +139,7 @@ const defaultData: AdminData = {
       date: '2023-12-15T20:00:00Z',
       homeTeam: 'Barcelona',
       awayTeam: 'Real Madrid',
-      homeScore: 2,
-      awayScore: 1,
-      status: 'pending_review'
+      status: 'scheduled'
     },
     {
       id: 'match2',
@@ -266,7 +252,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: generateId(),
+            id: Date.now().toString(),
             userId: 'admin',
             action: 'User Created',
             details: `Created user: ${user.username}`,
@@ -283,7 +269,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: generateId(),
+            id: Date.now().toString(),
             userId: 'admin',
             action: 'User Updated',
             details: `Updated user: ${user.username}`,
@@ -300,7 +286,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: generateId(),
+            id: Date.now().toString(),
             userId: 'admin',
             action: 'User Deleted',
             details: `Deleted user with ID: ${id}`,
@@ -324,7 +310,7 @@ export const useGlobalStore = create<GlobalStore>()(
           activities: [
             ...state.activities,
             {
-              id: generateId(),
+              id: Date.now().toString(),
               userId: 'admin',
               action: 'Club Created',
               details: `Created club: ${club.name}`,
@@ -420,24 +406,6 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
 
-    addTournament: tournament => {
-      set(state => ({
-        tournaments: [...state.tournaments, tournament],
-        activities: [
-          ...state.activities,
-          {
-            id: generateId(),
-            userId: 'admin',
-            action: 'Tournament Created',
-            details: `Created tournament: ${tournament.name}`,
-            date: new Date().toISOString()
-          }
-        ]
-      }));
-      useDataStore.getState().addTournament(tournament);
-      persist();
-    },
-
     updateTournamentStatus: (id, status) => {
       set(state => ({
         tournaments: state.tournaments.map(t =>
@@ -447,68 +415,13 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
 
-    removeTournament: id => {
-      set(state => ({
-        tournaments: state.tournaments.filter(t => t.id !== id),
-        activities: [
-          ...state.activities,
-          {
-            id: Date.now().toString(),
-            userId: 'admin',
-            action: 'Tournament Deleted',
-            details: `Deleted tournament with ID: ${id}`,
-            date: new Date().toISOString()
-          }
-        ]
-      }));
-      persist();
-    },
-
-
-    getPlayersRegisteredToday: () => {
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
-      const end = new Date();
-      end.setHours(23, 59, 59, 999);
-      return get().users.filter(u => {
-        if (!u.createdAt) return false;
-        const d = new Date(u.createdAt);
-        return d >= start && d <= end && u.role === 'user';
-      });
-    },
-
-    getMatchesScheduledTomorrow: () => {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
-      return get().matches.filter(m => {
-        if (!m.date) return false;
-        const d = new Date(m.date);
-        return d >= start && d < end;
-      });
-    },
-
-    getAvgGoalsLast7Days: () => {
-      const now = Date.now();
-      const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
-      const recent = get().matches.filter(m => {
-        if (!m.date) return false;
-        const d = new Date(m.date).getTime();
-        return d >= weekAgo && d <= now &&
-          typeof m.homeScore === 'number' && typeof m.awayScore === 'number';
-      });
-      if (recent.length === 0) return 0;
-      const totalGoals = recent.reduce((sum, m) => sum + (m.homeScore ?? 0) + (m.awayScore ?? 0), 0);
-      return totalGoals / recent.length;
-    },
-
     approveTransfer: id => {
       set(state => ({
         transfers: state.transfers.map(t => (t.id === id ? { ...t, status: 'approved' as const } : t)),
         activities: [
           ...state.activities,
           {
-            id: generateId(),
+            id: Date.now().toString(),
             userId: 'admin',
             action: 'Transfer Approved',
             details: `Approved transfer with ID: ${id}`,
@@ -525,7 +438,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: [
           ...state.activities,
           {
-            id: generateId(),
+            id: Date.now().toString(),
             userId: 'admin',
             action: 'Transfer Rejected',
             details: `Rejected transfer: ${reason}`,
@@ -570,25 +483,6 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
 
-    duplicateLastTournament: () => {
-      const last = [...get().tournaments]
-        .reverse()
-        .find(t => t.status === 'completed');
-      if (!last) return undefined;
-      const copy: Tournament = {
-        ...last,
-        id: generateId(),
-        name: `${last.name} (copia)`,
-        status: 'upcoming',
-        currentRound: 0
-      };
-      return copy;
-    },
-
-    generateTournamentsReport: () => {
-      console.log('Generating tournaments PDF report...');
-    },
-
     addActivity: activity => {
       set(state => ({ activities: [...state.activities, activity] }));
       persist();
@@ -597,9 +491,3 @@ export const useGlobalStore = create<GlobalStore>()(
 }));
 
 export const subscribe = useGlobalStore.subscribe;
-export const getPlayersRegisteredToday = () =>
-  useGlobalStore.getState().getPlayersRegisteredToday();
-export const getMatchesScheduledTomorrow = () =>
-  useGlobalStore.getState().getMatchesScheduledTomorrow();
-export const getAvgGoalsLast7Days = () =>
-  useGlobalStore.getState().getAvgGoalsLast7Days();

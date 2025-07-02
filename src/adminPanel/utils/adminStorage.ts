@@ -8,7 +8,7 @@ import {
 export interface AdminData {
   users: import('../types/shared').User[];
   clubs: import('../types/shared').Club[];
-  players: import('../types').Player[];
+  players: import('../types/shared').Player[];
   matches: import('../types').Fixture[];
   tournaments: import('../types').Tournament[];
   newsItems: import('../types').NewsItem[];
