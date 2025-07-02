@@ -63,9 +63,6 @@ interface GlobalStore {
   removeTournament: (id: string) => void;
 
   // Tournament selectors
-  getUpcoming: () => Tournament[];
-  getActive: () => Tournament[];
-  getFinished: () => Tournament[];
 
   // Extras
   duplicateLastTournament: () => void;
@@ -467,9 +464,6 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
 
-    getUpcoming: () => get().tournaments.filter(t => t.status === 'upcoming'),
-    getActive: () => get().tournaments.filter(t => t.status === 'active'),
-    getFinished: () => get().tournaments.filter(t => t.status === 'completed'),
 
     getPlayersRegisteredToday: () => {
       const start = new Date();

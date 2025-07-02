@@ -1,9 +1,14 @@
-import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
+import { Clock, Play, Award, Trophy, MoreHorizontal, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatsCard from '../components/admin/StatsCard';
 import DropdownMenu from '../components/admin/DropdownMenu';
 import useCan from '../../hooks/useCan';
 import { useGlobalStore } from '../store/globalStore';
+import {
+  useUpcomingTournaments,
+  useActiveTournaments,
+  useFinishedTournaments,
+} from '../hooks/useTournamentFilters';
 
 const TorneosDashboard = () => {
   const navigate = useNavigate();
@@ -14,12 +19,21 @@ const TorneosDashboard = () => {
   const canModify = useCan(['super', 'gestor']);
 
   const tournaments = useGlobalStore(state => state.tournaments);
-  const upcoming = useGlobalStore(state => state.getUpcoming());
-  const active = useGlobalStore(state => state.getActive());
-  const finished = useGlobalStore(state => state.getFinished());
+  const upcoming = useUpcomingTournaments();
+  const active = useActiveTournaments();
+  const finished = useFinishedTournaments();
 
   return (
     <div className="p-8 space-y-8">
+      {canModify && (
+        <button
+          className="btn-primary flex items-center space-x-2 fixed top-6 right-6 z-50"
+          onClick={() => navigate('/admin/torneos/nuevo')}
+        >
+          <Plus size={20} />
+          <span>Nuevo Torneo</span>
+        </button>
+      )}
       <div>
         <h1 className="text-4xl font-bold gradient-text">Torneos</h1>
         {tournaments.length > 0 && (
@@ -44,7 +58,7 @@ const TorneosDashboard = () => {
         <p className="text-gray-400 mt-2">Resumen general de torneos</p>
       </div>
 
-      {tournaments.length === 0 ? (
+      {tournaments.length === 0 && (
         <div className="flex flex-col items-center gap-4 text-center text-gray-400">
           <Trophy className="w-20 h-20 text-vz-primary/30" />
           <h2 className="text-2xl text-white">No hay torneos todavía</h2>
@@ -59,8 +73,9 @@ const TorneosDashboard = () => {
             Guía rápida
           </a>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      )
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div
             className="group relative cursor-pointer"
             onClick={() => navigate('/admin/torneos/list?status=upcoming')}
@@ -157,7 +172,6 @@ const TorneosDashboard = () => {
             </DropdownMenu>
           </div>
         </div>
-      )}
     </div>
   );
 };
