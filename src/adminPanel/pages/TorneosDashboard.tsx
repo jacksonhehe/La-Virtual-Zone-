@@ -1,5 +1,5 @@
-import { Clock, Play, Award, Trophy, MoreHorizontal, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Clock, Play, Award, Trophy, MoreHorizontal } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import StatsCard from '../components/admin/StatsCard';
 import DropdownMenu from '../components/admin/DropdownMenu';
 import useCan from '../../hooks/useCan';
@@ -25,17 +25,16 @@ const TorneosDashboard = () => {
 
   return (
     <div className="p-8 space-y-8">
-      {canModify && (
-        <button
-          className="btn-primary flex items-center space-x-2 fixed top-6 right-6 z-50"
-          onClick={() => navigate('/admin/torneos/nuevo')}
-        >
-          <Plus size={20} />
-          <span>Nuevo Torneo</span>
-        </button>
-      )}
-      <div>
+      <div className="relative">
         <h1 className="text-4xl font-bold gradient-text">Torneos</h1>
+        {canModify && (
+          <Link
+            to="/admin/torneos/nuevo"
+            className="btn-primary w-full mt-2 sm:w-auto sm:mt-0 lg:absolute lg:top-0 lg:right-0"
+          >
+            + Nuevo torneo
+          </Link>
+        )}
         {tournaments.length > 0 && (
           <div className="flex items-center gap-2 mt-2">
             {upcoming.length > 0 && (
