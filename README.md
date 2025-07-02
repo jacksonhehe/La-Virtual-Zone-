@@ -104,6 +104,10 @@ User accounts, login state, clubs, and players are stored in the browser using `
 
 Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.
 
+## Páginas legales
+
+Los documentos de [Términos de Servicio](/terminos) y [Política de Privacidad](/privacidad) están disponibles como páginas MDX.
+
 ## Personalización de datos
 
 El archivo `src/data/seed.json` contiene los valores iniciales de clubes, jugadores y fixtures que se copian en `localStorage` la primera vez que se abre la aplicación. Tras modificar este archivo, incrementa la constante `SEED_VERSION` en `src/main.tsx` para forzar la reseed al cargar la app.
