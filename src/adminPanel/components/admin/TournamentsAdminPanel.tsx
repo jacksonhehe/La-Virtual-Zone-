@@ -50,6 +50,13 @@ const TournamentsAdminPanel = () => {
     return format === 'league' ? Trophy : Users;
   };
 
+  const formatStartDate = (date: unknown): React.ReactNode => {
+    if (typeof date === 'string' && !isNaN(new Date(date).getTime())) {
+      return new Date(date).toLocaleString();
+    }
+    return <span className="text-red-400">Fecha no definida</span>;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -157,13 +164,7 @@ const TournamentsAdminPanel = () => {
                       Fecha Inicio
                     </div>
                     <div className="text-white font-medium">
-                      {tournament.startDate ? (
-                        new Date(tournament.startDate).toLocaleString()
-                      ) : (
-                        <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded">
-                          Fecha no definida
-                        </span>
-                      )}
+                      {formatStartDate(tournament.startDate)}
                     </div>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-3">
