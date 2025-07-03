@@ -33,6 +33,7 @@ export default function MercadoTab() {
 
   const availablePlayers = useMemo(() => {
     return players
+      .filter(p => p.transferListed)
       .filter(p => p.clubId !== club?.id)
       .filter(p => positionFilter === 'all' || p.position === positionFilter)
       .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
@@ -54,6 +55,10 @@ export default function MercadoTab() {
   const handleMakeOffer = (player: Player) => {
     if (!marketStatus) {
       toast.error('El mercado está cerrado');
+      return;
+    }
+    if (!player.transferListed) {
+      toast.error('El jugador no está en la lista de transferibles');
       return;
     }
     setSelectedPlayer(player);
