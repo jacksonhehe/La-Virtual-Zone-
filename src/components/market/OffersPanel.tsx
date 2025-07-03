@@ -6,11 +6,17 @@ import { processTransfer } from '../../utils/transferService';
 import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
+import RenegotiateModal from './RenegotiateModal';
 
-const OffersPanel = () => {
+interface OffersPanelProps {
+  initialView?: 'sent' | 'received';
+}
+
+const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<'sent' | 'received'>('sent');
+  const [view, setView] = useState<'sent' | 'received'>(initialView);
+  const [renegotiateOffer, setRenegotiateOffer] = useState<TransferOffer | null>(null);
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
@@ -72,14 +78,7 @@ const OffersPanel = () => {
 
   // Handle renegotiate offer
   const handleRenegotiate = (offer: TransferOffer) => {
-    const input = window.prompt('Nueva cantidad para la oferta', String(offer.amount));
-    if (!input) return;
-    const amount = Number(input);
-    if (isNaN(amount) || amount <= 0) {
-      setError('Cantidad inválida');
-      return;
-    }
-    useDataStore.getState().updateOfferAmount(offer.id, amount);
+    setRenegotiateOffer(offer);
   };
   
   // Check if user can respond to offer
@@ -239,6 +238,12 @@ const OffersPanel = () => {
           )}
         </Card>
       ))}
+      {renegotiateOffer && (
+        <RenegotiateModal
+          offer={renegotiateOffer}
+          onClose={() => setRenegotiateOffer(null)}
+        />
+      )}
     </div>
   );
 };
