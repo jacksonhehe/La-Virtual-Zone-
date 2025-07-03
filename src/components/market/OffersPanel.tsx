@@ -53,7 +53,8 @@ const OffersPanel = ({
       : user.role === 'dt' && user.club
         ? offers.filter(o => {
             const userClub = clubs.find(c => c.name === user.club);
-            return userClub && o.toClub === userClub.name;
+            // Offers where my club is selling
+            return userClub && o.fromClub === userClub.name;
           })
         : []
     : [];
@@ -283,19 +284,19 @@ const OffersPanel = ({
                 <div className="flex space-x-3">
                   <button
                     onClick={() => handleRenegotiate(offer)}
-                    className="btn-secondary text-sm flex-1"
+                    className="text-sm flex-1 rounded-lg bg-orange-500 hover:bg-orange-600 text-white py-2"
                   >
                     Renegociar
                   </button>
                   <button
                     onClick={() => setConfirmAction({ offer, action: 'accept' })}
-                    className="btn-primary text-sm flex-1"
+                    className="text-sm flex-1 rounded-lg bg-green-600 hover:bg-green-700 text-white py-2"
                   >
                     Aceptar
                   </button>
                   <button
                     onClick={() => setConfirmAction({ offer, action: 'reject' })}
-                    className="btn-secondary text-sm flex-1"
+                    className="text-sm flex-1 rounded-lg bg-red-600 hover:bg-red-700 text-white py-2"
                   >
                     Rechazar
                   </button>
