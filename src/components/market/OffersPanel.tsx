@@ -15,11 +15,6 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'sent' | 'received'>(initialView);
-
-  // Update view if parent changes the initial view
-  useEffect(() => {
-    setView(initialView);
-  }, [initialView]);
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
