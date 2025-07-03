@@ -7,10 +7,14 @@ import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
 
-const OffersPanel = () => {
+interface OffersPanelProps {
+  initialView?: 'sent' | 'received';
+}
+
+const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<'sent' | 'received'>('sent');
+  const [view, setView] = useState<'sent' | 'received'>(initialView);
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
