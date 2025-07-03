@@ -26,16 +26,36 @@ const Footer = () => {
               Gestiona tu club, ficha jugadores, y compite en ligas y torneos.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://github.com/jacksonhehe/La-Virtual-Zone-"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Github size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://twitter.com/lavirtualzone"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://instagram.com/lavirtualzone"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://facebook.com/lavirtualzone"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Facebook size={20} />
               </a>
             </div>
@@ -47,11 +67,6 @@ const Footer = () => {
               <li>
                 <Link to="/liga-master" className="text-gray-400 hover:text-white">
                   Vista General
-                </Link>
-              </li>
-              <li>
-                <Link to="/liga-master/mercado" className="text-gray-400 hover:text-white">
-                  Mercado de Fichajes
                 </Link>
               </li>
               <li>

@@ -115,17 +115,6 @@ const topScorers = [...players]
         
         {/* Quick access */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Link to="/liga-master/mercado" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
-            <TrendingUp size={32} className="text-neon-green mb-4" />
-            <h3 className="text-xl font-bold mb-2">Mercado de Fichajes</h3>
-            <p className="text-gray-400 mb-4">
-              Compra y vende jugadores para mejorar tu equipo.
-            </p>
-            <div className="text-primary flex items-center text-sm font-medium">
-              <span>Ir al mercado</span>
-              <ChevronRight size={16} className="ml-1" />
-            </div>
-          </Link>
           
           <Link to="/liga-master/fixture" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
             <Calendar size={32} className="text-neon-blue mb-4" />

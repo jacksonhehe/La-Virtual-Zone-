@@ -6,6 +6,7 @@ import { processTransfer } from '../../utils/transferService';
 import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
+import RenegotiateModal from './RenegotiateModal';
 
 interface OffersPanelProps {
   /**
@@ -19,6 +20,8 @@ interface OffersPanelProps {
 const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<'sent' | 'received'>(initialView);
+  const [renegotiateOffer, setRenegotiateOffer] = useState<TransferOffer | null>(null);
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
@@ -26,15 +29,12 @@ const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
   // Filter offers based on user role
   const filteredOffers = user ?
     user.role === 'admin' ?
-      // Admin sees all offers
       offers :
     user.role === 'dt' && user.club ?
-      // DT sees offers for their club
       offers.filter(o => {
         const userClub = clubs.find(c => c.name === user.club);
-        return userClub && (o.fromClub === userClub.name || o.toClub === userClub.name);
+        return userClub && o.toClub === userClub.name;
       }) :
-      // User made offers
       offers.filter(o => o.userId === user.id) :
     [];
 
@@ -80,14 +80,7 @@ const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
 
   // Handle renegotiate offer
   const handleRenegotiate = (offer: TransferOffer) => {
-    const input = window.prompt('Nueva cantidad para la oferta', String(offer.amount));
-    if (!input) return;
-    const amount = Number(input);
-    if (isNaN(amount) || amount <= 0) {
-      setError('Cantidad inválida');
-      return;
-    }
-    useDataStore.getState().updateOfferAmount(offer.id, amount);
+    setRenegotiateOffer(offer);
   };
   
   // Check if user can respond to offer
@@ -124,6 +117,20 @@ const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
   
   return (
     <div className="space-y-4">
+      <div className="flex border-b border-white/10 mb-4">
+        <button
+          onClick={() => setView('sent')}
+          className={`px-4 py-2 font-medium mr-2 ${view === 'sent' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
+        >
+          Ofertas Enviadas
+        </button>
+        <button
+          onClick={() => setView('received')}
+          className={`px-4 py-2 font-medium ${view === 'received' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
+        >
+          Ofertas Recibidas
+        </button>
+      </div>
       {error && (
         <div className="p-4 bg-red-500/20 text-red-400 rounded-lg">
           {error}
@@ -235,6 +242,12 @@ const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
           )}
         </Card>
       ))}
+      {renegotiateOffer && (
+        <RenegotiateModal
+          offer={renegotiateOffer}
+          onClose={() => setRenegotiateOffer(null)}
+        />
+      )}
     </div>
   );
 };

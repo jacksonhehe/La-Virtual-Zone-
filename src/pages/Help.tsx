@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
+import { Link } from 'react-router-dom';
 import { Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, FileText, Info } from 'lucide-react';
 
 const Help = () => {
@@ -328,7 +329,7 @@ const Help = () => {
                             <li>Toda transferencia debe respetar el presupuesto del club.</li>
                           </ul>
                           <p className="mt-2 text-gray-300">
-                            Para acceder al mercado, ve a la sección "Liga Master" y luego a "Mercado de Fichajes".
+                            Para acceder al mercado, abre el Tablero de DT y selecciona la pestaña "Mercado".
                           </p>
                         </div>
                       )}
@@ -349,7 +350,7 @@ const Help = () => {
                             Para hacer una oferta por un jugador:
                           </p>
                           <ol className="mt-2 space-y-2 text-gray-300 list-decimal list-inside">
-                            <li>Accede a la sección "Mercado de Fichajes".</li>
+                            <li>Abre el Tablero de DT y ve a la pestaña "Mercado".</li>
                             <li>Busca el jugador que te interesa usando los filtros disponibles.</li>
                             <li>Haz clic en "Ofertar" junto al jugador.</li>
                             <li>Introduce la cantidad que ofreces (debe estar dentro de tu presupuesto).</li>
@@ -577,22 +578,22 @@ const Help = () => {
                   <div className="bg-dark rounded-lg p-6">
                     <h3 className="font-bold mb-4">Enlaces útiles</h3>
                     <div className="space-y-2">
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      <Link to="/terminos" className="flex items-center text-primary hover:text-primary-light">
                         <FileText size={16} className="mr-2" />
                         <span>Reglamento general</span>
-                      </a>
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      </Link>
+                      <Link to="/liga-master" className="flex items-center text-primary hover:text-primary-light">
                         <Trophy size={16} className="mr-2" />
                         <span>Reglamento Liga Master</span>
-                      </a>
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      </Link>
+                      <Link to="/liga-master/calendario" className="flex items-center text-primary hover:text-primary-light">
                         <Calendar size={16} className="mr-2" />
                         <span>Calendario de eventos</span>
-                      </a>
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      </Link>
+                      <Link to="/tienda" className="flex items-center text-primary hover:text-primary-light">
                         <ShoppingBag size={16} className="mr-2" />
                         <span>Guía de la tienda</span>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
