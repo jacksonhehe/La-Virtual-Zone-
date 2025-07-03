@@ -15,7 +15,6 @@ export default function MercadoTab() {
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
   const [showOffers, setShowOffers] = useState(false);
-  const [offersView, setOffersView] = useState<'sent' | 'received'>('sent');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const sentOffers = useMemo(() => {
@@ -134,10 +133,7 @@ export default function MercadoTab() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              setOffersView('sent');
-              setShowOffers(true);
-            }}
+            onClick={() => setShowOffers(true)}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
               showOffers
                 ? 'bg-primary text-black'
@@ -145,21 +141,6 @@ export default function MercadoTab() {
             }`}
           >
             Mis Ofertas ({sentOffers.length + receivedOffers.length})
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              setOffersView('received');
-              setShowOffers(true);
-            }}
-            className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              showOffers && offersView === 'received'
-                ? 'bg-primary text-black'
-                : 'bg-white/5 text-white/70 hover:bg-white/10'
-            }`}
-          >
-            Ofertas Recibidas ({receivedOffers.length})
           </motion.button>
         </div>
       </motion.div>
@@ -230,7 +211,7 @@ export default function MercadoTab() {
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
-            <OffersPanel initialView={offersView} />
+            <OffersPanel initialView="sent" />
           </motion.div>
         )}
       </AnimatePresence>
