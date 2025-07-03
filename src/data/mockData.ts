@@ -647,6 +647,17 @@ export const offers: TransferOffer[] = [
     date: '2025-01-07',
     status: 'rejected',
     userId: 'user2'
+  },
+  {
+    id: 'offer4',
+    playerId: 'player52',
+    playerName: 'Martín Pérez',
+    fromClub: 'Real Madrid',
+    toClub: 'Defensores del Lag',
+    amount: 45000000,
+    date: '2025-01-08',
+    status: 'pending',
+    userId: 'user3'
   }
 ];
 
