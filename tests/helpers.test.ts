@@ -6,7 +6,7 @@ import {
   goalsDiff,
   possessionDiff,
   yellowDiff,
-} from '../src/utils/helpers.ts';
+} from '../src/utils/helpers';
 import { leagueStandings, tournaments, players } from '../src/data/mockData.ts';
 
 const fixtures = tournaments.find(t => t.id === 'tournament1')?.matches ?? [];
