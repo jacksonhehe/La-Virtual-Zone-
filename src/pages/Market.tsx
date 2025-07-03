@@ -126,7 +126,7 @@ const Market = () => {
               onClick={() => setActiveTab('offers')}
               className={`px-4 py-3 font-medium ${activeTab === 'offers' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
             >
-            Ofertas Enviadas
+            Mis Ofertas
             </button>
           </div>
         </div>
