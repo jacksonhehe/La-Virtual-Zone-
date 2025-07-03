@@ -312,9 +312,10 @@ const Market = () => {
       
       {/* Offer modal */}
       {selectedPlayer && (
-        <OfferModal 
-          player={selectedPlayer} 
-          onClose={() => setSelectedPlayer(null)} 
+        <OfferModal
+          player={selectedPlayer}
+          onClose={() => setSelectedPlayer(null)}
+          onOfferSent={() => setActiveTab('offers')}
         />
       )}
     </div>

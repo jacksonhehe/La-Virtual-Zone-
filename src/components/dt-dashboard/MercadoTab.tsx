@@ -210,6 +210,7 @@ export default function MercadoTab() {
         <OfferModal
           player={selectedPlayer}
           onClose={() => setSelectedPlayer(null)}
+          onOfferSent={() => setShowOffers(true)}
         />
       )}
     </div>
