@@ -1,5 +1,4 @@
 import { User } from '../types/shared';
-import { randomBytes } from 'crypto';
 import {
   VZ_USERS_KEY,
   VZ_CURRENT_USER_KEY,
@@ -490,7 +489,12 @@ const generateToken = (): string => {
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
   }
-  return randomBytes(32).toString('hex');
+  // Fallback for environments without Web Crypto API
+  let token = '';
+  for (let i = 0; i < 32; i++) {
+    token += Math.floor(Math.random() * 16).toString(16);
+  }
+  return token;
 };
 
 const sendResetEmail = (email: string, token: string): void => {
