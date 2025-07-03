@@ -1,46 +1,33 @@
-import  { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Star, TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Search, Filter, Star } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
 import { Player } from '../../types/shared';
 import toast from 'react-hot-toast';
-
-interface MarketOffer {
-  id: string;
-  player: Player;
-  club: string;
-  amount: number;
-  status: 'pending' | 'accepted' | 'rejected';
-  date: string;
-}
+import OffersPanel from '../market/OffersPanel';
 
 export default function MercadoTab() {
   const { user } = useAuthStore();
-  const { players, club, clubs } = useDataStore();
+  const { players, club, clubs, offers } = useDataStore();
   const [search, setSearch] = useState('');
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
   const [showOffers, setShowOffers] = useState(false);
 
-  const [mockOffers] = useState<MarketOffer[]>([
-    {
-      id: '1',
-      player: players[0],
-      club: 'Barcelona',
-      amount: 30000000,
-      status: 'pending',
-      date: '2024-02-10'
-    },
-    {
-      id: '2', 
-      player: players[2],
-      club: 'Manchester City',
-      amount: 120000000,
-      status: 'accepted',
-      date: '2024-02-08'
+  const myOffers = useMemo(() => {
+    if (!user) return [];
+    if (user.role === 'admin') return offers;
+    if (user.role === 'dt' && user.club) {
+      const userClub = clubs.find(c => c.name === user.club);
+      return userClub
+        ? offers.filter(
+            o => o.fromClub === userClub.name || o.toClub === userClub.name
+          )
+        : [];
     }
-  ]);
+    return offers.filter(o => o.userId === user.id);
+  }, [offers, user, clubs]);
 
   const availablePlayers = useMemo(() => {
     return players
@@ -68,15 +55,6 @@ export default function MercadoTab() {
 
   const formatCurrency = (amount: number) => 
     new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending': return <Clock size={16} className="text-yellow-500" />;
-      case 'accepted': return <CheckCircle size={16} className="text-green-500" />;
-      case 'rejected': return <AlertCircle size={16} className="text-red-500" />;
-      default: return null;
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -146,7 +124,7 @@ export default function MercadoTab() {
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
-            Mis Ofertas ({mockOffers.length})
+            Mis Ofertas ({myOffers.length})
           </motion.button>
         </div>
       </motion.div>
@@ -217,34 +195,7 @@ export default function MercadoTab() {
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
-            {mockOffers.map((offer, index) => (
-              <motion.div
-                key={offer.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-black/20 backdrop-blur-xl rounded-2xl p-6 border border-white/10"
-              >
-                <div className="flex items-center gap-4">
-                  <img 
-                    src={offer.player.image} 
-                    alt={offer.player.name}
-                    className="w-16 h-16 rounded-xl object-cover"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg">{offer.player.name}</h3>
-                    <p className="text-gray-400">{offer.club}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-primary">{formatCurrency(offer.amount)}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      {getStatusIcon(offer.status)}
-                      <span className="text-sm capitalize">{offer.status}</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <OffersPanel />
           </motion.div>
         )}
       </AnimatePresence>
