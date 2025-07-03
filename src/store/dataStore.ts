@@ -145,7 +145,19 @@ export const useDataStore = create<DataState>((set) => ({
   dtRankings,
   users: getUsers(),
   
-  updateClubs: (newClubs) => set({ clubs: newClubs }),
+  updateClubs: (newClubs) =>
+    set((state) => {
+      saveClubs(newClubs);
+      const current = useAuthStore.getState().user;
+      let club = state.club;
+      if (current?.clubId) {
+        const updated = newClubs.find(c => c.id === current.clubId);
+        if (updated) {
+          club = { ...club, budget: updated.budget };
+        }
+      }
+      return { clubs: newClubs, club };
+    }),
   
   updatePlayers: (newPlayers) => {
     savePlayers(newPlayers);
