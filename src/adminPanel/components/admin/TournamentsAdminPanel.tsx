@@ -25,15 +25,17 @@ const TournamentsAdminPanel = () => {
     console.warn('Se encontraron torneos sin fecha de inicio definida');
   }
 
-  const filteredTournaments = tournaments.filter(tournament => {
+  const validTournaments = tournaments.filter(t => t.startDate != null);
+
+  const filteredTournaments = validTournaments.filter(tournament => {
     const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || tournament.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const activeTournaments = tournaments.filter(t => t.status === 'active').length;
-  const totalPrizePool = tournaments.reduce((sum, t) => sum + (t.prizePool ?? 0), 0);
-  const totalTeams = tournaments.reduce((sum, t) => sum + (t.currentTeams ?? 0), 0);
+  const activeTournaments = validTournaments.filter(t => t.status === 'active').length;
+  const totalPrizePool = validTournaments.reduce((sum, t) => sum + t.prizePool, 0);
+  const totalTeams = validTournaments.reduce((sum, t) => sum + t.currentTeams, 0);
 
   const getStatusColor = (status: string) => {
     switch (status) {
