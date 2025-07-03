@@ -1,19 +1,21 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Star } from 'lucide-react';
+import { Search, Star } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
 import { Player } from '../../types/shared';
 import toast from 'react-hot-toast';
 import OffersPanel from '../market/OffersPanel';
+import OfferModal from '../market/OfferModal';
 
 export default function MercadoTab() {
   const { user } = useAuthStore();
-  const { players, club, clubs, offers } = useDataStore();
+  const { players, club, clubs, offers, marketStatus } = useDataStore();
   const [search, setSearch] = useState('');
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
   const [showOffers, setShowOffers] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const myOffers = useMemo(() => {
     if (!user) return [];
@@ -50,7 +52,11 @@ export default function MercadoTab() {
   };
 
   const handleMakeOffer = (player: Player) => {
-    toast.success(`Oferta enviada por ${player.name}`);
+    if (!marketStatus) {
+      toast.error('El mercado está cerrado');
+      return;
+    }
+    setSelectedPlayer(player);
   };
 
   const formatCurrency = (amount: number) => 
@@ -199,6 +205,13 @@ export default function MercadoTab() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {selectedPlayer && (
+        <OfferModal
+          player={selectedPlayer}
+          onClose={() => setSelectedPlayer(null)}
+        />
+      )}
     </div>
   );
 }
