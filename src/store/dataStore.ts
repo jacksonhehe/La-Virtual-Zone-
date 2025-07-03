@@ -7,10 +7,8 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
-  players as seedPlayers,
   tournaments,
   transfers,
-  offers,
   marketStatus,
   leagueStandings,
   newsItems,
@@ -28,6 +26,7 @@ import {
 } from '../data/mockData';
 import { getClubs, saveClubs } from '../utils/clubService';
 import { getPlayers, savePlayers } from '../utils/playerService';
+import { getOffers, saveOffers } from '../utils/offerService';
 import {
   Tournament,
   Transfer,
@@ -50,6 +49,7 @@ import { Club, Player, User } from '../types/shared';
 
 const initialClubs = getClubs();
 const initialPlayers = getPlayers();
+const initialOffers = getOffers();
 const initialUser = useAuthStore.getState().user;
 const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
 const initialClub: DtClub = {
@@ -125,7 +125,7 @@ export const useDataStore = create<DataState>((set) => ({
   players: initialPlayers,
   tournaments,
   transfers,
-  offers,
+  offers: initialOffers,
   standings: leagueStandings,
   newsItems,
   mediaItems,
@@ -161,7 +161,10 @@ export const useDataStore = create<DataState>((set) => ({
   
   updateTransfers: (newTransfers) => set({ transfers: newTransfers }),
   
-  updateOffers: (newOffers) => set({ offers: newOffers }),
+  updateOffers: (newOffers) => {
+    saveOffers(newOffers);
+    set({ offers: newOffers });
+  },
   
   updateMarketStatus: (status) =>
     set(() => {
@@ -176,15 +179,21 @@ export const useDataStore = create<DataState>((set) => ({
       return { marketStatus: status };
     }),
   
-  addOffer: (offer) => set((state) => ({
-    offers: [...state.offers, offer]
-  })),
+  addOffer: (offer) =>
+    set((state) => {
+      const updated = [...state.offers, offer];
+      saveOffers(updated);
+      return { offers: updated };
+    }),
   
-  updateOfferStatus: (offerId, status) => set((state) => ({
-    offers: state.offers.map(offer =>
-      offer.id === offerId ? { ...offer, status } : offer
-    )
-  })),
+  updateOfferStatus: (offerId, status) =>
+    set((state) => {
+      const updated = state.offers.map((offer) =>
+        offer.id === offerId ? { ...offer, status } : offer
+      );
+      saveOffers(updated);
+      return { offers: updated };
+    }),
 
   addTransfer: (transfer) => set((state) => ({
     transfers: [transfer, ...state.transfers]
