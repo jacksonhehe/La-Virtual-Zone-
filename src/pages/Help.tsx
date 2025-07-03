@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
+import { Link } from 'react-router-dom';
 import { Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, FileText, Info } from 'lucide-react';
 
 const Help = () => {
@@ -577,22 +578,22 @@ const Help = () => {
                   <div className="bg-dark rounded-lg p-6">
                     <h3 className="font-bold mb-4">Enlaces útiles</h3>
                     <div className="space-y-2">
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      <Link to="/terminos" className="flex items-center text-primary hover:text-primary-light">
                         <FileText size={16} className="mr-2" />
                         <span>Reglamento general</span>
-                      </a>
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      </Link>
+                      <Link to="/liga-master" className="flex items-center text-primary hover:text-primary-light">
                         <Trophy size={16} className="mr-2" />
                         <span>Reglamento Liga Master</span>
-                      </a>
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      </Link>
+                      <Link to="/liga-master/calendario" className="flex items-center text-primary hover:text-primary-light">
                         <Calendar size={16} className="mr-2" />
                         <span>Calendario de eventos</span>
-                      </a>
-                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
+                      </Link>
+                      <Link to="/tienda" className="flex items-center text-primary hover:text-primary-light">
                         <ShoppingBag size={16} className="mr-2" />
                         <span>Guía de la tienda</span>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
