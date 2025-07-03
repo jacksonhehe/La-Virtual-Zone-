@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -7,6 +7,7 @@ import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
 import RenegotiateModal from './RenegotiateModal';
+import toast from 'react-hot-toast';
 
 interface OffersPanelProps {
   initialView?: 'sent' | 'received';
@@ -17,6 +18,8 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'sent' | 'received'>(initialView);
   const [renegotiateOffer, setRenegotiateOffer] = useState<TransferOffer | null>(null);
+  const [page, setPage] = useState(1);
+  const prevStatusesRef = useRef<Record<string, string>>({});
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
@@ -46,6 +49,9 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
     [];
 
   const filteredOffers = view === 'sent' ? sentOffers : receivedOffers;
+  const OFFERS_PER_PAGE = 10;
+  const displayedOffers = filteredOffers.slice(0, page * OFFERS_PER_PAGE);
+  const hasMore = displayedOffers.length < filteredOffers.length;
   
   // Get club logo by name
   const getClubLogo = (clubName: string) => {
@@ -80,6 +86,29 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const handleRenegotiate = (offer: TransferOffer) => {
     setRenegotiateOffer(offer);
   };
+
+  // Reset pagination when view changes
+  useEffect(() => {
+    setPage(1);
+  }, [view]);
+
+  // Notify when offer status changes
+  useEffect(() => {
+    const current: Record<string, string> = {};
+    const relevantOffers = [...sentOffers, ...receivedOffers];
+    relevantOffers.forEach(o => {
+      current[o.id] = o.status;
+      const prev = prevStatusesRef.current[o.id];
+      if (prev && prev !== o.status) {
+        if (o.status === 'accepted') {
+          toast.success(`Oferta por ${o.playerName} aceptada`);
+        } else if (o.status === 'rejected') {
+          toast.error(`Oferta por ${o.playerName} rechazada`);
+        }
+      }
+    });
+    prevStatusesRef.current = current;
+  }, [sentOffers, receivedOffers]);
   
   // Check if user can respond to offer
   const canRespondToOffer = (offer: TransferOffer) => {
@@ -133,7 +162,7 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
         </div>
       )}
 
-      {filteredOffers.map(offer => (
+      {displayedOffers.map(offer => (
         <Card key={offer.id} className="overflow-hidden">
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
@@ -238,6 +267,16 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
           )}
         </Card>
       ))}
+      {hasMore && (
+        <div className="text-center">
+          <button
+            onClick={() => setPage(p => p + 1)}
+            className="btn-secondary mt-2"
+          >
+            Cargar más
+          </button>
+        </div>
+      )}
       {renegotiateOffer && (
         <RenegotiateModal
           offer={renegotiateOffer}
