@@ -48,6 +48,8 @@ export default function MercadoTab() {
     return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
   }, [offers, userClub, user]);
 
+  console.log('MercadoTab receivedOffers:', receivedOffers);
+
 
   const availablePlayers = useMemo(() => {
     return players
@@ -231,7 +233,11 @@ export default function MercadoTab() {
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
-            <OffersPanel initialView="sent" />
+            <OffersPanel
+              initialView="sent"
+              sentOffers={sentOffers}
+              receivedOffers={receivedOffers}
+            />
           </motion.div>
         )}
       </AnimatePresence>
