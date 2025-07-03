@@ -49,7 +49,7 @@ export default function DtDashboard() {
   useEffect(() => {
     if (!club) return;
     const incoming = offers.filter(
-      (o) => o.fromClub === club.name && o.status === 'pending'
+      (o) => o.toClub === club.name && o.status === 'pending'
     );
     const newOnes = incoming.filter((o) => !prevOffersRef.current.has(o.id));
     if (newOnes.length > 0) {
