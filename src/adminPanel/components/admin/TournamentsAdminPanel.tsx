@@ -157,9 +157,13 @@ const TournamentsAdminPanel = () => {
                       Fecha Inicio
                     </div>
                     <div className="text-white font-medium">
-                      {tournament.startDate
-                        ? new Date(tournament.startDate).toLocaleDateString()
-                        : 'Fecha no definida'}
+                      {tournament.startDate ? (
+                        new Date(tournament.startDate).toLocaleString()
+                      ) : (
+                        <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded">
+                          Fecha no definida
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-3">
