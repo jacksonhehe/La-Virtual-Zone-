@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Trophy, Calendar, Users, MapPin, Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
 import { Tournament } from '../../types';
-import { useGlobalStore } from '../../store/globalStore';
+import { useDataStore } from '../../../store/dataStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import NewTournamentModal from './NewTournamentModal';
@@ -11,9 +11,9 @@ const TournamentsAdminPanel = () => {
   const {
     tournaments,
     addTournament,
-    updateTournament,
+    updateTournamentEntry,
     removeTournament
-  } = useGlobalStore();
+  } = useDataStore();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -255,7 +255,7 @@ const TournamentsAdminPanel = () => {
           tournament={editingTournament}
           onClose={() => setEditingTournament(null)}
           onSave={(data) => {
-            updateTournament({ ...editingTournament, ...data });
+            updateTournamentEntry({ ...editingTournament, ...data });
             setEditingTournament(null);
           }}
         />
