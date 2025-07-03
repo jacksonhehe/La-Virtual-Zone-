@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -7,7 +7,16 @@ import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
 
-const OffersPanel = () => {
+interface OffersPanelProps {
+  /**
+   * Filter offers by type.
+   * - `all`: show every offer related to the current user/club
+   * - `received`: only show offers where the user's club is the recipient
+   */
+  filter?: 'all' | 'received';
+}
+
+const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   
@@ -15,7 +24,7 @@ const OffersPanel = () => {
   const { offers, clubs } = useDataStore();
   
   // Filter offers based on user role
-  const filteredOffers = user ? 
+  const filteredOffers = user ?
     user.role === 'admin' ?
       // Admin sees all offers
       offers :
@@ -28,6 +37,17 @@ const OffersPanel = () => {
       // User made offers
       offers.filter(o => o.userId === user.id) :
     [];
+
+  // Additional filtering for received-only mode
+  const offersToShow = useMemo(() => {
+    if (filter === 'received' && user && user.role === 'dt' && user.club) {
+      const userClub = clubs.find(c => c.name === user.club);
+      return userClub
+        ? filteredOffers.filter(o => o.toClub === userClub.name)
+        : [];
+    }
+    return filteredOffers;
+  }, [filter, filteredOffers, user, clubs]);
   
   // Get club logo by name
   const getClubLogo = (clubName: string) => {
@@ -89,7 +109,7 @@ const OffersPanel = () => {
     return false;
   };
   
-  if (filteredOffers.length === 0) {
+  if (offersToShow.length === 0) {
     return (
       <div className="p-6 text-center">
         <p className="text-gray-400">No hay ofertas para mostrar.</p>
@@ -110,7 +130,7 @@ const OffersPanel = () => {
         </div>
       )}
       
-      {filteredOffers.map(offer => (
+      {offersToShow.map(offer => (
         <Card key={offer.id} className="overflow-hidden">
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
