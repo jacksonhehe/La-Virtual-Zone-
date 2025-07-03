@@ -131,7 +131,7 @@ export default function MercadoTab() {
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
-            Ofertas Enviadas ({sentOffers.length})
+            Mis Ofertas ({sentOffers.length})
           </motion.button>
         </div>
       </motion.div>
