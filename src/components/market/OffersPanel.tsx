@@ -279,8 +279,6 @@ const OffersPanel = ({
           </div>
 
           {expandedOffers[offer.id] && (
-          
-          {expandedOffers[offer.id] && (
             <div className="px-4 pb-4 pt-2 border-t border-gray-700">
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
