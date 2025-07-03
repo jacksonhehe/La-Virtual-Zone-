@@ -1,4 +1,4 @@
-import  { useState, useMemo, useRef, Suspense, lazy } from 'react';
+import  { useState, useMemo, useRef, Suspense, lazy, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, TrendingUp, Award, Settings, Bell } from 'lucide-react';   
 import { useAuthStore } from '../store/authStore';
@@ -27,7 +27,7 @@ const    tabs = [
 
 export default function DtDashboard() {
   const { user } = useAuthStore();
-  const { clubs, tournaments } = useDataStore();
+  const { clubs, tournaments, offers } = useDataStore();
   const club = useMemo(
     () => clubs.find(c => c.id === user?.clubId),
     [clubs, user?.clubId]
@@ -43,6 +43,24 @@ export default function DtDashboard() {
   }, [tournaments, club]);
   const [activeTab, setActiveTab] = useState<Tab>('plantilla');
   const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Notify about new offers for this club
+  const prevOffersRef = useRef(new Set<string>());
+  useEffect(() => {
+    if (!club) return;
+    const incoming = offers.filter(
+      (o) => o.fromClub === club.name && o.status === 'pending'
+    );
+    const newOnes = incoming.filter((o) => !prevOffersRef.current.has(o.id));
+    if (newOnes.length > 0) {
+      toast.success(
+        newOnes.length === 1
+          ? 'Tienes una nueva oferta de transferencia'
+          : `Tienes ${newOnes.length} nuevas ofertas de transferencia`
+      );
+    }
+    prevOffersRef.current = new Set(incoming.map((o) => o.id));
+  }, [offers, club]);
 
   const nextMatch = useMemo(
     () =>
