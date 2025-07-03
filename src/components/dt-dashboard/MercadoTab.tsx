@@ -30,9 +30,7 @@ export default function MercadoTab() {
   const receivedOffers = useMemo(() => {
     if (!user || user.role !== 'dt' || !user.club) return [];
     const userClub = clubs.find(c => c.name === user.club);
-    return userClub
-      ? offers.filter(o => o.fromClub === userClub.name)
-      : [];
+    return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
   }, [offers, user, clubs]);
 
 

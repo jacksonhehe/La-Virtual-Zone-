@@ -47,13 +47,7 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
       : user.role === 'dt' && user.club
         ? offers.filter(o => {
             const userClub = clubs.find(c => c.name === user.club);
-            const player = players.find(p => p.id === o.playerId);
-            return (
-              userClub &&
-              player &&
-              player.clubId === userClub.id &&
-              o.fromClub === userClub.name
-            );
+            return userClub && o.toClub === userClub.name;
           })
         : []
     : [];
