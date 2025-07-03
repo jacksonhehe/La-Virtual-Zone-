@@ -380,14 +380,6 @@ const UserPanel = () => {
                   <h3 className="text-lg font-semibold mb-4">Acciones Rápidas</h3>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <a 
-                      href="/liga-master/mercado"
-                      className="p-4 bg-dark rounded-lg hover:bg-gray-800 transition-colors flex flex-col items-center text-center"
-                    >
-                      <ShoppingCart size={24} className="text-primary mb-2" />
-                      <span className="font-medium">Mercado de Fichajes</span>
-                      <span className="text-xs text-gray-400 mt-1">Ficha nuevos jugadores</span>
-                    </a>
                     
                     <a 
                       href="/liga-master/fixture"
