@@ -21,15 +21,21 @@ const TournamentsAdminPanel = () => {
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
   const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
 
-  const filteredTournaments = tournaments.filter(tournament => {
+  if (tournaments.some(t => t.startDate == null)) {
+    console.warn('Se encontraron torneos sin fecha de inicio definida');
+  }
+
+  const validTournaments = tournaments.filter(t => t.startDate != null);
+
+  const filteredTournaments = validTournaments.filter(tournament => {
     const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || tournament.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const activeTournaments = tournaments.filter(t => t.status === 'active').length;
-  const totalPrizePool = tournaments.reduce((sum, t) => sum + t.prizePool, 0);
-  const totalTeams = tournaments.reduce((sum, t) => sum + t.currentTeams, 0);
+  const activeTournaments = validTournaments.filter(t => t.status === 'active').length;
+  const totalPrizePool = validTournaments.reduce((sum, t) => sum + t.prizePool, 0);
+  const totalTeams = validTournaments.reduce((sum, t) => sum + t.currentTeams, 0);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -151,7 +157,9 @@ const TournamentsAdminPanel = () => {
                       Fecha Inicio
                     </div>
                     <div className="text-white font-medium">
-                      {new Date(tournament.startDate).toLocaleDateString()}
+                      {tournament.startDate
+                        ? new Date(tournament.startDate).toLocaleDateString()
+                        : 'Fecha no definida'}
                     </div>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-3">
