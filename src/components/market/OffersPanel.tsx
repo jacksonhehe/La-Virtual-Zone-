@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -7,10 +7,19 @@ import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
 
-const OffersPanel = () => {
+interface OffersPanelProps {
+  initialView?: 'sent' | 'received';
+}
+
+const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<'sent' | 'received'>('sent');
+  const [view, setView] = useState<'sent' | 'received'>(initialView);
+
+  // Update view if parent changes the initial view
+  useEffect(() => {
+    setView(initialView);
+  }, [initialView]);
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
