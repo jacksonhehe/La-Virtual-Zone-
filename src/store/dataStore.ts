@@ -203,7 +203,9 @@ export const useDataStore = create<DataState>((set) => ({
   updateOfferStatus: (offerId, status) =>
     set((state) => {
       const updated = state.offers.map((offer) =>
-        offer.id === offerId ? { ...offer, status } : offer
+        offer.id === offerId
+          ? { ...offer, status, responseDate: new Date().toISOString() }
+          : offer
       );
       saveOffers(updated);
       return { offers: updated };

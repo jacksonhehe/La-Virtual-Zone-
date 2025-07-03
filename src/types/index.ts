@@ -70,6 +70,7 @@ export interface TransferOffer {
   date: string;
   status: 'pending' | 'accepted' | 'rejected';
   userId: string;
+  responseDate?: string;
 }
 
 // News types

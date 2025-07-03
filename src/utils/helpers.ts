@@ -1,5 +1,6 @@
 import { Match, Standing } from '../types';
 import { Player } from '../types/shared';
+import { Clock, CheckCircle, XCircle } from 'lucide-react';
 export { slugify } from './slugify';
 
 //  Format currency
@@ -58,17 +59,31 @@ export const getOverallColor = (overall: number): string => {
   return 'bg-gray-500/20 text-gray-400';
 };
 
+
 // Get transfer status badge
-export const getStatusBadge = (status: string): string => {
-  switch(status) {
+
+export const getStatusBadge = (status: string): JSX.Element => {
+  switch (status) {
     case 'pending':
-      return 'badge bg-yellow-500/20 text-yellow-400';
+      return (
+        <span className="badge bg-yellow-500/20 text-yellow-400 inline-flex items-center gap-1">
+          <Clock size={12} /> Pendiente
+        </span>
+      );
     case 'accepted':
-      return 'badge bg-green-500/20 text-green-400';
+      return (
+        <span className="badge bg-green-500/20 text-green-400 inline-flex items-center gap-1">
+          <CheckCircle size={12} /> Aceptada
+        </span>
+      );
     case 'rejected':
-      return 'badge bg-red-500/20 text-red-400';
+      return (
+        <span className="badge bg-red-500/20 text-red-400 inline-flex items-center gap-1">
+          <XCircle size={12} /> Rechazada
+        </span>
+      );
     default:
-      return 'badge bg-gray-500/20 text-gray-400';
+      return <span className="badge bg-gray-500/20 text-gray-400">Desconocido</span>;
   }
 };
 
