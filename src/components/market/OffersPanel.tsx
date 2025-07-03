@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -12,9 +12,15 @@ import toast from 'react-hot-toast';
 
 interface OffersPanelProps {
   initialView?: 'sent' | 'received';
+  sentOffers?: TransferOffer[];
+  receivedOffers?: TransferOffer[];
 }
 
-const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
+const OffersPanel = ({
+  initialView = 'sent',
+  sentOffers: sentOffersProp,
+  receivedOffers: receivedOffersProp
+}: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'sent' | 'received'>(initialView);
@@ -29,19 +35,19 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const { offers, clubs, players } = useDataStore();
   
   // Offers sent by the current user/club
-  const sentOffers = user ?
+  const storeSentOffers = user ?
     user.role === 'admin' ?
       offers :
     user.role === 'dt' && user.club ?
       offers.filter(o => {
         const userClub = clubs.find(c => c.name === user.club);
-        return userClub && o.toClub === userClub.name;
+        return userClub && o.fromClub === userClub.name;
       }) :
       offers.filter(o => o.userId === user.id) :
     [];
 
   // Offers received by the current club (only for DT or admin)
-  const receivedOffers = user
+  const storeReceivedOffers = user
     ? user.role === 'admin'
       ? offers
       : user.role === 'dt' && user.club
@@ -51,6 +57,10 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
           })
         : []
     : [];
+
+  const sentOffers = sentOffersProp ?? storeSentOffers;
+  const receivedOffers = receivedOffersProp ?? storeReceivedOffers;
+  console.log('Received Offers:', receivedOffers);
 
   const filteredOffers = view === 'sent' ? sentOffers : receivedOffers;
   const OFFERS_PER_PAGE = 10;
@@ -178,9 +188,15 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
         </div>
       )}
 
-      {filteredOffers.length === 0 && (
+      {view === 'received' && receivedOffers.length === 0 && (
         <div className="p-6 text-center">
-          <p className="text-gray-400">No hay ofertas para mostrar.</p>
+          <p className="text-gray-400">No hay ofertas recibidas.</p>
+        </div>
+      )}
+
+      {view === 'sent' && sentOffers.length === 0 && (
+        <div className="p-6 text-center">
+          <p className="text-gray-400">No hay ofertas enviadas.</p>
           {user && user.role !== 'dt' && (
             <p className="mt-2 text-sm text-gray-500">
               Para realizar ofertas, necesitas ser DT de un club.
