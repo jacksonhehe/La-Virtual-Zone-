@@ -1,38 +1,19 @@
-import  React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Trophy, Calendar, Users, MapPin, Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
 import { Tournament } from '../../types';
+import { useDataStore } from '../../../store/dataStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 const TournamentsAdminPanel = () => {
-  const [tournaments, setTournaments] = useState<Tournament[]>([
-    {
-      id: '1',
-      name: 'Liga Master 2024',
-      format: 'league',
-      status: 'active',
-      startDate: '2024-01-15',
-      endDate: '2024-06-30',
-      maxTeams: 20,
-      currentTeams: 18,
-      prizePool: 500000,
-      location: 'España'
-    },
-    {
-      id: '2',
-      name: 'Copa Elite',
-      format: 'knockout',
-      status: 'upcoming',
-      startDate: '2024-07-01',
-      endDate: '2024-07-31',
-      maxTeams: 32,
-      currentTeams: 24,
-      prizePool: 250000,
-      location: 'Internacional'
-    }
-  ]);
+  const {
+    tournaments,
+    addTournament,
+    updateTournamentEntry,
+    removeTournament
+  } = useDataStore();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -247,7 +228,7 @@ const TournamentsAdminPanel = () => {
               currentTeams: 0,
               ...data
             } as Tournament;
-            setTournaments([...tournaments, newTournament]);
+            addTournament(newTournament);
             setShowNewModal(false);
           }}
         />
@@ -258,9 +239,7 @@ const TournamentsAdminPanel = () => {
           tournament={editingTournament}
           onClose={() => setEditingTournament(null)}
           onSave={(data) => {
-            setTournaments(tournaments.map(t => 
-              t.id === editingTournament.id ? { ...t, ...data } : t
-            ));
+            updateTournamentEntry({ ...editingTournament, ...data });
             setEditingTournament(null);
           }}
         />
@@ -271,7 +250,7 @@ const TournamentsAdminPanel = () => {
           isOpen={true}
           onClose={() => setDeletingTournament(null)}
           onConfirm={() => {
-            setTournaments(tournaments.filter(t => t.id !== deletingTournament.id));
+            removeTournament(deletingTournament.id);
             setDeletingTournament(null);
           }}
           title="Eliminar Torneo"
