@@ -72,7 +72,7 @@ export function makeOffer(params: MakeOfferParams): string | null {
   
   // Create new offer
   const newOffer: TransferOffer = {
-    id: `offer${offers.length + 1}`,
+    id: `offer${Date.now()}`,
     playerId,
     playerName,
     fromClub,

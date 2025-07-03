@@ -5,14 +5,16 @@ import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
 import { makeOffer, getMinOfferAmount, getMaxOfferAmount } from '../../utils/transferService';
 import { formatCurrency } from '../../utils/helpers';
+import toast from 'react-hot-toast';
 import useFocusTrap from '../../hooks/useFocusTrap';
 
 interface OfferModalProps {
   player: Player;
   onClose: () => void;
+  onOfferSent?: () => void;
 }
 
-const OfferModal = ({ player, onClose }: OfferModalProps) => {
+const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
   const [offerAmount, setOfferAmount] = useState<number>(0);
@@ -92,6 +94,8 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
       setError(result);
     } else {
       setSuccess(true);
+      toast.success('Oferta enviada');
+      if (onOfferSent) onOfferSent();
       setTimeout(() => {
         onClose();
       }, 1500);
