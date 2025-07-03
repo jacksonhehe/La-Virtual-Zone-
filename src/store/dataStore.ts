@@ -102,6 +102,7 @@ interface DataState {
   updateMarketStatus: (status: boolean) => void;
   addOffer: (offer: TransferOffer) => void;
   updateOfferStatus: (offerId: string, status: 'pending' | 'accepted' | 'rejected') => void;
+  updateOfferAmount: (offerId: string, amount: number) => void;
   addTransfer: (transfer: Transfer) => void;
   removeTransfer: (id: string) => void;
   addUser: (user: User) => void;
@@ -203,6 +204,15 @@ export const useDataStore = create<DataState>((set) => ({
     set((state) => {
       const updated = state.offers.map((offer) =>
         offer.id === offerId ? { ...offer, status } : offer
+      );
+      saveOffers(updated);
+      return { offers: updated };
+    }),
+
+  updateOfferAmount: (offerId, amount) =>
+    set((state) => {
+      const updated = state.offers.map((offer) =>
+        offer.id === offerId ? { ...offer, amount } : offer
       );
       saveOffers(updated);
       return { offers: updated };
