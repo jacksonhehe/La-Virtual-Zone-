@@ -17,6 +17,19 @@ export default function MercadoTab() {
   const [showOffers, setShowOffers] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
+  const userClub =
+    user?.role === 'dt' && user.club
+      ? clubs.find(c => c.name === user.club)
+      : null;
+
+  // Debugging logs
+  console.log('Todas las ofertas:', offers);
+  console.log('Club del usuario:', userClub?.name);
+  console.log(
+    'Ofertas filtradas:',
+    userClub ? offers.filter(o => o.toClub === userClub.name) : []
+  );
+
   const sentOffers = useMemo(() => {
     if (!user) return [];
     if (user.role === 'admin') return offers;
