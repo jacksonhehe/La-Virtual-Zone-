@@ -120,6 +120,14 @@ const OffersPanel = ({
     }
   };
 
+  const handleAccept = (offer: TransferOffer) => {
+    setConfirmAction({ offer, action: 'accept' });
+  };
+
+  const handleReject = (offer: TransferOffer) => {
+    setConfirmAction({ offer, action: 'reject' });
+  };
+
   // Handle renegotiate offer
   const handleRenegotiate = (offer: TransferOffer) => {
     setRenegotiateOffer(offer);
@@ -228,7 +236,8 @@ const OffersPanel = ({
                   </div>
                 </div>
               </div>
-              <button 
+
+              <button
                 onClick={() => toggleOfferDetails(offer.id)}
                 className="bg-dark hover:bg-gray-800 p-2 rounded-full"
               >
@@ -239,7 +248,37 @@ const OffersPanel = ({
                 )}
               </button>
             </div>
+            {view === 'received' && (
+              offer.status === 'pending' ? (
+                <div className="mt-3 flex gap-2">
+                  <button
+                    className="text-xs rounded-lg bg-green-600 hover:bg-green-700 text-white px-2 py-1"
+                    onClick={() => handleAccept(offer)}
+                  >
+                    Aceptar
+                  </button>
+                  <button
+                    className="text-xs rounded-lg bg-orange-500 hover:bg-orange-600 text-white px-2 py-1"
+                    onClick={() => handleRenegotiate(offer)}
+                  >
+                    Renegociar
+                  </button>
+                  <button
+                    className="text-xs rounded-lg bg-red-600 hover:bg-red-700 text-white px-2 py-1"
+                    onClick={() => handleReject(offer)}
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-3 text-xs">
+                  {getStatusBadge(offer.status)}
+                </div>
+              )
+            )}
           </div>
+
+          {expandedOffers[offer.id] && (
           
           {expandedOffers[offer.id] && (
             <div className="px-4 pb-4 pt-2 border-t border-gray-700">
