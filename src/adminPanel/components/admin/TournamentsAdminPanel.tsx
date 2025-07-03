@@ -118,7 +118,8 @@ const TournamentsAdminPanel = () => {
         <div className="grid gap-4">
           {filteredTournaments.map((tournament) => {
             const FormatIcon = getFormatIcon(tournament.format);
-            const progress = (tournament.currentTeams / tournament.maxTeams) * 100;
+            const progress = tournament.maxTeams ?
+              (tournament.currentTeams / tournament.maxTeams) * 100 : 0;
 
             return (
               <div key={tournament.id} className="bg-gray-900/50 rounded-lg p-6 border border-gray-700/30 hover:border-primary/30 transition-all">
@@ -173,7 +174,9 @@ const TournamentsAdminPanel = () => {
                       Fecha Fin
                     </div>
                     <div className="text-white font-medium">
-                      {new Date(tournament.endDate).toLocaleDateString()}
+                      {tournament.endDate
+                        ? new Date(tournament.endDate).toLocaleDateString()
+                        : <span className="text-red-400">Fecha no definida</span>}
                     </div>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-3">
@@ -191,7 +194,7 @@ const TournamentsAdminPanel = () => {
                       Premio
                     </div>
                     <div className="text-white font-medium">
-                      €{tournament.prizePool.toLocaleString()}
+                      €{(tournament.prizePool ?? 0).toLocaleString()}
                     </div>
                   </div>
                 </div>
