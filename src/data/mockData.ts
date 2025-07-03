@@ -658,6 +658,17 @@ export const offers: TransferOffer[] = [
     date: '2025-01-08',
     status: 'pending',
     userId: 'user3'
+  },
+  {
+    id: 'offer5',
+    playerId: 'player10',
+    playerName: 'Miguel Delgado',
+    fromClub: 'Rayo Digital FC',
+    toClub: 'Glitchers 404',
+    amount: 5000000,
+    date: '2025-01-09',
+    status: 'pending',
+    userId: 'user2'
   }
 ];
 
