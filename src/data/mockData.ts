@@ -668,7 +668,18 @@ export const offers: TransferOffer[] = [
     amount: 5000000,
     date: '2025-01-09',
     status: 'pending',
-    userId: '2'
+    userId: 'user2'
+  },
+  {
+    id: 'offer6',
+    playerId: 'player63',
+    playerName: 'Pablo Hernández',
+    fromClub: 'Defensores del Lag',
+    toClub: 'Glitchers 404',
+    amount: 6200000,
+    date: '2025-01-10',
+    status: 'pending',
+    userId: '8'
   }
 ];
 
