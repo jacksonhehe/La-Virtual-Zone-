@@ -27,6 +27,7 @@ export default function MercadoTab() {
     return offers.filter(o => o.userId === user.id);
   }, [offers, user, clubs]);
 
+
   const availablePlayers = useMemo(() => {
     return players
       .filter(p => p.transferListed)
@@ -114,8 +115,8 @@ export default function MercadoTab() {
             whileTap={{ scale: 0.98 }}
             onClick={() => setShowOffers(false)}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              !showOffers 
-                ? 'bg-primary text-black' 
+              !showOffers
+                ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
@@ -126,8 +127,8 @@ export default function MercadoTab() {
             whileTap={{ scale: 0.98 }}
             onClick={() => setShowOffers(true)}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              showOffers 
-                ? 'bg-primary text-black' 
+              showOffers
+                ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
