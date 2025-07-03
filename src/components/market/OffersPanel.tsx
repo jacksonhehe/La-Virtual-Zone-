@@ -10,24 +10,36 @@ import Card from '../common/Card';
 const OffersPanel = () => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<'sent' | 'received'>('sent');
   
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
   
-  // Filter offers based on user role
-  const filteredOffers = user ? 
+  // Offers sent by the current user/club
+  const sentOffers = user ?
     user.role === 'admin' ?
-      // Admin sees all offers
       offers :
     user.role === 'dt' && user.club ?
-      // DT sees offers for their club
       offers.filter(o => {
         const userClub = clubs.find(c => c.name === user.club);
-        return userClub && (o.fromClub === userClub.name || o.toClub === userClub.name);
+        return userClub && o.fromClub === userClub.name;
       }) :
-      // User made offers
       offers.filter(o => o.userId === user.id) :
     [];
+
+  // Offers received by the current club (only for DT or admin)
+  const receivedOffers = user ?
+    user.role === 'admin' ?
+      offers :
+    user.role === 'dt' && user.club ?
+      offers.filter(o => {
+        const userClub = clubs.find(c => c.name === user.club);
+        return userClub && o.toClub === userClub.name;
+      }) :
+      [] :
+    [];
+
+  const filteredOffers = view === 'sent' ? sentOffers : receivedOffers;
   
   // Get club logo by name
   const getClubLogo = (clubName: string) => {
@@ -89,27 +101,39 @@ const OffersPanel = () => {
     return false;
   };
   
-  if (filteredOffers.length === 0) {
-    return (
-      <div className="p-6 text-center">
-        <p className="text-gray-400">No hay ofertas para mostrar.</p>
-        {user && user.role !== 'dt' && (
-          <p className="mt-2 text-sm text-gray-500">
-            Para realizar ofertas, necesitas ser DT de un club.
-          </p>
-        )}
-      </div>
-    );
-  }
-  
   return (
     <div className="space-y-4">
+      <div className="flex border-b border-white/10 mb-4">
+        <button
+          onClick={() => setView('sent')}
+          className={`px-4 py-2 font-medium mr-2 ${view === 'sent' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
+        >
+          Ofertas Enviadas
+        </button>
+        <button
+          onClick={() => setView('received')}
+          className={`px-4 py-2 font-medium ${view === 'received' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
+        >
+          Ofertas Recibidas
+        </button>
+      </div>
       {error && (
         <div className="p-4 bg-red-500/20 text-red-400 rounded-lg">
           {error}
         </div>
       )}
-      
+
+      {filteredOffers.length === 0 && (
+        <div className="p-6 text-center">
+          <p className="text-gray-400">No hay ofertas para mostrar.</p>
+          {user && user.role !== 'dt' && (
+            <p className="mt-2 text-sm text-gray-500">
+              Para realizar ofertas, necesitas ser DT de un club.
+            </p>
+          )}
+        </div>
+      )}
+
       {filteredOffers.map(offer => (
         <Card key={offer.id} className="overflow-hidden">
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>

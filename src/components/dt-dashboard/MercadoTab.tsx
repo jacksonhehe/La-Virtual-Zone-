@@ -17,16 +17,12 @@ export default function MercadoTab() {
   const [showOffers, setShowOffers] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
-  const myOffers = useMemo(() => {
+  const sentOffers = useMemo(() => {
     if (!user) return [];
     if (user.role === 'admin') return offers;
     if (user.role === 'dt' && user.club) {
       const userClub = clubs.find(c => c.name === user.club);
-      return userClub
-        ? offers.filter(
-            o => o.fromClub === userClub.name || o.toClub === userClub.name
-          )
-        : [];
+      return userClub ? offers.filter(o => o.fromClub === userClub.name) : [];
     }
     return offers.filter(o => o.userId === user.id);
   }, [offers, user, clubs]);
@@ -135,7 +131,7 @@ export default function MercadoTab() {
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
-            Mis Ofertas ({myOffers.length})
+            Ofertas Enviadas ({sentOffers.length})
           </motion.button>
         </div>
       </motion.div>
