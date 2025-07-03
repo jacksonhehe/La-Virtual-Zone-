@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { getUserByUsername } from '../utils/userService';
 import { User } from '../types/shared';
+import { slugify } from '../utils/helpers';
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -39,7 +40,10 @@ const PublicProfile = () => {
         {user.club && (
           <p>
             Director Técnico de{' '}
-            <Link to={`/liga-master/club/${user.clubId}`} className="text-primary hover:text-primary-light">
+            <Link
+              to={`/liga-master/club/${slugify(user.club)}`}
+              className="text-primary hover:text-primary-light"
+            >
               {user.club}
             </Link>
           </p>
