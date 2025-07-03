@@ -22,15 +22,13 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
   const [success, setSuccess] = useState<boolean>(false);
   
   const { user } = useAuthStore();
-  const { clubs } = useDataStore();
+  const { clubs, club: myClub } = useDataStore();
   
   // Find player's club
   const playerClub = clubs.find(c => c.id === player.clubId);
-  
-  // Find user's club (if DT)
-  const userClub = user?.role === 'dt' && user?.club
-    ? clubs.find(c => c.name === user.club)
-    : null;
+
+  // Use DT dashboard club for budget and club name
+  const userClub = user?.role === 'dt' ? myClub : null;
   
   // Calculate min and max offer
   const minOffer = getMinOfferAmount(player);
