@@ -57,6 +57,18 @@ const OffersPanel = () => {
       useDataStore.getState().updateOfferStatus(offerId, 'rejected');
     }
   };
+
+  // Handle renegotiate offer
+  const handleRenegotiate = (offer: TransferOffer) => {
+    const input = window.prompt('Nueva cantidad para la oferta', String(offer.amount));
+    if (!input) return;
+    const amount = Number(input);
+    if (isNaN(amount) || amount <= 0) {
+      setError('Cantidad inválida');
+      return;
+    }
+    useDataStore.getState().updateOfferAmount(offer.id, amount);
+  };
   
   // Check if user can respond to offer
   const canRespondToOffer = (offer: TransferOffer) => {
@@ -167,7 +179,13 @@ const OffersPanel = () => {
               
               {canRespondToOffer(offer) && (
                 <div className="flex space-x-3">
-                  <button 
+                  <button
+                    onClick={() => handleRenegotiate(offer)}
+                    className="btn-secondary text-sm flex-1"
+                  >
+                    Renegociar
+                  </button>
+                  <button
                     onClick={() => handleOfferAction(offer.id, 'accept')}
                     className="btn-primary text-sm flex-1"
                   >
