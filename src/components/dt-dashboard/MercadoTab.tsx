@@ -14,8 +14,7 @@ export default function MercadoTab() {
   const [search, setSearch] = useState('');
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
-  const [showOffers, setShowOffers] = useState(false);
-  const [offersView, setOffersView] = useState<'sent' | 'received'>('sent');
+  const [activeTab, setActiveTab] = useState<'players' | 'my' | 'received'>('players');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const sentOffers = useMemo(() => {
@@ -31,11 +30,8 @@ export default function MercadoTab() {
   const receivedOffers = useMemo(() => {
     if (!user || user.role !== 'dt' || !user.club) return [];
     const userClub = clubs.find(c => c.name === user.club);
-    return userClub
-      ? offers.filter(o => o.fromClub === userClub.name)
-      : [];
+    return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
   }, [offers, user, clubs]);
-
 
   const availablePlayers = useMemo(() => {
     return players
@@ -122,9 +118,9 @@ export default function MercadoTab() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setShowOffers(false)}
+            onClick={() => setActiveTab('players')}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              !showOffers
+              activeTab === 'players'
                 ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
@@ -134,38 +130,34 @@ export default function MercadoTab() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              setOffersView('sent');
-              setShowOffers(true);
-            }}
+            onClick={() => setActiveTab('my')}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              showOffers
-                ? 'bg-primary text-black'
-                : 'bg-white/5 text-white/70 hover:bg-white/10'
-            }`}
-          >
-            Mis Ofertas ({sentOffers.length + receivedOffers.length})
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              setOffersView('received');
-              setShowOffers(true);
-            }}
-            className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              showOffers && offersView === 'received'
+              activeTab === 'my'
                 ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
             Ofertas Recibidas ({receivedOffers.length})
           </motion.button>
+          {user?.role === 'dt' && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setActiveTab('received')}
+              className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                activeTab === 'received'
+                  ? 'bg-primary text-black'
+                  : 'bg-white/5 text-white/70 hover:bg-white/10'
+              }`}
+            >
+              Ofertas Recibidas ({receivedOffers.length})
+            </motion.button>
+          )}
         </div>
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {!showOffers ? (
+        {activeTab === 'players' ? (
           <motion.div
             key="market"
             initial={{ opacity: 0 }}
@@ -224,13 +216,17 @@ export default function MercadoTab() {
           </motion.div>
         ) : (
           <motion.div
-            key="offers"
+            key={activeTab}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
-            <OffersPanel initialView={offersView} />
+            {activeTab === 'my' ? (
+              <OffersPanel />
+            ) : (
+              <OffersPanel filter="received" />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -239,7 +235,7 @@ export default function MercadoTab() {
         <OfferModal
           player={selectedPlayer}
           onClose={() => setSelectedPlayer(null)}
-          onOfferSent={() => setShowOffers(true)}
+          onOfferSent={() => setActiveTab('my')}
         />
       )}
     </div>

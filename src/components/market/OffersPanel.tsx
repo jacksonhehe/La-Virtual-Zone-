@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -9,10 +9,15 @@ import Card from '../common/Card';
 import RenegotiateModal from './RenegotiateModal';
 
 interface OffersPanelProps {
-  initialView?: 'sent' | 'received';
+  /**
+   * Filter offers by type.
+   * - `all`: show every offer related to the current user/club
+   * - `received`: only show offers where the user's club is the recipient
+   */
+  filter?: 'all' | 'received';
 }
 
-const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
+const OffersPanel = ({ filter = 'all' }: OffersPanelProps) => {
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'sent' | 'received'>(initialView);
@@ -21,8 +26,8 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const { user } = useAuthStore();
   const { offers, clubs } = useDataStore();
   
-  // Offers sent by the current user/club
-  const sentOffers = user ?
+  // Filter offers based on user role
+  const filteredOffers = user ?
     user.role === 'admin' ?
       offers :
     user.role === 'dt' && user.club ?
@@ -33,19 +38,16 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
       offers.filter(o => o.userId === user.id) :
     [];
 
-  // Offers received by the current club (only for DT or admin)
-  const receivedOffers = user ?
-    user.role === 'admin' ?
-      offers :
-    user.role === 'dt' && user.club ?
-      offers.filter(o => {
-        const userClub = clubs.find(c => c.name === user.club);
-        return userClub && o.fromClub === userClub.name;
-      }) :
-      [] :
-    [];
-
-  const filteredOffers = view === 'sent' ? sentOffers : receivedOffers;
+  // Additional filtering for received-only mode
+  const offersToShow = useMemo(() => {
+    if (filter === 'received' && user && user.role === 'dt' && user.club) {
+      const userClub = clubs.find(c => c.name === user.club);
+      return userClub
+        ? filteredOffers.filter(o => o.toClub === userClub.name)
+        : [];
+    }
+    return filteredOffers;
+  }, [filter, filteredOffers, user, clubs]);
   
   // Get club logo by name
   const getClubLogo = (clubName: string) => {
@@ -100,6 +102,19 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
     return false;
   };
   
+  if (offersToShow.length === 0) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-gray-400">No hay ofertas para mostrar.</p>
+        {user && user.role !== 'dt' && (
+          <p className="mt-2 text-sm text-gray-500">
+            Para realizar ofertas, necesitas ser DT de un club.
+          </p>
+        )}
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-4">
       <div className="flex border-b border-white/10 mb-4">
@@ -121,19 +136,8 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
           {error}
         </div>
       )}
-
-      {filteredOffers.length === 0 && (
-        <div className="p-6 text-center">
-          <p className="text-gray-400">No hay ofertas para mostrar.</p>
-          {user && user.role !== 'dt' && (
-            <p className="mt-2 text-sm text-gray-500">
-              Para realizar ofertas, necesitas ser DT de un club.
-            </p>
-          )}
-        </div>
-      )}
-
-      {filteredOffers.map(offer => (
+      
+      {offersToShow.map(offer => (
         <Card key={offer.id} className="overflow-hidden">
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
