@@ -22,7 +22,7 @@ const OffersPanel = () => {
     user.role === 'dt' && user.club ?
       offers.filter(o => {
         const userClub = clubs.find(c => c.name === user.club);
-        return userClub && o.fromClub === userClub.name;
+        return userClub && o.toClub === userClub.name;
       }) :
       offers.filter(o => o.userId === user.id) :
     [];
@@ -34,7 +34,7 @@ const OffersPanel = () => {
     user.role === 'dt' && user.club ?
       offers.filter(o => {
         const userClub = clubs.find(c => c.name === user.club);
-        return userClub && o.toClub === userClub.name;
+        return userClub && o.fromClub === userClub.name;
       }) :
       [] :
     [];
