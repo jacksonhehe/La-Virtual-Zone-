@@ -7,6 +7,7 @@ import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
 import RenegotiateModal from './RenegotiateModal';
+import ConfirmModal from '../common/ConfirmModal';
 import toast from 'react-hot-toast';
 
 interface OffersPanelProps {
@@ -18,11 +19,14 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'sent' | 'received'>(initialView);
   const [renegotiateOffer, setRenegotiateOffer] = useState<TransferOffer | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ offer: TransferOffer; action: 'accept' | 'reject' } | null>(null);
   const [page, setPage] = useState(1);
   const prevStatusesRef = useRef<Record<string, string>>({});
+
+  const MIN_SQUAD_SIZE = 18;
   
   const { user } = useAuthStore();
-  const { offers, clubs } = useDataStore();
+  const { offers, clubs, players } = useDataStore();
   
   // Offers sent by the current user/club
   const sentOffers = user ?
@@ -37,16 +41,22 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
     [];
 
   // Offers received by the current club (only for DT or admin)
-  const receivedOffers = user ?
-    user.role === 'admin' ?
-      offers :
-    user.role === 'dt' && user.club ?
-      offers.filter(o => {
-        const userClub = clubs.find(c => c.name === user.club);
-        return userClub && o.fromClub === userClub.name;
-      }) :
-      [] :
-    [];
+  const receivedOffers = user
+    ? user.role === 'admin'
+      ? offers
+      : user.role === 'dt' && user.club
+        ? offers.filter(o => {
+            const userClub = clubs.find(c => c.name === user.club);
+            const player = players.find(p => p.id === o.playerId);
+            return (
+              userClub &&
+              player &&
+              player.clubId === userClub.id &&
+              o.fromClub === userClub.name
+            );
+          })
+        : []
+    : [];
 
   const filteredOffers = view === 'sent' ? sentOffers : receivedOffers;
   const OFFERS_PER_PAGE = 10;
@@ -70,15 +80,38 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
   // Handle accept/reject offer
   const handleOfferAction = (offerId: string, action: 'accept' | 'reject') => {
     setError(null);
-    
+
+    const { offers: allOffers, clubs: allClubs, players: allPlayers } =
+      useDataStore.getState();
+    const offer = allOffers.find(o => o.id === offerId);
+    if (!offer) return;
+
+    if (offer.status !== 'pending') {
+      setError('Esta oferta ya ha sido procesada');
+      return;
+    }
+
     if (action === 'accept') {
+      const seller = allClubs.find(c => c.name === offer.fromClub);
+      if (seller) {
+        const sellerPlayers = allPlayers.filter(p => p.clubId === seller.id);
+        if (sellerPlayers.length - 1 < MIN_SQUAD_SIZE) {
+          setError(
+            `No puedes aceptar la oferta. La plantilla mínima es de ${MIN_SQUAD_SIZE} jugadores.`
+          );
+          return;
+        }
+      }
+
       const result = processTransfer(offerId);
       if (result) {
         setError(result);
+      } else {
+        toast.success(`Has aceptado la oferta por ${offer.playerName}`);
       }
     } else {
-      // Reject offer
       useDataStore.getState().updateOfferStatus(offerId, 'rejected');
+      toast.error(`Has rechazado la oferta por ${offer.playerName}`);
     }
   };
 
@@ -228,6 +261,13 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
                 <p className="text-xs text-gray-400 mb-1">Cantidad ofertada</p>
                 <p className="font-bold text-lg">{formatCurrency(offer.amount)}</p>
               </div>
+
+              <div className="text-xs text-gray-400 mb-4 space-y-1">
+                <p>Recibida: {formatDate(offer.date)}</p>
+                {offer.responseDate && (
+                  <p>Respondida: {formatDate(offer.responseDate)}</p>
+                )}
+              </div>
               
               {canRespondToOffer(offer) && (
                 <div className="flex space-x-3">
@@ -238,13 +278,13 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
                     Renegociar
                   </button>
                   <button
-                    onClick={() => handleOfferAction(offer.id, 'accept')}
+                    onClick={() => setConfirmAction({ offer, action: 'accept' })}
                     className="btn-primary text-sm flex-1"
                   >
                     Aceptar
                   </button>
-                  <button 
-                    onClick={() => handleOfferAction(offer.id, 'reject')}
+                  <button
+                    onClick={() => setConfirmAction({ offer, action: 'reject' })}
                     className="btn-secondary text-sm flex-1"
                   >
                     Rechazar
@@ -281,6 +321,16 @@ const OffersPanel = ({ initialView = 'sent' }: OffersPanelProps) => {
         <RenegotiateModal
           offer={renegotiateOffer}
           onClose={() => setRenegotiateOffer(null)}
+        />
+      )}
+      {confirmAction && (
+        <ConfirmModal
+          message={`¿Seguro que deseas ${confirmAction.action === 'accept' ? 'aceptar' : 'rechazar'} la oferta por ${confirmAction.offer.playerName}?`}
+          onConfirm={() => {
+            handleOfferAction(confirmAction.offer.id, confirmAction.action);
+            setConfirmAction(null);
+          }}
+          onCancel={() => setConfirmAction(null)}
         />
       )}
     </div>
