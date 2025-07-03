@@ -15,6 +15,7 @@ export default function MercadoTab() {
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
   const [showOffers, setShowOffers] = useState(false);
+  const [offersView, setOffersView] = useState<'sent' | 'received'>('sent');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const sentOffers = useMemo(() => {
@@ -26,6 +27,17 @@ export default function MercadoTab() {
     }
     return offers.filter(o => o.userId === user.id);
   }, [offers, user, clubs]);
+
+  const receivedOffers = useMemo(() => {
+    if (!user) return [];
+    if (user.role === 'admin') return offers;
+    if (user.role === 'dt' && user.club) {
+      const userClub = clubs.find(c => c.name === user.club);
+      return userClub ? offers.filter(o => o.fromClub === userClub.name) : [];
+    }
+    return [];
+  }, [offers, user, clubs]);
+
 
   const availablePlayers = useMemo(() => {
     return players
@@ -114,8 +126,8 @@ export default function MercadoTab() {
             whileTap={{ scale: 0.98 }}
             onClick={() => setShowOffers(false)}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              !showOffers 
-                ? 'bg-primary text-black' 
+              !showOffers
+                ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
@@ -124,14 +136,32 @@ export default function MercadoTab() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setShowOffers(true)}
+            onClick={() => {
+              setOffersView('sent');
+              setShowOffers(true);
+            }}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
-              showOffers 
-                ? 'bg-primary text-black' 
+              showOffers && offersView === 'sent'
+                ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
             Mis Ofertas ({sentOffers.length})
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              setOffersView('received');
+              setShowOffers(true);
+            }}
+            className={`px-6 py-3 rounded-xl font-medium transition-all ${
+              showOffers && offersView === 'received'
+                ? 'bg-primary text-black'
+                : 'bg-white/5 text-white/70 hover:bg-white/10'
+            }`}
+          >
+            Ofertas Recibidas ({receivedOffers.length})
           </motion.button>
         </div>
       </motion.div>
@@ -202,7 +232,7 @@ export default function MercadoTab() {
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
-            <OffersPanel />
+            <OffersPanel initialView={offersView} />
           </motion.div>
         )}
       </AnimatePresence>
