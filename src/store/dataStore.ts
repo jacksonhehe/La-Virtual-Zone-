@@ -118,6 +118,7 @@ interface DataState {
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
+  setClubFromUser: (user: User | null) => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -321,6 +322,29 @@ export const useDataStore = create<DataState>((set) => ({
     newsItems: state.newsItems.filter(n => n.id !== id)
   })),
 
+  setClubFromUser: (user) =>
+    set((state) => {
+      if (!user?.clubId) return state;
+      const baseClub = state.clubs.find(c => c.id === user.clubId);
+      if (!baseClub) return state;
+      const club: DtClub = {
+        id: baseClub.id,
+        name: baseClub.name,
+        slug: baseClub.slug,
+        logo: baseClub.logo,
+        formation: '4-3-3',
+        budget: baseClub.budget,
+        players: refreshClubPlayers(state.players, baseClub.id)
+      };
+      const fixtures = state.tournaments[0].matches
+        .filter(
+          m => m.homeTeam === baseClub.name || m.awayTeam === baseClub.name
+        )
+        .slice(0, 6)
+        .map(m => ({ ...m, played: m.status === 'finished' }));
+      return { club, fixtures };
+    }),
+
   updateStandings: (newStandings) => set({ standings: newStandings }),
 
   toggleTask: (id) =>
@@ -330,4 +354,9 @@ export const useDataStore = create<DataState>((set) => ({
       )
     }))
 }));
+
+// Update DT club when authenticated user changes
+useAuthStore.subscribe(state => {
+  useDataStore.getState().setClubFromUser(state.user);
+});
  
