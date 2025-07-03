@@ -7,7 +7,6 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
-  tournaments,
   transfers,
   marketStatus,
   leagueStandings,
@@ -27,6 +26,7 @@ import {
 import { getClubs, saveClubs } from '../utils/clubService';
 import { getPlayers, savePlayers } from '../utils/playerService';
 import { getOffers, saveOffers } from '../utils/offerService';
+import { getTournaments, saveTournaments } from '../utils/tournamentService';
 import {
   Tournament,
   Transfer,
@@ -50,6 +50,7 @@ import { Club, Player, User } from '../types/shared';
 const initialClubs = getClubs();
 const initialPlayers = getPlayers();
 const initialOffers = getOffers();
+const initialTournaments = getTournaments();
 const initialUser = useAuthStore.getState().user;
 const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
 const initialClub: DtClub = {
@@ -61,7 +62,7 @@ const initialClub: DtClub = {
   budget: baseClub.budget,
   players: initialPlayers.filter(p => p.clubId === baseClub.id)
 };
-const initialFixtures = tournaments[0].matches
+const initialFixtures = initialTournaments[0].matches
   .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
   .slice(0, 6)
   .map(m => ({ ...m, played: m.status === 'finished' }));
@@ -115,6 +116,8 @@ interface DataState {
   updatePlayerEntry: (player: Player) => void;
   removePlayer: (id: string) => void;
   addTournament: (tournament: Tournament) => void;
+  updateTournamentEntry: (tournament: Tournament) => void;
+  removeTournament: (id: string) => void;
   addNewsItem: (item: NewsItem) => void;
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
@@ -125,7 +128,7 @@ interface DataState {
 export const useDataStore = create<DataState>((set) => ({
   clubs: initialClubs,
   players: initialPlayers,
-  tournaments,
+  tournaments: initialTournaments,
   transfers,
   offers: initialOffers,
   standings: leagueStandings,
@@ -171,7 +174,10 @@ export const useDataStore = create<DataState>((set) => ({
     }));
   },
   
-  updateTournaments: (newTournaments) => set({ tournaments: newTournaments }),
+  updateTournaments: (newTournaments) => {
+    saveTournaments(newTournaments);
+    set({ tournaments: newTournaments });
+  },
   
   updateTransfers: (newTransfers) => set({ transfers: newTransfers }),
   
@@ -331,11 +337,29 @@ export const useDataStore = create<DataState>((set) => ({
 
   addTournament: (tournament) =>
     set((state) => {
+      const updated = [...state.tournaments, tournament];
+      saveTournaments(updated);
       const current = useAuthStore.getState().user?.id || 'system';
       useActivityLogStore
         .getState()
         .addLog('tournament_create', current, `Torneo ${tournament.name}`);
-      return { tournaments: [...state.tournaments, tournament] };
+      return { tournaments: updated };
+    }),
+
+  updateTournamentEntry: (tournament) =>
+    set((state) => {
+      const updated = state.tournaments.map(t =>
+        t.id === tournament.id ? { ...t, ...tournament } : t
+      );
+      saveTournaments(updated);
+      return { tournaments: updated };
+    }),
+
+  removeTournament: (id) =>
+    set((state) => {
+      const updated = state.tournaments.filter(t => t.id !== id);
+      saveTournaments(updated);
+      return { tournaments: updated };
     }),
 
   addNewsItem: (item) => set((state) => ({
