@@ -18,9 +18,13 @@ export default function MercadoTab() {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   const userClub =
-    user?.role === 'dt' && user.club
-      ? clubs.find(c => c.name === user.club)
+    user?.role === 'dt'
+      ? clubs.find(c => c.id === user.clubId || c.name === user.club)
       : null;
+
+  // Debugging logs
+  console.log('User object:', user);
+  console.log('Clubs array:', clubs);
 
   // Debugging logs
   console.log('Todas las ofertas:', offers);
@@ -33,18 +37,16 @@ export default function MercadoTab() {
   const sentOffers = useMemo(() => {
     if (!user) return [];
     if (user.role === 'admin') return offers;
-    if (user.role === 'dt' && user.club) {
-      const userClub = clubs.find(c => c.name === user.club);
+    if (user.role === 'dt') {
       return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
     }
     return offers.filter(o => o.userId === user.id);
-  }, [offers, user, clubs]);
+  }, [offers, user, userClub]);
 
   const receivedOffers = useMemo(() => {
-    if (!user || user.role !== 'dt' || !user.club) return [];
-    const userClub = clubs.find(c => c.name === user.club);
+    if (!user || user.role !== 'dt') return [];
     return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
-  }, [offers, user, clubs]);
+  }, [offers, userClub, user]);
 
 
   const availablePlayers = useMemo(() => {
@@ -144,17 +146,24 @@ export default function MercadoTab() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setShowOffers(true)}
+            onClick={() => userClub && setShowOffers(true)}
+            disabled={!userClub}
             className={`px-6 py-3 rounded-xl font-medium transition-all ${
               showOffers
                 ? 'bg-primary text-black'
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
-            }`}
+            } ${!userClub ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Mis Ofertas ({sentOffers.length + receivedOffers.length})
           </motion.button>
         </div>
       </motion.div>
+
+      {!userClub && user?.role === 'dt' && (
+        <p className="text-center text-red-400">
+          No tienes un club asignado. Contacta a un administrador.
+        </p>
+      )}
 
       <AnimatePresence mode="wait">
         {!showOffers ? (
