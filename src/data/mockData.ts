@@ -624,7 +624,7 @@ export const offers: TransferOffer[] = [
     amount: 9800000,
     date: '2025-01-05',
     status: 'pending',
-    userId: 'user2'
+    userId: '2'
   },
   {
     id: 'offer2',
@@ -635,7 +635,7 @@ export const offers: TransferOffer[] = [
     amount: 11500000,
     date: '2025-01-06',
     status: 'accepted',
-    userId: 'user2'
+    userId: '2'
   },
   {
     id: 'offer3',
@@ -646,7 +646,7 @@ export const offers: TransferOffer[] = [
     amount: 7800000,
     date: '2025-01-07',
     status: 'rejected',
-    userId: 'user2'
+    userId: '2'
   },
   {
     id: 'offer4',
@@ -657,7 +657,7 @@ export const offers: TransferOffer[] = [
     amount: 45000000,
     date: '2025-01-08',
     status: 'pending',
-    userId: 'user3'
+    userId: '3'
   },
   {
     id: 'offer5',
