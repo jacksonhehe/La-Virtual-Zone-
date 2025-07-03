@@ -22,7 +22,7 @@ export default function MercadoTab() {
     if (user.role === 'admin') return offers;
     if (user.role === 'dt' && user.club) {
       const userClub = clubs.find(c => c.name === user.club);
-      return userClub ? offers.filter(o => o.fromClub === userClub.name) : [];
+      return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
     }
     return offers.filter(o => o.userId === user.id);
   }, [offers, user, clubs]);
