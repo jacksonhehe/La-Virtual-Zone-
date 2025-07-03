@@ -329,7 +329,7 @@ const Help = () => {
                             <li>Toda transferencia debe respetar el presupuesto del club.</li>
                           </ul>
                           <p className="mt-2 text-gray-300">
-                            Para acceder al mercado, ve a la sección "Liga Master" y luego a "Mercado de Fichajes".
+                            Para acceder al mercado, abre el Tablero de DT y selecciona la pestaña "Mercado".
                           </p>
                         </div>
                       )}
@@ -350,7 +350,7 @@ const Help = () => {
                             Para hacer una oferta por un jugador:
                           </p>
                           <ol className="mt-2 space-y-2 text-gray-300 list-decimal list-inside">
-                            <li>Accede a la sección "Mercado de Fichajes".</li>
+                            <li>Abre el Tablero de DT y ve a la pestaña "Mercado".</li>
                             <li>Busca el jugador que te interesa usando los filtros disponibles.</li>
                             <li>Haz clic en "Ofertar" junto al jugador.</li>
                             <li>Introduce la cantidad que ofreces (debe estar dentro de tu presupuesto).</li>

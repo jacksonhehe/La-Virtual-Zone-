@@ -70,11 +70,6 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/liga-master/mercado" className="text-gray-400 hover:text-white">
-                  Mercado de Fichajes
-                </Link>
-              </li>
-              <li>
                 <Link to="/liga-master/fixture" className="text-gray-400 hover:text-white">
                   Fixture y Resultados
                 </Link>

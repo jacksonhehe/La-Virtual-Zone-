@@ -34,7 +34,6 @@ const Store = lazy(() => import("./pages/Store"));
 const Help = lazy(() => import("./pages/Help"));
 const DtDashboard = lazy(() => import("./pages/DtDashboard"));
 
-const Market = lazy(() => import("./pages/Market"));
 const Fixtures = lazy(() => import("./pages/Fixtures"));
 const Rankings = lazy(() => import("./pages/Rankings"));
 const HallOfFame = lazy(() => import("./pages/HallOfFame"));
@@ -85,7 +84,6 @@ function App() {
             <Route path="liga-master/tacticas" element={<Tacticas />} />
             <Route path="liga-master/finanzas" element={<Finanzas />} />
             <Route path="liga-master/calendario" element={<Calendario />} />
-            <Route path="liga-master/mercado" element={<Market />} />
             <Route path="liga-master/fixture" element={<Fixtures />} />
             <Route path="liga-master/rankings" element={<Rankings />} />
             <Route path="liga-master/hall-of-fame" element={<HallOfFame />} />
