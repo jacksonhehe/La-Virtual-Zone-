@@ -1,19 +1,27 @@
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
-import { useDataStore } from '../store/dataStore';
+import useTorneos from '../hooks/useTorneos';
+import Spinner from '../components/Spinner';
 import usePersistentState from '../hooks/usePersistentState';
 
 const Tournaments = () => {
-  const [filter, setFilter] = usePersistentState<'all' | 'ongoing' | 'open' | 'finished'>('tournaments_filter', 'all');
+  const [filter, setFilter] =
+    usePersistentState<'all' | 'ongoing' | 'open' | 'finished'>(
+      'tournaments_filter',
+      'all'
+    );
 
-  const { tournaments } = useDataStore();
+  const { torneos: tournaments, loading } = useTorneos();
   
   // Filter tournaments
-  const filteredTournaments = filter === 'all' 
-    ? tournaments 
-    : tournaments.filter(tournament => tournament.status === filter);
-  
+  const filteredTournaments =
+    filter === 'all'
+      ? tournaments
+      : tournaments.filter(tournament => tournament.status === filter);
+
+  if (loading) return <Spinner />;
+
   return (
     <div>
       <PageHeader 
