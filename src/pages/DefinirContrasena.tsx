@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AlertCircle, Lock } from 'lucide-react';
-import { resetPassword } from '../utils/authService';
+import { supabase } from '../supabaseClient';
 import { z } from 'zod';
 
 const schema = z
@@ -15,14 +15,13 @@ const schema = z
   });
 
 const DefinirContrasena = () => {
-  const { token } = useParams();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ password: '', confirm: '' });
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -34,15 +33,19 @@ const DefinirContrasena = () => {
       setErrors(fieldErrors);
       return;
     }
-    if (!token) {
-      setError('Token inválido');
-      return;
-    }
-    const ok = resetPassword(token, form.password);
-    if (ok) {
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: form.password
+      });
+      if (updateError) {
+        setError(updateError.message);
+        return;
+      }
       navigate('/login');
-    } else {
-      setError('Token inválido o expirado');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      }
     }
   };
 
