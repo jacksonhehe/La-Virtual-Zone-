@@ -17,12 +17,14 @@ import ClubListItem from '../components/common/ClubListItem';
 import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
 import useClubes from '../hooks/useClubes';
+import useTorneos from '../hooks/useTorneos';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
   const { user } = useAuthStore();
-  const { clubes, loading } = useClubes();
-  const { tournaments, players, standings, marketStatus } = useDataStore();
+  const { clubes, loading: loadingClubes } = useClubes();
+  const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
+  const { players, standings, marketStatus } = useDataStore();
 
   if (user?.role === 'dt') {
     if (user.clubId) {
@@ -41,7 +43,7 @@ const LigaMaster = () => {
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
 
-  if (loading || !ligaMaster) {
+  if (loadingClubes || loadingTorneos || !ligaMaster) {
     return <DashboardSkeleton />;
   }
   

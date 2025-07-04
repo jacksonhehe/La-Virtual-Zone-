@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Trophy, Calendar, Award, Users } from 'lucide-react';
-import { useDataStore } from '../../store/dataStore';
+import useTorneos from '../../hooks/useTorneos';
 import { formatDate } from '../../utils/helpers';
 import Card from '../common/Card';
 
 const FeaturedTournaments = () => {
-  const { tournaments } = useDataStore();
+  const { torneos: tournaments } = useTorneos();
   
   // Status indicators
   const getStatusBadge = (status: string) => {

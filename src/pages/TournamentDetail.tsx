@@ -2,7 +2,9 @@ import { useState, lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, ChevronLeft, Image, ArrowRight, Star } from 'lucide-react';
-import { useDataStore } from '../store/dataStore';
+import useClubes from '../hooks/useClubes';
+import useTorneos from '../hooks/useTorneos';
+import Spinner from '../components/Spinner';
 import { Match } from '../types';
 import { formatDate, slugify } from '../utils/helpers';
 import ClubListItem from '../components/common/ClubListItem';
@@ -16,7 +18,12 @@ const TournamentDetail = () => {
   const { tournamentName } = useParams<{ tournamentName: string }>();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const { tournaments, clubs } = useDataStore();
+  const { clubes: clubs, loading: loadingClubes } = useClubes();
+  const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
+
+  if (loadingClubes || loadingTorneos) {
+    return <Spinner />;
+  }
   
   // Find tournament by slug
   const tournament = tournaments.find(t => t.slug === tournamentName);
