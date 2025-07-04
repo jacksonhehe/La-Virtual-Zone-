@@ -12,13 +12,15 @@ import {
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import { useDataStore } from '../store/dataStore';
+import useJugadores from '../hooks/useJugadores';
 import { formatDate, formatCurrency, getMatchResult } from '../utils/helpers';
 
 const ClubProfile = () => {
   const { clubName } = useParams<{ clubName: string }>();
   const [activeTab, setActiveTab] = useState('overview');
   
-  const { clubs, players, tournaments } = useDataStore();
+  const { clubs, tournaments } = useDataStore();
+  const { jugadores: players } = useJugadores();
   
   // Find club by slug
   const club = clubs.find(c => c.slug === clubName);

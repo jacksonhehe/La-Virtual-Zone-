@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
+import useJugadores from '../../hooks/useJugadores';
 import { processTransfer } from '../../utils/transferService';
 import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
@@ -32,7 +33,8 @@ const OffersPanel = ({
   const MIN_SQUAD_SIZE = 18;
   
   const { user } = useAuthStore();
-  const { offers, clubs, players } = useDataStore();
+  const { offers, clubs } = useDataStore();
+  const { jugadores: players } = useJugadores();
   
   // Offers sent by the current user/club
   const storeSentOffers = user ?
@@ -86,8 +88,8 @@ const OffersPanel = ({
   const handleOfferAction = (offerId: string, action: 'accept' | 'reject') => {
     setError(null);
 
-    const { offers: allOffers, clubs: allClubs, players: allPlayers } =
-      useDataStore.getState();
+    const { offers: allOffers, clubs: allClubs } = useDataStore.getState();
+    const allPlayers = players;
     const offer = allOffers.find(o => o.id === offerId);
     if (!offer) return;
 
