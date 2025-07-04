@@ -1,10 +1,20 @@
 import  React, { useState } from 'react';
-import { Trophy, Calendar, Users, MapPin, Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
+import {
+  Trophy,
+  Calendar,
+  Users,
+  MapPin,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+} from 'lucide-react';
 import { Tournament } from '../../types';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
+import TournamentDetailsModal from './TournamentDetailsModal';
 
 const TournamentsAdminPanel = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([
@@ -39,6 +49,7 @@ const TournamentsAdminPanel = () => {
   const [showNewModal, setShowNewModal] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
   const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
+  const [viewingTournament, setViewingTournament] = useState<Tournament | null>(null);
 
   const filteredTournaments = tournaments.filter(tournament => {
     const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
@@ -219,7 +230,10 @@ const TournamentsAdminPanel = () => {
                   <span className="text-sm text-gray-400 capitalize">
                     Formato: {tournament.format === 'league' ? 'Liga' : 'Eliminación'}
                   </span>
-                  <button className="btn-outline text-sm flex items-center space-x-2">
+                  <button
+                    onClick={() => setViewingTournament(tournament)}
+                    className="btn-outline text-sm flex items-center space-x-2"
+                  >
                     <Eye size={16} />
                     <span>Ver Detalles</span>
                   </button>
@@ -276,6 +290,13 @@ const TournamentsAdminPanel = () => {
           }}
           title="Eliminar Torneo"
           message={`¿Estás seguro de que quieres eliminar "${deletingTournament.name}"? Esta acción no se puede deshacer.`}
+        />
+      )}
+
+      {viewingTournament && (
+        <TournamentDetailsModal
+          tournament={viewingTournament}
+          onClose={() => setViewingTournament(null)}
         />
       )}
     </div>
