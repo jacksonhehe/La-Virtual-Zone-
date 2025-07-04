@@ -21,7 +21,17 @@ export default function useJugadores() {
       .channel('public:jugadores')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'jugadores' },
+        { event: 'INSERT', schema: 'public', table: 'jugadores' },
+        () => fetchJugadores()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'jugadores' },
+        () => fetchJugadores()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'jugadores' },
         () => fetchJugadores()
       )
       .subscribe();
