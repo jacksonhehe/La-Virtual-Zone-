@@ -18,8 +18,8 @@ const Register = lazy(() => import("./pages/Register"));
 const UserPanel = lazy(() => import("./pages/UserPanel"));
 const Users = lazy(() => import("./pages/Users"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
-const RecoverPassword = lazy(() => import("./pages/RecoverPassword"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const RecuperarContrasena = lazy(() => import("./pages/RecuperarContrasena"));
+const DefinirContrasena = lazy(() => import("./pages/DefinirContrasena"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 
@@ -55,8 +55,8 @@ function App() {
 
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Register />} />
-            <Route path="recuperar-password" element={<RecoverPassword />} />
-            <Route path="reset/:token" element={<ResetPassword />} />
+            <Route path="recuperar-password" element={<RecuperarContrasena />} />
+            <Route path="reset/:token" element={<DefinirContrasena />} />
             <Route path="terminos" element={<Terms />} />
             <Route path="privacidad" element={<Privacy />} />
             <Route path="usuarios" element={<Users />} />
