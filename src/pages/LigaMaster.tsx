@@ -16,15 +16,17 @@ import StatsCard from '../components/common/StatsCard';
 import ClubListItem from '../components/common/ClubListItem';
 import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
+import useClubes from '../hooks/useClubes';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
   const { user } = useAuthStore();
-  const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
+  const { clubes, loading } = useClubes();
+  const { tournaments, players, standings, marketStatus } = useDataStore();
 
   if (user?.role === 'dt') {
     if (user.clubId) {
-      const assignedClub = clubs.find(c => c.id === user.clubId);
+      const assignedClub = clubes.find(c => c.id === user.clubId);
       if (assignedClub) {
         return <DtDashboard />;
       }
@@ -39,7 +41,7 @@ const LigaMaster = () => {
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
 
-  if (!ligaMaster) {
+  if (loading || !ligaMaster) {
     return <DashboardSkeleton />;
   }
   
@@ -83,9 +85,9 @@ const topScorers = [...players]
           className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-8"
           aria-live="polite"
         >
-          <StatsCard 
-            title="Total de Clubes" 
-            value={clubs.length}
+          <StatsCard
+            title="Total de Clubes"
+            value={clubes.length}
             icon={<Users size={24} className="text-primary" />}
           />
           <StatsCard 
@@ -95,7 +97,7 @@ const topScorers = [...players]
           />
           <StatsCard 
             title="Presupuesto Medio" 
-            value={formatCurrency(clubs.reduce((sum, club) => sum + club.budget, 0) / clubs.length)}
+            value={formatCurrency(clubes.reduce((sum, club) => sum + club.budget, 0) / clubes.length)}
             icon={<Briefcase size={24} className="text-primary" />}
           />
           <StatsCard
@@ -175,7 +177,7 @@ const topScorers = [...players]
                   </thead>
                   <tbody className="divide-y divide-gray-800">
                     {standings.slice(0, 5).map((team, index) => {
-                      const club = clubs.find(c => c.id === team.clubId);
+                      const club = clubes.find(c => c.id === team.clubId);
                       
                       return (
                         <tr key={team.clubId} className="hover:bg-gray-800/50">
@@ -235,8 +237,8 @@ const topScorers = [...players]
               
               <div className="divide-y divide-gray-800">
                 {upcomingMatches.map((match) => {
-                  const homeClub = clubs.find(c => c.name === match.homeTeam);
-                  const awayClub = clubs.find(c => c.name === match.awayTeam);
+                  const homeClub = clubes.find(c => c.name === match.homeTeam);
+                  const awayClub = clubes.find(c => c.name === match.awayTeam);
 
                   return (
                     <div
@@ -287,7 +289,7 @@ const topScorers = [...players]
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                {clubs.map(club => (
+                {clubes.map(club => (
                   <ClubListItem
                     key={club.id}
                     club={club}
@@ -343,7 +345,7 @@ const topScorers = [...players]
               
               <div className="divide-y divide-gray-800">
                 {topScorers.map((player, index) => {
-                  const club = clubs.find(c => c.id === player.clubId);
+                  const club = clubes.find(c => c.id === player.clubId);
                   
                   return (
                     <div key={player.id} className="p-4 flex items-center justify-between">
