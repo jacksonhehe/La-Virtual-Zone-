@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowLeft, Check, AlertCircle, Shield, Lock } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 export default function RecuperarContrasena() {
   const [email, setEmail] = useState('');
@@ -24,11 +25,20 @@ export default function RecuperarContrasena() {
     }
 
     setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
+
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email
+      );
+      if (resetError) {
+        setError(resetError.message);
+        setIsLoading(false);
+        return;
+      }
       setIsSubmitted(true);
-    }, 2000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {

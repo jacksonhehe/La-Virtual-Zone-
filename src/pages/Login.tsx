@@ -1,21 +1,20 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, AlertCircle } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
+import { supabase } from '../supabaseClient';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const navigate = useNavigate();
-  const { login } = useAuthStore();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
+    if (!email || !password) {
       setError('Por favor, completa todos los campos');
       return;
     }
@@ -24,7 +23,14 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      await login(username, password);
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
       navigate('/usuario');
     } catch (err) {
       if (err instanceof Error) {
@@ -59,13 +65,13 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Nombre de usuario
+                  Correo electrónico
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   className="input w-full"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               
@@ -114,9 +120,9 @@ const Login = () => {
             <div className="mt-8 pt-6 border-t border-gray-800">
               <div className="text-xs text-gray-500 text-center">
                 <p>Para pruebas, puedes usar:</p>
-                <p className="mt-1">Usuario: <span className="text-primary">usuario</span> / Contraseña: <span className="text-primary">password</span></p>
-                <p className="mt-1">DT: <span className="text-primary">entrenador</span> / Contraseña: <span className="text-primary">password</span></p>
-                <p className="mt-1">Admin: <span className="text-primary">admin</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">Email: <span className="text-primary">usuario@test.com</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">DT: <span className="text-primary">dt@test.com</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">Admin: <span className="text-primary">admin@virtualzone.com</span> / Contraseña: <span className="text-primary">password</span></p>
               </div>
             </div>
           </div>
