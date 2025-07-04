@@ -1,23 +1,14 @@
-interface Props {
+interface  Props {
   message: string;
   onConfirm: () => void;
   onClose: () => void;
-  isOpen?: boolean;
-  title?: string;
 }
 
-const ConfirmDeleteModal = ({
-  message,
-  onConfirm,
-  onClose,
-  isOpen = true,
-  title = 'Confirmar eliminación'
-}: Props) => {
-  if (!isOpen) return null;
+const ConfirmDeleteModal = ({ message, onConfirm, onClose }: Props) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
-        <h3 className="text-lg font-semibold mb-4">{title}</h3>
+        <h3 className="text-lg font-semibold mb-4">Confirmar eliminación</h3>
         <p className="text-gray-300 mb-6">{message}</p>
         <div className="flex space-x-3 justify-end">
           <button onClick={onClose} className="btn-outline">

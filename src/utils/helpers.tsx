@@ -13,10 +13,8 @@ export const formatCurrency = (amount: number): string => {
 };
 
 // Format date
-export const formatDate = (dateString?: string | null): string => {
-  if (!dateString) return 'Fecha no definida';
+export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return 'Fecha no definida';
   return new Intl.DateTimeFormat('es-ES', {
     day: '2-digit',
     month: '2-digit',
@@ -25,10 +23,8 @@ export const formatDate = (dateString?: string | null): string => {
 };
 
 // Format time
-export const formatTime = (dateString?: string | null): string => {
-  if (!dateString) return '';
+export const formatTime = (dateString: string): string => {
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '';
   return new Intl.DateTimeFormat('es-ES', {
     hour: '2-digit',
     minute: '2-digit'

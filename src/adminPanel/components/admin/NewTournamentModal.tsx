@@ -4,10 +4,9 @@ import { Tournament } from '../../types';
 interface Props {
   onClose: () => void;
   onSave: (data: Partial<Tournament>) => void;
-  tournament?: Tournament;
 }
 
-const NewTournamentModal = ({ onClose, onSave, tournament }: Props) => {
+const NewTournamentModal = ({ onClose, onSave }: Props) => {
   const [formData, setFormData] = useState({
     name: '',
     totalRounds: 1,
@@ -15,16 +14,6 @@ const NewTournamentModal = ({ onClose, onSave, tournament }: Props) => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (tournament) {
-      setFormData({
-        name: tournament.name,
-        totalRounds: tournament.totalRounds,
-        status: tournament.status
-      });
-    }
-  }, [tournament]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,7 +37,7 @@ const NewTournamentModal = ({ onClose, onSave, tournament }: Props) => {
     if (validate()) {
       onSave({
         ...formData,
-        currentRound: tournament?.currentRound ?? 0,
+        currentRound: 0,
       });
     }
   };
@@ -60,9 +49,7 @@ const NewTournamentModal = ({ onClose, onSave, tournament }: Props) => {
         className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4"
         tabIndex={-1}
       >
-        <h3 className="text-lg font-semibold mb-4">
-          {tournament ? 'Editar Torneo' : 'Nuevo Torneo'}
-        </h3>
+        <h3 className="text-lg font-semibold mb-4">Nuevo Torneo</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
@@ -96,9 +83,7 @@ const NewTournamentModal = ({ onClose, onSave, tournament }: Props) => {
           </select>
           <div className="flex space-x-3 justify-end mt-6">
             <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
-            <button type="submit" className="btn-primary">
-              {tournament ? 'Guardar' : 'Crear'}
-            </button>
+            <button type="submit" className="btn-primary">Crear</button>
           </div>
         </form>
       </div>

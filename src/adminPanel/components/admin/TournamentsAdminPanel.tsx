@@ -1,29 +1,44 @@
-import React, { useState } from 'react';
+import  React, { useState } from 'react';
 import { Trophy, Calendar, Users, MapPin, Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
 import { Tournament } from '../../types';
-import { useDataStore } from '../../../store/dataStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 const TournamentsAdminPanel = () => {
-  const {
-    tournaments,
-    addTournament,
-    updateTournamentEntry,
-    removeTournament
-  } = useDataStore();
+  const [tournaments, setTournaments] = useState<Tournament[]>([
+    {
+      id: '1',
+      name: 'Liga Master 2024',
+      format: 'league',
+      status: 'active',
+      startDate: '2024-01-15',
+      endDate: '2024-06-30',
+      maxTeams: 20,
+      currentTeams: 18,
+      prizePool: 500000,
+      location: 'España'
+    },
+    {
+      id: '2',
+      name: 'Copa Elite',
+      format: 'knockout',
+      status: 'upcoming',
+      startDate: '2024-07-01',
+      endDate: '2024-07-31',
+      maxTeams: 32,
+      currentTeams: 24,
+      prizePool: 250000,
+      location: 'Internacional'
+    }
+  ]);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
   const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
-
-  if (tournaments.some(t => t.startDate == null)) {
-    console.warn('Se encontraron torneos sin fecha de inicio definida');
-  }
 
   const filteredTournaments = tournaments.filter(tournament => {
     const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
@@ -32,8 +47,8 @@ const TournamentsAdminPanel = () => {
   });
 
   const activeTournaments = tournaments.filter(t => t.status === 'active').length;
-  const totalPrizePool = tournaments.reduce((sum, t) => sum + (t.prizePool ?? 0), 0);
-  const totalTeams = tournaments.reduce((sum, t) => sum + (t.currentTeams ?? 0), 0);
+  const totalPrizePool = tournaments.reduce((sum, t) => sum + t.prizePool, 0);
+  const totalTeams = tournaments.reduce((sum, t) => sum + t.currentTeams, 0);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -46,13 +61,6 @@ const TournamentsAdminPanel = () => {
 
   const getFormatIcon = (format: string) => {
     return format === 'league' ? Trophy : Users;
-  };
-
-  const formatStartDate = (date: unknown): React.ReactNode => {
-    if (typeof date === 'string' && !isNaN(new Date(date).getTime())) {
-      return new Date(date).toLocaleString();
-    }
-    return <span className="text-red-400">Fecha no definida</span>;
   };
 
   return (
@@ -162,7 +170,7 @@ const TournamentsAdminPanel = () => {
                       Fecha Inicio
                     </div>
                     <div className="text-white font-medium">
-                      {formatStartDate(tournament.startDate)}
+                      {new Date(tournament.startDate).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-3">
@@ -239,7 +247,7 @@ const TournamentsAdminPanel = () => {
               currentTeams: 0,
               ...data
             } as Tournament;
-            addTournament(newTournament);
+            setTournaments([...tournaments, newTournament]);
             setShowNewModal(false);
           }}
         />
@@ -250,7 +258,9 @@ const TournamentsAdminPanel = () => {
           tournament={editingTournament}
           onClose={() => setEditingTournament(null)}
           onSave={(data) => {
-            updateTournamentEntry({ ...editingTournament, ...data });
+            setTournaments(tournaments.map(t => 
+              t.id === editingTournament.id ? { ...t, ...data } : t
+            ));
             setEditingTournament(null);
           }}
         />
@@ -261,7 +271,7 @@ const TournamentsAdminPanel = () => {
           isOpen={true}
           onClose={() => setDeletingTournament(null)}
           onConfirm={() => {
-            removeTournament(deletingTournament.id);
+            setTournaments(tournaments.filter(t => t.id !== deletingTournament.id));
             setDeletingTournament(null);
           }}
           title="Eliminar Torneo"
