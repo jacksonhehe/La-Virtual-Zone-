@@ -12,6 +12,14 @@ npm install
 
 After the packages are installed you can start the development server.
 
+## Configuración
+
+1. Copia `.env.example` a `.env` en la raíz del proyecto.
+2. En tu panel de Supabase ve a **Settings → API** y copia la `Project URL` y la clave anónima.
+3. Asigna esos valores a `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env`.
+
+El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente de Supabase que se consume en la aplicación.
+
 ## Development
 
 Run the development server with hot reload:
