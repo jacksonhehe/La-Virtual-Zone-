@@ -1,5 +1,5 @@
 import   { useState, useEffect, useRef } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   User, 
   Settings, 
@@ -13,11 +13,13 @@ import {
   
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import useSession from '../hooks/useSession';
 import { useDataStore } from '../store/dataStore';
 import { xpForNextLevel } from '../utils/helpers';
 
 const UserPanel = () => {
-  const { user, isAuthenticated, logout } = useAuthStore();
+  useSession();
+  const { user, logout } = useAuthStore();
   const { clubs } = useDataStore();
   const navigate = useNavigate();
   
@@ -52,10 +54,7 @@ const UserPanel = () => {
   // Initialize achievements array if it doesn't exist
   const achievements = user?.achievements || [];
 
-  // If not authenticated, redirect to login
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" />;
-  }
+
   
   return (
     <div className="container mx-auto px-4 py-8 pt-24">

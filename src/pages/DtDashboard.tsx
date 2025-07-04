@@ -2,6 +2,7 @@ import  { useState, useMemo, useRef, Suspense, lazy, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, Bell } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import useSession from '../hooks/useSession';
 import useClubes from '../hooks/useClubes';
 import useTorneos from '../hooks/useTorneos';
 import useOfertas from '../hooks/useOfertas';
@@ -29,6 +30,7 @@ const    tabs = [
 ];   
 
 export default function DtDashboard() {
+  useSession();
   const { user } = useAuthStore();
   const { clubes: clubs, loading: loadingClubes } = useClubes();
   const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
