@@ -21,7 +21,17 @@ export default function useClubes() {
       .channel('public:clubes')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'clubes' },
+        { event: 'INSERT', schema: 'public', table: 'clubes' },
+        () => fetchClubes()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'clubes' },
+        () => fetchClubes()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'clubes' },
         () => fetchClubes()
       )
       .subscribe();

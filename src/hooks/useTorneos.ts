@@ -21,7 +21,17 @@ export default function useTorneos() {
       .channel('public:torneos')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'torneos' },
+        { event: 'INSERT', schema: 'public', table: 'torneos' },
+        () => fetchTorneos()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'torneos' },
+        () => fetchTorneos()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'torneos' },
         () => fetchTorneos()
       )
       .subscribe();
