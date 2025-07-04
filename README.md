@@ -18,7 +18,22 @@ After the packages are installed you can start the development server.
 2. En tu panel de Supabase ve a **Settings → API** y copia la `Project URL` y la clave anónima.
 3. Asigna esos valores a `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env`.
 
+
 El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente de Supabase que se consume en la aplicación.
+
+## Supabase Setup
+
+La aplicación utiliza Supabase para sincronizar en tiempo real los datos de algunos recursos. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures` y `ofertas` dentro de tu proyecto de Supabase.
+
+Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env` con los valores proporcionados por Supabase. Si el proyecto incluye migraciones para estas tablas, ejecútalas con:
+
+```bash
+npm run supabase:migrate
+```
+
+Para cargar datos de ejemplo puedes importar manualmente `src/data/seed.json` desde la consola o CLI de Supabase.
+
+## Development
 
 ## Development
 
