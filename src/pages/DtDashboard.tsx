@@ -1,6 +1,6 @@
 import  { useState, useMemo, useRef, Suspense, lazy, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, TrendingUp, Award, Settings, Bell } from 'lucide-react';
+import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, Bell } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import useClubes from '../hooks/useClubes';
 import useTorneos from '../hooks/useTorneos';
