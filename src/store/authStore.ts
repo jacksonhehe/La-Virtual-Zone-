@@ -11,24 +11,28 @@ import {
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => void;
-  register: (email: string, username: string, password: string) => void;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<User>;
+  register: (email: string, username: string, password: string) => Promise<User>;
+  logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
   addXP: (amount: number) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => {
-  // Check for stored auth information
-  const initialUser = getCurrentUser();
-  
+  const initialUser: User | null = null;
+  getCurrentUser().then((user) => {
+    if (user) {
+      set({ user, isAuthenticated: true });
+    }
+  });
+
   return {
     user: initialUser,
     isAuthenticated: !!initialUser,
     
-    login: (username, password) => {
+    login: async (email, password) => {
       try {
-        const user = authLogin(username, password);
+        const user = await authLogin(email, password);
         set({ user, isAuthenticated: true });
         useActivityLogStore
           .getState()
@@ -40,9 +44,9 @@ export const useAuthStore = create<AuthState>((set) => {
       }
     },
     
-    register: (email, username, password) => {
+    register: async (email, username, password) => {
       try {
-        const user = authRegister(email, username, password);
+        const user = await authRegister(email, username, password);
         set({ user, isAuthenticated: true });
         useActivityLogStore
           .getState()
@@ -54,9 +58,9 @@ export const useAuthStore = create<AuthState>((set) => {
       }
     },
     
-    logout: () => {
-      const current = getCurrentUser();
-      authLogout();
+    logout: async () => {
+      const current = await getCurrentUser();
+      await authLogout();
       set({ user: null, isAuthenticated: false });
       if (current) {
         useActivityLogStore

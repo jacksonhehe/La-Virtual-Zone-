@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, AlertCircle } from 'lucide-react';
-import { supabase } from '../supabaseClient';
+import { useAuthStore } from '../store/authStore';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +10,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuthStore();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,14 +24,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      if (signInError) {
-        setError(signInError.message);
-        return;
-      }
+      await login(email, password);
       navigate('/usuario');
     } catch (err) {
       if (err instanceof Error) {

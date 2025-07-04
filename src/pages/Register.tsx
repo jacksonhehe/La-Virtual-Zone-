@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, AlertCircle } from 'lucide-react';
-import { supabase } from '../supabaseClient';
+import { useAuthStore } from '../store/authStore';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -12,6 +12,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const navigate = useNavigate();
+  const { register } = useAuthStore();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,17 +44,7 @@ const Register = () => {
     setIsLoading(true);
     
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username }
-        }
-      });
-      if (signUpError) {
-        setError(signUpError.message);
-        return;
-      }
+      await register(email, username, password);
       navigate('/usuario');
     } catch (err) {
       if (err instanceof Error) {
