@@ -17,12 +17,14 @@ import ClubListItem from '../components/common/ClubListItem';
 import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
 import useClubes from '../hooks/useClubes';
+import useJugadores from '../hooks/useJugadores';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
   const { user } = useAuthStore();
   const { clubes, loading } = useClubes();
-  const { tournaments, players, standings, marketStatus } = useDataStore();
+  const { tournaments, standings, marketStatus } = useDataStore();
+  const { jugadores: players } = useJugadores();
 
   if (user?.role === 'dt') {
     if (user.clubId) {

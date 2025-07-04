@@ -2,11 +2,13 @@ import  { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, TrendingDown, Target, Users, Trophy } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, BarChart, Bar } from 'recharts';
 import { useDataStore } from '../../store/dataStore';
+import useJugadores from '../../hooks/useJugadores';
 
 const formatCurrency= (amount: number) => `€${amount.toLocaleString()}`;
 
 export default function FinanzasTab() {
-  const { club, players } = useDataStore();
+  const { club } = useDataStore();
+  const { jugadores: players } = useJugadores();
 
   const clubPlayers = players.filter(p => p.clubId === club?.id);
   const totalSalaries = clubPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
