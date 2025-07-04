@@ -22,6 +22,7 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
     secondaryColor: '#000000',
     description: ''
   });
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const users = useGlobalStore(state => state.users);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -49,11 +50,21 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      const logo = formData.logo ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=111827&color=fff&size=128&bold=true`;
+      let logo = formData.logo;
+      if (logoFile) {
+        try {
+          const { uploadImage } = await import('../../../lib/uploadImage');
+          logo = await uploadImage(logoFile, 'logos');
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (!logo) {
+        logo = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=111827&color=fff&size=128&bold=true`;
+      }
       onSave({ ...formData, logo, slug: slugify(formData.name) });
     }
   };
@@ -133,6 +144,13 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
               placeholder="Descripción"
               value={formData.description}
               onChange={e => setFormData({ ...formData, description: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Logo</label>
+            <input
+              type="file"
+              onChange={e => setLogoFile(e.target.files ? e.target.files[0] : null)}
             />
           </div>
           <div className="flex space-x-2">
