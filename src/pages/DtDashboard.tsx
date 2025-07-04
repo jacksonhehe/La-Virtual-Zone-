@@ -1,9 +1,12 @@
 import  { useState, useMemo, useRef, Suspense, lazy, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, TrendingUp, Award, Settings, Bell } from 'lucide-react';   
+import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, List, Play, TrendingUp, Award, Settings, Bell } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-import { useDataStore } from '../store/dataStore';
+import useClubes from '../hooks/useClubes';
+import useTorneos from '../hooks/useTorneos';
+import useOfertas from '../hooks/useOfertas';
 import toast, { Toaster } from 'react-hot-toast';
+import Spinner from '../components/Spinner';
 
 const   PlantillaTab = lazy(() => import('../components/dt-dashboard/PlantillaTab'));
 const TacticasTab = lazy(() => import('../components/dt-dashboard/TacticasTab'));
@@ -27,7 +30,10 @@ const    tabs = [
 
 export default function DtDashboard() {
   const { user } = useAuthStore();
-  const { clubs, tournaments, offers } = useDataStore();
+  const { clubes: clubs, loading: loadingClubes } = useClubes();
+  const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
+  const { ofertas: offers, loading: loadingOfertas } = useOfertas();
+  const loading = loadingClubes || loadingTorneos || loadingOfertas;
   const club = useMemo(
     () => clubs.find(c => c.id === user?.clubId),
     [clubs, user?.clubId]
@@ -74,6 +80,14 @@ export default function DtDashboard() {
     setActiveTab(tab);
     toast.dismiss();
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   if (!user) {
     return (

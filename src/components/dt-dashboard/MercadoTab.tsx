@@ -1,16 +1,24 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Star } from 'lucide-react';
-import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
+import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
+import useJugadores from '../../hooks/useJugadores';
+import useOfertas from '../../hooks/useOfertas';
+import useClubes from '../../hooks/useClubes';
 import toast from 'react-hot-toast';
 import OffersPanel from '../market/OffersPanel';
 import OfferModal from '../market/OfferModal';
+import Spinner from '../Spinner';
 
 export default function MercadoTab() {
   const { user } = useAuthStore();
-  const { players, club, clubs, offers, marketStatus } = useDataStore();
+  const { club, marketStatus } = useDataStore();
+  const { jugadores: players, loading: loadingPlayers } = useJugadores();
+  const { ofertas: offers, loading: loadingOfertas } = useOfertas();
+  const { clubes: clubs, loading: loadingClubes } = useClubes();
+  const loading = loadingPlayers || loadingOfertas || loadingClubes;
   const [search, setSearch] = useState('');
   const [positionFilter, setPositionFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
@@ -85,8 +93,13 @@ export default function MercadoTab() {
     setSelectedPlayer(player);
   };
 
-  const formatCurrency = (amount: number) => 
-    new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="space-y-6">
