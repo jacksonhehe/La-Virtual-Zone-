@@ -6,4 +6,3 @@ export const VZ_CLUBS_KEY = 'vz_clubs';
 export const VZ_PLAYERS_KEY = 'vz_players';
 export const VZ_FIXTURES_KEY = 'vz_fixtures';
 export const VZ_FINANCE_HISTORY_KEY = 'vz_finance_history';
-export const VZ_RESET_TOKENS_KEY = 'vz_reset_tokens';
