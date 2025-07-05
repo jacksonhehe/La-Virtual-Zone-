@@ -1,30 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-const createMockStorage = () => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => (key in store ? store[key] : null),
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  } as Storage;
-};
+const selectMock = vi.fn(() => ({ data: [] }));
+const deleteMock = vi.fn(() => ({ in: vi.fn() }));
+const upsertMock = vi.fn();
+let fromMock: any;
+
+vi.mock('../src/supabaseClient', () => {
+  fromMock = vi.fn(() => ({ select: selectMock, delete: deleteMock, upsert: upsertMock }));
+  return { supabase: { from: fromMock, auth: { getSession: vi.fn(() => ({ data: { session: null } })) } } };
+});
 
 beforeEach(() => {
   vi.resetModules();
-  delete (global as any).localStorage;
+  vi.clearAllMocks();
 });
 
 describe('useGlobalStore addTournament', () => {
-  it('updates state and persists through adminStorage', async () => {
-    const mockStorage = createMockStorage();
-    (global as any).localStorage = mockStorage;
+  it('updates state and persists through saveAdminData', async () => {
     const { useGlobalStore } = await import('../src/adminPanel/store/globalStore');
 
     const tournament = {
@@ -39,11 +31,7 @@ describe('useGlobalStore addTournament', () => {
 
     expect(useGlobalStore.getState().tournaments).toContainEqual(tournament);
 
-    const stored = JSON.parse(mockStorage.getItem('vz_tournaments_admin') || '[]');
-    expect(stored).toContainEqual(tournament);
-
-    vi.resetModules();
-    const { useGlobalStore: reloaded } = await import('../src/adminPanel/store/globalStore');
-    expect(reloaded.getState().tournaments).toContainEqual(tournament);
+    await new Promise(setImmediate);
+    expect(upsertMock).toHaveBeenCalled();
   });
 });
