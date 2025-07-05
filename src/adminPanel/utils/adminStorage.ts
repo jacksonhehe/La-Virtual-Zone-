@@ -33,7 +33,7 @@ export const loadAdminData = async (
   await Promise.all(
     Object.entries(TABLES).map(async ([prop, table]) => {
       const { data: rows } = await supabase.from(table).select('*');
-      if (rows) {
+      if (rows && rows.length > 0) {
         (data as any)[prop] = rows;
       }
     })
