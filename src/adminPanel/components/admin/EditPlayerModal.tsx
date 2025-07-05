@@ -20,8 +20,8 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
     overall: player.overall,
     potential: player.potential,
     price: player.value,
-    contractExpires: player.contract.expires,
-    salary: player.contract.salary
+    contractExpires: player.contract?.expires || '',
+    salary: player.contract?.salary || 0
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const modalRef = useRef<HTMLDivElement>(null);
