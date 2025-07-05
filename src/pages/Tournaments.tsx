@@ -7,7 +7,7 @@ import usePersistentState from '../hooks/usePersistentState';
 
 const Tournaments = () => {
   const [filter, setFilter] =
-    usePersistentState<'all' | 'ongoing' | 'open' | 'finished'>(
+    usePersistentState<'all' | 'active' | 'upcoming' | 'finished'>(
       'tournaments_filter',
       'all'
     );
@@ -45,17 +45,17 @@ const Tournaments = () => {
               >
                 Todos
               </button>
-              <button 
-                onClick={() => setFilter('ongoing')}
-                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'ongoing' ? 'bg-neon-green text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
+              <button
+                onClick={() => setFilter('active')}
+                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'active' ? 'bg-neon-green text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
               >
                 En curso
               </button>
-              <button 
-                onClick={() => setFilter('open')}
-                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'open' ? 'bg-neon-blue text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
+              <button
+                onClick={() => setFilter('upcoming')}
+                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'upcoming' ? 'bg-neon-blue text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
               >
-                Inscripciones
+                Próximos
               </button>
               <button 
                 onClick={() => setFilter('finished')}
@@ -80,11 +80,11 @@ const Tournaments = () => {
                   <div className="absolute top-3 left-3">
                     <span className={`
                       inline-block px-3 py-1 text-xs font-medium rounded-full
-                      ${tournament.status === 'ongoing' ? 'bg-neon-green/20 text-neon-green' : ''}
-                      ${tournament.status === 'open' ? 'bg-neon-blue/20 text-neon-blue' : ''}
+                      ${tournament.status === 'active' ? 'bg-neon-green/20 text-neon-green' : ''}
+                      ${tournament.status === 'upcoming' ? 'bg-neon-blue/20 text-neon-blue' : ''}
                       ${tournament.status === 'finished' ? 'bg-gray-700/70 text-gray-300' : ''}
                     `}>
-                      {tournament.status === 'ongoing' ? 'En curso' : tournament.status === 'open' ? 'Inscripciones' : 'Finalizado'}
+                      {tournament.status === 'active' ? 'En curso' : tournament.status === 'upcoming' ? 'Próximamente' : 'Finalizado'}
                     </span>
                   </div>
                   
@@ -100,8 +100,8 @@ const Tournaments = () => {
                     <div className="flex items-center text-sm text-gray-300">
                       <span className={`
                         inline-block w-2 h-2 rounded-full mr-2
-                        ${tournament.status === 'ongoing' ? 'bg-neon-green' : ''}
-                        ${tournament.status === 'open' ? 'bg-neon-blue' : ''}
+                        ${tournament.status === 'active' ? 'bg-neon-green' : ''}
+                        ${tournament.status === 'upcoming' ? 'bg-neon-blue' : ''}
                         ${tournament.status === 'finished' ? 'bg-gray-500' : ''}
                       `}></span>
                       <span className="capitalize">
