@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { Match } from '../types';
+import { getFixtures } from '../utils/dataService';
 
 export default function useFixtures() {
   const [fixtures, setFixtures] = useState<Match[]>([]);
@@ -8,10 +9,8 @@ export default function useFixtures() {
 
   const fetchFixtures = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('fixtures').select('*').order('id');
-    if (!error && data) {
-      setFixtures(data as Match[]);
-    }
+    const data = await getFixtures();
+    setFixtures(data);
     setLoading(false);
   }, []);
 
