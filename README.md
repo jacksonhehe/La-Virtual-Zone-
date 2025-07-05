@@ -38,12 +38,12 @@ Agrega la cuenta inicial del panel ejecutando el snippet SQL incluido en el
 repositorio o utilizando el helper `addUser` de `src/utils/authService.ts`:
 
 ```sql
-insert into users (email, username, role, password)
-values ('admin@virtualzone.com', 'admin', 'admin', 'password');
+insert into users (id, email, username, role, password)
+values ('1', 'admin@virtualzone.com', 'admin', 'admin', 'password');
 ```
 
 ```ts
-await addUser('admin@virtualzone.com', 'admin', 'admin');
+await addUser('1', 'admin@virtualzone.com', 'admin', 'admin');
 ```
 
 Para cargar datos de ejemplo puedes importar manualmente `src/data/seed.json` desde la consola o CLI de Supabase.
