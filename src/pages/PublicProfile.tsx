@@ -11,7 +11,7 @@ const PublicProfile = () => {
 
   useEffect(() => {
     if (username) {
-      setUser(getUserByUsername(username));
+      getUserByUsername(username).then(setUser);
     }
   }, [username]);
 

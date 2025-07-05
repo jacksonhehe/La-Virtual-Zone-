@@ -144,7 +144,7 @@ export const useDataStore = create<DataState>((set) => ({
   news: dtNews,
   positions: dtPositions,
   dtRankings,
-  users: getUsers(),
+  users: [],
   
   updateClubs: (newClubs) =>
     set((state) => {
@@ -370,5 +370,9 @@ export const useDataStore = create<DataState>((set) => ({
 // Update DT club when authenticated user changes
 useAuthStore.subscribe(state => {
   useDataStore.getState().setClubFromUser(state.user);
+});
+
+getUsers().then(users => {
+  useDataStore.setState({ users });
 });
  
