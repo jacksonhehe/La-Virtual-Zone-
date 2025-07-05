@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { renderHook } from '@testing-library/react';
 import { useGlobalStore } from '../src/adminPanel/store/globalStore';
 import {
   useUpcomingTournaments,
@@ -20,20 +21,20 @@ beforeEach(() => {
 
 describe('useTournamentFilters', () => {
   it('returns only upcoming tournaments', () => {
-    const upcoming = useUpcomingTournaments();
-    expect(upcoming).toHaveLength(2);
-    expect(upcoming.every(t => t.status === 'upcoming')).toBe(true);
+    const { result } = renderHook(() => useUpcomingTournaments());
+    expect(result.current).toHaveLength(2);
+    expect(result.current.every(t => t.status === 'upcoming')).toBe(true);
   });
 
   it('returns only active tournaments', () => {
-    const active = useActiveTournaments();
-    expect(active).toHaveLength(1);
-    expect(active[0].status).toBe('active');
+    const { result } = renderHook(() => useActiveTournaments());
+    expect(result.current).toHaveLength(1);
+    expect(result.current[0].status).toBe('active');
   });
 
   it('returns only finished tournaments', () => {
-    const finished = useFinishedTournaments();
-    expect(finished).toHaveLength(1);
-    expect(finished[0].status).toBe('completed');
+    const { result } = renderHook(() => useFinishedTournaments());
+    expect(result.current).toHaveLength(1);
+    expect(result.current[0].status).toBe('completed');
   });
 });

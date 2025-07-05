@@ -21,7 +21,9 @@ const Mercado = () => {
       state => state.transfers.filter(t => t.status === 'pending').length,
       setPendingCount
     );
-    return () => unsub();
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
   }, []);
 
   const filteredTransfers = transfers.filter(transfer => {
