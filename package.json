@@ -23,7 +23,7 @@
     "@fullcalendar/react": "^6.1.17",
     "@sentry/react": "^7.92.0",
     "@supabase/supabase-js": "^2.50.3",
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.19.1",
     "lucide-react": "^0.244.0",
