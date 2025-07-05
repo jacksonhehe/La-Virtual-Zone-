@@ -45,6 +45,7 @@ npm run dev
 
 If you still require the legacy NestJS API you can start it from the `server/` directory:
 
+To start the API server (which now connects to Supabase) run:
 ```bash
 (cd server && npm install && npm run start:dev)
 ```
@@ -95,10 +96,10 @@ starting the E2E tests.
 To access the administrator interface:
 
 1. Start the development server with `npm run dev`.
-2. (Opcional) Inicia la API heredada ejecutando:
-   ```bash
-   (cd server && npm install && npm run start:dev)
-   ```
+   To start the API server (connected to Supabase) run:
+```bash
+(cd server && npm install && npm run start:dev)
+```
 
 3. Open the app in your browser and log in using the demo admin account (`admin` / `password`).
 4. Click on your avatar in the navigation bar and choose **Panel Admin** or navigate directly to `/admin`.
@@ -134,13 +135,7 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 ## Data Persistence
 
-La base de datos vive ahora en Supabase. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures` y `ofertas` desde la consola de Supabase o con el CLI. Luego importa `src/data/seed.json` para poblarlas con datos de ejemplo.
-
-Si decides mantener la API antigua puedes seguir iniciándola en `server/`, pero no es necesario para usar Supabase.
-
-## Legacy Server
-
-El directorio `server/` contiene una API construida con NestJS y Prisma. Puedes eliminarlo por completo si quieres depender exclusivamente de Supabase. En caso de integrarlo, asegúrate de que `DATABASE_URL` esté configurada y que la API utilice las mismas tablas que tu instancia de Supabase.
+The backend now connects directly to Supabase, so no local PostgreSQL setup is required. Run `npm run start:dev` inside `server/` to start the API.
 
 ## Recuperar contraseña
 
