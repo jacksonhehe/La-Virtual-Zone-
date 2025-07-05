@@ -6,7 +6,8 @@ vi.mock('../src/supabaseClient', () => {
     supabase: {
       from: vi.fn(() => ({
         select: vi.fn(() => ({ data: [] }))
-      }))
+      })),
+      auth: { getSession: vi.fn(() => ({ data: { session: null } })) }
     }
   };
 });

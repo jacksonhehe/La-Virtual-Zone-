@@ -46,7 +46,13 @@ export const saveAdminData = async (data: AdminData): Promise<void> => {
     Object.entries(TABLES).map(async ([prop, table]) => {
       const rows = (data as any)[prop];
       if (!Array.isArray(rows)) return;
-      await supabase.from(table).delete().neq('id', '');
+      const { data: existing } = await supabase.from(table).select('id');
+      const existingIds = existing?.map((r: any) => r.id) ?? [];
+      const newIds = rows.map((r: any) => r.id);
+      const toDelete = existingIds.filter(id => !newIds.includes(id));
+      if (toDelete.length > 0) {
+        await supabase.from(table).delete().in('id', toDelete);
+      }
       if (rows.length > 0) {
         await supabase.from(table).upsert(rows);
       }
