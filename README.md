@@ -25,15 +25,13 @@ El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente
 
 La aplicación utiliza Supabase para sincronizar en tiempo real los datos de algunos recursos. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures` y `ofertas` dentro de tu proyecto de Supabase. El panel de administración también persiste su estado en la base de datos. Ejecuta el script `supabase/admin_tables.sql` para crear las tablas `admin_users`, `admin_clubs`, `admin_players`, `admin_matches`, `admin_tournaments`, `admin_news`, `admin_transfers`, `admin_standings`, `admin_activities` y `admin_comments`.
 
-Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env` con los valores proporcionados por Supabase. Si el proyecto incluye migraciones para estas tablas, ejecútalas con:
+Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env` con los valores proporcionados por Supabase. Si el proyecto incluye migraciones para estas tablas, ejecútalas con el CLI de Supabase, por ejemplo:
 
 ```bash
-npm run supabase:migrate
+supabase db push
 ```
 
 Para cargar datos de ejemplo puedes importar manualmente `src/data/seed.json` desde la consola o CLI de Supabase.
-
-## Development
 
 ## Development
 
@@ -101,7 +99,7 @@ To access the administrator interface:
 (cd server && npm install && npm run start:dev)
 ```
 
-3. Open the app in your browser and log in using the demo admin account (`admin` / `password`).
+3. Open the app in your browser and log in using the demo admin account (`admin@virtualzone.com` / `password`).
 4. Click on your avatar in the navigation bar and choose **Panel Admin** or navigate directly to `/admin`.
 
 Within the admin panel you will find management sections for:
