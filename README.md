@@ -31,6 +31,20 @@ Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archi
 supabase db push
 ```
 
+### Insertar usuario administrador
+
+Agrega la cuenta inicial del panel ejecutando el snippet SQL incluido en el
+repositorio o utilizando el helper `addUser` de `src/utils/authService.ts`:
+
+```sql
+insert into users (email, username, role, password)
+values ('admin@virtualzone.com', 'admin', 'admin', 'password');
+```
+
+```ts
+await addUser('admin@virtualzone.com', 'admin', 'admin');
+```
+
 Para cargar datos de ejemplo puedes importar manualmente `src/data/seed.json` desde la consola o CLI de Supabase.
 
 ## Development
