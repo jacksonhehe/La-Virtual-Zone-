@@ -1,3 +1,5 @@
+-- SQL schema for the users table
+-- Execute this migration via the Supabase SQL editor or CLI
 CREATE TABLE IF NOT EXISTS users (
   id text PRIMARY KEY,
   username text NOT NULL,
