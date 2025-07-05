@@ -21,6 +21,14 @@ export interface Tournament {
   status: 'active' | 'completed' | 'upcoming';
   currentRound: number;
   totalRounds: number;
+  /** Optional metadata used in some admin views */
+  format?: 'league' | 'knockout';
+  startDate?: string;
+  endDate?: string;
+  maxTeams?: number;
+  currentTeams: number;
+  prizePool?: number;
+  location?: string;
 }
 
 export interface NewsItem {
