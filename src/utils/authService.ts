@@ -61,11 +61,15 @@ export const register = async (
   if (error || !data.user) {
     throw new Error(error?.message || 'Error al registrar la cuenta');
   }
+
+  await addUser(data.user.id, email, username, 'user', undefined, password);
+
   return mapAuthUser(data.user);
 };
 
 // Add new user (admin)
 export const addUser = async (
+  id: string,
   email: string,
   username: string,
   role: 'user' | 'dt' | 'admin',
@@ -75,6 +79,7 @@ export const addUser = async (
   const { data, error } = await supabase
     .from('users')
     .insert({
+      id,
       email,
       username,
       role,
