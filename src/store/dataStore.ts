@@ -136,7 +136,7 @@ export const useDataStore = create<DataState>((set) => ({
   news: dtNews,
   positions: dtPositions,
   dtRankings,
-  users: getUsers(),
+  users: [],
   
   updateClubs: (newClubs) =>
     set((state) => {
@@ -364,24 +364,7 @@ useAuthStore.subscribe(state => {
   useDataStore.getState().setClubFromUser(state.user);
 });
 
-(async () => {
-  const [clubs, players, tournaments, fixtures, offers] = await Promise.all([
-    getClubs(),
-    getPlayers(),
-    getTournaments(),
-    getFixtures(),
-    getOffers()
-  ]);
-
-  if (clubs.length) useDataStore.getState().updateClubs(clubs);
-  if (players.length) useDataStore.getState().updatePlayers(players);
-  if (tournaments.length) useDataStore.getState().updateTournaments(tournaments);
-  if (fixtures.length) useDataStore.setState({ fixtures });
-  if (offers.length) useDataStore.getState().updateOffers(offers);
-
-  const user = useAuthStore.getState().user;
-  if (user) {
-    useDataStore.getState().setClubFromUser(user);
-  }
-})();
+getUsers().then(users => {
+  useDataStore.setState({ users });
+});
  

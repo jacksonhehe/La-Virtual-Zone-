@@ -1,9 +1,5 @@
 import { User } from '../types/shared';
-import {
-  VZ_USERS_KEY,
-  VZ_CURRENT_USER_KEY,
-  VZ_RESET_TOKENS_KEY
-} from './storageKeys';
+import { VZ_CURRENT_USER_KEY, VZ_RESET_TOKENS_KEY } from './storageKeys';
 import { supabase } from '../supabaseClient';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
@@ -15,9 +11,6 @@ const mapAuthUser = (authUser: SupabaseUser): User => ({
   status: 'active'
 });
 
-// Simulated backend - using localStorage for persistence
-
-// Simple base64 "hash" for demo purposes
 export const hashPassword = (pwd: string): string => {
   if (typeof btoa !== 'undefined') {
     return btoa(pwd);
@@ -25,275 +18,10 @@ export const hashPassword = (pwd: string): string => {
   return Buffer.from(pwd).toString('base64');
 };
 
-// Mock test users
-const TEST_PASSWORD = hashPassword('password');
-
-const TEST_USERS = [
-  {
-    id: '1',
-    username: 'admin',
-    email: 'admin@virtualzone.com',
-    role: 'admin',
-    level: 10,
-    xp: 1000,
-    avatar: 'https://ui-avatars.com/api/?name=Admin&background=9f65fd&color=fff&size=128&bold=true',
-    bio: 'Fundador y administrador de La Virtual Zone.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['founder'],
-    following: {
-      users: [],
-      clubs: [],
-      players: []
-    },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '2',
-    username: 'usuario',
-    email: 'usuario@test.com',
-    role: 'user',
-    level: 1,
-    xp: 0,
-    bio: 'Jugador casual que disfruta los torneos online.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: [],
-    following: {
-      users: [],
-      clubs: [],
-      players: []
-    },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '3',
-    username: 'entrenador',
-    email: 'dt@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Neón FC',
-    clubId: 'club4',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Apasionado entrenador de Neón FC.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: {
-      users: [],
-      clubs: ['Rayo Digital FC'],
-      players: []
-    },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '4',
-    username: 'jacksonhehe11',
-    email: 'jacksonhehe11@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Real Madrid',
-    clubId: 'club11',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'DT madridista con experiencia en torneos virtuales.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: {
-      users: [],
-      clubs: ['Rayo Digital FC'],
-      players: []
-    },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '5',
-    username: 'dtdefensor',
-    email: 'dtdefensor@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Defensores del Lag',
-    clubId: 'club3',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Especialista en defensas sólidas y tácticas cerradas.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '6',
-    username: 'dtneon',
-    email: 'dtneon@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Neón FC',
-    clubId: 'club4',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Fanático del juego ofensivo con tácticas de presión alta.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '7',
-    username: 'dthax',
-    email: 'dthax@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Haxball United',
-    clubId: 'club5',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Jugador experimentado en Haxball ahora en PES.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '8',
-    username: 'dtglitch',
-    email: 'dtglitch@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Glitchers 404',
-    clubId: 'club6',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Amante de la tecnología y los glitches.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '9',
-    username: 'dtcyber',
-    email: 'dtcyber@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Cyber Warriors',
-    clubId: 'club7',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Estratega con enfoque en ciencia ficción y ciberespacio.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '10',
-    username: 'dtbinary',
-    email: 'dtbinary@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Binary Strikers',
-    clubId: 'club8',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Analítico y preciso, amante de los datos y binarios.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '11',
-    username: 'dtconnect',
-    email: 'dtconnect@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Connection FC',
-    clubId: 'club9',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Entusiasta de la conectividad y las comunidades online.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '12',
-    username: 'dtgalaxy',
-    email: 'dtgalaxy@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Pixel Galaxy',
-    clubId: 'club10',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Explorador del universo virtual y fan de la ciencia ficción.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '13',
-    username: 'dtmadrid',
-    email: 'dtmadrid@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Real Madrid',
-    clubId: 'club11',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Hincha merengue con amplia trayectoria en ligas virtuales.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  },
-  {
-    id: '14',
-    username: 'dtquantum',
-    email: 'dtquantum@test.com',
-    role: 'dt',
-    level: 5,
-    xp: 500,
-    club: 'Quantum Rangers',
-    clubId: 'club12',
-    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Siempre buscando la próxima frontera táctica.',
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
-    password: TEST_PASSWORD
-  }
-];
-
-// Get users from localStorage or initialize with test users
-export const getUsers = (): User[] => {
-  const usersJson = localStorage.getItem(VZ_USERS_KEY);
-  if (!usersJson) {
-    localStorage.setItem(VZ_USERS_KEY, JSON.stringify(TEST_USERS));
-    return TEST_USERS;
-  }
-
-  return JSON.parse(usersJson);
-};
-
-// Save users to localStorage
-const saveUsers = (users: User[]): void => {
-  localStorage.setItem(VZ_USERS_KEY, JSON.stringify(users));
+export const getUsers = async (): Promise<User[]> => {
+  const { data, error } = await supabase.from('users').select('*');
+  if (error) throw new Error(error.message);
+  return (data || []) as User[];
 };
 
 // Get current logged in user
@@ -330,52 +58,39 @@ export const register = async (
 };
 
 // Add new user (admin)
-export const addUser = (
+export const addUser = async (
   email: string,
   username: string,
   role: 'user' | 'dt' | 'admin',
   clubId?: string,
   password = 'password'
-): User => {
-  const users = getUsers();
+): Promise<User> => {
+  const { data, error } = await supabase
+    .from('users')
+    .insert({
+      email,
+      username,
+      role,
+      clubId,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        username
+      )}&background=111827&color=fff&size=128`,
+      xp: 0,
+      createdAt: new Date().toISOString(),
+      status: 'active',
+      notifications: true,
+      lastLogin: new Date().toISOString(),
+      followers: 0,
+      following: 0,
+      password: hashPassword(password)
+    })
+    .select()
+    .single();
 
-  const usernameExists = users.some(
-    u => u.username.toLowerCase() === username.toLowerCase()
-  );
-  if (usernameExists) {
-    throw new Error('El nombre de usuario ya está en uso');
+  if (error || !data) {
+    throw new Error(error?.message || 'Error al crear usuario');
   }
-
-  const emailExists = users.some(
-    u => u.email.toLowerCase() === email.toLowerCase()
-  );
-  if (emailExists) {
-    throw new Error('El correo electrónico ya está en uso');
-  }
-
-  const newUser: User = {
-    id: `${Date.now()}`,
-    username,
-    email,
-    role,
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      username
-    )}&background=111827&color=fff&size=128`,
-    xp: 0,
-    clubId,
-    createdAt: new Date().toISOString(),
-    status: 'active',
-    notifications: true,
-    lastLogin: new Date().toISOString(),
-    followers: 0,
-    following: 0,
-    password: hashPassword(password)
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  return newUser;
+  return data as User;
 };
 
 // Login function
@@ -403,21 +118,22 @@ export const updateUser = async (updates: { email?: string; password?: string; d
 };
 
 // Get user by ID
-export const getUserById = (userId: string): User | null => {
-  const users = getUsers();
-  return users.find(u => u.id === userId) || null;
+export const getUserById = async (userId: string): Promise<User | null> => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  if (error && error.code !== 'PGRST116') {
+    throw new Error(error.message);
+  }
+  return (data as User) || null;
 };
 
 // Delete a user by ID and update localStorage
 export const deleteUser = async (id: string): Promise<void> => {
-  const users = getUsers();
-  const updatedUsers = users.filter(u => u.id !== id);
-  saveUsers(updatedUsers);
-
-  const currentUser = await getCurrentUser();
-  if (currentUser && currentUser.id === id) {
-    saveCurrentUser(null);
-  }
+  const { error } = await supabase.from('users').delete().eq('id', id);
+  if (error) throw new Error(error.message);
 };
 
 // Password reset token handling
