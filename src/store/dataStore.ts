@@ -23,7 +23,6 @@ import {
   dtPositions,
   dtRankings
 } from '../data/mockData';
-import { getClubs, getPlayers, getTournaments, getFixtures, getOffers } from '../utils/dataService';
 import {
   Tournament,
   Transfer,

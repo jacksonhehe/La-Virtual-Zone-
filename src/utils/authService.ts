@@ -1,15 +1,23 @@
 import { User } from '../types/shared';
-import { VZ_CURRENT_USER_KEY, VZ_RESET_TOKENS_KEY } from './storageKeys';
+import { VZ_CURRENT_USER_KEY } from './storageKeys';
 import { supabase } from '../supabaseClient';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
-const mapAuthUser = (authUser: SupabaseUser): User => ({
-  id: authUser.id,
-  username: (authUser.user_metadata as any)?.username || '',
-  email: authUser.email || '',
-  role: (authUser.user_metadata as any)?.role || 'user',
-  status: 'active'
-});
+interface UserMetadata {
+  username?: string;
+  role?: 'user' | 'dt' | 'admin';
+}
+
+const mapAuthUser = (authUser: SupabaseUser): User => {
+  const metadata = authUser.user_metadata as UserMetadata | null;
+  return {
+    id: authUser.id,
+    username: metadata?.username || '',
+    email: authUser.email || '',
+    role: metadata?.role || 'user',
+    status: 'active'
+  };
+};
 
 export const hashPassword = (pwd: string): string => {
   if (typeof btoa !== 'undefined') {
@@ -109,7 +117,7 @@ export const logout = async (): Promise<void> => {
 };
 
 // Update user function
-export const updateUser = async (updates: { email?: string; password?: string; data?: any }): Promise<User> => {
+export const updateUser = async (updates: { email?: string; password?: string; data?: Record<string, unknown> }): Promise<User> => {
   const { data, error } = await supabase.auth.updateUser(updates);
   if (error || !data.user) {
     throw new Error(error?.message || 'Error al actualizar');
@@ -134,47 +142,6 @@ export const getUserById = async (userId: string): Promise<User | null> => {
 export const deleteUser = async (id: string): Promise<void> => {
   const { error } = await supabase.from('users').delete().eq('id', id);
   if (error) throw new Error(error.message);
-};
-
-// Password reset token handling
-interface ResetToken {
-  token: string;
-  userId: string;
-  expiresAt: number;
-}
-
-const getResetTokens = (): ResetToken[] => {
-  const json = localStorage.getItem(VZ_RESET_TOKENS_KEY);
-  return json ? JSON.parse(json) : [];
-};
-
-const saveResetTokens = (tokens: ResetToken[]): void => {
-  localStorage.setItem(VZ_RESET_TOKENS_KEY, JSON.stringify(tokens));
-};
-
-const generateToken = (): string => {
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const arr = new Uint8Array(32);
-    crypto.getRandomValues(arr);
-    return Array.from(arr)
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
-  // Fallback for environments without Web Crypto API
-  let token = '';
-  for (let i = 0; i < 32; i++) {
-    token += Math.floor(Math.random() * 16).toString(16);
-  }
-  return token;
-};
-
-const sendResetEmail = (email: string, token: string): void => {
-  const apiKey = import.meta.env.VITE_SMTP_API_KEY;
-  if (!apiKey) {
-    console.log('SMTP service not configured');
-    return;
-  }
-  console.log(`Reset link for ${email}: /reset/${token}`);
 };
 
 export const requestPasswordReset = async (email: string): Promise<void> => {
