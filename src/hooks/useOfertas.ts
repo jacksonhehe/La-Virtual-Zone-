@@ -21,7 +21,17 @@ export default function useOfertas() {
       .channel('public:ofertas')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'ofertas' },
+        { event: 'INSERT', schema: 'public', table: 'ofertas' },
+        () => fetchOfertas()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'ofertas' },
+        () => fetchOfertas()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'ofertas' },
         () => fetchOfertas()
       )
       .subscribe();

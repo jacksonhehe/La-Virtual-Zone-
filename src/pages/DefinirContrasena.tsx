@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, Lock } from 'lucide-react';
-import { supabase } from '../supabaseClient';
+import { resetPassword } from '../utils/authService';
 import { z } from 'zod';
 
 const schema = z
@@ -34,13 +34,7 @@ const DefinirContrasena = () => {
       return;
     }
     try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: form.password
-      });
-      if (updateError) {
-        setError(updateError.message);
-        return;
-      }
+      await resetPassword(form.password);
       navigate('/login');
     } catch (err) {
       if (err instanceof Error) {

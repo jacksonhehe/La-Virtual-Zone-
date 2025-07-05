@@ -21,7 +21,17 @@ export default function useFixtures() {
       .channel('public:fixtures')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'fixtures' },
+        { event: 'INSERT', schema: 'public', table: 'fixtures' },
+        () => fetchFixtures()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'fixtures' },
+        () => fetchFixtures()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'fixtures' },
         () => fetchFixtures()
       )
       .subscribe();

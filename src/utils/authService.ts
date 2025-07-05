@@ -4,6 +4,16 @@ import {
   VZ_CURRENT_USER_KEY,
   VZ_RESET_TOKENS_KEY
 } from './storageKeys';
+import { supabase } from '../supabaseClient';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+
+const mapAuthUser = (authUser: SupabaseUser): User => ({
+  id: authUser.id,
+  username: (authUser.user_metadata as any)?.username || '',
+  email: authUser.email || '',
+  role: (authUser.user_metadata as any)?.role || 'user',
+  status: 'active'
+});
 
 // Simulated backend - using localStorage for persistence
 
@@ -287,9 +297,10 @@ const saveUsers = (users: User[]): void => {
 };
 
 // Get current logged in user
-export const getCurrentUser = (): User | null => {
-  const userJson = localStorage.getItem(VZ_CURRENT_USER_KEY);
-  return userJson ? JSON.parse(userJson) : null;
+export const getCurrentUser = async (): Promise<User | null> => {
+  const { data } = await supabase.auth.getSession();
+  const authUser = data.session?.user;
+  return authUser ? mapAuthUser(authUser) : null;
 };
 
 // Save current user to localStorage
@@ -302,50 +313,20 @@ export const saveCurrentUser = (user: User | null): void => {
 };
 
 // Register a new user and log them in
-export const register = (
+export const register = async (
   email: string,
   username: string,
   password: string
-): User => {
-  const users = getUsers();
-
-  const usernameExists = users.some(
-    u => u.username.toLowerCase() === username.toLowerCase()
-  );
-  if (usernameExists) {
-    throw new Error('El nombre de usuario ya está en uso');
-  }
-
-  const emailExists = users.some(
-    u => u.email.toLowerCase() === email.toLowerCase()
-  );
-  if (emailExists) {
-    throw new Error('El correo electrónico ya está en uso');
-  }
-
-  const newUser: User = {
-    id: `${Date.now()}`,
-    username,
+): Promise<User> => {
+  const { data, error } = await supabase.auth.signUp({
     email,
-    role: 'user',
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      username
-    )}&background=111827&color=fff&size=128`,
-    xp: 0,
-    joinDate: new Date().toISOString(),
-    status: 'active',
-    notifications: true,
-    lastLogin: new Date().toISOString(),
-    followers: 0,
-    following: 0,
-    password: hashPassword(password)
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-  saveCurrentUser(newUser);
-
-  return newUser;
+    password,
+    options: { data: { username } }
+  });
+  if (error || !data.user) {
+    throw new Error(error?.message || 'Error al registrar la cuenta');
+  }
+  return mapAuthUser(data.user);
 };
 
 // Add new user (admin)
@@ -398,53 +379,27 @@ export const addUser = (
 };
 
 // Login function
-export const login = (username: string, password: string): User => {
-  // Get users, falling back to test users if none exist
-  const users = getUsers();
-  
-  // Find user by username (case insensitive)
-  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  
-  if (!user) {
-    throw new Error('Usuario no encontrado');
+export const login = async (email: string, password: string): Promise<User> => {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data.user) {
+    throw new Error(error?.message || 'Error al iniciar sesión');
   }
-  
-  if (user.status !== 'active') {
-    throw new Error('Esta cuenta está suspendida o baneada');
-  }
-
-  if (user.password && user.password !== hashPassword(password)) {
-    throw new Error('Contraseña incorrecta');
-  }
-  
-  // Update last login time
-  user.lastLogin = new Date().toISOString();
-  saveUsers(users.map(u => u.id === user.id ? user : u));
-  
-  // Save the current user
-  saveCurrentUser(user);
-  
-  return user;
+  return mapAuthUser(data.user);
 };
 
 // Logout function
-export const logout = (): void => {
-  saveCurrentUser(null);
+export const logout = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message);
 };
 
 // Update user function
-export const updateUser = (user: User): User => {
-  const users = getUsers();
-  const updatedUsers = users.map(u => u.id === user.id ? user : u);
-  saveUsers(updatedUsers);
-  
-  // If updating the current user, update local storage
-  const currentUser = getCurrentUser();
-  if (currentUser && currentUser.id === user.id) {
-    saveCurrentUser(user);
+export const updateUser = async (updates: { email?: string; password?: string; data?: any }): Promise<User> => {
+  const { data, error } = await supabase.auth.updateUser(updates);
+  if (error || !data.user) {
+    throw new Error(error?.message || 'Error al actualizar');
   }
-  
-  return user;
+  return mapAuthUser(data.user);
 };
 
 // Get user by ID
@@ -454,12 +409,12 @@ export const getUserById = (userId: string): User | null => {
 };
 
 // Delete a user by ID and update localStorage
-export const deleteUser = (id: string): void => {
+export const deleteUser = async (id: string): Promise<void> => {
   const users = getUsers();
   const updatedUsers = users.filter(u => u.id !== id);
   saveUsers(updatedUsers);
 
-  const currentUser = getCurrentUser();
+  const currentUser = await getCurrentUser();
   if (currentUser && currentUser.id === id) {
     saveCurrentUser(null);
   }
@@ -506,33 +461,13 @@ const sendResetEmail = (email: string, token: string): void => {
   console.log(`Reset link for ${email}: /reset/${token}`);
 };
 
-export const requestPasswordReset = (email: string): void => {
-  const users = getUsers();
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  const tokens = getResetTokens().filter(t => t.expiresAt > Date.now());
-
-  if (user) {
-    const token = generateToken();
-    tokens.push({ token, userId: user.id, expiresAt: Date.now() + 60 * 60 * 1000 });
-    saveResetTokens(tokens);
-    sendResetEmail(email, token);
-  }
+export const requestPasswordReset = async (email: string): Promise<void> => {
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  if (error) throw new Error(error.message);
 };
 
-export const resetPassword = (token: string, password: string): boolean => {
-  const tokens = getResetTokens();
-  const entry = tokens.find(t => t.token === token);
-  if (!entry || entry.expiresAt < Date.now()) {
-    return false;
-  }
-  const users = getUsers();
-  const user = users.find(u => u.id === entry.userId);
-  if (!user) {
-    return false;
-  }
-  user.password = hashPassword(password);
-  saveUsers(users);
-  saveResetTokens(tokens.filter(t => t.token !== token));
-  return true;
+export const resetPassword = async (password: string): Promise<void> => {
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) throw new Error(error.message);
 };
  
