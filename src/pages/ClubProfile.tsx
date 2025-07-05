@@ -12,15 +12,22 @@ import {
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import { useDataStore } from '../store/dataStore';
-import useJugadores from '../hooks/useJugadores';
+import useClubes from '../hooks/useClubes';
+import useTorneos from '../hooks/useTorneos';
+import Spinner from '../components/Spinner';
 import { formatDate, formatCurrency, getMatchResult } from '../utils/helpers';
 
 const ClubProfile = () => {
   const { clubName } = useParams<{ clubName: string }>();
   const [activeTab, setActiveTab] = useState('overview');
   
-  const { clubs, tournaments } = useDataStore();
-  const { jugadores: players } = useJugadores();
+  const { clubes: clubs, loading: loadingClubes } = useClubes();
+  const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
+  const { players } = useDataStore();
+
+  if (loadingClubes || loadingTorneos) {
+    return <Spinner />;
+  }
   
   // Find club by slug
   const club = clubs.find(c => c.slug === clubName);
