@@ -10,13 +10,14 @@ Before running the project, make sure you have **Node.js** installed. Install th
 npm install
 ```
 
-After the packages are installed you can start the development server.
+Before starting the development server, run the `supabase/migrations/create_users_table.sql` migration to create the `users` table.
 
 ## Configuración
 
 1. Copia `.env.example` a `.env` en la raíz del proyecto.
 2. En tu panel de Supabase ve a **Settings → API** y copia la `Project URL` y la clave anónima.
 3. Asigna la URL a `SUPABASE_URL` (backend) y `VITE_SUPABASE_URL` (frontend); la clave anónima a `VITE_SUPABASE_ANON_KEY` en el archivo `.env`. Estas variables definen la conexión principal a la base de datos y reemplazan la configuración previa basada en `DATABASE_URL`.
+4. Ejecuta la migración `supabase/migrations/create_users_table.sql` en tu proyecto de Supabase antes de iniciar la aplicación.
 
 
 El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente de Supabase que se consume en la aplicación.
