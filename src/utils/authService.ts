@@ -2,7 +2,7 @@ import { User } from '../types/shared';
 import { VZ_CURRENT_USER_KEY } from './storageKeys';
 import { supabase } from '../supabaseClient';
 import { User as SupabaseUser } from '@supabase/supabase-js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 interface UserMetadata {
   username?: string;
@@ -20,9 +20,8 @@ const mapAuthUser = (authUser: SupabaseUser): User => {
   };
 };
 
-export const hashPassword = (pwd: string): string => {
-  const salt = bcrypt.genSaltSync(10);
-  return bcrypt.hashSync(pwd, salt);
+export const hashPassword = async (pwd: string): Promise<string> => {
+  return bcrypt.hash(pwd, 10);
 };
 
 export const getUsers = async (): Promise<User[]> => {
@@ -89,7 +88,7 @@ export const addUser = async (
       lastLogin: new Date().toISOString(),
       followers: 0,
       following: 0,
-      password: hashPassword(password)
+      password: await hashPassword(password)
     })
     .select()
     .single();
