@@ -58,7 +58,7 @@ const TournamentsAdminPanel = () => {
   });
 
   const activeTournaments = tournaments.filter(t => t.status === 'active').length;
-  const totalPrizePool = tournaments.reduce((sum, t) => sum + t.prizePool, 0);
+  const totalPrizePool = tournaments.reduce((sum, t) => sum + (t.prizePool ?? 0), 0);
   const totalTeams = tournaments.reduce((sum, t) => sum + t.currentTeams, 0);
 
   const getStatusColor = (status: string) => {
@@ -208,7 +208,9 @@ const TournamentsAdminPanel = () => {
                       Premio
                     </div>
                     <div className="text-white font-medium">
-                      €{tournament.prizePool.toLocaleString()}
+                      {typeof tournament.prizePool === 'number'
+                        ? `€${tournament.prizePool.toLocaleString()}`
+                        : 'N/A'}
                     </div>
                   </div>
                 </div>
