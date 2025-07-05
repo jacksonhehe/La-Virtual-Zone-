@@ -1,10 +1,11 @@
 import  { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useGlobalStore } from '../store/globalStore';
-import Usuarios from '../pages/admin/Usuarios';
 
 vi.mock('../store/globalStore');
+
+import { useGlobalStore } from '../store/globalStore';
+import Usuarios from '../pages/admin/Usuarios';
 
 const mockStore = {
   users: [
@@ -36,20 +37,20 @@ describe('Usuarios Component', () => {
 
   it('should filter users by search term', async () => {
     render(<Usuarios />);
-    const searchInput = screen.getByPlaceholderText('Buscar usuarios...');
-    
+    const searchInput = screen.getByPlaceholderText('Buscar por usuario o email...');
+
     fireEvent.change(searchInput, { target: { value: 'test' } });
-    
+
     expect(screen.getByText('testuser')).toBeInTheDocument();
   });
 
   it('should open new user modal', () => {
     render(<Usuarios />);
     const newUserButton = screen.getByText('Nuevo Usuario');
-    
+
     fireEvent.click(newUserButton);
-    
-    expect(screen.getByText('Nuevo Usuario')).toBeInTheDocument();
+
+    expect(screen.getAllByText('Nuevo Usuario').length).toBeGreaterThan(1);
   });
 });
  
