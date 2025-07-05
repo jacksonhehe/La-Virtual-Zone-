@@ -16,7 +16,7 @@ After the packages are installed you can start the development server.
 
 1. Copia `.env.example` a `.env` en la raíz del proyecto.
 2. En tu panel de Supabase ve a **Settings → API** y copia la `Project URL` y la clave anónima.
-3. Asigna esos valores a `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env`. Estas variables definen la conexión principal a la base de datos y reemplazan la configuración previa basada en `DATABASE_URL`.
+3. Asigna la URL a `SUPABASE_URL` (backend) y `VITE_SUPABASE_URL` (frontend); la clave anónima a `VITE_SUPABASE_ANON_KEY` en el archivo `.env`. Estas variables definen la conexión principal a la base de datos y reemplazan la configuración previa basada en `DATABASE_URL`.
 
 
 El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente de Supabase que se consume en la aplicación.
