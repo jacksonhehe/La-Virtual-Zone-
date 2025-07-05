@@ -18,7 +18,7 @@ export class AuthService {
     const { data, error } = await this.supabase
       .getClient()
       .auth.signInWithPassword({ email, password });
-    if (error || !data.session) throw new UnauthorizedException(error.message);
+    if (error || !data.session) throw new UnauthorizedException(error?.message);
     res.cookie('refreshToken', data.session.refresh_token, {
       httpOnly: true,
       path: '/auth/refresh',
@@ -30,7 +30,7 @@ export class AuthService {
     const { data, error } = await this.supabase
       .getClient()
       .auth.setSession({ refresh_token: token, access_token: '' });
-    if (error || !data.session) throw new UnauthorizedException(error.message);
+    if (error || !data.session) throw new UnauthorizedException(error?.message);
     res.cookie('refreshToken', data.session.refresh_token, {
       httpOnly: true,
       path: '/auth/refresh',
