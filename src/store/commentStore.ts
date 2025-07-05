@@ -1,61 +1,74 @@
 import { create } from 'zustand';
-import { Comment } from '../types';
-import { VZ_COMMENTS_KEY } from '../utils/storageKeys';
-
-const loadComments = (): Comment[] => {
-  const json = localStorage.getItem(VZ_COMMENTS_KEY);
-  return json ? JSON.parse(json) : [];
-};
-
-const saveComments = (comments: Comment[]) => {
-  localStorage.setItem(VZ_COMMENTS_KEY, JSON.stringify(comments));
-};
+import { supabase } from '../supabaseClient';
+import type { Comment } from '../types';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 interface CommentState {
   comments: Comment[];
-  addComment: (comment: Comment) => void;
-  reportComment: (id: string) => void;
-  approveComment: (id: string) => void;
-  hideComment: (id: string) => void;
-  deleteComment: (id: string) => void;
+  loading: boolean;
+  fetchComments: () => Promise<void>;
+  addComment: (comment: Comment) => Promise<void>;
+  reportComment: (id: string) => Promise<void>;
+  approveComment: (id: string) => Promise<void>;
+  hideComment: (id: string) => Promise<void>;
+  deleteComment: (id: string) => Promise<void>;
 }
 
-export const useCommentStore = create<CommentState>(set => ({
-  comments: loadComments(),
-  addComment: comment =>
-    set(state => {
-      const updated = [comment, ...state.comments];
-      saveComments(updated);
-      return { comments: updated };
-    }),
-  reportComment: id =>
-    set(state => {
-      const updated = state.comments.map(c =>
-        c.id === id ? { ...c, reported: true } : c
-      );
-      saveComments(updated);
-      return { comments: updated };
-    }),
-  approveComment: id =>
-    set(state => {
-      const updated = state.comments.map(c =>
-        c.id === id ? { ...c, reported: false, hidden: false } : c
-      );
-      saveComments(updated);
-      return { comments: updated };
-    }),
-  hideComment: id =>
-    set(state => {
-      const updated = state.comments.map(c =>
-        c.id === id ? { ...c, hidden: true, reported: false } : c
-      );
-      saveComments(updated);
-      return { comments: updated };
-    }),
-  deleteComment: id =>
-    set(state => {
-      const updated = state.comments.filter(c => c.id !== id);
-      saveComments(updated);
-      return { comments: updated };
-    }),
+let channel: RealtimeChannel | null = null;
+
+export const useCommentStore = create<CommentState>((set) => ({
+  comments: [],
+  loading: false,
+
+  fetchComments: async () => {
+    set({ loading: true });
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .order('date', { ascending: false });
+    if (!error && data) {
+      set({ comments: data as Comment[] });
+    }
+    set({ loading: false });
+  },
+
+  addComment: async (comment) => {
+    await supabase.from('comments').insert(comment);
+  },
+
+  reportComment: async (id) => {
+    await supabase.from('comments').update({ reported: true }).eq('id', id);
+  },
+
+  approveComment: async (id) => {
+    await supabase
+      .from('comments')
+      .update({ reported: false, hidden: false })
+      .eq('id', id);
+  },
+
+  hideComment: async (id) => {
+    await supabase
+      .from('comments')
+      .update({ hidden: true, reported: false })
+      .eq('id', id);
+  },
+
+  deleteComment: async (id) => {
+    await supabase.from('comments').delete().eq('id', id);
+  },
 }));
+
+const init = () => {
+  useCommentStore.getState().fetchComments();
+  channel = supabase
+    .channel('public:comments')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'comments' },
+      () => useCommentStore.getState().fetchComments()
+    )
+    .subscribe();
+};
+
+init();

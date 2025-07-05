@@ -23,7 +23,9 @@ El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente
 
 ## Supabase Setup
 
-La aplicación utiliza Supabase para sincronizar en tiempo real los datos de algunos recursos. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures` y `ofertas` dentro de tu proyecto de Supabase.
+La aplicación utiliza Supabase para sincronizar en tiempo real los datos de algunos recursos. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures`, `ofertas` y `comments` dentro de tu proyecto de Supabase.
+
+Para mayor comodidad se incluye la migración SQL `supabase/migrations/add_comments_table.sql` que puedes ejecutar desde la consola de Supabase para crear la tabla `comments` con los campos necesarios.
 
 Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env` con los valores proporcionados por Supabase. Si el proyecto incluye migraciones para estas tablas, ejecútalas con:
 
