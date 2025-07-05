@@ -42,7 +42,7 @@ Run the development server with hot reload:
 ```bash
 npm run dev
 
-To start the API server run:
+To start the API server (which now connects to Supabase) run:
 ```bash
 (cd server && npm install && npm run start:dev)
 ```
@@ -93,7 +93,7 @@ starting the E2E tests.
 To access the administrator interface:
 
 1. Start the development server with `npm run dev`.
-nTo start the API server run:
+   To start the API server (connected to Supabase) run:
 ```bash
 (cd server && npm install && npm run start:dev)
 ```
@@ -132,7 +132,7 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 ## Data Persistence
 
-The platform now stores all data in a PostgreSQL database managed by Prisma. Run `npm run start:dev` inside `server/` to start the API.
+The backend now connects directly to Supabase, so no local PostgreSQL setup is required. Run `npm run start:dev` inside `server/` to start the API.
 
 ## Recuperar contraseña
 

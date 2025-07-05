@@ -1,49 +1,40 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwt: JwtService,
-  ) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async validateUser(email: string, pass: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new UnauthorizedException();
-    const valid = await bcrypt.compare(pass, user.password);
-    if (!valid) throw new UnauthorizedException();
-    const { password, ...result } = user;
-    return result;
+    const { data, error } = await this.supabase
+      .getClient()
+      .auth.signInWithPassword({ email, password: pass });
+    if (error || !data.session) throw new UnauthorizedException();
+    const { user } = data.session;
+    return { id: user.id, role: (user.user_metadata as any)?.role || 'user' };
   }
 
-  async login(res: any, user: any) {
-    const payload = { sub: user.id, role: user.role };
-    const accessToken = this.jwt.sign(payload, { expiresIn: '15m' });
-    const refreshToken = this.jwt.sign(payload, { expiresIn: '7d' });
-    await this.prisma.refreshToken.create({
-      data: {
-        token: refreshToken,
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
+  async login(res: any, email: string, password: string) {
+    const { data, error } = await this.supabase
+      .getClient()
+      .auth.signInWithPassword({ email, password });
+    if (error || !data.session) throw new UnauthorizedException(error.message);
+    res.cookie('refreshToken', data.session.refresh_token, {
+      httpOnly: true,
+      path: '/auth/refresh',
     });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, path: '/auth/refresh' });
-    return { accessToken };
+    return { accessToken: data.session.access_token };
   }
 
   async refresh(res: any, token: string) {
-    const stored = await this.prisma.refreshToken.findUnique({ where: { token } });
-    if (!stored || stored.expiresAt < new Date()) throw new UnauthorizedException();
-    const user = await this.prisma.user.findUnique({ where: { id: stored.userId } });
-    if (!user) throw new UnauthorizedException();
-    const payload = { sub: user.id, role: user.role };
-    const accessToken = this.jwt.sign(payload, { expiresIn: '15m' });
-    const refreshToken = this.jwt.sign(payload, { expiresIn: '7d' });
-    await this.prisma.refreshToken.update({ where: { token }, data: { token: refreshToken, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, path: '/auth/refresh' });
-    return { accessToken };
+    const { data, error } = await this.supabase
+      .getClient()
+      .auth.setSession({ refresh_token: token, access_token: '' });
+    if (error || !data.session) throw new UnauthorizedException(error.message);
+    res.cookie('refreshToken', data.session.refresh_token, {
+      httpOnly: true,
+      path: '/auth/refresh',
+    });
+    return { accessToken: data.session.access_token };
   }
 }
