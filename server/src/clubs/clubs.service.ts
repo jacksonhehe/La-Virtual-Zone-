@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class ClubsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   all() {
-    return this.prisma.club.findMany();
+    return this.supabase.getClient().from('clubs').select('*');
   }
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { TransferOffer } from '../types';
+import { getOffers } from '../utils/dataService';
 
 export default function useOfertas() {
   const [ofertas, setOfertas] = useState<TransferOffer[]>([]);
@@ -8,10 +9,8 @@ export default function useOfertas() {
 
   const fetchOfertas = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('ofertas').select('*').order('id');
-    if (!error && data) {
-      setOfertas(data as TransferOffer[]);
-    }
+    const data = await getOffers();
+    setOfertas(data);
     setLoading(false);
   }, []);
 

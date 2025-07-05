@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { Club } from '../types/shared';
+import { getClubs } from '../utils/dataService';
 
 export default function useClubes() {
   const [clubes, setClubes] = useState<Club[]>([]);
@@ -8,10 +9,8 @@ export default function useClubes() {
 
   const fetchClubes = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('clubes').select('*').order('id');
-    if (!error && data) {
-      setClubes(data as Club[]);
-    }
+    const data = await getClubs();
+    setClubes(data);
     setLoading(false);
   }, []);
 
