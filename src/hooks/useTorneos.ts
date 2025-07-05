@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { Tournament } from '../types';
+import { getTournaments } from '../utils/dataService';
 
 export default function useTorneos() {
   const [torneos, setTorneos] = useState<Tournament[]>([]);
@@ -8,10 +9,8 @@ export default function useTorneos() {
 
   const fetchTorneos = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('torneos').select('*').order('id');
-    if (!error && data) {
-      setTorneos(data as Tournament[]);
-    }
+    const data = await getTournaments();
+    setTorneos(data);
     setLoading(false);
   }, []);
 

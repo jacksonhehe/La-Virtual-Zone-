@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { Player } from '../types/shared';
+import { getPlayers } from '../utils/dataService';
 
 export default function useJugadores() {
   const [jugadores, setJugadores] = useState<Player[]>([]);
@@ -8,10 +9,8 @@ export default function useJugadores() {
 
   const fetchJugadores = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('jugadores').select('*').order('id');
-    if (!error && data) {
-      setJugadores(data as Player[]);
-    }
+    const data = await getPlayers();
+    setJugadores(data);
     setLoading(false);
   }, []);
 

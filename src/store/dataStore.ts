@@ -7,7 +7,6 @@ import {
   deleteUser as persistDeleteUser
 } from '../utils/authService';
 import {
-  tournaments,
   transfers,
   marketStatus,
   leagueStandings,
@@ -22,11 +21,9 @@ import {
   dtEvents,
   dtNews,
   dtPositions,
-  dtRankings,
-  players as defaultPlayers,
-  offers as defaultOffers
+  dtRankings
 } from '../data/mockData';
-import seed from '../data/seed.json';
+import { getClubs, getPlayers, getTournaments, getFixtures, getOffers } from '../utils/dataService';
 import {
   Tournament,
   Transfer,
@@ -47,24 +44,19 @@ import {
 } from '../types';
 import { Club, Player, User } from '../types/shared';
 
-const initialClubs: Club[] = seed.clubs as Club[];
-const initialPlayers: Player[] = defaultPlayers as Player[];
-const initialOffers: TransferOffer[] = defaultOffers as TransferOffer[];
-const initialUser = useAuthStore.getState().user;
-const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
+const initialClubs: Club[] = [];
+const initialPlayers: Player[] = [];
+const initialOffers: TransferOffer[] = [];
 const initialClub: DtClub = {
-  id: baseClub.id,
-  name: baseClub.name,
-  slug: baseClub.slug,
-  logo: baseClub.logo,
+  id: '',
+  name: '',
+  slug: '',
+  logo: '',
   formation: '4-3-3',
-  budget: baseClub.budget,
-  players: initialPlayers.filter(p => p.clubId === baseClub.id)
+  budget: 0,
+  players: []
 };
-const initialFixtures = tournaments[0].matches
-  .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
-  .slice(0, 6)
-  .map(m => ({ ...m, played: m.status === 'finished' }));
+const initialFixtures: DtFixture[] = [];
 
 const refreshClubPlayers = (players: Player[], clubId: string) =>
   players.filter(p => p.clubId === clubId);
@@ -125,7 +117,7 @@ interface DataState {
 export const useDataStore = create<DataState>((set) => ({
   clubs: initialClubs,
   players: initialPlayers,
-  tournaments,
+  tournaments: [],
   transfers,
   offers: initialOffers,
   standings: leagueStandings,
@@ -371,4 +363,25 @@ export const useDataStore = create<DataState>((set) => ({
 useAuthStore.subscribe(state => {
   useDataStore.getState().setClubFromUser(state.user);
 });
+
+(async () => {
+  const [clubs, players, tournaments, fixtures, offers] = await Promise.all([
+    getClubs(),
+    getPlayers(),
+    getTournaments(),
+    getFixtures(),
+    getOffers()
+  ]);
+
+  if (clubs.length) useDataStore.getState().updateClubs(clubs);
+  if (players.length) useDataStore.getState().updatePlayers(players);
+  if (tournaments.length) useDataStore.getState().updateTournaments(tournaments);
+  if (fixtures.length) useDataStore.setState({ fixtures });
+  if (offers.length) useDataStore.getState().updateOffers(offers);
+
+  const user = useAuthStore.getState().user;
+  if (user) {
+    useDataStore.getState().setClubFromUser(user);
+  }
+})();
  
