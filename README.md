@@ -157,6 +157,13 @@ El archivo `src/data/seed.json` contiene los valores iniciales que puedes import
 
 ## Health Checks
 
+Comprueba que la API está activa haciendo una solicitud a `/healthz`.
+El servidor responde con un **HTTP 200** si el servicio se está ejecutando.
+
+```bash
+curl -i http://localhost:3000/healthz
+```
+
 ## CI/CD
 
 El proyecto se despliega automáticamente mediante **GitHub Actions**. El flujo ejecuta `npm run test` y las pruebas de `server/`, mide el rendimiento con Lighthouse CI y publica el front end en **Vercel** y el back end en **Fly.io**.
