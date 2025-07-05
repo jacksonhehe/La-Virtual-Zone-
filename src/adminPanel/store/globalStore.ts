@@ -54,6 +54,9 @@ interface GlobalStore {
   removeMatch: (id: string) => void;
 
   // Tournaments
+  addTournament: (tournament: Tournament) => void;
+  updateTournament: (tournament: Tournament) => void;
+  removeTournament: (id: string) => void;
   updateTournamentStatus: (id: string, status: Tournament['status']) => void;
   
   // Transfers
@@ -395,6 +398,26 @@ export const useGlobalStore = create<GlobalStore>()(
 
     removeMatch: id => {
       set(state => ({ matches: state.matches.filter(m => m.id !== id) }));
+      persist();
+    },
+
+    addTournament: tournament => {
+      set(state => ({ tournaments: [...state.tournaments, tournament] }));
+      useDataStore.getState().addTournament(tournament);
+      persist();
+    },
+
+    updateTournament: tournament => {
+      set(state => ({
+        tournaments: state.tournaments.map(t =>
+          t.id === tournament.id ? tournament : t
+        )
+      }));
+      persist();
+    },
+
+    removeTournament: id => {
+      set(state => ({ tournaments: state.tournaments.filter(t => t.id !== id) }));
       persist();
     },
 
