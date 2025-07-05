@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '../supabaseClient';
 import type { Comment } from '../types';
-import type { RealtimeChannel } from '@supabase/supabase-js';
 
 interface CommentState {
   comments: Comment[];
@@ -14,7 +13,6 @@ interface CommentState {
   deleteComment: (id: string) => Promise<void>;
 }
 
-let channel: RealtimeChannel | null = null;
 
 export const useCommentStore = create<CommentState>((set) => ({
   comments: [],
@@ -61,7 +59,7 @@ export const useCommentStore = create<CommentState>((set) => ({
 
 const init = () => {
   useCommentStore.getState().fetchComments();
-  channel = supabase
+  supabase
     .channel('public:comments')
     .on(
       'postgres_changes',
