@@ -4,7 +4,7 @@ describe('Admin user management flow', () => {
   it('creates a new user from the admin panel', () => {
     cy.visit('/login');
 
-    cy.get('input[type="text"]').first().type('admin');
+    cy.get('input[type="email"]').type('admin@virtualzone.com');
     cy.get('input[type="password"]').type('password');
     cy.get('button[type="submit"]').click();
 
