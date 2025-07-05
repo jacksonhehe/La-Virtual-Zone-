@@ -63,9 +63,9 @@ const TournamentDetail = () => {
   
   return (
     <div>
-      <PageHeader 
-        title={tournament.name} 
-        subtitle={`${tournament.format === 'league' ? 'Liga' : tournament.format === 'cup' ? 'Copa' : 'Playoff'} • ${tournament.status === 'ongoing' ? 'En curso' : tournament.status === 'open' ? 'Inscripciones abiertas' : 'Finalizado'}`}
+      <PageHeader
+        title={tournament.name}
+        subtitle={`${tournament.format === 'league' ? 'Liga' : tournament.format === 'cup' ? 'Copa' : 'Playoff'} • ${tournament.status === 'active' ? 'En curso' : tournament.status === 'upcoming' ? 'Próximamente' : 'Finalizado'}`}
         image={tournament.image}
       />
       
@@ -147,8 +147,8 @@ const TournamentDetail = () => {
                     <h3 className="text-xl font-bold mb-4">Sobre el torneo</h3>
                     <p className="text-gray-300 mb-6">
                       {tournament.name} es {tournament.format === 'league' ? 'una liga' : tournament.format === 'cup' ? 'un torneo de copa' : 'un playoff'} organizado por La Virtual Zone para la temporada 2025.
-                      {tournament.status === 'ongoing' && ' Actualmente se encuentra en fase de grupos con partidos disputándose cada semana.'}
-                      {tournament.status === 'open' && ' Las inscripciones están abiertas y se cerrarán próximamente. ¡Regístrate para participar!'}
+                      {tournament.status === 'active' && ' Actualmente se encuentra en fase de grupos con partidos disputándose cada semana.'}
+                      {tournament.status === 'upcoming' && ' Las inscripciones están abiertas y se cerrarán próximamente. ¡Regístrate para participar!'}
                       {tournament.status === 'finished' && ` El torneo ha finalizado y el campeón fue ${tournament.winner}.`}
                     </p>
                     
@@ -195,7 +195,7 @@ const TournamentDetail = () => {
                       </div>
                     </div>
                     
-                    {tournament.status === 'open' && (
+                    {tournament.status === 'upcoming' && (
                       <div className="bg-primary/10 border border-primary rounded-lg p-6 mt-8">
                         <h3 className="text-xl font-bold mb-2">Inscripciones abiertas</h3>
                         <p className="text-gray-300 mb-4">
@@ -242,7 +242,7 @@ const TournamentDetail = () => {
                         />
                       ))}
                       
-                      {tournament.status === 'open' && tournament.participants.length < 8 && (
+                      {tournament.status === 'upcoming' && tournament.participants.length < 8 && (
                         <div className="bg-dark rounded-lg p-4 flex items-center justify-center border border-dashed border-gray-700">
                           <div className="text-center">
                             <p className="font-medium mb-2">Inscripciones abiertas</p>
@@ -265,10 +265,10 @@ const TournamentDetail = () => {
                         <h4 className="font-medium mb-4">Cuadro Final</h4>
                         <div className="h-60 flex items-center justify-center">
                           <p className="text-gray-400">
-                            {tournament.status === 'open' 
-                              ? 'El cuadro se definirá al cerrarse las inscripciones' 
-                              : tournament.status === 'ongoing' 
-                                ? 'El torneo está en progreso, el cuadro se actualiza tras cada fase' 
+                            {tournament.status === 'upcoming'
+                              ? 'El cuadro se definirá al cerrarse las inscripciones'
+                              : tournament.status === 'active'
+                                ? 'El torneo está en progreso, el cuadro se actualiza tras cada fase'
                                 : 'Torneo finalizado'}
                           </p>
                         </div>
@@ -278,7 +278,7 @@ const TournamentDetail = () => {
                         <div className="bg-dark-lighter rounded-lg p-4 mb-6">
                           <h4 className="font-medium mb-4">Próximos partidos</h4>
                           
-                          {tournament.status !== 'open' ? (
+                          {tournament.status !== 'upcoming' ? (
                             <div className="space-y-3">
                               {tournamentMatches.map(match => (
                                 <div key={match.id} className="bg-dark rounded-lg p-3 flex justify-between items-center">
@@ -312,7 +312,7 @@ const TournamentDetail = () => {
                           )}
                         </div>
                         
-                        {tournament.status !== 'open' && (
+                        {tournament.status !== 'upcoming' && (
                           <div className="bg-dark-lighter rounded-lg p-4">
                             <h4 className="font-medium mb-4">Tabla de posiciones</h4>
                             
@@ -382,7 +382,7 @@ const TournamentDetail = () => {
                   <div>
                     <h3 className="text-xl font-bold mb-6">Tabla de goleadores</h3>
                     
-                    {tournament.status !== 'open' ? (
+                    {tournament.status !== 'upcoming' ? (
                       <div className="bg-dark-lighter rounded-lg overflow-hidden">
                         <table className="w-full">
                           <thead>
@@ -434,7 +434,7 @@ const TournamentDetail = () => {
                   <div>
                     <h3 className="text-xl font-bold mb-6">Galería</h3>
                     
-                    {tournament.status !== 'open' ? (
+                    {tournament.status !== 'upcoming' ? (
                       <div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                           <div className="bg-dark-lighter rounded-lg overflow-hidden aspect-video">
@@ -491,12 +491,12 @@ const TournamentDetail = () => {
                   <p className="flex items-center">
                     <span className={`
                       inline-block w-2 h-2 rounded-full mr-2
-                      ${tournament.status === 'ongoing' ? 'bg-neon-green' : ''}
-                      ${tournament.status === 'open' ? 'bg-neon-blue' : ''}
+                      ${tournament.status === 'active' ? 'bg-neon-green' : ''}
+                      ${tournament.status === 'upcoming' ? 'bg-neon-blue' : ''}
                       ${tournament.status === 'finished' ? 'bg-gray-500' : ''}
                     `}></span>
                     <span>
-                      {tournament.status === 'ongoing' ? 'En curso' : tournament.status === 'open' ? 'Inscripciones abiertas' : 'Finalizado'}
+                      {tournament.status === 'active' ? 'En curso' : tournament.status === 'upcoming' ? 'Próximamente' : 'Finalizado'}
                     </span>
                   </p>
                 </div>
@@ -525,7 +525,7 @@ const TournamentDetail = () => {
               </div>
             </div>
             
-            {tournament.status === 'open' && (
+            {tournament.status === 'upcoming' && (
               <div className="bg-primary/10 border border-primary rounded-lg p-6 mb-6">
                 <h3 className="font-bold mb-3">¡Inscríbete ahora!</h3>
                 <p className="text-sm text-gray-300 mb-4">
@@ -564,7 +564,7 @@ const TournamentDetail = () => {
               </button>
             </div>
             
-            {tournament.status !== 'open' && (
+            {tournament.status !== 'upcoming' && (
               <div className="bg-dark-light border border-gray-800 rounded-lg p-4">
                 <h3 className="font-bold mb-4">Top goleadores</h3>
                 
