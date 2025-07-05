@@ -220,10 +220,11 @@ const defaultData: AdminData = {
 
 export const useGlobalStore = create<GlobalStore>()(
   subscribeWithSelector<GlobalStore>((set, get) => {
-  const initial = loadAdminData(defaultData);
+  const initial = { ...defaultData };
+  loadAdminData(defaultData).then(data => set(data));
 
-  const persist = () => {
-      saveAdminData({
+  const persist = async () => {
+      await saveAdminData({
         users: get().users,
         clubs: get().clubs,
         players: get().players,
