@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
-import Spinner from '../components/Spinner';
-const DtDashboard = lazy(() => import('./DtDashboard'));
+
 import { useAuthStore } from '../store/authStore';
 import { 
   Trophy, 
@@ -28,23 +26,9 @@ const LigaMaster = () => {
   const { torneos: tournaments, loading: loadingTorneos, error: torneosError } = useTorneos();
   const { players, standings, marketStatus } = useDataStore();
 
-  if (isAuthenticated && user?.role === 'dt') {
-    if (user.clubId) {
-      const assignedClub = clubes.find(c => c.id === user.clubId);
-      if (assignedClub) {
-        return (
-          <Suspense fallback={<Spinner />}>
-            <DtDashboard />
-          </Suspense>
-        );
-      }
-    }
-    return (
-      <div className="p-8 text-center">
-        <p>No tienes un club asignado. Contacta a un administrador.</p>
-      </div>
-    );
-  }
+  const assignedClub = isAuthenticated && user?.clubId
+    ? clubes.find(c => c.id === user.clubId)
+    : undefined;
   
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
@@ -100,6 +84,14 @@ const topScorers = [...players]
           </nav>
         )}
       />
+
+      {assignedClub && (
+        <div className="container mx-auto px-4 mb-4 text-right">
+          <Link to="/dt-dashboard" className="btn-primary inline-block">
+            Mi Club
+          </Link>
+        </div>
+      )}
       
       <div className="container mx-auto px-4 py-8">
         {/* Stats cards */}
