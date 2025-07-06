@@ -22,8 +22,8 @@ import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
   const { user } = useAuthStore();
-  const { clubes, loading: loadingClubes } = useClubes();
-  const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
+  const { clubes, loading: loadingClubes, error: clubesError } = useClubes();
+  const { torneos: tournaments, loading: loadingTorneos, error: torneosError } = useTorneos();
   const { players, standings, marketStatus } = useDataStore();
 
   if (user?.role === 'dt') {
@@ -42,9 +42,18 @@ const LigaMaster = () => {
   
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
+  const hasError = Boolean(clubesError || torneosError);
 
-  if (loadingClubes || loadingTorneos || !ligaMaster) {
+  if (loadingClubes || loadingTorneos) {
     return <DashboardSkeleton />;
+  }
+
+  if (!ligaMaster) {
+    return (
+      <div className="p-8 text-center">
+        <p>No se encontró la información de la Liga Master.</p>
+      </div>
+    );
   }
   
   // Get upcoming matches
@@ -70,6 +79,11 @@ const topScorers = [...players]
   
   return (
     <div>
+      {hasError && (
+        <div className="bg-yellow-900 text-yellow-300 p-4 text-center">
+          Ocurrió un problema al conectar con la base de datos. Se muestran datos de ejemplo.
+        </div>
+      )}
       <PageHeader
         title={ligaMaster.name}
         subtitle={ligaMaster.description}

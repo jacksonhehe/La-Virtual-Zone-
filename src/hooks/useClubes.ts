@@ -6,11 +6,13 @@ import { getClubs } from '../utils/dataService';
 export default function useClubes() {
   const [clubes, setClubes] = useState<Club[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const fetchClubes = useCallback(async () => {
     setLoading(true);
-    const data = await getClubs();
+    const { data, error } = await getClubs();
     setClubes(data);
+    setError(error ?? null);
     setLoading(false);
   }, []);
 
@@ -39,5 +41,5 @@ export default function useClubes() {
     };
   }, [fetchClubes]);
 
-  return { clubes, loading, refresh: fetchClubes };
+  return { clubes, loading, error, refresh: fetchClubes };
 }

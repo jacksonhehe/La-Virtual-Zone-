@@ -9,7 +9,7 @@ export default function useOfertas() {
 
   const fetchOfertas = useCallback(async () => {
     setLoading(true);
-    const data = await getOffers();
+    const { data } = await getOffers();
     setOfertas(data);
     setLoading(false);
   }, []);

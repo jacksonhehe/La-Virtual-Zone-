@@ -9,7 +9,7 @@ export default function useJugadores() {
 
   const fetchJugadores = useCallback(async () => {
     setLoading(true);
-    const data = await getPlayers();
+    const { data } = await getPlayers();
     setJugadores(data);
     setLoading(false);
   }, []);

@@ -9,7 +9,7 @@ export default function useFixtures() {
 
   const fetchFixtures = useCallback(async () => {
     setLoading(true);
-    const data = await getFixtures();
+    const { data } = await getFixtures();
     setFixtures(data);
     setLoading(false);
   }, []);
