@@ -6,11 +6,13 @@ import { getTournaments } from '../utils/dataService';
 export default function useTorneos() {
   const [torneos, setTorneos] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const fetchTorneos = useCallback(async () => {
     setLoading(true);
-    const data = await getTournaments();
+    const { data, error } = await getTournaments();
     setTorneos(data);
+    setError(error ?? null);
     setLoading(false);
   }, []);
 
@@ -39,5 +41,5 @@ export default function useTorneos() {
     };
   }, [fetchTorneos]);
 
-  return { torneos, loading, refresh: fetchTorneos };
+  return { torneos, loading, error, refresh: fetchTorneos };
 }
