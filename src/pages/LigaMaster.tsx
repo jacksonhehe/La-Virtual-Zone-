@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import DtDashboard from './DtDashboard';
+import { Suspense, lazy } from 'react';
+import Spinner from '../components/Spinner';
+const DtDashboard = lazy(() => import('./DtDashboard'));
 import { useAuthStore } from '../store/authStore';
 import { 
   Trophy, 
@@ -30,7 +32,11 @@ const LigaMaster = () => {
     if (user.clubId) {
       const assignedClub = clubes.find(c => c.id === user.clubId);
       if (assignedClub) {
-        return <DtDashboard />;
+        return (
+          <Suspense fallback={<Spinner />}>
+            <DtDashboard />
+          </Suspense>
+        );
       }
     }
     return (
