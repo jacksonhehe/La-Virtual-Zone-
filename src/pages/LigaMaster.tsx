@@ -21,12 +21,12 @@ import useTorneos from '../hooks/useTorneos';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
   const { clubes, loading: loadingClubes, error: clubesError } = useClubes();
   const { torneos: tournaments, loading: loadingTorneos, error: torneosError } = useTorneos();
   const { players, standings, marketStatus } = useDataStore();
 
-  if (user?.role === 'dt') {
+  if (isAuthenticated && user?.role === 'dt') {
     if (user.clubId) {
       const assignedClub = clubes.find(c => c.id === user.clubId);
       if (assignedClub) {
