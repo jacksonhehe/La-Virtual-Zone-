@@ -35,7 +35,12 @@ export const getUsers = async (): Promise<User[]> => {
 export const getCurrentUser = async (): Promise<User | null> => {
   const { data } = await supabase.auth.getSession();
   const authUser = data.session?.user;
-  return authUser ? mapAuthUser(authUser) : null;
+  if (!authUser) return null;
+
+  const base = await getUserById(authUser.id);
+  const mapped = mapAuthUser(authUser);
+
+  return base ? { ...base, ...mapped } : mapped;
 };
 
 // Save current user to localStorage
