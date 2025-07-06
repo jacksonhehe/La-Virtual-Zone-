@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useGlobalStore } from '../src/adminPanel/store/globalStore';
 import {
@@ -7,6 +7,13 @@ import {
   useFinishedTournaments
 } from '../src/adminPanel/hooks/useTournamentFilters';
 import type { Tournament } from '../src/adminPanel/types';
+
+vi.mock('../src/supabaseClient', () => ({
+  supabase: {
+    from: vi.fn(() => ({ select: vi.fn(() => ({ data: [] })) })),
+    auth: { getSession: vi.fn(() => ({ data: { session: null } })) }
+  }
+}));
 
 const sampleTournaments: Tournament[] = [
   { id: '1', name: 'Upcoming 1', status: 'upcoming', currentRound: 0, totalRounds: 3 },

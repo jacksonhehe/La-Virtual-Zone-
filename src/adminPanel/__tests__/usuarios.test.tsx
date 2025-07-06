@@ -3,6 +3,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 vi.mock('../store/globalStore');
+vi.mock('../../supabaseClient', () => ({
+  supabase: {
+    from: vi.fn(() => ({ select: vi.fn(() => ({ data: [] })) })),
+    auth: { getSession: vi.fn(() => ({ data: { session: null } })) }
+  }
+}));
 
 import { useGlobalStore } from '../store/globalStore';
 import Usuarios from '../pages/admin/Usuarios';
