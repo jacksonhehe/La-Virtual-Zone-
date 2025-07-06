@@ -327,7 +327,10 @@ export const useDataStore = create<DataState>((set) => ({
 
   setClubFromUser: (user) =>
     set((state) => {
-      if (!user?.clubId) return state;
+      if (!user) {
+        return { club: initialClub, fixtures: initialFixtures };
+      }
+      if (!user.clubId) return state;
       const baseClub = state.clubs.find(c => c.id === user.clubId);
       if (!baseClub) return state;
       const club: DtClub = {
