@@ -63,10 +63,10 @@ const UserPanel = () => {
         <div className="md:col-span-1">
           <div className="card p-6 text-center mb-6">
             <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden mb-4 bg-dark">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt={user.username} 
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.username}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -76,21 +76,21 @@ const UserPanel = () => {
               )}
               <div className="absolute -bottom-1 -right-1 bg-dark rounded-full p-0.5">
                 <div className="w-6 h-6 flex items-center justify-center bg-primary text-dark text-xs font-bold rounded-full">
-                  {user.level}
+                  {user?.level}
                 </div>
               </div>
             </div>
-            
-            <h2 className="text-xl font-bold mb-1">{user.username}</h2>
+
+            <h2 className="text-xl font-bold mb-1">{user?.username}</h2>
             <p className="text-gray-400 text-sm mb-4">
-              {user.role === 'dt' ? 'Director Técnico' : 
-               user.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
+              {user?.role === 'dt' ? 'Director Técnico' :
+               user?.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
             </p>
             
             <div className="mb-4">
               <div className="flex justify-between text-xs text-gray-400 mb-1">
-                <span>Nivel {user.level}</span>
-                <span>Nivel {user.level + 1}</span>
+                <span>Nivel {user?.level}</span>
+                <span>Nivel {user ? user.level + 1 : 1}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 flex-1 bg-dark rounded-full overflow-hidden">
@@ -102,11 +102,11 @@ const UserPanel = () => {
                 <span className="text-xs w-10 text-right">{Math.round(levelProgress)}%</span>
               </div>
               <div className="text-xs text-gray-400 mt-1">
-                {user.xp} / {nextLevelXp} XP
+                {user?.xp ?? 0} / {nextLevelXp} XP
               </div>
             </div>
             
-            {user.role === 'dt' && userClub && (
+            {user?.role === 'dt' && userClub && (
               <div className="mt-3 p-3 bg-dark rounded-lg">
                 <div className="flex items-center justify-center">
                   <img 
@@ -132,7 +132,7 @@ const UserPanel = () => {
                 <span>Mi Perfil</span>
               </button>
               
-              {user.role === 'dt' && (
+              {user?.role === 'dt' && (
                 <button
                   onClick={() => setActiveTab('club')}
                   className={`w-full flex items-center p-3 ${
@@ -174,7 +174,7 @@ const UserPanel = () => {
                 <span>Configuración</span>
               </button>
               
-              {user.role === 'admin' && (
+              {user?.role === 'admin' && (
                 <button
                   onClick={() => navigate('/admin')}
                   className="w-full flex items-center p-3 rounded-md bg-neon-red text-white"
@@ -211,23 +211,23 @@ const UserPanel = () => {
                     <div className="space-y-3">
                       <div>
                         <label className="block text-sm text-gray-400 mb-1">Nombre de usuario</label>
-                        <div className="font-medium">{user.username}</div>
+                        <div className="font-medium">{user?.username}</div>
                       </div>
                       <div>
                         <label className="block text-sm text-gray-400 mb-1">Correo electrónico</label>
-                        <div className="font-medium">{user.email}</div>
+                        <div className="font-medium">{user?.email}</div>
                       </div>
                       <div>
                         <label className="block text-sm text-gray-400 mb-1">Rol</label>
                         <div className="font-medium">
-                          {user.role === 'dt' ? 'Director Técnico' : 
-                           user.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
+                          {user?.role === 'dt' ? 'Director Técnico' :
+                           user?.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
                         </div>
                       </div>
                       <div>
                         <label className="block text-sm text-gray-400 mb-1">Fecha de registro</label>
                         <div className="font-medium">
-                          {user.joinDate ? new Date(user.joinDate).toLocaleDateString('es-ES') : '-'}
+                          {user?.joinDate ? new Date(user.joinDate).toLocaleDateString('es-ES') : '-'}
                         </div>
                       </div>
                     </div>
@@ -237,11 +237,11 @@ const UserPanel = () => {
                     <h3 className="text-lg font-semibold mb-3">Estadísticas y Logros</h3>
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <div className="text-3xl font-bold">{user.level}</div>
+                        <div className="text-3xl font-bold">{user?.level}</div>
                         <div className="text-sm text-gray-400">Nivel</div>
                       </div>
                       <div>
-                        <div className="text-3xl font-bold">{user.xp}</div>
+                        <div className="text-3xl font-bold">{user?.xp}</div>
                         <div className="text-sm text-gray-400">Experiencia</div>
                       </div>
                       <div>
@@ -274,7 +274,7 @@ const UserPanel = () => {
                 </div>
               </div>
               
-              {user.role !== 'dt' && (
+              {user?.role !== 'dt' && (
                 <div className="card p-6">
                   <h3 className="text-lg font-semibold mb-3">Solicitar Club</h3>
                   <p className="text-gray-300 mb-4">
@@ -292,7 +292,7 @@ const UserPanel = () => {
                   Tu perfil público muestra tu información a otros usuarios de la comunidad. Puedes personalizar lo que se muestra.
                 </p>
                 <a 
-                  href={`/usuarios/${user.username}`}
+                  href={`/usuarios/${user?.username}`}
                   className="btn-secondary"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -304,7 +304,7 @@ const UserPanel = () => {
           )}
           
           {/* Club tab (only for DT) */}
-          {activeTab === 'club' && user.role === 'dt' && userClub && (
+          {activeTab === 'club' && user?.role === 'dt' && userClub && (
             <div className="space-y-6">
               <div className="card p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
@@ -812,7 +812,7 @@ const UserPanel = () => {
                         <input
                           type="text"
                           className="input w-full"
-                          value={user.username}
+                          value={user?.username}
                           disabled
                         />
                         <p className="text-xs text-gray-500 mt-1">
@@ -827,7 +827,7 @@ const UserPanel = () => {
                         <input
                           type="email"
                           className="input w-full"
-                          defaultValue={user.email}
+                          defaultValue={user?.email}
                         />
                       </div>
                       
@@ -838,7 +838,7 @@ const UserPanel = () => {
                         <input
                           type="text"
                           className="input w-full"
-                          defaultValue={user.avatar || ''}
+                          defaultValue={user?.avatar || ''}
                           placeholder="https://ejemplo.com/mi-avatar.jpg"
                         />
                       </div>
