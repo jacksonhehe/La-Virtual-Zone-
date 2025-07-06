@@ -111,7 +111,10 @@ export const login = async (email: string, password: string): Promise<User> => {
   if (error || !data.user) {
     throw new Error(error?.message || 'Error al iniciar sesión');
   }
-  return mapAuthUser(data.user);
+
+  const base = await getUserById(data.user.id);
+  const authUser = mapAuthUser(data.user);
+  return base ? { ...base, ...authUser } : authUser;
 };
 
 // Logout function
