@@ -176,6 +176,8 @@ El archivo `src/data/seed.json` contiene los valores iniciales que puedes import
 ## Health Checks
 
 Comprueba que la API está activa haciendo una solicitud a `/healthz`.
+De forma predeterminada la API escucha en el puerto `3000`, pero puedes
+cambiarlo definiendo la variable de entorno `PORT`.
 El servidor responde con un **HTTP 200** si el servicio se está ejecutando.
 
 ```bash
