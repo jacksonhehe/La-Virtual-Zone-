@@ -7,7 +7,8 @@ async function bootstrap() {
   Sentry.init({ dsn: process.env.SENTRY_DSN });
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
-  await app.listen(3000);
+  const port = parseInt(process.env.PORT ?? '3000', 10);
+  await app.listen(port);
 }
 
 bootstrap();
