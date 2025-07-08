@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
-import Spinner from '../components/Spinner';
-const DtDashboard = lazy(() => import('./DtDashboard'));
+import DtDashboard from './DtDashboard';
 import { useAuthStore } from '../store/authStore';
 import { 
   Trophy, 
@@ -18,25 +16,17 @@ import StatsCard from '../components/common/StatsCard';
 import ClubListItem from '../components/common/ClubListItem';
 import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
-import useClubes from '../hooks/useClubes';
-import useTorneos from '../hooks/useTorneos';
 import { formatDate, formatCurrency } from '../utils/helpers';
 
 const LigaMaster = () => {
-  const { user, isAuthenticated } = useAuthStore();
-  const { clubes, loading: loadingClubes, error: clubesError } = useClubes();
-  const { torneos: tournaments, loading: loadingTorneos, error: torneosError } = useTorneos();
-  const { players, standings, marketStatus } = useDataStore();
+  const { user } = useAuthStore();
+  const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
 
-  if (isAuthenticated && user?.role === 'dt') {
+  if (user?.role === 'dt') {
     if (user.clubId) {
-      const assignedClub = clubes.find(c => c.id === user.clubId);
+      const assignedClub = clubs.find(c => c.id === user.clubId);
       if (assignedClub) {
-        return (
-          <Suspense fallback={<Spinner />}>
-            <DtDashboard />
-          </Suspense>
-        );
+        return <DtDashboard />;
       }
     }
     return (
@@ -48,18 +38,9 @@ const LigaMaster = () => {
   
   // Get active tournament (Liga Master)
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
-  const hasError = Boolean(clubesError || torneosError);
-
-  if (loadingClubes || loadingTorneos) {
-    return <DashboardSkeleton />;
-  }
 
   if (!ligaMaster) {
-    return (
-      <div className="p-8 text-center">
-        <p>No se encontró la información de la Liga Master.</p>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
   
   // Get upcoming matches
@@ -85,15 +66,15 @@ const topScorers = [...players]
   
   return (
     <div>
-      {hasError && (
-        <div className="bg-yellow-900 text-yellow-300 p-4 text-center">
-          Ocurrió un problema al conectar con la base de datos. Se muestran datos de ejemplo.
-        </div>
-      )}
       <PageHeader
         title={ligaMaster.name}
         subtitle={ligaMaster.description}
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
+        breadcrumb={(
+          <nav className="text-xs md:text-sm mb-4" aria-label="breadcrumb">
+            /Inicio › {ligaMaster.name}
+          </nav>
+        )}
       />
       
       <div className="container mx-auto px-4 py-8">
@@ -102,9 +83,9 @@ const topScorers = [...players]
           className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-8"
           aria-live="polite"
         >
-          <StatsCard
-            title="Total de Clubes"
-            value={clubes.length}
+          <StatsCard 
+            title="Total de Clubes" 
+            value={clubs.length}
             icon={<Users size={24} className="text-primary" />}
           />
           <StatsCard 
@@ -114,7 +95,7 @@ const topScorers = [...players]
           />
           <StatsCard 
             title="Presupuesto Medio" 
-            value={formatCurrency(clubes.reduce((sum, club) => sum + club.budget, 0) / clubes.length)}
+            value={formatCurrency(clubs.reduce((sum, club) => sum + club.budget, 0) / clubs.length)}
             icon={<Briefcase size={24} className="text-primary" />}
           />
           <StatsCard
@@ -194,7 +175,7 @@ const topScorers = [...players]
                   </thead>
                   <tbody className="divide-y divide-gray-800">
                     {standings.slice(0, 5).map((team, index) => {
-                      const club = clubes.find(c => c.id === team.clubId);
+                      const club = clubs.find(c => c.id === team.clubId);
                       
                       return (
                         <tr key={team.clubId} className="hover:bg-gray-800/50">
@@ -254,8 +235,8 @@ const topScorers = [...players]
               
               <div className="divide-y divide-gray-800">
                 {upcomingMatches.map((match) => {
-                  const homeClub = clubes.find(c => c.name === match.homeTeam);
-                  const awayClub = clubes.find(c => c.name === match.awayTeam);
+                  const homeClub = clubs.find(c => c.name === match.homeTeam);
+                  const awayClub = clubs.find(c => c.name === match.awayTeam);
 
                   return (
                     <div
@@ -306,7 +287,7 @@ const topScorers = [...players]
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                {clubes.map(club => (
+                {clubs.map(club => (
                   <ClubListItem
                     key={club.id}
                     club={club}
@@ -362,7 +343,7 @@ const topScorers = [...players]
               
               <div className="divide-y divide-gray-800">
                 {topScorers.map((player, index) => {
-                  const club = clubes.find(c => c.id === player.clubId);
+                  const club = clubs.find(c => c.id === player.clubId);
                   
                   return (
                     <div key={player.id} className="p-4 flex items-center justify-between">

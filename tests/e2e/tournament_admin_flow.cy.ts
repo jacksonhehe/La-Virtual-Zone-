@@ -3,7 +3,7 @@
 describe('Admin tournament management', () => {
   it('creates, starts and deletes a tournament', () => {
     cy.visit('/login');
-    cy.get('input[type="email"]').type('admin@virtualzone.com');
+    cy.get('input[type="text"]').first().type('admin');
     cy.get('input[type="password"]').type('password');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/usuario');

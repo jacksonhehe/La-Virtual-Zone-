@@ -4,18 +4,18 @@ import { LogIn, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  
   const navigate = useNavigate();
   const { login } = useAuthStore();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!username || !password) {
       setError('Por favor, completa todos los campos');
       return;
     }
@@ -24,7 +24,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      await login(email, password);
+      await login(username, password);
       navigate('/usuario');
     } catch (err) {
       if (err instanceof Error) {
@@ -59,13 +59,13 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Correo electrónico
+                  Nombre de usuario
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className="input w-full"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               
@@ -114,9 +114,9 @@ const Login = () => {
             <div className="mt-8 pt-6 border-t border-gray-800">
               <div className="text-xs text-gray-500 text-center">
                 <p>Para pruebas, puedes usar:</p>
-                <p className="mt-1">Email: <span className="text-primary">usuario@test.com</span> / Contraseña: <span className="text-primary">password</span></p>
-                <p className="mt-1">DT: <span className="text-primary">dt@test.com</span> / Contraseña: <span className="text-primary">password</span></p>
-                <p className="mt-1">Admin: <span className="text-primary">admin@virtualzone.com</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">Usuario: <span className="text-primary">usuario</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">DT: <span className="text-primary">entrenador</span> / Contraseña: <span className="text-primary">password</span></p>
+                <p className="mt-1">Admin: <span className="text-primary">admin</span> / Contraseña: <span className="text-primary">password</span></p>
               </div>
             </div>
           </div>

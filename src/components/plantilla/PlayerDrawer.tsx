@@ -48,17 +48,11 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
         <div className="grid grid-cols-2 gap-2 text-sm mb-4">
           <div>
             <p className="text-gray-400">Contrato hasta</p>
-            <p>
-              {player.contract ? formatDate(player.contract.expires) : 'N/A'}
-            </p>
+            <p>{formatDate(player.contract.expires)}</p>
           </div>
           <div>
             <p className="text-gray-400">Salario</p>
-            <p>
-              {player.contract
-                ? formatCurrency(player.contract.salary)
-                : 'N/A'}
-            </p>
+            <p>{formatCurrency(player.contract.salary)}</p>
           </div>
           <div>
             <p className="text-gray-400">Valor</p>

@@ -11,6 +11,8 @@ declare module '*.md' {
 }
 
 interface ImportMetaEnv {
+  readonly VITE_GA_ID?: string;
+  readonly VITE_SMTP_API_KEY?: string;
   readonly VITE_SENTRY_DSN?: string;
 }
 

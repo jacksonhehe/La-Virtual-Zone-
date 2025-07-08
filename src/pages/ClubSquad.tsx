@@ -2,7 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
-import useJugadores from '../hooks/useJugadores';
 import { formatCurrency, getOverallColor } from '../utils/helpers';
 import { useState } from 'react';
 
@@ -11,8 +10,7 @@ const ClubSquad = () => {
   const [sortBy, setSortBy] = useState('overall');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  const { clubs } = useDataStore();
-  const { jugadores: players } = useJugadores();
+  const { clubs, players } = useDataStore();
   
   // Find club by slug
   const club = clubId

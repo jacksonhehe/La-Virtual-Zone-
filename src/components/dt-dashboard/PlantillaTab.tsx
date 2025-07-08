@@ -2,12 +2,10 @@ import  { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Star, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import useJugadores from '../../hooks/useJugadores';
 import { Player } from '../../types/shared';
 
 export default function PlantillaTab() {
-  const { club } = useDataStore();
-  const { jugadores: players } = useJugadores();
+  const { club, players } = useDataStore();
   const [search, setSearch] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('all');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);

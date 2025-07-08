@@ -2,7 +2,6 @@ import  { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, Save, Settings } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import useJugadores from '../../hooks/useJugadores';
 import { Player } from '../../types/shared';
 
 const formations = [
@@ -27,8 +26,7 @@ const formations = [
 ];
 
 export default function TacticasTab() {
-  const { club } = useDataStore();
-  const { jugadores: players } = useJugadores();
+  const { club, players } = useDataStore();
   const [selectedFormation, setSelectedFormation] = useState(formations[0]);
   const [playerPositions, setPlayerPositions] = useState(selectedFormation.positions);
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);

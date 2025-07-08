@@ -4,7 +4,6 @@ import ResumenClub from '../components/plantilla/ResumenClub';
 import PlayerTable from '../components/plantilla/PlayerTable';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
-import useJugadores from '../hooks/useJugadores';
 import { Player as FullPlayer } from '../types/shared';
 
 const PlayerDrawer = lazy(() => import('../components/plantilla/PlayerDrawer'));
@@ -23,8 +22,7 @@ interface TablePlayer {
 
 const Plantilla = () => {
   const { user } = useAuthStore();
-  const { clubs, updatePlayerEntry } = useDataStore();
-  const { jugadores: allPlayers } = useJugadores();
+  const { clubs, players: allPlayers, updatePlayerEntry } = useDataStore();
   const club = clubs.find(c => c.id === user?.clubId);
   const currentYear = new Date().getFullYear();
   const players: TablePlayer[] = allPlayers

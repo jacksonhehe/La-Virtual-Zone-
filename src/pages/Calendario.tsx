@@ -5,7 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import DtMenuTabs from '../components/DtMenuTabs';
 import EventModal, { CalendarEvent } from '../components/calendar/EventModal';
 import CardSkeleton from '../components/common/CardSkeleton';
-import useFixtures from '../hooks/useFixtures';
+import fixtures from '../data/fixtures.json';
 import { VZ_CALENDAR_PREFS_KEY } from '../utils/storageKeys';
 
 const FullCalendar = lazy(() => import('@fullcalendar/react'));
@@ -30,7 +30,6 @@ const Calendario = () => {
     return saved ? JSON.parse(saved) : defaultFilters;
   });
   const [selected, setSelected] = useState<CalendarEvent | null>(null);
-  const { fixtures, loading } = useFixtures();
 
   useEffect(() => {
     localStorage.setItem(VZ_CALENDAR_PREFS_KEY, JSON.stringify(filters));
@@ -38,7 +37,7 @@ const Calendario = () => {
 
   const handleEventClick = (arg: EventClickArg) => {
     const event = fixtures.find(f => f.id === arg.event.id);
-    if (event) setSelected(event as CalendarEvent);
+    if (event) setSelected(event);
   };
 
   const filteredEvents = fixtures.filter(ev => {
@@ -48,15 +47,6 @@ const Calendario = () => {
     if (ev.category === 'mercado' && !filters.mercado) return false;
     return true;
   });
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <DtMenuTabs />
-        <CardSkeleton lines={4} />
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">

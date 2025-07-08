@@ -1,19 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { loadAdminData, saveAdminData, AdminData } from '../src/adminPanel/utils/adminStorage';
-
-const selectMock = vi.fn();
-const deleteMock = vi.fn(() => ({ in: vi.fn() }));
-const upsertMock = vi.fn();
-vi.mock('../src/supabaseClient', () => ({
-  supabase: {
-    from: (table: string) => ({
-      select: selectMock.mockImplementation(() => ({ data: [] })),
-      delete: deleteMock,
-      upsert: upsertMock
-    }),
-    auth: { getSession: vi.fn(() => ({ data: { session: null } })) }
-  }
-}));
+import { VZ_USERS_KEY } from '../src/utils/storageKeys';
 
 const defaults: AdminData = {
   users: [],
@@ -28,23 +15,42 @@ const defaults: AdminData = {
   comments: []
 };
 
+const createMockStorage = () => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => (key in store ? store[key] : null),
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    }
+  } as Storage;
+};
+
 beforeEach(() => {
-  selectMock.mockImplementation(() => ({ data: [] }));
+  delete (global as any).localStorage;
 });
 
 describe('adminStorage', () => {
-  it('returns defaults when tables are empty', async () => {
-    const data = await loadAdminData(defaults);
+  it('returns defaults when localStorage is undefined', () => {
+    const data = loadAdminData(defaults);
     expect(data).toEqual(defaults);
   });
 
-  it('loads data from supabase when available', async () => {
-    selectMock.mockImplementationOnce(() => ({ data: [{ id: '1' }] }));
-    const data = await loadAdminData(defaults);
+  it('loads data from localStorage when available', () => {
+    const mock = createMockStorage();
+    mock.setItem(VZ_USERS_KEY, JSON.stringify([{ id: '1' }]));
+    (global as any).localStorage = mock;
+
+    const data = loadAdminData(defaults);
     expect(data.users).toEqual([{ id: '1' }]);
   });
 
-  it('saveAdminData does not throw', async () => {
-    await expect(saveAdminData(defaults)).resolves.not.toThrow();
+  it('saveAdminData does nothing when localStorage is undefined', () => {
+    expect(() => saveAdminData(defaults)).not.toThrow();
   });
 });

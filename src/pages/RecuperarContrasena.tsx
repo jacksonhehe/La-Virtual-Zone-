@@ -1,7 +1,6 @@
 import  { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowLeft, Check, AlertCircle, Shield, Lock } from 'lucide-react';
-import { requestPasswordReset } from '../utils/authService';
 
 export default function RecuperarContrasena() {
   const [email, setEmail] = useState('');
@@ -25,13 +24,11 @@ export default function RecuperarContrasena() {
     }
 
     setIsLoading(true);
-
-    try {
-      await requestPasswordReset(email);
-      setIsSubmitted(true);
-    } finally {
+    
+    setTimeout(() => {
       setIsLoading(false);
-    }
+      setIsSubmitted(true);
+    }, 2000);
   };
 
   if (isSubmitted) {

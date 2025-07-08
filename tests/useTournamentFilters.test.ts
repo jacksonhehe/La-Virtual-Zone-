@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { useGlobalStore } from '../src/adminPanel/store/globalStore';
 import {
   useUpcomingTournaments,
@@ -7,13 +6,6 @@ import {
   useFinishedTournaments
 } from '../src/adminPanel/hooks/useTournamentFilters';
 import type { Tournament } from '../src/adminPanel/types';
-
-vi.mock('../src/supabaseClient', () => ({
-  supabase: {
-    from: vi.fn(() => ({ select: vi.fn(() => ({ data: [] })) })),
-    auth: { getSession: vi.fn(() => ({ data: { session: null } })) }
-  }
-}));
 
 const sampleTournaments: Tournament[] = [
   { id: '1', name: 'Upcoming 1', status: 'upcoming', currentRound: 0, totalRounds: 3 },
@@ -28,20 +20,20 @@ beforeEach(() => {
 
 describe('useTournamentFilters', () => {
   it('returns only upcoming tournaments', () => {
-    const { result } = renderHook(() => useUpcomingTournaments());
-    expect(result.current).toHaveLength(2);
-    expect(result.current.every(t => t.status === 'upcoming')).toBe(true);
+    const upcoming = useUpcomingTournaments();
+    expect(upcoming).toHaveLength(2);
+    expect(upcoming.every(t => t.status === 'upcoming')).toBe(true);
   });
 
   it('returns only active tournaments', () => {
-    const { result } = renderHook(() => useActiveTournaments());
-    expect(result.current).toHaveLength(1);
-    expect(result.current[0].status).toBe('active');
+    const active = useActiveTournaments();
+    expect(active).toHaveLength(1);
+    expect(active[0].status).toBe('active');
   });
 
   it('returns only finished tournaments', () => {
-    const { result } = renderHook(() => useFinishedTournaments());
-    expect(result.current).toHaveLength(1);
-    expect(result.current[0].status).toBe('completed');
+    const finished = useFinishedTournaments();
+    expect(finished).toHaveLength(1);
+    expect(finished[0].status).toBe('completed');
   });
 });

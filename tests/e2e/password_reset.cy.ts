@@ -4,18 +4,13 @@ describe('Password recovery flow', () => {
   const email = 'usuario@test.com';
 
   it('resets password with valid token', () => {
-    let resetToken = '';
-    cy.intercept('POST', '**/recover', req => {
-      req.reply({ statusCode: 200, body: { oobCode: 'test-token' } });
-    }).as('recover');
-
     cy.visit('/recuperar-password');
     cy.get('input[type="email"]').type(email);
     cy.contains('button', 'Enviar enlace').click();
-
-    cy.wait('@recover').then(interception => {
-      resetToken = interception.response?.body.oobCode;
-      cy.visit(`/reset/${resetToken}`);
+    cy.window().then(win => {
+      const tokens = JSON.parse(win.localStorage.getItem('vz_reset_tokens') || '[]');
+      const token = tokens[0].token;
+      cy.visit(`/reset/${token}`);
       cy.get('input[type="password"]').first().type('nueva123');
       cy.get('input[type="password"]').eq(1).type('nueva123');
       cy.contains('button', 'Restablecer').click();

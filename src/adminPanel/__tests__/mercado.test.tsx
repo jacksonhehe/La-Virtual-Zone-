@@ -1,17 +1,10 @@
 import  { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-
-vi.mock('../store/globalStore');
-vi.mock('../../supabaseClient', () => ({
-  supabase: {
-    from: vi.fn(() => ({ select: vi.fn(() => ({ data: [] })) })),
-    auth: { getSession: vi.fn(() => ({ data: { session: null } })) }
-  }
-}));
-
 import { useGlobalStore } from '../store/globalStore';
 import Mercado from '../pages/admin/Mercado';
+
+vi.mock('../store/globalStore');
 
 const mockStore = {
   transfers: [
@@ -42,7 +35,7 @@ describe('Mercado Component', () => {
 
   it('should approve transfer', () => {
     render(<Mercado />);
-    const approveButton = screen.getByTitle('Aprobar transferencia');
+    const approveButton = screen.getByTitle('Aprobar');
     
     fireEvent.click(approveButton);
     

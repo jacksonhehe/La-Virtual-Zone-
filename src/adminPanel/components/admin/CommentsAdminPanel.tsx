@@ -20,9 +20,7 @@ const CommentsAdminPanel = () => {
       state => state.comments.filter(c => c.status === 'pending').length,
       setPendingCount
     );
-    return () => {
-      if (typeof unsub === 'function') unsub();
-    };
+    return () => unsub();
   }, []);
 
   const filteredComments = comments.filter(comment => {

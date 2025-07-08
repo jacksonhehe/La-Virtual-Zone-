@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronLeft, ChevronUp } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import Card from '../components/common/Card';
-import Spinner from '../components/Spinner';
-import useClubes from '../hooks/useClubes';
-import useTorneos from '../hooks/useTorneos';
+import { useDataStore } from '../store/dataStore';
 import { formatDate } from '../utils/helpers';
 import usePersistentState from '../hooks/usePersistentState';
 
@@ -13,13 +11,8 @@ const Fixtures = () => {
   const [selectedRound, setSelectedRound] = usePersistentState<number | null>('fixtures_round', null);
   const [expandedMatches, setExpandedMatches] = useState<Record<string, boolean>>({});
   
-  const { clubes: clubs, loading: loadingClubes } = useClubes();
-  const { torneos: tournaments, loading: loadingTorneos } = useTorneos();
-
-  if (loadingClubes || loadingTorneos) {
-    return <Spinner />;
-  }
-
+  const { tournaments, clubs } = useDataStore();
+  
   // Get Liga Master tournament
   const ligaMaster = tournaments.find(t => t.id === 'tournament1');
   

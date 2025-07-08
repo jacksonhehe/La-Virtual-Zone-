@@ -62,14 +62,7 @@ function App() {
             <Route path="usuarios" element={<Users />} />
             <Route path="usuarios/:username" element={<PublicProfile />} />
             <Route path="usuario" element={<UserPanel />} />
-            <Route
-              path="dt-dashboard"
-              element={(
-                <Suspense fallback={<Spinner />}>
-                  <DtDashboard />
-                </Suspense>
-              )}
-            />
+            <Route path="dt-dashboard" element={<DtDashboard />} />
             <Route path="admin/*" element={<Admin />} />
 
             <Route path="torneos">

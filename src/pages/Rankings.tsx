@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
-import useJugadores from '../hooks/useJugadores';
 
 const Rankings = () => {
   const [activeTab, setActiveTab] = useState('clubs');
   const [season, setSeason] = useState('2025');
   
-  const { clubs, standings } = useDataStore();
-  const { jugadores: players } = useJugadores();
+  const { clubs, players, standings } = useDataStore();
   
   // Get top scorers
   const topScorers = [...players]

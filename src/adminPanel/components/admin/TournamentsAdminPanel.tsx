@@ -10,7 +10,6 @@ import {
   Eye,
 } from 'lucide-react';
 import { Tournament } from '../../types';
-import { useGlobalStore } from '../../store/globalStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import NewTournamentModal from './NewTournamentModal';
@@ -18,10 +17,32 @@ import ConfirmDeleteModal from './ConfirmDeleteModal';
 import TournamentDetailsModal from './TournamentDetailsModal';
 
 const TournamentsAdminPanel = () => {
-  const tournaments = useGlobalStore(state => state.tournaments);
-  const addTournament = useGlobalStore(state => state.addTournament);
-  const updateTournament = useGlobalStore(state => state.updateTournament);
-  const removeTournament = useGlobalStore(state => state.removeTournament);
+  const [tournaments, setTournaments] = useState<Tournament[]>([
+    {
+      id: '1',
+      name: 'Liga Master 2024',
+      format: 'league',
+      status: 'active',
+      startDate: '2024-01-15',
+      endDate: '2024-06-30',
+      maxTeams: 20,
+      currentTeams: 18,
+      prizePool: 500000,
+      location: 'España'
+    },
+    {
+      id: '2',
+      name: 'Copa Elite',
+      format: 'knockout',
+      status: 'upcoming',
+      startDate: '2024-07-01',
+      endDate: '2024-07-31',
+      maxTeams: 32,
+      currentTeams: 24,
+      prizePool: 250000,
+      location: 'Internacional'
+    }
+  ]);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -37,7 +58,7 @@ const TournamentsAdminPanel = () => {
   });
 
   const activeTournaments = tournaments.filter(t => t.status === 'active').length;
-  const totalPrizePool = tournaments.reduce((sum, t) => sum + (t.prizePool ?? 0), 0);
+  const totalPrizePool = tournaments.reduce((sum, t) => sum + t.prizePool, 0);
   const totalTeams = tournaments.reduce((sum, t) => sum + t.currentTeams, 0);
 
   const getStatusColor = (status: string) => {
@@ -187,9 +208,7 @@ const TournamentsAdminPanel = () => {
                       Premio
                     </div>
                     <div className="text-white font-medium">
-                      {typeof tournament.prizePool === 'number'
-                        ? `€${tournament.prizePool.toLocaleString()}`
-                        : 'N/A'}
+                      €{tournament.prizePool.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -242,7 +261,7 @@ const TournamentsAdminPanel = () => {
               currentTeams: 0,
               ...data
             } as Tournament;
-            addTournament(newTournament);
+            setTournaments([...tournaments, newTournament]);
             setShowNewModal(false);
           }}
         />
@@ -253,10 +272,9 @@ const TournamentsAdminPanel = () => {
           tournament={editingTournament}
           onClose={() => setEditingTournament(null)}
           onSave={(data) => {
-            updateTournament({
-              ...editingTournament!,
-              ...data
-            } as Tournament);
+            setTournaments(tournaments.map(t => 
+              t.id === editingTournament.id ? { ...t, ...data } : t
+            ));
             setEditingTournament(null);
           }}
         />
@@ -267,7 +285,7 @@ const TournamentsAdminPanel = () => {
           isOpen={true}
           onClose={() => setDeletingTournament(null)}
           onConfirm={() => {
-            removeTournament(deletingTournament.id);
+            setTournaments(tournaments.filter(t => t.id !== deletingTournament.id));
             setDeletingTournament(null);
           }}
           title="Eliminar Torneo"

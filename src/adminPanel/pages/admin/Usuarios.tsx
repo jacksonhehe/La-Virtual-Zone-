@@ -39,9 +39,6 @@ const Usuarios = () => {
       username: userData.username || '',
       email: userData.email || '',
       role: userData.role || 'user',
-      avatar:
-        userData.avatar ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.username || '')}&background=111827&color=fff&size=128&bold=true`,
       status: 'active',
       createdAt: new Date().toISOString()
     };

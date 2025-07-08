@@ -10,51 +10,7 @@ Before running the project, make sure you have **Node.js** installed. Install th
 npm install
 ```
 
-Before starting the development server, run the `supabase/migrations/create_users_table.sql` migration to create the `users` table.
-
-## Configuración
-
-1. Copia `.env.example` a `.env` en la raíz del proyecto.
-2. En tu panel de Supabase ve a **Settings → API** y copia la `Project URL` y la clave anónima.
-3. Asigna la URL a `SUPABASE_URL` (backend) y `VITE_SUPABASE_URL` (frontend); la clave anónima a `VITE_SUPABASE_ANON_KEY` en el archivo `.env`. Estas variables definen la conexión principal a la base de datos y reemplazan la configuración previa basada en `DATABASE_URL`.
-4. Define `SUPABASE_JWT_SECRET` con el valor proporcionado por Supabase. Esta variable es obligatoria para que el servidor valide los JWT.
-5. Ejecuta la migración `supabase/migrations/create_users_table.sql` en tu proyecto de Supabase antes de iniciar la aplicación.
-
-
-El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente de Supabase que se consume en la aplicación.
-
-## Supabase Setup
-
-La aplicación utiliza Supabase para sincronizar en tiempo real los datos de algunos recursos. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures` y `ofertas` dentro de tu proyecto de Supabase. El panel de administración también persiste su estado en la base de datos. Ejecuta el script `supabase/admin_tables.sql` para crear las tablas `admin_users`, `admin_clubs`, `admin_players`, `admin_matches`, `admin_tournaments`, `admin_news`, `admin_transfers`, `admin_standings`, `admin_activities` y `admin_comments`. Además, aplica la migración `supabase/migrations/create_users_table.sql` para definir la tabla `users` utilizada en la función `addUser`.
-
-La función `getTournaments` consulta por defecto la tabla `admin_tournaments`. Si no existe o está vacía, recurre automáticamente a la tabla pública `torneos`. Asegúrate de crear `admin_tournaments` para mantener la coherencia con el panel de administración.
-
-Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env` con los valores proporcionados por Supabase. Si el proyecto incluye migraciones para estas tablas, ejecútalas con el CLI de Supabase, por ejemplo:
-
-```bash
-supabase db push
-```
-
-### Insertar usuario administrador
-
-Agrega la cuenta inicial del panel ejecutando el snippet SQL incluido en el
-repositorio o utilizando el helper `addUser` de `src/utils/authService.ts`:
-
-```sql
-insert into users (id, email, username, role, password)
-values ('1', 'admin@virtualzone.com', 'admin', 'admin', 'password');
-```
-
-```ts
-await addUser('1', 'admin@virtualzone.com', 'admin', 'admin');
-```
-
-Si se cambia el orden de fusión en `authService` para que los datos de la tabla
-`users` prevalezcan sobre `user_metadata`, asegúrate de que el campo `id` de
-esta fila coincida con el ID de usuario generado por Supabase Auth. De lo
-contrario, el rol de administrador no se aplicará correctamente.
-
-Para cargar datos de ejemplo puedes importar manualmente `src/data/seed.json` desde la consola o CLI de Supabase.
+After the packages are installed you can start the development server.
 
 ## Development
 
@@ -62,11 +18,8 @@ Run the development server with hot reload:
 
 ```bash
 npm run dev
-```
 
-If you still require the legacy NestJS API you can start it from the `server/` directory:
-
-To start the API server (which now connects to Supabase) run:
+To start the API server run:
 ```bash
 (cd server && npm install && npm run start:dev)
 ```
@@ -117,13 +70,13 @@ starting the E2E tests.
 To access the administrator interface:
 
 1. Start the development server with `npm run dev`.
-   To start the API server (connected to Supabase) run:
+nTo start the API server run:
 ```bash
 (cd server && npm install && npm run start:dev)
 ```
 
-3. Open the app in your browser and log in using the demo admin account (`admin@virtualzone.com` / `password`).
-4. Click on your avatar in the navigation bar and choose **Panel Admin** or navigate directly to `/admin`.
+2. Open the app in your browser and log in using the demo admin account (`admin` / `password`).
+3. Click on your avatar in the navigation bar and choose **Panel Admin** or navigate directly to `/admin`.
 
 Within the admin panel you will find management sections for:
 
@@ -156,7 +109,7 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 ## Data Persistence
 
-The backend now connects directly to Supabase, so no local PostgreSQL setup is required. Run `npm run start:dev` inside `server/` to start the API.
+The platform now stores all data in a PostgreSQL database managed by Prisma. Run `npm run start:dev` inside `server/` to start the API.
 
 ## Recuperar contraseña
 
@@ -176,18 +129,9 @@ Si intentas acceder a una URL inexistente verás una página 404 con un botón q
 
 El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
-El archivo `src/data/seed.json` contiene los valores iniciales que puedes importar directamente en Supabase usando la opción **Table Editor** o el CLI `supabase db import`.
+El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
 
 ## Health Checks
-
-Comprueba que la API está activa haciendo una solicitud a `/healthz`.
-De forma predeterminada la API escucha en el puerto `3000`, pero puedes
-cambiarlo definiendo la variable de entorno `PORT`.
-El servidor responde con un **HTTP 200** si el servicio se está ejecutando.
-
-```bash
-curl -i http://localhost:3000/healthz
-```
 
 ## CI/CD
 

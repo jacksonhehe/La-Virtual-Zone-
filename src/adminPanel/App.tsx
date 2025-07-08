@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import useSession from '../hooks/useSession';
 import SidebarAdmin from './components/SidebarAdmin';
 
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
@@ -18,8 +17,11 @@ const Estadisticas = lazy(() => import('./pages/admin/Estadisticas'));
 const Calendario = lazy(() => import('./pages/admin/Calendario'));
 
 const AdminLayout = () => {
-  useSession();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (user?.role !== 'admin') {
     return (

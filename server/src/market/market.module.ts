@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MarketService } from './market.service';
 import { MarketController } from './market.controller';
-import { SupabaseModule } from '../supabase/supabase.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [SupabaseModule],
+  imports: [PrismaModule],
   providers: [MarketService],
   controllers: [MarketController],
 })

@@ -14,7 +14,6 @@ const EditUserModal = ({ user, onClose, onSave }: Props) => {
     role: user.role,
     status: user.status
   });
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -36,19 +35,10 @@ const EditUserModal = ({ user, onClose, onSave }: Props) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      let avatar = user.avatar;
-      if (avatarFile) {
-        try {
-          const { uploadImage } = await import('../../../lib/uploadImage');
-          avatar = await uploadImage(avatarFile, 'avatars');
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      onSave({ ...user, ...formData, avatar });
+      onSave({ ...user, ...formData });
     }
   };
 
@@ -97,13 +87,6 @@ const EditUserModal = ({ user, onClose, onSave }: Props) => {
             <option value="active">Activo</option>
             <option value="inactive">Inactivo</option>
           </select>
-          <div>
-            <label className="block text-sm font-medium mb-1">Avatar</label>
-            <input
-              type="file"
-              onChange={e => setAvatarFile(e.target.files ? e.target.files[0] : null)}
-            />
-          </div>
           <div className="flex space-x-3 justify-end mt-6">
             <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
             <button type="submit" className="btn-primary">Guardar</button>

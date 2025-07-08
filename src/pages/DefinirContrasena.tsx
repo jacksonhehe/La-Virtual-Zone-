@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AlertCircle, Lock } from 'lucide-react';
 import { resetPassword } from '../utils/authService';
 import { z } from 'zod';
@@ -15,13 +15,14 @@ const schema = z
   });
 
 const DefinirContrasena = () => {
+  const { token } = useParams();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ password: '', confirm: '' });
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -33,13 +34,15 @@ const DefinirContrasena = () => {
       setErrors(fieldErrors);
       return;
     }
-    try {
-      await resetPassword(form.password);
+    if (!token) {
+      setError('Token inválido');
+      return;
+    }
+    const ok = resetPassword(token, form.password);
+    if (ok) {
       navigate('/login');
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      }
+    } else {
+      setError('Token inválido o expirado');
     }
   };
 

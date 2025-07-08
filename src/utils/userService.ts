@@ -17,7 +17,7 @@ export const fetchUsers = async (
 ): Promise<PagedUsers> => {
   const { search = '', page = 1, pageSize = 10 } = query;
   const term = search.toLowerCase();
-  const all = await getUsers();
+  const all = getUsers();
   const filtered = all.filter(
     u =>
       u.username.toLowerCase().includes(term) ||
@@ -30,8 +30,8 @@ export const fetchUsers = async (
   return { users: data, total };
 };
 
-export const getUserByUsername = async (username: string): Promise<User | null> => {
-  const all = await getUsers();
+export const getUserByUsername = (username: string): User | null => {
+  const all = getUsers();
   return (
     all.find(u => u.username.toLowerCase() === username.toLowerCase()) || null
   );

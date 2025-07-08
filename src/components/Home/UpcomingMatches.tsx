@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import useClubes from '../../hooks/useClubes';
-import useTorneos from '../../hooks/useTorneos';
+import { useDataStore } from '../../store/dataStore';
 import { formatDate, formatTime } from '../../utils/helpers';
 
 const UpcomingMatches = () => {
-  const { clubes: clubs } = useClubes();
-  const { torneos: tournaments } = useTorneos();
+  const { tournaments, clubs } = useDataStore();
   
   // Find active tournament
   const activeTournament = tournaments.find(t => t.status === 'active');
