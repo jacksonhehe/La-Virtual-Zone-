@@ -49,6 +49,11 @@ values ('1', 'admin@virtualzone.com', 'admin', 'admin', 'password');
 await addUser('1', 'admin@virtualzone.com', 'admin', 'admin');
 ```
 
+Si se cambia el orden de fusión en `authService` para que los datos de la tabla
+`users` prevalezcan sobre `user_metadata`, asegúrate de que el campo `id` de
+esta fila coincida con el ID de usuario generado por Supabase Auth. De lo
+contrario, el rol de administrador no se aplicará correctamente.
+
 Para cargar datos de ejemplo puedes importar manualmente `src/data/seed.json` desde la consola o CLI de Supabase.
 
 ## Development
