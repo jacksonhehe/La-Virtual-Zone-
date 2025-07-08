@@ -6,6 +6,6 @@ export class ClubsService {
   constructor(private readonly supabase: SupabaseService) {}
 
   all() {
-    return this.supabase.getClient().from('clubs').select('*');
+    return this.supabase.getClient().from('clubes').select('*');
   }
 }
