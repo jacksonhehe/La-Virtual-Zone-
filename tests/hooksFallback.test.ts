@@ -50,4 +50,17 @@ describe('hooks fallback data', () => {
     expect(result.current.torneos.length).toBe(tournaments.length);
     expect(result.current.error).toBeInstanceOf(Error);
   });
+
+  it('useTorneos returns mock tournaments when supabase returns empty array', async () => {
+    orderMock.mockResolvedValueOnce({ data: [], error: null });
+
+    const { default: useTorneos } = await import('../src/hooks/useTorneos');
+    const { result } = renderHook(() => useTorneos());
+
+    await act(async () => {
+      await new Promise(setImmediate);
+    });
+    expect(result.current.torneos.length).toBe(tournaments.length);
+    expect(result.current.error).toBeInstanceOf(Error);
+  });
 });

@@ -5,7 +5,7 @@ import { clubs as mockClubs, players as mockPlayers, tournaments as mockTourname
 
 export const getClubs = async (): Promise<{ data: Club[]; error?: Error }> => {
   const { data, error } = await supabase.from('clubes').select('*').order('id');
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     return { data: mockClubs, error: error ?? new Error('Failed to fetch clubs') };
   }
   return { data: data as Club[] };
@@ -13,7 +13,7 @@ export const getClubs = async (): Promise<{ data: Club[]; error?: Error }> => {
 
 export const getPlayers = async (): Promise<{ data: Player[]; error?: Error }> => {
   const { data, error } = await supabase.from('jugadores').select('*').order('id');
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     return { data: mockPlayers, error: error ?? new Error('Failed to fetch players') };
   }
   return { data: data as Player[] };
@@ -21,7 +21,7 @@ export const getPlayers = async (): Promise<{ data: Player[]; error?: Error }> =
 
 export const getTournaments = async (): Promise<{ data: Tournament[]; error?: Error }> => {
   const { data, error } = await supabase.from('torneos').select('*').order('id');
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     return { data: mockTournaments, error: error ?? new Error('Failed to fetch tournaments') };
   }
   return { data: data as Tournament[] };
@@ -29,7 +29,7 @@ export const getTournaments = async (): Promise<{ data: Tournament[]; error?: Er
 
 export const getFixtures = async (): Promise<{ data: Match[]; error?: Error }> => {
   const { data, error } = await supabase.from('fixtures').select('*').order('id');
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     const fallback = mockTournaments.flatMap(t => t.matches);
     return { data: fallback, error: error ?? new Error('Failed to fetch fixtures') };
   }
@@ -38,7 +38,7 @@ export const getFixtures = async (): Promise<{ data: Match[]; error?: Error }> =
 
 export const getOffers = async (): Promise<{ data: TransferOffer[]; error?: Error }> => {
   const { data, error } = await supabase.from('ofertas').select('*').order('id');
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     return { data: mockOffers, error: error ?? new Error('Failed to fetch offers') };
   }
   return { data: data as TransferOffer[] };
