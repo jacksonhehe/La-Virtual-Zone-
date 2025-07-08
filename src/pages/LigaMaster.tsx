@@ -94,11 +94,6 @@ const topScorers = [...players]
         title={ligaMaster.name}
         subtitle={ligaMaster.description}
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
-        breadcrumb={(
-          <nav className="text-xs md:text-sm mb-4" aria-label="breadcrumb">
-            /Inicio › {ligaMaster.name}
-          </nav>
-        )}
       />
       
       <div className="container mx-auto px-4 py-8">
