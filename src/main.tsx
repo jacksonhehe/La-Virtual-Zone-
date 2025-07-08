@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import App from './App';
-import AppErrorBoundary from './components/AppErrorBoundary';
 import './index.css';
 import seed from './data/seed.json';
 import { players as mockPlayers } from './data/mockData';
