@@ -366,7 +366,13 @@ useAuthStore.subscribe(state => {
   useDataStore.getState().setClubFromUser(state.user);
 });
 
-getUsers().then(users => {
-  useDataStore.setState({ users });
-});
+getUsers()
+  .then(users => {
+    useDataStore.setState({ users });
+  })
+  .catch(err => {
+    console.error('Error fetching users:', err);
+    // Keep existing users or initialize with an empty array
+    useDataStore.setState(state => ({ users: state.users ?? [] }));
+  });
  
