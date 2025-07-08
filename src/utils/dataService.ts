@@ -20,11 +20,22 @@ export const getPlayers = async (): Promise<{ data: Player[]; error?: Error }> =
 };
 
 export const getTournaments = async (): Promise<{ data: Tournament[]; error?: Error }> => {
-  const { data, error } = await supabase.from('torneos').select('*').order('id');
+  let { data, error } = await supabase.from('admin_tournaments').select('*').order('id');
+
   if (error || !data || data.length === 0) {
-    return { data: mockTournaments, error: error ?? new Error('Failed to fetch tournaments') };
+    // Fallback to the legacy public table
+    const fallback = await supabase.from('torneos').select('*').order('id');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data = (fallback as any)?.data ?? undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error = error ?? (fallback as any)?.error ?? undefined;
+
+    if (!data || data.length === 0) {
+      return { data: mockTournaments, error: error ?? new Error('Failed to fetch tournaments') };
+    }
   }
-  return { data: data as Tournament[] };
+
+  return { data: data as Tournament[], ...(error ? { error } : {}) };
 };
 
 export const getFixtures = async (): Promise<{ data: Match[]; error?: Error }> => {
