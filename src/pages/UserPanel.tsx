@@ -15,7 +15,7 @@ import {
 import { useAuthStore } from '../store/authStore';
 import useSession from '../hooks/useSession';
 import { useDataStore } from '../store/dataStore';
-import { xpForNextLevel } from '../utils/helpers';
+import { xpForNextLevel, calculateLevel } from '../utils/helpers';
 
 const UserPanel = () => {
   useSession();
@@ -34,8 +34,9 @@ const UserPanel = () => {
     : null;
 
   // Calculate XP progress for the level bar
-  const currentLevelXp = xpForNextLevel((user?.level ?? 1) - 1);
-  const nextLevelXp = xpForNextLevel(user?.level ?? 1);
+  const calculatedLevel = user?.level ?? calculateLevel(user?.xp ?? 0);
+  const currentLevelXp = xpForNextLevel(calculatedLevel - 1);
+  const nextLevelXp = xpForNextLevel(calculatedLevel);
   const levelProgress = user
     ? ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100
     : 0;
@@ -76,7 +77,7 @@ const UserPanel = () => {
               )}
               <div className="absolute -bottom-1 -right-1 bg-dark rounded-full p-0.5">
                 <div className="w-6 h-6 flex items-center justify-center bg-primary text-dark text-xs font-bold rounded-full">
-                  {user?.level}
+                  {calculatedLevel}
                 </div>
               </div>
             </div>
@@ -89,8 +90,8 @@ const UserPanel = () => {
             
             <div className="mb-4">
               <div className="flex justify-between text-xs text-gray-400 mb-1">
-                <span>Nivel {user?.level}</span>
-                <span>Nivel {user ? user.level + 1 : 1}</span>
+                <span>Nivel {calculatedLevel}</span>
+                <span>Nivel {calculatedLevel + 1}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 flex-1 bg-dark rounded-full overflow-hidden">
@@ -237,7 +238,7 @@ const UserPanel = () => {
                     <h3 className="text-lg font-semibold mb-3">Estadísticas y Logros</h3>
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <div className="text-3xl font-bold">{user?.level}</div>
+                        <div className="text-3xl font-bold">{calculatedLevel}</div>
                         <div className="text-sm text-gray-400">Nivel</div>
                       </div>
                       <div>
