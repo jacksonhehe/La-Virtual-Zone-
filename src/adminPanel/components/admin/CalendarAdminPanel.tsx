@@ -94,6 +94,8 @@ const CalendarAdminPanel = () => {
 
   useEffect(() => {
     setEvents(mockEvents);
+    // mockEvents is recreated on each render but contains static data
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredEvents = events.filter(event => {
