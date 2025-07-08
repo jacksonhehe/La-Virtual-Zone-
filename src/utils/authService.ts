@@ -40,7 +40,8 @@ export const getCurrentUser = async (): Promise<User | null> => {
   const base = await getUserById(authUser.id);
   const mapped = mapAuthUser(authUser);
 
-  return base ? { ...base, ...mapped } : mapped;
+  // Data from the users table should override the auth metadata
+  return base ? { ...mapped, ...base } : mapped;
 };
 
 // Save current user to localStorage
@@ -119,7 +120,9 @@ export const login = async (email: string, password: string): Promise<User> => {
 
   const base = await getUserById(data.user.id);
   const authUser = mapAuthUser(data.user);
-  return base ? { ...base, ...authUser } : authUser;
+
+  // Allow values from the users table to override auth metadata
+  return base ? { ...authUser, ...base } : authUser;
 };
 
 // Logout function
