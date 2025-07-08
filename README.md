@@ -27,6 +27,8 @@ El archivo `src/supabaseClient.ts` utiliza estas variables para crear el cliente
 
 La aplicación utiliza Supabase para sincronizar en tiempo real los datos de algunos recursos. Crea las tablas `clubes`, `jugadores`, `torneos`, `fixtures` y `ofertas` dentro de tu proyecto de Supabase. El panel de administración también persiste su estado en la base de datos. Ejecuta el script `supabase/admin_tables.sql` para crear las tablas `admin_users`, `admin_clubs`, `admin_players`, `admin_matches`, `admin_tournaments`, `admin_news`, `admin_transfers`, `admin_standings`, `admin_activities` y `admin_comments`. Además, aplica la migración `supabase/migrations/create_users_table.sql` para definir la tabla `users` utilizada en la función `addUser`.
 
+La función `getTournaments` consulta por defecto la tabla `admin_tournaments`. Si no existe o está vacía, recurre automáticamente a la tabla pública `torneos`. Asegúrate de crear `admin_tournaments` para mantener la coherencia con el panel de administración.
+
 Asegúrate de definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el archivo `.env` con los valores proporcionados por Supabase. Si el proyecto incluye migraciones para estas tablas, ejecútalas con el CLI de Supabase, por ejemplo:
 
 ```bash
