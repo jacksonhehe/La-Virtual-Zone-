@@ -15,8 +15,8 @@ import {
   saveAdminData,
   AdminData
 } from '../utils/adminStorage';
-import { saveClubs } from '../../utils/clubService';
-import { savePlayers } from '../../utils/playerService';
+import { createClub, updateClub as apiUpdateClub } from '../../utils/clubService';
+import { createPlayer as apiCreatePlayer, updatePlayer as apiUpdatePlayer } from '../../utils/playerService';
 import { useDataStore } from '../../store/dataStore';
 
 interface GlobalStore {
@@ -236,7 +236,6 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: get().activities,
         comments: get().comments
       });
-      savePlayers(get().players);
   };
 
   return {
@@ -302,7 +301,7 @@ export const useGlobalStore = create<GlobalStore>()(
           u.id === club.managerId ? { ...u, clubId: club.id } : u
         );
         const updatedClubs = [...state.clubs, club];
-        saveClubs(updatedClubs);
+        createClub({ name: club.name });
         return {
           users: updatedUsers,
           clubs: updatedClubs,
@@ -336,7 +335,7 @@ export const useGlobalStore = create<GlobalStore>()(
           );
         }
         const updatedClubs = state.clubs.map(c => (c.id === club.id ? club : c));
-        saveClubs(updatedClubs);
+        apiUpdateClub(club.id, { name: club.name });
         return {
           users: updatedUsers,
           clubs: updatedClubs
@@ -354,7 +353,6 @@ export const useGlobalStore = create<GlobalStore>()(
             )
           : state.users;
         const updatedClubs = state.clubs.filter(c => c.id !== id);
-        saveClubs(updatedClubs);
         return { users: updatedUsers, clubs: updatedClubs };
       });
       persist();
@@ -363,7 +361,7 @@ export const useGlobalStore = create<GlobalStore>()(
     addPlayer: player => {
       set(state => {
         const updated = [...state.players, player];
-        savePlayers(updated);
+        apiCreatePlayer({ name: player.name, clubId: player.clubId ? Number(player.clubId) : undefined });
         return { players: updated };
       });
       useDataStore.getState().addPlayer(player);
@@ -373,7 +371,7 @@ export const useGlobalStore = create<GlobalStore>()(
     updatePlayer: player => {
       set(state => {
         const updated = state.players.map(p => (p.id === player.id ? player : p));
-        savePlayers(updated);
+        apiUpdatePlayer(player.id, { name: player.name, clubId: player.clubId ? Number(player.clubId) : undefined });
         return { players: updated };
       });
       useDataStore.getState().updatePlayerEntry(player);
@@ -383,7 +381,6 @@ export const useGlobalStore = create<GlobalStore>()(
     removePlayer: id => {
       set(state => {
         const updated = state.players.filter(p => p.id !== id);
-        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().removePlayer(id);
