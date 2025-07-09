@@ -1,6 +1,6 @@
 import  { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Star, TrendingUp, Clock, DollarSign } from 'lucide-react';
+import { Search, Star, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
 

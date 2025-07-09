@@ -23,7 +23,7 @@ class ZString {
   }
 }
 
-class ZObject<T extends Record<string, any>> {
+class ZObject<T extends Record<string, unknown>> {
   constructor(private shape: { [K in keyof T]: ZString }) {}
   private refinement?: { check: (val: T) => boolean; message: string; path: (keyof T)[] };
 
@@ -36,13 +36,14 @@ class ZObject<T extends Record<string, any>> {
     if (typeof obj !== 'object' || obj === null) {
       throw { issues: [{ path: [], message: 'Expected object' }] };
     }
-    const out: any = {};
+    const out: Record<string, unknown> = {};
     for (const key in this.shape) {
       try {
-        out[key] = this.shape[key].parse((obj as any)[key]);
-      } catch (err: any) {
-        err.issues[0].path = [key];
-        throw err;
+        out[key] = this.shape[key].parse((obj as Record<string, unknown>)[key]);
+      } catch (err) {
+        const e = err as { issues: { path: (string | number)[]; message: string }[] };
+        e.issues[0].path = [key];
+        throw e;
       }
     }
     if (this.refinement && !this.refinement.check(out)) {
@@ -55,13 +56,13 @@ class ZObject<T extends Record<string, any>> {
     try {
       const data = this.parse(obj);
       return { success: true, data };
-    } catch (err: any) {
-      return { success: false, error: err };
+    } catch (err) {
+      return { success: false, error: err as { issues: { path: (string | number)[]; message: string }[] } };
     }
   }
 }
 
 export const z = {
   string: () => new ZString(),
-  object: <T extends Record<string, any>>(shape: { [K in keyof T]: ZString }) => new ZObject<T>(shape)
+  object: <T extends Record<string, unknown>>(shape: { [K in keyof T]: ZString }) => new ZObject<T>(shape)
 };

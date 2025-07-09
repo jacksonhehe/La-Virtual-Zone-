@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -32,7 +32,7 @@ const OffersPanel = ({
   const MIN_SQUAD_SIZE = 18;
   
   const { user } = useAuthStore();
-  const { offers, clubs, players } = useDataStore();
+  const { offers, clubs } = useDataStore();
   
   // Offers sent by the current user/club
   const storeSentOffers = user ?
