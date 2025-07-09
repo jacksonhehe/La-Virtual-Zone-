@@ -8,4 +8,12 @@ export class ClubsService {
   all() {
     return this.prisma.club.findMany();
   }
+
+  create(data: { name: string }) {
+    return this.prisma.club.create({ data });
+  }
+
+  update(id: number, data: { name?: string }) {
+    return this.prisma.club.update({ where: { id }, data });
+  }
 }

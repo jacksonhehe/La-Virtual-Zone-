@@ -1,23 +1,32 @@
-import seed from '../data/seed.json';
 import { Club } from '../types/shared';
-import { VZ_CLUBS_KEY } from './storageKeys';
 
-export const getClubs = (): Club[] => {
-  const json =
-    typeof localStorage === 'undefined'
-      ? null
-      : localStorage.getItem(VZ_CLUBS_KEY);
-  if (json) {
-    try {
-      return JSON.parse(json) as Club[];
-    } catch {
-      // ignore parse errors and fall back to seed
-    }
-  }
-  return seed.clubs as Club[];
+const API_BASE = typeof window === 'undefined' ? 'http://localhost:3000' : '';
+
+export const getClubs = async (): Promise<Club[]> => {
+  const res = await fetch(`${API_BASE}/clubs`);
+  if (!res.ok) throw new Error('Failed to load clubs');
+  return res.json();
 };
 
-export const saveClubs = (clubs: Club[]): void => {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(VZ_CLUBS_KEY, JSON.stringify(clubs));
+export const createClub = async (club: { name: string }): Promise<Club> => {
+  const res = await fetch(`${API_BASE}/clubs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(club),
+  });
+  if (!res.ok) throw new Error('Failed to create club');
+  return res.json();
+};
+
+export const updateClub = async (
+  id: number,
+  club: Partial<Club>,
+): Promise<Club> => {
+  const res = await fetch(`${API_BASE}/clubs/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(club),
+  });
+  if (!res.ok) throw new Error('Failed to update club');
+  return res.json();
 };
