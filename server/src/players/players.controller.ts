@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
 import { PlayersService } from './players.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -14,5 +14,24 @@ export class PlayersController {
   @Roles(Role.ADMIN, Role.CLUB)
   findAll() {
     return this.players.all();
+  }
+
+  @Post()
+  @Roles(Role.ADMIN)
+  create(@Body('name') name: string, @Body('clubId') clubId?: string) {
+    return this.players.create({ name, clubId: clubId ? Number(clubId) : undefined });
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN)
+  update(
+    @Param('id') id: string,
+    @Body('name') name?: string,
+    @Body('clubId') clubId?: string,
+  ) {
+    return this.players.update(Number(id), {
+      name,
+      clubId: clubId ? Number(clubId) : undefined,
+    });
   }
 }
