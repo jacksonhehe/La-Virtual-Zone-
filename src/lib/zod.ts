@@ -23,18 +23,7 @@ class ZString {
   }
 }
 
-type ParseError = { issues: { path: (string | number)[]; message: string }[] };
-
-function isParseError(value: unknown): value is ParseError {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'issues' in value &&
-    Array.isArray((value as { issues?: unknown }).issues)
-  );
-}
-
-class ZObject<T extends Record<string, string>> {
+class ZObject<T extends Record<string, unknown>> {
   constructor(private shape: { [K in keyof T]: ZString }) {}
   private refinement?: { check: (val: T) => boolean; message: string; path: (keyof T)[] };
 
@@ -47,17 +36,14 @@ class ZObject<T extends Record<string, string>> {
     if (typeof obj !== 'object' || obj === null) {
       throw { issues: [{ path: [], message: 'Expected object' }] };
     }
-    const out = {} as T;
+    const out: Record<string, unknown> = {};
     for (const key in this.shape) {
       try {
-        (out as Record<string, string>)[key] = this.shape[key].parse(
-          (obj as Record<string, unknown>)[key]
-        );
-      } catch (err: unknown) {
-        if (isParseError(err)) {
-          err.issues[0].path = [key];
-        }
-        throw err;
+        out[key] = this.shape[key].parse((obj as Record<string, unknown>)[key]);
+      } catch (err) {
+        const e = err as { issues: { path: (string | number)[]; message: string }[] };
+        e.issues[0].path = [key];
+        throw e;
       }
     }
     if (this.refinement && !this.refinement.check(out)) {
@@ -74,17 +60,13 @@ class ZObject<T extends Record<string, string>> {
     try {
       const data = this.parse(obj);
       return { success: true, data };
-    } catch (err: unknown) {
-      if (isParseError(err)) {
-        return { success: false, error: err };
-      }
-      throw err;
+    } catch (err) {
+      return { success: false, error: err as { issues: { path: (string | number)[]; message: string }[] } };
     }
   }
 }
 
 export const z = {
   string: () => new ZString(),
-  object: <T extends Record<string, string>>(shape: { [K in keyof T]: ZString }) =>
-    new ZObject<T>(shape)
+  object: <T extends Record<string, unknown>>(shape: { [K in keyof T]: ZString }) => new ZObject<T>(shape)
 };

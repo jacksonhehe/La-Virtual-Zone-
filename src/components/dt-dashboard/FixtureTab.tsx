@@ -2,10 +2,8 @@ import  { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, CheckCircle, Trophy, Calendar, MapPin, Filter } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import { useAuthStore } from '../../store/authStore';
 
 export default function FixtureTab() {
-  const { user } = useAuthStore();
   const { fixtures, clubs, tournaments, club: userClub } = useDataStore();
   const [selectedTournament, setSelectedTournament] = useState('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'played' | 'upcoming'>('all');

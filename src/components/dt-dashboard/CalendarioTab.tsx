@@ -9,7 +9,7 @@ const months = [
 ];
 
 export default function CalendarioTab() {
-  const { club, fixtures, tournaments } = useDataStore();
+  const { club, fixtures } = useDataStore();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const clubMatches = useMemo(() => 
@@ -67,7 +67,6 @@ export default function CalendarioTab() {
 
   const getMatchForDay = (day: number | null) => {
     if (!day) return null;
-    const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
     return monthMatches.find(match => {
       const matchDate = new Date(match.date);
       return matchDate.getDate() === day;

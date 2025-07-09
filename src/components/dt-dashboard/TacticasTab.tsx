@@ -1,6 +1,6 @@
 import  { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RotateCcw, Save, Settings } from 'lucide-react';
+import { RotateCcw, Save } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
 
@@ -39,7 +39,7 @@ export default function TacticasTab() {
   useEffect(() => {
     setSelectedPlayers(startingEleven);
     setPlayerPositions(selectedFormation.positions);
-  }, [selectedFormation]);
+  }, [selectedFormation, startingEleven]);
 
   const handleFormationChange = (formation: typeof formations[0]) => {
     setSelectedFormation(formation);

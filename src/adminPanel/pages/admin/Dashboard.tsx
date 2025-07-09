@@ -1,4 +1,4 @@
-import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target } from 'lucide-react'; 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

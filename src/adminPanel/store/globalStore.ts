@@ -3,7 +3,6 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import {
   Tournament,
   Fixture,
-  Match,
   NewsItem,
   Transfer,
   Standing,

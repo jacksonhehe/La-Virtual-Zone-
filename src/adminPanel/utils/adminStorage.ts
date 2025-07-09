@@ -21,9 +21,7 @@ export interface AdminData {
 const PREFIX = 'vz_';
 
 // Keys previously used by older admin panel versions
-type AdminDataKey = keyof AdminData;
-
-const OLD_KEYS: Record<AdminDataKey, string> = {
+const OLD_KEYS: Record<keyof AdminData, string> = {
   users: `${PREFIX}users_admin`,
   clubs: `${PREFIX}clubs_admin`,
   players: `${PREFIX}players_admin`,
@@ -37,7 +35,7 @@ const OLD_KEYS: Record<AdminDataKey, string> = {
 } as const;
 
 // Updated keys aligned with the main application
-const keys: Record<AdminDataKey, string> = {
+const keys: Record<keyof AdminData, string> = {
   users: VZ_USERS_KEY,
   clubs: VZ_CLUBS_KEY,
   players: VZ_PLAYERS_KEY,
@@ -50,10 +48,9 @@ const keys: Record<AdminDataKey, string> = {
   comments: OLD_KEYS.comments
 } as const;
 
-const migrateOldKeys = (): void => {
-  (Object.keys(OLD_KEYS) as AdminDataKey[]).forEach((prop) => {
-    const oldKey = OLD_KEYS[prop];
-    const newKey = keys[prop];
+const migrateOldKeys = () => {
+  Object.entries(OLD_KEYS).forEach(([prop, oldKey]) => {
+    const newKey = keys[prop as keyof AdminData];
     if (oldKey !== newKey) {
       const oldVal = localStorage.getItem(oldKey);
       if (oldVal && !localStorage.getItem(newKey)) {
@@ -77,7 +74,7 @@ export const loadAdminData = (defaults: AdminData): AdminData => {
     const json = localStorage.getItem(key);
     if (json) {
       try {
-        data[prop] = JSON.parse(json) as AdminData[typeof prop];
+        data[prop as keyof AdminData] = JSON.parse(json) as AdminData[keyof AdminData];
       } catch {
         // ignore parse errors and keep defaults
       }
@@ -90,9 +87,8 @@ export const saveAdminData = (data: AdminData): void => {
   if (typeof localStorage === 'undefined') {
     return;
   }
-  (Object.keys(keys) as AdminDataKey[]).forEach((prop) => {
-    const key = keys[prop];
-    const value = data[prop] as AdminData[typeof prop];
+  Object.entries(keys).forEach(([prop, key]) => {
+    const value = data[prop as keyof AdminData];
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch {
