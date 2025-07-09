@@ -267,6 +267,23 @@ const TEST_USERS = [
     achievements: ['first_win', 'first_transfer'],
     following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
     password: TEST_PASSWORD
+  },
+  {
+    id: '15',
+    username: 'dtbarca',
+    email: 'dtbarca@test.com',
+    role: 'dt',
+    level: 5,
+    xp: 500,
+    club: 'FC Barcelona',
+    clubId: 'club13',
+    avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
+    bio: 'Entrenador cul\u00e9 con preferencia por la posesi\u00f3n y la cantera.',
+    joinDate: new Date().toISOString(),
+    status: 'active',
+    achievements: ['first_win', 'first_transfer'],
+    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    password: TEST_PASSWORD
   }
 ];
 
