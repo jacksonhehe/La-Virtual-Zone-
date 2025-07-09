@@ -62,7 +62,7 @@ const TournamentDetailsModal = ({ tournament, onClose }: Props) => {
           <p>
             <span className="text-gray-400">Premio: </span>
             <span className="text-white">
-              €{tournament.prizePool.toLocaleString()}
+              €{(tournament.prizePool ?? 0).toLocaleString()}
             </span>
           </p>
           <p>
