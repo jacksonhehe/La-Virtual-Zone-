@@ -69,7 +69,8 @@ export const loadAdminData = (defaults: AdminData): AdminData => {
   }
   const data: AdminData = { ...defaults };
   migrateOldKeys();
-  Object.entries(keys).forEach(([prop, key]) => {
+  (Object.keys(keys) as AdminDataKey[]).forEach((prop) => {
+    const key = keys[prop];
     const json = localStorage.getItem(key);
     if (json) {
       try {

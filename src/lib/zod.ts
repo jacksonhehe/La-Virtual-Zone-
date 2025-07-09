@@ -47,9 +47,13 @@ class ZObject<T extends Record<string, unknown>> {
       }
     }
     if (this.refinement && !this.refinement.check(out)) {
-      throw { issues: [{ path: this.refinement.path as string[], message: this.refinement.message }] };
+      throw {
+        issues: [
+          { path: this.refinement.path as string[], message: this.refinement.message }
+        ]
+      };
     }
-    return out as T;
+    return out;
   }
 
   safeParse(obj: unknown): SafeParseReturn<T> {

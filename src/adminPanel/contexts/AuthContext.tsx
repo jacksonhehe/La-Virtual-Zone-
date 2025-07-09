@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, ReactNode } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { User } from '../../types/shared';
 
@@ -12,9 +12,9 @@ export interface AuthContextType {
   addXP: (amount: number) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+function AuthProvider({ children }: { children: ReactNode }) {
   const store = useAuthStore();
 
   return (
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {

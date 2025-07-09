@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthProvider from './contexts/AuthContext';
+import useAuth from './hooks/useAuth';
 import SidebarAdmin from './components/SidebarAdmin';
 
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
