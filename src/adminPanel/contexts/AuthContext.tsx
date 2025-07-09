@@ -1,4 +1,4 @@
-import { createContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { User } from '../../types/shared';
 
@@ -12,6 +12,7 @@ export interface AuthContextType {
   addXP: (amount: number) => void;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function AuthProvider({ children }: { children: ReactNode }) {
@@ -31,4 +32,6 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};
+
+export default AuthProvider;
