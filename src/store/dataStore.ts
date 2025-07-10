@@ -50,7 +50,6 @@ import { Club, Player, User } from '../types/shared';
 const initialClubs: Club[] = [];
 const initialPlayers: Player[] = [];
 const initialOffers = [] as TransferOffer[];
-const initialUser = useAuthStore.getState().user;
 const initialClub: DtClub = {
   id: '',
   name: '',

@@ -6,8 +6,13 @@ declare module '*.json' {
 }
 
 declare module '*.md' {
-  const Component: React.ComponentType;
-  export default Component;
+  const html: string;
+  export default html;
+}
+
+declare module '*.mdx' {
+  const html: string;
+  export default html;
 }
 
 interface ImportMetaEnv {

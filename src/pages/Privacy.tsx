@@ -1,9 +1,10 @@
-import PrivacyContent from '../../docs/legal/privacy.md';
+import privacyHtml from '../../docs/legal/privacy.mdx';
 
 const Privacy = () => (
-  <div className="prose prose-invert max-w-3xl mx-auto p-4">
-    <PrivacyContent />
-  </div>
+  <div
+    className="prose prose-invert max-w-3xl mx-auto p-4"
+    dangerouslySetInnerHTML={{ __html: privacyHtml }}
+  />
 );
 
 export default Privacy;

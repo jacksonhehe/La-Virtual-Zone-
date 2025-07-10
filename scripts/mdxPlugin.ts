@@ -1,3 +1,4 @@
+import fs from 'fs';
 import type { Plugin } from 'vite';
 
 function mdToHtml(md: string): string {
@@ -16,10 +17,18 @@ function mdToHtml(md: string): string {
 export default function mdxPlugin(): Plugin {
   return {
     name: 'mdx-lite',
+    enforce: 'pre',
+    load(id) {
+      if (id.endsWith('.md') || id.endsWith('.mdx')) {
+        const code = fs.readFileSync(id, 'utf-8');
+        const html = mdToHtml(code);
+        return `export default ${JSON.stringify(html)};`;
+      }
+    },
     transform(code, id) {
       if (id.endsWith('.md') || id.endsWith('.mdx')) {
         const html = mdToHtml(code);
-        const component = `import React from 'react';\nexport default function MDXContent(){return <div className="prose prose-invert" dangerouslySetInnerHTML={{__html: ${JSON.stringify(html)}}} />}`;
+        const component = `export default ${JSON.stringify(html)};`;
         return { code: component, map: null };
       }
     },
