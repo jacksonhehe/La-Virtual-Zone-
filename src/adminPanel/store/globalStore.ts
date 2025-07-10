@@ -18,6 +18,7 @@ import {
 import { createClub, updateClub as apiUpdateClub } from '../../utils/clubService';
 import { createPlayer as apiCreatePlayer, updatePlayer as apiUpdatePlayer } from '../../utils/playerService';
 import { useDataStore } from '../../store/dataStore';
+import { useCommentStore } from '../../store/commentStore';
 
 interface GlobalStore {
   users: User[];
@@ -428,6 +429,7 @@ export const useGlobalStore = create<GlobalStore>()(
           }
         ]
       }));
+      useDataStore.getState().updateTransferStatus(id, 'approved');
       persist();
     },
 
@@ -445,21 +447,27 @@ export const useGlobalStore = create<GlobalStore>()(
           }
         ]
       }));
+      useDataStore.getState().updateTransferStatus(id, 'rejected');
       persist();
     },
 
     addNewsItem: item => {
       set(state => ({ newsItems: [...state.newsItems, item] }));
+      useDataStore.getState().addNewsItem(item);
       persist();
     },
 
     updateNewsItem: item => {
       set(state => ({ newsItems: state.newsItems.map(n => (n.id === item.id ? item : n)) }));
+      if (useDataStore.getState().updateNewsItem) {
+        useDataStore.getState().updateNewsItem(item);
+      }
       persist();
     },
 
     removeNewsItem: id => {
       set(state => ({ newsItems: state.newsItems.filter(n => n.id !== id) }));
+      useDataStore.getState().removeNewsItem(id);
       persist();
     },
 
@@ -467,6 +475,7 @@ export const useGlobalStore = create<GlobalStore>()(
       set(state => ({
         comments: state.comments.map(c => (c.id === id ? { ...c, status: 'approved' as const } : c))
       }));
+      useCommentStore.getState().approveComment(id);
       persist();
     },
 
@@ -474,11 +483,13 @@ export const useGlobalStore = create<GlobalStore>()(
       set(state => ({
         comments: state.comments.map(c => (c.id === id ? { ...c, status: 'hidden' as const } : c))
       }));
+      useCommentStore.getState().hideComment(id);
       persist();
     },
 
     deleteComment: id => {
       set(state => ({ comments: state.comments.filter(c => c.id !== id) }));
+      useCommentStore.getState().deleteComment(id);
       persist();
     },
 

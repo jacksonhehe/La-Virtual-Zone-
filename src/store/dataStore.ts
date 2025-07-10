@@ -100,6 +100,10 @@ interface DataState {
   updateOfferAmount: (offerId: string, amount: number) => void;
   addTransfer: (transfer: Transfer) => void;
   removeTransfer: (id: string) => void;
+  updateTransferStatus: (
+    id: string,
+    status: 'approved' | 'rejected'
+  ) => void;
   addUser: (user: User) => void;
   addClub: (club: Club) => void;
   addPlayer: (player: Player) => void;
@@ -111,6 +115,7 @@ interface DataState {
   removePlayer: (id: string) => void;
   addTournament: (tournament: Tournament) => void;
   addNewsItem: (item: NewsItem) => void;
+  updateNewsItem: (item: NewsItem) => void;
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
@@ -216,6 +221,13 @@ export const useDataStore = create<DataState>((set) => ({
   removeTransfer: (id) =>
     set((state) => ({
       transfers: state.transfers.filter(t => t.id !== id)
+    })),
+
+  updateTransferStatus: (id, status) =>
+    set(state => ({
+      transfers: state.transfers.map(t =>
+        t.id === id ? { ...t, status } : t
+      )
     })),
 
   addUser: (user) => set((state) => ({
@@ -324,6 +336,11 @@ export const useDataStore = create<DataState>((set) => ({
   addNewsItem: (item) => set((state) => ({
     newsItems: [item, ...state.newsItems]
   })),
+
+  updateNewsItem: (item) =>
+    set(state => ({
+      newsItems: state.newsItems.map(n => (n.id === item.id ? item : n))
+    })),
 
   removeNewsItem: (id) => set((state) => ({
     newsItems: state.newsItems.filter(n => n.id !== id)
