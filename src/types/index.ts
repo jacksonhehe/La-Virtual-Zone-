@@ -58,6 +58,7 @@ export interface Transfer {
   toClub: string;
   fee: number;
   date: string;
+  status?: 'pending' | 'approved' | 'rejected';
 }
 
 export interface TransferOffer {
