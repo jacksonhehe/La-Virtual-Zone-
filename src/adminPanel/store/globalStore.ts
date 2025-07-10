@@ -317,6 +317,7 @@ export const useGlobalStore = create<GlobalStore>()(
           ]
         };
       });
+      useDataStore.getState().addClub(club);
       persist();
     },
 
@@ -341,6 +342,7 @@ export const useGlobalStore = create<GlobalStore>()(
           clubs: updatedClubs
         };
       });
+      useDataStore.getState().updateClubEntry(club);
       persist();
     },
 
@@ -355,6 +357,7 @@ export const useGlobalStore = create<GlobalStore>()(
         const updatedClubs = state.clubs.filter(c => c.id !== id);
         return { users: updatedUsers, clubs: updatedClubs };
       });
+      useDataStore.getState().removeClub(id);
       persist();
     },
 
