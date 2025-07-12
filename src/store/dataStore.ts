@@ -119,6 +119,7 @@ interface DataState {
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
+  loadNewsItems: () => void;
   setClubFromUser: (user: User | null) => void;
 }
 
@@ -129,7 +130,7 @@ export const useDataStore = create<DataState>((set) => ({
   transfers,
   offers: initialOffers,
   standings: leagueStandings,
-  newsItems,
+  newsItems: [],
   mediaItems,
   faqs,
   storeItems,
@@ -376,8 +377,10 @@ export const useDataStore = create<DataState>((set) => ({
       tasks: state.tasks.map(t =>
         t.id === id ? { ...t, done: !t.done } : t
       )
-    }))
+    })),
+  loadNewsItems: () => set({ newsItems }),
 }));
+useDataStore.getState().loadNewsItems();
 
 // Update DT club when authenticated user changes
 useAuthStore.subscribe(state => {
