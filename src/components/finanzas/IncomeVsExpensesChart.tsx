@@ -1,6 +1,6 @@
 
 import React, { Suspense, useState } from "react";
-const Recharts = React.lazy(() => import('recharts'));
+import * as Recharts from 'recharts';
 import ChartSkeleton from '../common/ChartSkeleton';
 import financeHistory from "../../data/financeHistory.json";
 

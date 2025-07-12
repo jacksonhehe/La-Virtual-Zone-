@@ -1,5 +1,5 @@
 import React, { Suspense, useState } from 'react';
-const Recharts = React.lazy(() => import('recharts'));
+import * as Recharts from 'recharts';
 import { TrendingUp, TrendingDown, Users, Globe, User, Trophy, Calendar, Filter, Download, RefreshCw, ChevronDown } from 'lucide-react';
 import StatsCard from './StatsCard';
 import ChartSkeleton from '../../../components/common/ChartSkeleton';
