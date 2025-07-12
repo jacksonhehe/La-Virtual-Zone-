@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate, formatNewsType, getNewsTypeColor } from '../../utils/helpers';
+import SkeletonNewsFeed from './SkeletonNewsFeed';
 
 const LatestNews = () => {
   const { newsItems } = useDataStore();
-  
+
+  if (!newsItems?.length) return <SkeletonNewsFeed />;
+
   // Get latest 4 news
   const latestNews = newsItems.slice(0, 4);
   

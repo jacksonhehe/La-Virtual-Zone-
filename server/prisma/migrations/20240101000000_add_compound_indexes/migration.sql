@@ -1,0 +1,2 @@
+-- Migration for compound indexes
+-- This file was generated manually during QA tasks.

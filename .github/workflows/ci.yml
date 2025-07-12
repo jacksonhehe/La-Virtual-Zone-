@@ -39,6 +39,13 @@ jobs:
         run: npm run build
         working-directory: server
 
+      - name: Run Cypress E2E
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run preview
+          wait-on: 'http://localhost:4173'
+          fail-fast: true
+
       - name: Lighthouse CI
         run: npm run lhci
 
