@@ -1,7 +1,8 @@
-import  React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import React, { Suspense, useState } from 'react';
+const Recharts = React.lazy(() => import('recharts'));
 import { TrendingUp, TrendingDown, Users, Globe, User, Trophy, Calendar, Filter, Download, RefreshCw, ChevronDown } from 'lucide-react';
 import StatsCard from './StatsCard';
+import ChartSkeleton from '../../../components/common/ChartSkeleton';
 
 const StatisticsAdminPanel = () => {
   const [timeRange, setTimeRange] = useState('7d');
@@ -147,24 +148,25 @@ const StatisticsAdminPanel = () => {
                 </select>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={320}>
-              <AreaChart data={userGrowthData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
-                <YAxis stroke="#9CA3AF" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
+            <Suspense fallback={<ChartSkeleton />}>
+              <Recharts.ResponsiveContainer width="100%" height={320}>
+                <Recharts.AreaChart data={userGrowthData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <Recharts.XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
+                <Recharts.YAxis stroke="#9CA3AF" fontSize={12} />
+                <Recharts.Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
                     border: '1px solid #374151',
                     borderRadius: '12px',
                     color: '#F3F4F6'
-                  }} 
+                  }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey={selectedMetric} 
-                  stroke="#8B5CF6" 
-                  fill="url(#areaGradient)" 
+                <Recharts.Area
+                  type="monotone"
+                  dataKey={selectedMetric}
+                  stroke="#8B5CF6"
+                  fill="url(#areaGradient)"
                   strokeWidth={3}
                 />
                 <defs>
@@ -173,8 +175,9 @@ const StatisticsAdminPanel = () => {
                     <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
-              </AreaChart>
-            </ResponsiveContainer>
+                </Recharts.AreaChart>
+              </Recharts.ResponsiveContainer>
+            </Suspense>
           </div>
 
           {/* Device Distribution */}
@@ -183,9 +186,10 @@ const StatisticsAdminPanel = () => {
               <h3 className="text-xl font-bold text-white">Dispositivos</h3>
               <RefreshCw size={18} className="text-gray-400 hover:text-white cursor-pointer transition-colors" />
             </div>
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart>
-                <Pie
+            <Suspense fallback={<ChartSkeleton />}>
+              <Recharts.ResponsiveContainer width="100%" height={240}>
+                <Recharts.PieChart>
+                  <Recharts.Pie
                   data={deviceData}
                   cx="50%"
                   cy="50%"
@@ -195,19 +199,20 @@ const StatisticsAdminPanel = () => {
                   dataKey="value"
                 >
                   {deviceData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Recharts.Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
+                </Recharts.Pie>
+                <Recharts.Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
                     border: '1px solid #374151',
                     borderRadius: '8px',
                     color: '#F3F4F6'
-                  }} 
+                  }}
                 />
-              </PieChart>
-            </ResponsiveContainer>
+                </Recharts.PieChart>
+              </Recharts.ResponsiveContainer>
+            </Suspense>
             <div className="space-y-3 mt-4">
               {deviceData.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
@@ -235,22 +240,24 @@ const StatisticsAdminPanel = () => {
                 <p className="text-gray-400 text-sm">Sessions y duración promedio</p>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={engagementData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
-                <YAxis stroke="#9CA3AF" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F3F4F6'
-                  }} 
-                />
-                <Bar dataKey="sessions" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <Suspense fallback={<ChartSkeleton />}>
+              <Recharts.ResponsiveContainer width="100%" height={280}>
+                <Recharts.BarChart data={engagementData}>
+                  <Recharts.CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <Recharts.XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
+                  <Recharts.YAxis stroke="#9CA3AF" fontSize={12} />
+                  <Recharts.Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F3F4F6'
+                    }}
+                  />
+                  <Recharts.Bar dataKey="sessions" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                </Recharts.BarChart>
+              </Recharts.ResponsiveContainer>
+            </Suspense>
           </div>
 
           {/* Top Clubs */}
