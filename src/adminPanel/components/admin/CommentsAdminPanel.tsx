@@ -1,7 +1,6 @@
 import  React, { useState, useEffect } from 'react';
-import { MessageSquare, CheckCircle, EyeOff, Trash, AlertTriangle, User, Clock } from 'lucide-react';
+import { MessageSquare, CheckCircle, EyeOff, Trash, AlertTriangle, Search, Filter, User, Clock, MoreVertical } from 'lucide-react';
 import { useGlobalStore, subscribe as subscribeGlobal } from '../../store/globalStore';
-import type { Comment as CommentType } from '../../types';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import toast from 'react-hot-toast';
@@ -10,6 +9,7 @@ const CommentsAdminPanel = () => {
   const { comments, approveComment, hideComment, deleteComment } = useGlobalStore();
   const [filter, setFilter] = useState('pending');
   const [search, setSearch] = useState('');
+  const [selectedComment, setSelectedComment] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<string | null>(null);
   const [pendingCount, setPendingCount] = useState(
     comments.filter(c => c.status === 'pending').length
@@ -52,7 +52,7 @@ const CommentsAdminPanel = () => {
     toast.success('Comentario eliminado');
   };
 
-  const getPriorityColor = (comment: CommentType) => {
+  const getPriorityColor = (comment: any) => {
     if (comment.flags > 5) return 'border-red-500/50 bg-red-500/10';
     if (comment.flags > 2) return 'border-yellow-500/50 bg-yellow-500/10';
     return 'border-gray-700/50';

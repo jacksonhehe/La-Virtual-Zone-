@@ -3,6 +3,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import {
   Tournament,
   Fixture,
+  Match,
   NewsItem,
   Transfer,
   Standing,
@@ -15,10 +16,9 @@ import {
   saveAdminData,
   AdminData
 } from '../utils/adminStorage';
-import { createClub, updateClub as apiUpdateClub } from '../../utils/clubService';
-import { createPlayer as apiCreatePlayer, updatePlayer as apiUpdatePlayer } from '../../utils/playerService';
+import { saveClubs } from '../../utils/clubService';
+import { savePlayers } from '../../utils/playerService';
 import { useDataStore } from '../../store/dataStore';
-import { useCommentStore } from '../../store/commentStore';
 
 interface GlobalStore {
   users: User[];
@@ -237,6 +237,7 @@ export const useGlobalStore = create<GlobalStore>()(
         activities: get().activities,
         comments: get().comments
       });
+      savePlayers(get().players);
   };
 
   return {
@@ -302,7 +303,7 @@ export const useGlobalStore = create<GlobalStore>()(
           u.id === club.managerId ? { ...u, clubId: club.id } : u
         );
         const updatedClubs = [...state.clubs, club];
-        createClub({ name: club.name });
+        saveClubs(updatedClubs);
         return {
           users: updatedUsers,
           clubs: updatedClubs,
@@ -318,7 +319,6 @@ export const useGlobalStore = create<GlobalStore>()(
           ]
         };
       });
-      useDataStore.getState().addClub(club);
       persist();
     },
 
@@ -337,13 +337,12 @@ export const useGlobalStore = create<GlobalStore>()(
           );
         }
         const updatedClubs = state.clubs.map(c => (c.id === club.id ? club : c));
-        apiUpdateClub(club.id, { name: club.name });
+        saveClubs(updatedClubs);
         return {
           users: updatedUsers,
           clubs: updatedClubs
         };
       });
-      useDataStore.getState().updateClubEntry(club);
       persist();
     },
 
@@ -356,16 +355,16 @@ export const useGlobalStore = create<GlobalStore>()(
             )
           : state.users;
         const updatedClubs = state.clubs.filter(c => c.id !== id);
+        saveClubs(updatedClubs);
         return { users: updatedUsers, clubs: updatedClubs };
       });
-      useDataStore.getState().removeClub(id);
       persist();
     },
 
     addPlayer: player => {
       set(state => {
         const updated = [...state.players, player];
-        apiCreatePlayer({ name: player.name, clubId: player.clubId ? Number(player.clubId) : undefined });
+        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().addPlayer(player);
@@ -375,7 +374,7 @@ export const useGlobalStore = create<GlobalStore>()(
     updatePlayer: player => {
       set(state => {
         const updated = state.players.map(p => (p.id === player.id ? player : p));
-        apiUpdatePlayer(player.id, { name: player.name, clubId: player.clubId ? Number(player.clubId) : undefined });
+        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().updatePlayerEntry(player);
@@ -385,6 +384,7 @@ export const useGlobalStore = create<GlobalStore>()(
     removePlayer: id => {
       set(state => {
         const updated = state.players.filter(p => p.id !== id);
+        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().removePlayer(id);
@@ -429,7 +429,6 @@ export const useGlobalStore = create<GlobalStore>()(
           }
         ]
       }));
-      useDataStore.getState().updateTransferStatus(id, 'approved');
       persist();
     },
 
@@ -447,27 +446,21 @@ export const useGlobalStore = create<GlobalStore>()(
           }
         ]
       }));
-      useDataStore.getState().updateTransferStatus(id, 'rejected');
       persist();
     },
 
     addNewsItem: item => {
       set(state => ({ newsItems: [...state.newsItems, item] }));
-      useDataStore.getState().addNewsItem(item);
       persist();
     },
 
     updateNewsItem: item => {
       set(state => ({ newsItems: state.newsItems.map(n => (n.id === item.id ? item : n)) }));
-      if (useDataStore.getState().updateNewsItem) {
-        useDataStore.getState().updateNewsItem(item);
-      }
       persist();
     },
 
     removeNewsItem: id => {
       set(state => ({ newsItems: state.newsItems.filter(n => n.id !== id) }));
-      useDataStore.getState().removeNewsItem(id);
       persist();
     },
 
@@ -475,7 +468,6 @@ export const useGlobalStore = create<GlobalStore>()(
       set(state => ({
         comments: state.comments.map(c => (c.id === id ? { ...c, status: 'approved' as const } : c))
       }));
-      useCommentStore.getState().approveComment(id);
       persist();
     },
 
@@ -483,13 +475,11 @@ export const useGlobalStore = create<GlobalStore>()(
       set(state => ({
         comments: state.comments.map(c => (c.id === id ? { ...c, status: 'hidden' as const } : c))
       }));
-      useCommentStore.getState().hideComment(id);
       persist();
     },
 
     deleteComment: id => {
       set(state => ({ comments: state.comments.filter(c => c.id !== id) }));
-      useCommentStore.getState().deleteComment(id);
       persist();
     },
 

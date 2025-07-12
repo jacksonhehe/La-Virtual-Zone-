@@ -229,27 +229,6 @@
       "reputation": 80,
       "fanBase": 7500,
       "morale": 70
-    },
-    {
-      "id": "club13",
-      "slug": "fc-barcelona",
-      "name": "FC Barcelona",
-      "logo": "https://ui-avatars.com/api/?name=FCB&background=004d98&color=fff&size=128&bold=true",
-      "foundedYear": 1899,
-      "stadium": "Camp Nou",
-      "budget": 55000000,
-      "manager": "Xavi",
-      "playStyle": "Posesión",
-      "primaryColor": "#004d98",
-      "secondaryColor": "#A50044",
-      "description": "Club histórico reconocido por su estilo de posesión y cantera prolífica.",
-      "titles": [
-        { "id": "title9", "name": "Liga", "year": 2024, "type": "league" },
-        { "id": "title10", "name": "Champions", "year": 2024, "type": "cup" }
-      ],
-      "reputation": 94,
-      "fanBase": 19500,
-      "morale": 88
     }
   ],
   "players": [

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import App from './App';
+import AppErrorBoundary from './components/AppErrorBoundary';
 import './index.css';
 import seed from './data/seed.json';
 import { players as mockPlayers } from './data/mockData';
@@ -10,7 +11,7 @@ import { VZ_CLUBS_KEY, VZ_PLAYERS_KEY, VZ_FIXTURES_KEY } from './utils/storageKe
 
 // Update this value when modifying seed.json to force re-seeding
 const SEED_VERSION_KEY = 'vz_seed_version';
-const SEED_VERSION = '4';
+const SEED_VERSION = '3';
 
 Sentry.init({ dsn: import.meta.env.VITE_SENTRY_DSN });
 
@@ -34,4 +35,5 @@ createRoot(document.getElementById('root')!).render(
       <App />
     </BrowserRouter>
   </StrictMode>
-); 
+);
+ 

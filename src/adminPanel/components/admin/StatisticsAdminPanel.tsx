@@ -1,6 +1,6 @@
 import  React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { TrendingUp, Users, Globe, User, Trophy, Calendar, Download, RefreshCw } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { TrendingUp, TrendingDown, Users, Globe, User, Trophy, Calendar, Filter, Download, RefreshCw, ChevronDown } from 'lucide-react';
 import StatsCard from './StatsCard';
 
 const StatisticsAdminPanel = () => {
@@ -40,6 +40,13 @@ const StatisticsAdminPanel = () => {
     { name: 'Liverpool FC', members: 33, rating: 4.4, matches: 20 }
   ];
 
+  const activityHeatmap = [
+    { hour: '00', Mon: 2, Tue: 1, Wed: 3, Thu: 2, Fri: 4, Sat: 8, Sun: 6 },
+    { hour: '06', Mon: 8, Tue: 12, Wed: 15, Thu: 18, Fri: 22, Sat: 25, Sun: 20 },
+    { hour: '12', Mon: 35, Tue: 42, Wed: 48, Thu: 52, Fri: 58, Sat: 65, Sun: 55 },
+    { hour: '18', Mon: 65, Tue: 70, Wed: 75, Thu: 80, Fri: 85, Sat: 90, Sun: 82 },
+    { hour: '21', Mon: 45, Tue: 48, Wed: 52, Thu: 55, Fri: 62, Sat: 78, Sun: 68 }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20 p-6">

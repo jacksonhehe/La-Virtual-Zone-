@@ -1,6 +1,13 @@
-import { User as SharedUser } from '../types/shared';
+import {
+  User as SharedUser,
+  Club,
+  Title,
+  Player,
+  PlayerAttributes,
+  PlayerContract,
+} from '../types/shared';
 
-export type { Club, Title, Player, PlayerAttributes, PlayerContract } from '../types/shared';
+export { Club, Title, Player, PlayerAttributes, PlayerContract } from '../types/shared';
 
 export interface User extends SharedUser {
   role: 'admin' | 'dt' | 'user';

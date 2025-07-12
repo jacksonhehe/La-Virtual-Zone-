@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import  { Calendar, Clock, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings } from 'lucide-react';
+import  React, { useState, useEffect } from 'react';
+import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, Filter, MapPin, Settings } from 'lucide-react'; 
+import { useGlobalStore } from '../../store/globalStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 
@@ -18,19 +19,21 @@ interface CalendarEvent {
 }
 
 const CalendarAdminPanel = () => {
+  const { users } = useGlobalStore();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
-  const mockEvents = useMemo<CalendarEvent[]>(
-    () => [
-      {
-        id: '1',
-        title: 'Liga Master - Jornada 15',
-        type: 'match',
-        date: '2024-01-22',
+  const mockEvents: CalendarEvent[] = [
+    {
+      id: '1',
+      title: 'Liga Master - Jornada 15',
+      type: 'match',
+      date: '2024-01-22',
       time: '20:00',
       description: 'Partidos de la jornada 15 de Liga Master',
       location: 'Virtual Stadium',
@@ -87,13 +90,11 @@ const CalendarAdminPanel = () => {
       priority: 'high',
       createdBy: 'system'
     }
-    ],
-    []
-  );
+  ];
 
   useEffect(() => {
     setEvents(mockEvents);
-  }, [mockEvents]);
+  }, []);
 
   const filteredEvents = events.filter(event => {
     const matchesFilter = filter === 'all' || event.type === filter;
@@ -185,6 +186,13 @@ const CalendarAdminPanel = () => {
                 </div>
               </div>
             )}
+            <button
+              onClick={() => setShowEventModal(true)}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <Plus size={18} />
+              <span>Nuevo Evento</span>
+            </button>
           </div>
         </div>
 
@@ -332,12 +340,17 @@ const CalendarAdminPanel = () => {
                         </div>
                         <div className="flex items-center space-x-2">
                           <button
+                            onClick={() => setSelectedEvent(event)}
                             className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                             title="Ver detalles"
                           >
                             <Eye size={16} />
                           </button>
                           <button
+                            onClick={() => {
+                              setSelectedEvent(event);
+                              setShowEventModal(true);
+                            }}
                             className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                             title="Editar evento"
                           >

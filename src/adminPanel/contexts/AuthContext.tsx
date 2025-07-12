@@ -12,10 +12,9 @@ export interface AuthContextType {
   addXP: (amount: number) => void;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const store = useAuthStore();
 
   return (
@@ -23,9 +22,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -33,5 +31,4 @@ export const useAuth = () => {
   }
   return context;
 };
-
-export default AuthProvider;
+ 

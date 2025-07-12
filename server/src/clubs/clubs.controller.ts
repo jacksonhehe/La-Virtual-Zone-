@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ClubsService } from './clubs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -14,17 +14,5 @@ export class ClubsController {
   @Roles(Role.ADMIN, Role.CLUB)
   findAll() {
     return this.clubs.all();
-  }
-
-  @Post()
-  @Roles(Role.ADMIN)
-  create(@Body('name') name: string) {
-    return this.clubs.create({ name });
-  }
-
-  @Patch(':id')
-  @Roles(Role.ADMIN)
-  update(@Param('id') id: string, @Body('name') name: string) {
-    return this.clubs.update(Number(id), { name });
   }
 }

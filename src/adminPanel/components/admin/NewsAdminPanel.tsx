@@ -1,5 +1,6 @@
 import  React, { useState } from 'react';
-import { Edit, Plus, Trash, Search, Calendar, User, Eye, EyeOff, FileText, Star } from 'lucide-react';
+import { Edit, Plus, Trash, Search, Filter, Calendar, User, Eye, EyeOff, FileText, Image, Star } from 'lucide-react';
+import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 
 interface NewsArticle {
@@ -17,7 +18,7 @@ interface NewsArticle {
 }
 
 const NewsAdminPanel = () => {
-  const [articles] = useState<NewsArticle[]>([
+  const [articles, setArticles] = useState<NewsArticle[]>([
     {
       id: '1',
       title: 'Nueva temporada de La Virtual Zone comienza en enero',
@@ -59,6 +60,7 @@ const NewsAdminPanel = () => {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
 
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(search.toLowerCase()) ||

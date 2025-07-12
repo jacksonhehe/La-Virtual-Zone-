@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Activity, User, Clock, AlertCircle, Eye, Calendar } from 'lucide-react';
+import  React, { useState, useEffect } from 'react';
+import { Activity, User, Clock, AlertCircle, Eye, Filter, Calendar, CheckCircle, X } from 'lucide-react';
+import { useGlobalStore, subscribe as subscribeGlobal } from '../../store/globalStore';
+import { useActivityStore } from '../../store/activityStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 
 const ActivityAdminPanel = () => {
+  const { users } = useGlobalStore();
+  const { activities } = useActivityStore();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [timeFilter, setTimeFilter] = useState('today');

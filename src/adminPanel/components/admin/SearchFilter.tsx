@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import  { Search, Filter } from 'lucide-react';
 
 interface Props {
   search: string;

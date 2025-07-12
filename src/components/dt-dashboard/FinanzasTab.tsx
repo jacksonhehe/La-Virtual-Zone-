@@ -1,5 +1,5 @@
 import  { motion } from 'framer-motion';
-import { DollarSign, TrendingUp, TrendingDown, Target, Users } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Target, Users, Trophy } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, BarChart, Bar } from 'recharts';
 import { useDataStore } from '../../store/dataStore';
 

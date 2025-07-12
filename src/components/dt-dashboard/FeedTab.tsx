@@ -5,8 +5,10 @@ import {
   TrendingUp, 
   Users, 
   DollarSign, 
-  AlertCircle,
-  Trophy,
+  AlertCircle, 
+  Trophy, 
+  Calendar,
+  Filter,
   Clock
 } from 'lucide-react';
 

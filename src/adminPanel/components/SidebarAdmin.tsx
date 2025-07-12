@@ -2,7 +2,7 @@ import  { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 const SidebarAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);

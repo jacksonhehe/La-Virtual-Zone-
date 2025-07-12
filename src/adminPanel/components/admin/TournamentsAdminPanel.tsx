@@ -208,7 +208,7 @@ const TournamentsAdminPanel = () => {
                       Premio
                     </div>
                     <div className="text-white font-medium">
-                      €{(tournament.prizePool ?? 0).toLocaleString()}
+                      €{tournament.prizePool.toLocaleString()}
                     </div>
                   </div>
                 </div>

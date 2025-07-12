@@ -9,6 +9,7 @@ import {
   Standing,
   FAQ,
   StoreItem,
+  DtClub,
   DtFixture,
   DtMarket,
   DtObjectives,

@@ -21,7 +21,7 @@ export interface AdminData {
 const PREFIX = 'vz_';
 
 // Keys previously used by older admin panel versions
-const OLD_KEYS: Record<keyof AdminData, string> = {
+const OLD_KEYS = {
   users: `${PREFIX}users_admin`,
   clubs: `${PREFIX}clubs_admin`,
   players: `${PREFIX}players_admin`,
@@ -35,7 +35,7 @@ const OLD_KEYS: Record<keyof AdminData, string> = {
 } as const;
 
 // Updated keys aligned with the main application
-const keys: Record<keyof AdminData, string> = {
+const keys = {
   users: VZ_USERS_KEY,
   clubs: VZ_CLUBS_KEY,
   players: VZ_PLAYERS_KEY,
@@ -50,7 +50,7 @@ const keys: Record<keyof AdminData, string> = {
 
 const migrateOldKeys = () => {
   Object.entries(OLD_KEYS).forEach(([prop, oldKey]) => {
-    const newKey = keys[prop as keyof AdminData];
+    const newKey = (keys as any)[prop];
     if (oldKey !== newKey) {
       const oldVal = localStorage.getItem(oldKey);
       if (oldVal && !localStorage.getItem(newKey)) {
@@ -69,12 +69,11 @@ export const loadAdminData = (defaults: AdminData): AdminData => {
   }
   const data: AdminData = { ...defaults };
   migrateOldKeys();
-  (Object.keys(keys) as AdminDataKey[]).forEach((prop) => {
-    const key = keys[prop];
+  Object.entries(keys).forEach(([prop, key]) => {
     const json = localStorage.getItem(key);
     if (json) {
       try {
-        data[prop as keyof AdminData] = JSON.parse(json) as AdminData[keyof AdminData];
+        (data as any)[prop] = JSON.parse(json);
       } catch {
         // ignore parse errors and keep defaults
       }
@@ -88,7 +87,7 @@ export const saveAdminData = (data: AdminData): void => {
     return;
   }
   Object.entries(keys).forEach(([prop, key]) => {
-    const value = data[prop as keyof AdminData];
+    const value = (data as any)[prop];
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch {
