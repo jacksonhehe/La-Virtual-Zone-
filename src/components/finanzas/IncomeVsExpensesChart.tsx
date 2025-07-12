@@ -1,14 +1,7 @@
 
-import React, { useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+import React, { Suspense, useState } from "react";
+const Recharts = React.lazy(() => import('recharts'));
+import ChartSkeleton from '../common/ChartSkeleton';
 import financeHistory from "../../data/financeHistory.json";
 
 export interface FinanceHistoryEntry {
@@ -47,16 +40,18 @@ const IncomeVsExpensesChart: React.FC<Props> = ({ data }) => {
           <option value="12m">12 meses</option>
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData}>
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="income" stackId="a" />
-          <Bar dataKey="expenses" stackId="a" />
-        </BarChart>
-      </ResponsiveContainer>
+      <Suspense fallback={<ChartSkeleton />}>
+        <Recharts.ResponsiveContainer width="100%" height={300}>
+          <Recharts.BarChart data={chartData}>
+            <Recharts.XAxis dataKey="month" />
+            <Recharts.YAxis />
+            <Recharts.Tooltip />
+            <Recharts.Legend />
+            <Recharts.Bar dataKey="income" stackId="a" />
+            <Recharts.Bar dataKey="expenses" stackId="a" />
+          </Recharts.BarChart>
+        </Recharts.ResponsiveContainer>
+      </Suspense>
     </div>
   );
 };
