@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   Sentry.init({ dsn: process.env.SENTRY_DSN });
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: false });
   app.enableCors({
     origin: ['https://la-virtual-zone.app', 'http://localhost:5173'],
     credentials: true,
