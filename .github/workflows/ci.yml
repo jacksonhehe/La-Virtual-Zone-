@@ -44,7 +44,8 @@ jobs:
         with:
           start: npm run preview
           wait-on: 'http://localhost:4173'
-          fail-fast: true
+          wait-on-timeout: 120
+          record: false
 
       - name: Lighthouse CI
         run: npm run lhci
