@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: lavirtual
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  api:
+    build:
+      context: .
+      target: api-runtime
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  web:
+    build:
+      context: .
+      target: web-runtime
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+volumes:
+  pgdata:

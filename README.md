@@ -138,3 +138,13 @@ El archivo `src/data/seed.json` contiene los valores iniciales que se importan e
 El proyecto se despliega automáticamente mediante **GitHub Actions**. El flujo ejecuta `npm run test` y las pruebas de `server/`, mide el rendimiento con Lighthouse CI y publica el front end en **Vercel** y el back end en **Fly.io**.
 Se requiere definir los secretos `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `FLY_API_TOKEN` y `FLY_APP` en los ajustes del repositorio. También se recomienda configurar `SENTRY_DSN` para el seguimiento de errores.
 
+
+## Despliegue con Docker
+
+Se incluye un `Dockerfile` multi-stage y un `docker-compose.yml` para levantar la base de datos, la API y la web. Ejecuta:
+
+```bash
+docker compose up --build
+```
+
+La API quedará disponible en `http://localhost:3000` y la interfaz web en `http://localhost`.
