@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-const Recharts = React.lazy(() => import('recharts'));
+import * as Recharts from 'recharts';
 import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target } from 'lucide-react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

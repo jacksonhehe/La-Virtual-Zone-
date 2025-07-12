@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, TrendingDown, Target, Users, Trophy } from 'lucide-react';
-const Recharts = React.lazy(() => import('recharts'));
+import * as Recharts from 'recharts';
 import ChartSkeleton from '../common/ChartSkeleton';
 import { useDataStore } from '../../store/dataStore';
 

@@ -1,5 +1,5 @@
 import React, { Suspense, useState } from 'react';
-const Recharts = React.lazy(() => import('recharts'));
+import * as Recharts from 'recharts';
 import { useGlobalStore } from '../../store/globalStore';
 import ChartSkeleton from '../../../components/common/ChartSkeleton';
 
