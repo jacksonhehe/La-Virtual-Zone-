@@ -33,6 +33,7 @@ model Player {
   clubId Int?
 
   @@index([clubId, name])
+  @@index([clubId])
 }
 
 model Match {
