@@ -31,6 +31,8 @@ model Player {
   name   String
   club   Club? @relation(fields: [clubId], references: [id])
   clubId Int?
+
+  @@index([clubId, name])
 }
 
 model Match {
@@ -40,6 +42,8 @@ model Match {
   awayClub   Club     @relation("away", fields: [awayClubId], references: [id])
   awayClubId Int
   playedAt   DateTime
+
+  @@index([homeClubId, awayClubId, playedAt])
 }
 
 model Transfer {
@@ -52,6 +56,8 @@ model Transfer {
   toId     Int
   amount   Int
   createdAt DateTime @default(now())
+
+  @@index([fromId, toId, createdAt])
 }
 
 model News {
