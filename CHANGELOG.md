@@ -3,3 +3,9 @@
 - restrict API CORS policy
 - add compound indexes in Prisma schema
 - run Cypress E2E tests in CI workflow
+- Lazy-load de Recharts
+- Dockerización completa (web, API, DB)
+- Validación de variables de entorno con Zod
+- Helmet + límite de JSON
+- Rotación de refresh token
+- CI con imágenes Docker y Lighthouse

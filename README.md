@@ -144,7 +144,7 @@ Se requiere definir los secretos `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJEC
 Se incluye un `Dockerfile` multi-stage y un `docker-compose.yml` para levantar la base de datos, la API y la web. Ejecuta:
 
 ```bash
-docker compose up --build
+docker compose up -d --build
 ```
 
 La API quedará disponible en `http://localhost:3000` y la interfaz web en `http://localhost`.
