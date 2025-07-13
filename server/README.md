@@ -20,6 +20,17 @@ Start the API in watch mode:
 pnpm run start:dev
 ```
 
+### Connect to Supabase
+
+1. Create a project in **Supabase** and copy its PostgreSQL connection string.
+2. Create a `.env` file using the template at the project root and set `DATABASE_URL` to the Supabase string. Also choose a strong value for `JWT_SECRET`.
+3. Run Prisma commands to prepare the database:
+
+   ```bash
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+
 ## Testing
 
 Run the server unit and e2e tests:
