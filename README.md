@@ -111,6 +111,26 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 The platform now stores all data in a PostgreSQL database managed by Prisma. Run `npm run start:dev` inside `server/` to start the API.
 
+### Using Supabase as the database
+
+1. Create a project in **Supabase** and copy the PostgreSQL connection string.
+2. Duplicate `.env.example` as `.env` and replace `DATABASE_URL` with the string provided by Supabase. Define a strong `JWT_SECRET` as well.
+3. Inside `server/` install dependencies and generate the Prisma client:
+
+   ```bash
+   pnpm install
+   npx prisma generate
+   ```
+
+4. Create the tables in Supabase and seed the demo data:
+
+   ```bash
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+
+5. Start the API and the web app as usual. The backend will now connect to Supabase using the credentials from `.env`.
+
 ## Recuperar contraseña
 
 Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.
