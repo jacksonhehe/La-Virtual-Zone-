@@ -16,21 +16,29 @@ model User {
   clubs         Club[]
   players       Player[]
   sessions      Session[]
+  refreshTokens RefreshToken[]
 }
 
 model Club {
-  id        Int      @id @default(autoincrement())
-  name      String
-  manager   User?    @relation(fields: [managerId], references: [id])
-  managerId Int?
-  players   Player[]
+  id            Int        @id @default(autoincrement())
+  name          String
+  manager       User?      @relation(fields: [managerId], references: [id])
+  managerId     Int?
+  players       Player[]
+  homeMatches   Match[]    @relation("home")
+  awayMatches   Match[]    @relation("away")
+  fromTransfers Transfer[] @relation("from")
+  toTransfers   Transfer[] @relation("to")
 }
 
 model Player {
-  id     Int   @id @default(autoincrement())
-  name   String
-  club   Club? @relation(fields: [clubId], references: [id])
-  clubId Int?
+  id        Int        @id @default(autoincrement())
+  name      String
+  club      Club?      @relation(fields: [clubId], references: [id])
+  clubId    Int?
+  user      User?      @relation(fields: [userId], references: [id])
+  userId    Int?
+  transfers Transfer[]
 
   @@index([clubId, name])
   @@index([clubId])
@@ -48,14 +56,14 @@ model Match {
 }
 
 model Transfer {
-  id       Int    @id @default(autoincrement())
-  player   Player @relation(fields: [playerId], references: [id])
-  playerId Int
-  from     Club   @relation("from", fields: [fromId], references: [id])
-  fromId   Int
-  to       Club   @relation("to", fields: [toId], references: [id])
-  toId     Int
-  amount   Int
+  id        Int      @id @default(autoincrement())
+  player    Player   @relation(fields: [playerId], references: [id])
+  playerId  Int
+  from      Club     @relation("from", fields: [fromId], references: [id])
+  fromId    Int
+  to        Club     @relation("to", fields: [toId], references: [id])
+  toId      Int
+  amount    Int
   createdAt DateTime @default(now())
 
   @@index([fromId, toId, createdAt])
