@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
+import helmet from '@nest/helmet';
+import express from 'express';
 import * as Sentry from '@sentry/node';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
@@ -15,6 +17,8 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type,Authorization',
   });
   app.use(cookieParser());
+  app.use(helmet());
+  app.use(express.json({ limit: '1mb' }));
   await app.listen(config.get<number>('PORT'));
 }
 
