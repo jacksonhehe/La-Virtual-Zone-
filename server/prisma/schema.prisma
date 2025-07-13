@@ -15,7 +15,7 @@ model User {
   role          Role           @default(USER)
   clubs         Club[]
   players       Player[]
-  refreshTokens RefreshToken[]
+  sessions      Session[]
 }
 
 model Club {
@@ -74,6 +74,17 @@ model RefreshToken {
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
   expiresAt DateTime
+}
+
+model Session {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  refreshHash String
+  hashedAt    DateTime @default(now())
+  revoked     Boolean  @default(false)
+
+  @@index([userId])
 }
 
 enum Role {
