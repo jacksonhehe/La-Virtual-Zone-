@@ -1,0 +1,16 @@
+[
+  {
+    "resourceSizes": [
+      {
+        "resourceType": "total",
+        "budget": 1600
+      }
+    ],
+    "timings": [
+      {
+        "metric": "first-contentful-paint",
+        "budget": 2000
+      }
+    ]
+  }
+]

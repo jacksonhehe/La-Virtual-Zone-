@@ -3,6 +3,7 @@ name: CI/CD
 on:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
   build:
@@ -48,6 +49,7 @@ jobs:
           record: false
 
       - name: Lighthouse CI
+        if: github.event_name == 'pull_request'
         run: npm run lhci
 
       - name: Deploy frontend to Vercel
