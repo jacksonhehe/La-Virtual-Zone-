@@ -1,6 +1,6 @@
 import { Player } from '../types/shared';
 import { VZ_PLAYERS_KEY } from './storageKeys';
-import { players as defaultPlayers } from '../data/mockData';
+import { supabase } from '../lib/supabaseClient';
 
 export const getPlayers = (): Player[] => {
   const json = localStorage.getItem(VZ_PLAYERS_KEY);
@@ -11,7 +11,12 @@ export const getPlayers = (): Player[] => {
       // ignore
     }
   }
-  return defaultPlayers as Player[];
+  supabase.from('players').select('*').then(({ data, error }) => {
+    if (!error && data) {
+      localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(data));
+    }
+  });
+  return [] as Player[];
 };
 
 export const savePlayers = (data: Player[]): void => {

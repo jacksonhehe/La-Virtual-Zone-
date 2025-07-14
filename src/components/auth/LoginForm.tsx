@@ -1,26 +1,26 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, User, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
 const LoginForm = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    if (!username || !password) {
+    if (!email || !password) {
       setError('Por favor, ingresa todos los campos');
       return;
     }
-    
+
     try {
-      login(username, password);
+      await login(email, password);
       navigate('/usuario');
     } catch {
       setError('Credenciales incorrectas');
@@ -28,7 +28,7 @@ const LoginForm = () => {
   };
 
   const handleDemoLogin = () => {
-    login('admin', 'password');
+    login('admin@virtualzone.com', 'password');
     navigate('/usuario');
   };
 
@@ -50,18 +50,18 @@ const LoginForm = () => {
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-1">Nombre de usuario</label>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">Correo electrónico</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User size={16} className="text-gray-500" />
+              <Mail size={16} className="text-gray-500" />
             </div>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="input pl-10 w-full"
-              placeholder="Ingresa tu nombre de usuario"
+              placeholder="Ingresa tu correo electrónico"
             />
           </div>
         </div>
