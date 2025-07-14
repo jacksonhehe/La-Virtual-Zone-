@@ -1,0 +1,10 @@
+{
+  "clubs": [
+    { "id": "1", "name": "Demo FC", "slug": "demo-fc", "owner_id": "1" },
+    { "id": "2", "name": "Sample United", "slug": "sample-united", "owner_id": "2" }
+  ],
+  "players": [
+    { "id": "1", "name": "Player One", "club_id": "1", "position": "GK", "rating": 80 },
+    { "id": "2", "name": "Player Two", "club_id": "2", "position": "ST", "rating": 85 }
+  ]
+}
