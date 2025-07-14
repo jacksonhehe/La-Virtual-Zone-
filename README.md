@@ -131,6 +131,14 @@ The platform now stores all data in a PostgreSQL database managed by Prisma. Run
 
 5. Start the API and the web app as usual. The backend will now connect to Supabase using the credentials from `.env`.
 
+### Seed Supabase
+
+Run the following command to populate the Supabase tables with demo data:
+
+```bash
+pnpm seed:supabase
+```
+
 ## Recuperar contraseña
 
 Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.
