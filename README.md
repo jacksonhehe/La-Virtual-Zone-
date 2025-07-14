@@ -149,7 +149,6 @@ Si intentas acceder a una URL inexistente verás una página 404 con un botón q
 
 El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
-El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
 
 ## Health Checks
 

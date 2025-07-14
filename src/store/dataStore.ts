@@ -1,11 +1,7 @@
 import { create } from 'zustand';
 import { useActivityLogStore } from './activityLogStore';
 import { useAuthStore } from './authStore';
-import {
-  getUsers,
-  updateUser as persistUser,
-  deleteUser as persistDeleteUser
-} from '../utils/authService';
+import { supabase } from '../lib/supabaseClient';
 import {
   tournaments,
   transfers,
@@ -51,7 +47,9 @@ const initialClubs = getClubs();
 const initialPlayers = getPlayers();
 const initialOffers = getOffers();
 const initialUser = useAuthStore.getState().user;
-const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
+const baseClub =
+  initialClubs.find(c => c.id === initialUser?.clubId) ||
+  initialClubs[0] || { id: '', name: '', slug: '', logo: '', budget: 0 }
 const initialClub: DtClub = {
   id: baseClub.id,
   name: baseClub.name,
@@ -59,8 +57,8 @@ const initialClub: DtClub = {
   logo: baseClub.logo,
   formation: '4-3-3',
   budget: baseClub.budget,
-  players: initialPlayers.filter(p => p.clubId === baseClub.id)
-};
+  players: initialPlayers.filter(p => p.clubId === baseClub.id),
+}
 const initialFixtures = tournaments[0].matches
   .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
   .slice(0, 6)
@@ -145,7 +143,7 @@ export const useDataStore = create<DataState>((set) => ({
   news: dtNews,
   positions: dtPositions,
   dtRankings,
-  users: getUsers(),
+  users: [],
   
   updateClubs: (newClubs) =>
     set((state) => {
@@ -257,7 +255,7 @@ export const useDataStore = create<DataState>((set) => ({
   updateUserEntry: (user) =>
     set((state) => {
       const prev = state.users.find(u => u.id === user.id);
-      persistUser(user);
+      supabase.from('users').update(user).eq('id', user.id).catch(console.error);
       const current = useAuthStore.getState().user?.id || 'system';
       if (prev && prev.role !== user.role) {
         useActivityLogStore
@@ -284,7 +282,7 @@ export const useDataStore = create<DataState>((set) => ({
 
   removeUser: (id) =>
     set((state) => {
-      persistDeleteUser(id);
+      supabase.from('users').delete().eq('id', id).catch(console.error);
       return {
         users: state.users.filter(u => u.id !== id)
       };
@@ -381,6 +379,11 @@ export const useDataStore = create<DataState>((set) => ({
   loadNewsItems: () => set({ newsItems }),
 }));
 useDataStore.getState().loadNewsItems();
+supabase.from('users').select('*').then(({ data, error }) => {
+  if (!error && data) {
+    useDataStore.setState({ users: data })
+  }
+})
 
 // Update DT club when authenticated user changes
 useAuthStore.subscribe(state => {
