@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AlertCircle, Lock } from 'lucide-react';
-import { resetPassword } from '../utils/authService';
+import { supabase } from '../lib/supabaseClient';
 import { z } from 'zod';
 
 const schema = z
@@ -22,7 +22,7 @@ const DefinirContrasena = () => {
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -38,11 +38,11 @@ const DefinirContrasena = () => {
       setError('Token inválido');
       return;
     }
-    const ok = resetPassword(token, form.password);
-    if (ok) {
-      navigate('/login');
+    const { error } = await supabase.auth.updateUser({ password: form.password })
+    if (!error) {
+      navigate('/login')
     } else {
-      setError('Token inválido o expirado');
+      setError(error.message)
     }
   };
 
