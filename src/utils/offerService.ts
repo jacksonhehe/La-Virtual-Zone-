@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabaseClient'
-import { TransferOffer } from '@/types'
+import { supabase } from '../lib/supabaseClient'
+import { TransferOffer } from '../types'
 
 export const fetchOffers = async () => {
   const { data, error } = await supabase

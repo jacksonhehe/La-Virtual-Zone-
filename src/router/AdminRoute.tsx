@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import { AuthContext } from '@/contexts/AuthContext'
+import { AuthContext } from '../contexts/AuthContext'
 
 export const AdminRoute = () => {
   const { user } = useContext(AuthContext)
