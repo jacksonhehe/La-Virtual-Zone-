@@ -1,4 +1,6 @@
 import { supabase } from '../lib/supabaseClient'
+import { Player } from '../types/shared'
+import { VZ_PLAYERS_KEY } from './storageKeys'
 
 export const fetchPlayers = async () => {
   const { data, error } = await supabase
@@ -7,6 +9,31 @@ export const fetchPlayers = async () => {
     .order('created_at')
   if (error) throw error
   return data
+}
+
+export const getPlayers = (): Player[] => {
+  const json = typeof localStorage === 'undefined' ? null : localStorage.getItem(VZ_PLAYERS_KEY)
+  if (json) {
+    try {
+      return JSON.parse(json) as Player[]
+    } catch {
+      // ignore
+    }
+  }
+  fetchPlayers()
+    .then(data => {
+      if (data && typeof localStorage !== 'undefined') {
+        localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(data))
+      }
+    })
+    .catch(() => {})
+  return [] as Player[]
+}
+
+export const savePlayers = (data: Player[]): void => {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(data))
+  }
 }
 
 export const createPlayer = async (payload: { name: string; club_id: string; position: string; rating: number }) => {
