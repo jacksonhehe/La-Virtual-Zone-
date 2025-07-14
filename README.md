@@ -139,6 +139,14 @@ Run the following command to populate the Supabase tables with demo data:
 pnpm seed:supabase
 ```
 
+### Activar RLS
+
+Aplica las políticas de seguridad ejecutando:
+
+```bash
+pnpm migrate:rls
+```
+
 ## Recuperar contraseña
 
 Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.

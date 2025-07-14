@@ -5,37 +5,45 @@ function usePersistentState<T>(key: string, defaultValue: T): [T, React.Dispatch
   const [state, setState] = useState<T>(defaultValue)
 
   useEffect(() => {
-    let isMounted = true
-    supabase
-      .from('persistent_state')
-      .select('value')
-      .eq('key', key)
-      .single()
-      .then(({ data, error }) => {
-        if (!error && data && isMounted) {
-          setState(data.value as T)
-        } else if (typeof localStorage !== 'undefined') {
-          const stored = localStorage.getItem(key)
-          if (stored && isMounted) setState(JSON.parse(stored) as T)
-        }
-      })
+    let mounted = true
+    const load = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      const lsKey = `lzui_${key}`
+      if (typeof localStorage !== 'undefined') {
+        const cached = localStorage.getItem(lsKey)
+        if (cached && mounted) setState(JSON.parse(cached) as T)
+      }
+      if (!user) return
+      const { data } = await supabase
+        .from('ui_state')
+        .select('value')
+        .eq('key', key)
+        .eq('user_id', user.id)
+        .single()
+      if (data && mounted) setState(data.value as T)
+    }
+    load()
     return () => {
-      isMounted = false
+      mounted = false
     }
   }, [key])
 
   useEffect(() => {
-    supabase
-      .from('persistent_state')
-      .upsert({ key, value: state })
-      .catch(() => {})
-    if (typeof localStorage !== 'undefined') {
-      try {
-        localStorage.setItem(key, JSON.stringify(state))
-      } catch {
-        // ignore write errors
+    const save = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return
+      await supabase
+        .from('ui_state')
+        .upsert({ key, value: state, user_id: user.id }, { onConflict: 'key' })
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(`lzui_${key}`, JSON.stringify(state))
       }
     }
+    save()
   }, [key, state])
 
   return [state, setState]
