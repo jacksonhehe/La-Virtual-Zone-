@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { supabase } from '@/lib/supabaseClient'
-import { Comment } from '@/types'
+import { supabase } from '../lib/supabaseClient'
+import { Comment } from '../types'
 
 interface CommentState {
   comments: Comment[]
