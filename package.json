@@ -13,6 +13,7 @@
     "test:unit": "vitest run",
     "test": "npm run lint && npm run build && npm run test:unit && (npx cypress run || echo \"Skipping e2e tests: Cypress not installed\")",
     "seed:supabase": "ts-node scripts/seedSupabase.ts"
+    ,"migrate:rls": "supabase db push supabase/sql/*.sql"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
