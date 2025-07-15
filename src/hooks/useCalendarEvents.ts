@@ -9,7 +9,7 @@ const useCalendarEvents = () => {
     supabase
       .from('events')
       .select('*')
-      .order('start')
+      .order('date')
       .then(({ data, error }) => {
         if (!error && data) {
           setEvents(data as CalendarEvent[])

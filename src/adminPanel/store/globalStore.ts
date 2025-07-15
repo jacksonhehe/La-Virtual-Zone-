@@ -13,6 +13,7 @@ import {
 import { User, Club, Player } from '../types/shared';
 import { getState, setState } from '../utils/adminStorage';
 import type { AdminData } from '../utils/adminStorage';
+import { supabase } from '../../lib/supabaseClient';
 import { useDataStore } from '../../store/dataStore';
 
 interface GlobalStore {
@@ -218,11 +219,15 @@ const defaultData: AdminData = {
 export const useGlobalStore = create<GlobalStore>()(
   subscribeWithSelector<GlobalStore>((set, get) => {
   const initial = defaultData;
-  getState('admin_data').then(data => {
-    if (data) set(data as GlobalStore);
+  supabase.auth.getUser().then(({ data: { user } }) => {
+    getState('admin_data', user?.id ?? '').then(data => {
+      if (data) set(data as GlobalStore);
+    });
   });
 
-  const persist = () => {
+  const persist = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
     setState('admin_data', {
       users: get().users,
       clubs: get().clubs,
@@ -234,7 +239,7 @@ export const useGlobalStore = create<GlobalStore>()(
       standings: get().standings,
       activities: get().activities,
       comments: get().comments,
-    }).catch(() => {});
+    }, user.id).catch(() => {});
   };
 
   return {

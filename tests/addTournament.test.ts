@@ -1,19 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { supabase } from '../src/lib/supabaseClient'
 
-vi.mock('../src/lib/supabaseClient', () => {
-  const store: any[] = []
-  const query = {
-    insert: vi.fn((payload: any) => {
-      store.push(payload)
-      return { single: () => Promise.resolve({ data: payload, error: null }) }
-    }),
-  }
-  return {
-    supabase: {
-      from: vi.fn(() => query),
-    },
-  }
-})
+const store: any[] = []
+const query = {
+  insert: vi.fn((payload: any) => {
+    store.push(payload)
+    return { single: () => Promise.resolve({ data: payload, error: null }) }
+  }),
+  upsert: vi.fn(() => Promise.resolve({ error: null })),
+}
+
+vi.spyOn(supabase, 'from').mockReturnValue(query as any)
+vi.spyOn(supabase.auth, 'getUser').mockResolvedValue({ data: { user: { id: 'u1' } } })
 
 beforeEach(() => {
   vi.resetModules()

@@ -1,7 +1,9 @@
 import  { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useGlobalStore } from '../store/globalStore';
+import { useGlobalStore, subscribe } from '../store/globalStore';
+import { supabase } from '../../lib/supabaseClient';
+vi.spyOn(supabase, 'from').mockReturnValue({ select: () => ({ data: [], error: null }) } as any)
 import Mercado from '../pages/admin/Mercado';
 
 vi.mock('../store/globalStore');
@@ -21,6 +23,8 @@ const mockStore = {
   approveTransfer: vi.fn(),
   rejectTransfer: vi.fn()
 };
+
+vi.mocked(subscribe as any).mockReturnValue(() => {})
 
 describe('Mercado Component', () => {
   beforeEach(() => {

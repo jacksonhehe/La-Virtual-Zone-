@@ -1,52 +1,42 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-function usePersistentState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+function usePersistentState<T>(key: string, defaultValue: T): [T, (v: T) => void] {
   const [state, setState] = useState<T>(defaultValue)
 
   useEffect(() => {
-    let mounted = true
-    const load = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      const lsKey = `lzui_${key}`
-      if (typeof localStorage !== 'undefined') {
-        const cached = localStorage.getItem(lsKey)
-        if (cached && mounted) setState(JSON.parse(cached) as T)
-      }
-      if (!user) return
-      const { data } = await supabase
+    let cancelled = false
+    const lsKey = `lzui_${key}`
+    if (typeof localStorage !== 'undefined') {
+      const cached = localStorage.getItem(lsKey)
+      if (cached) setState(JSON.parse(cached) as T)
+    }
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      supabase
         .from('ui_state')
         .select('value')
         .eq('key', key)
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id ?? '')
         .single()
-      if (data && mounted) setState(data.value as T)
-    }
-    load()
+        .then(({ data }) => {
+          if (!cancelled && data?.value !== undefined) setState(data.value as T)
+        })
+    })
     return () => {
-      mounted = false
+      cancelled = true
     }
   }, [key])
 
-  useEffect(() => {
-    const save = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
-      await supabase
-        .from('ui_state')
-        .upsert({ key, value: state, user_id: user.id }, { onConflict: 'key' })
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(`lzui_${key}`, JSON.stringify(state))
-      }
+  const persist = async (newValue: T) => {
+    setState(newValue)
+    const { data: { user } } = await supabase.auth.getUser()
+    supabase.from('ui_state').upsert({ key, value: newValue, user_id: user?.id })
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(`lzui_${key}`, JSON.stringify(newValue))
     }
-    save()
-  }, [key, state])
+  }
 
-  return [state, setState]
+  return [state, persist]
 }
 
 export default usePersistentState

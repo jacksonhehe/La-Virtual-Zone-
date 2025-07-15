@@ -1,27 +1,19 @@
 import { supabase } from '@/lib/supabaseClient'
 
-export const getState = async (key: string) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return null
+export const getState = async (key: string, user_id: string) => {
   const { data, error } = await supabase
     .from('admin_state')
     .select('value')
     .eq('key', key)
-    .eq('user_id', user.id)
+    .eq('user_id', user_id)
     .single()
-  if (error) return null
+  if (error && error.code !== 'PGRST116') throw error
   return data?.value ?? null
 }
 
-export const setState = async (key: string, value: unknown) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authenticated')
+export const setState = async (key: string, value: any, user_id: string) => {
   const { error } = await supabase
     .from('admin_state')
-    .upsert({ key, value, user_id: user.id }, { onConflict: 'key' })
+    .upsert({ key, value, user_id }, { onConflict: 'key' })
   if (error) throw error
 }

@@ -1,7 +1,9 @@
 import  { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useGlobalStore } from '../store/globalStore';
+import { supabase } from '../../lib/supabaseClient';
+vi.spyOn(supabase, 'from').mockReturnValue({ select: () => ({ data: [], error: null }) } as any)
 import Usuarios from '../pages/admin/Usuarios';
 
 vi.mock('../store/globalStore');
@@ -22,6 +24,8 @@ const mockStore = {
   removeUser: vi.fn(),
   setLoading: vi.fn()
 };
+
+vi.spyOn(supabase, 'from').mockReturnValue({ select: () => ({ data: [], error: null }) } as any)
 
 describe('Usuarios Component', () => {
   beforeEach(() => {
