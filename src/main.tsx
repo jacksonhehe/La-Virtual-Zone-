@@ -1,4 +1,5 @@
 import { StrictMode } from 'react';
+import 'whatwg-fetch'
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
