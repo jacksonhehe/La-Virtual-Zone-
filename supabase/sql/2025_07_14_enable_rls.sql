@@ -1,18 +1,27 @@
 -- Habilitar RLS en tablas principales
-alter table clubs     enable row level security;
-alter table players   enable row level security;
-alter table transfers enable row level security;
+alter table clubs       enable row level security;
+alter table players     enable row level security;
+alter table transfers   enable row level security;
 alter table admin_state enable row level security;
-alter table ui_state enable row level security;
+alter table ui_state    enable row level security;
 
--- Política genérica: usuario ve su data o es ADMIN
-create policy "Users read own clubs or ADMIN"
-on clubs for select
-using (
-  owner_id = auth.uid() or (auth.jwt() ->> 'role') = 'ADMIN'
-);
+-- Política: dueños o rol ADMIN pueden operar
+create policy "Owner or ADMIN on clubs"
+  on clubs for all
+  using (owner_id = auth.uid() OR (auth.jwt() ->> 'role') = 'ADMIN');
 
-create policy "Users manage own admin_state"
-on admin_state for all
-using (user_id = auth.uid());
--- (Repetir reglas equivalentes en players, transfers, ui_state)
+create policy "Owner or ADMIN on players"
+  on players for all
+  using (owner_id = auth.uid() OR (auth.jwt() ->> 'role') = 'ADMIN');
+
+create policy "Owner or ADMIN on transfers"
+  on transfers for all
+  using (owner_id = auth.uid() OR (auth.jwt() ->> 'role') = 'ADMIN');
+
+create policy "Owner or ADMIN on admin_state"
+  on admin_state for all
+  using (user_id = auth.uid() OR (auth.jwt() ->> 'role') = 'ADMIN');
+
+create policy "Owner or ADMIN on ui_state"
+  on ui_state for all
+  using (user_id = auth.uid() OR (auth.jwt() ->> 'role') = 'ADMIN');
