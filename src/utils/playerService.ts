@@ -1,30 +1,19 @@
-import { supabase } from '../lib/supabaseClient'
-import { Player } from '../types/shared'
+import { supabase } from '@/lib/supabaseClient'
 
 export const fetchPlayers = async () => {
-  const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .order('created_at')
+  const { data, error } = await supabase.from('players').select('*').order('created_at')
   if (error) throw error
   return data
 }
 
 export const createPlayer = async (payload: { name: string; club_id: string; position: string; rating: number }) => {
-  const { data, error } = await supabase
-    .from('players')
-    .insert(payload)
-    .single()
+  const { data, error } = await supabase.from('players').insert(payload).single()
   if (error) throw error
   return data
 }
 
-export const updatePlayer = async (id: string, payload: Partial<{ name: string; club_id: string; position: string; rating: number }>) => {
-  const { data, error } = await supabase
-    .from('players')
-    .update(payload)
-    .eq('id', id)
-    .single()
+export const updatePlayer = async (id: string, fields: Record<string, any>) => {
+  const { data, error } = await supabase.from('players').update(fields).eq('id', id).single()
   if (error) throw error
   return data
 }
@@ -32,14 +21,4 @@ export const updatePlayer = async (id: string, payload: Partial<{ name: string; 
 export const deletePlayer = async (id: string) => {
   const { error } = await supabase.from('players').delete().eq('id', id)
   if (error) throw error
-}
-
-export const fetchPlayerById = async (id: string) => {
-  const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .eq('id', id)
-    .single()
-  if (error) throw error
-  return data as Player
 }
