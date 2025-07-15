@@ -7,21 +7,22 @@ function usePersistentState<T>(key: string, defaultValue: T): [T, (v: T) => void
   useEffect(() => {
     let cancelled = false
     const lsKey = `lzui_${key}`
-    if (typeof localStorage !== 'undefined') {
-      const cached = localStorage.getItem(lsKey)
-      if (cached) setState(JSON.parse(cached) as T)
-    }
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      supabase
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data, error } = await supabase
         .from('ui_state')
         .select('value')
         .eq('key', key)
         .eq('user_id', user?.id ?? '')
         .single()
-        .then(({ data }) => {
-          if (!cancelled && data?.value !== undefined) setState(data.value as T)
-        })
-    })
+      if (!cancelled && !error && data?.value !== undefined) {
+        setState(data.value as T)
+      } else if (!cancelled && typeof localStorage !== 'undefined') {
+        const cached = localStorage.getItem(lsKey)
+        if (cached) setState(JSON.parse(cached) as T)
+      }
+    }
+    load()
     return () => {
       cancelled = true
     }
