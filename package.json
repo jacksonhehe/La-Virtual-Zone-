@@ -12,7 +12,7 @@
     "cypress:open": "cypress open",
     "test:unit": "vitest run",
     "test": "npm run lint && npm run build && npm run test:unit && (npx cypress run || echo \"Skipping e2e tests: Cypress not installed\")",
-    "seed:supabase": "ts-node-esm scripts/seedSupabase.ts",
+    "seed:supabase": "tsx scripts/seedSupabase.ts",
     "migrate:rls": "supabase db push supabase/sql/*.sql"
   },
   "dependencies": {
@@ -59,6 +59,7 @@
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
     "ts-node": "^10.9.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.0.2",
     "typescript-eslint": "^8.34.1",
     "vite": "^6.3.5",
