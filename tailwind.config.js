@@ -41,5 +41,5 @@ export default {
     'focus:ring-primary',
     'focus:ring-opacity-50'
   ],
-  plugins: []
+  plugins: [require('@tailwindcss/typography')]
 };
