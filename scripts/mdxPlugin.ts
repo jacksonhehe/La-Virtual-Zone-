@@ -17,7 +17,8 @@ export default function mdxPlugin(): Plugin {
   return {
     name: 'mdx-lite',
     transform(code, id) {
-      if (id.endsWith('.md') || id.endsWith('.mdx')) {
+      const [path] = id.split('?');
+      if (path.endsWith('.md') || path.endsWith('.mdx')) {
         const html = mdToHtml(code);
         const component = `import React from 'react';\nexport default function MDXContent(){return <div className="prose prose-invert" dangerouslySetInnerHTML={{__html: ${JSON.stringify(html)}}} />}`;
         return { code: component, map: null };
