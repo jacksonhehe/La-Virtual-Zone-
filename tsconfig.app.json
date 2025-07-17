@@ -16,8 +16,7 @@
     "jsx": "react-jsx",
     "types": ["node"],
     "paths": {
-      "zod": ["./src/lib/zod"],
-      "@/*": ["./src/*"]
+      "zod": ["./src/lib/zod"]
     },
 
     /* Linting */

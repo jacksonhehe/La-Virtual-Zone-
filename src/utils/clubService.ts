@@ -1,24 +1,23 @@
-import { supabase } from '@/lib/supabaseClient'
+import seed from '../data/seed.json';
+import { Club } from '../types/shared';
+import { VZ_CLUBS_KEY } from './storageKeys';
 
-export const fetchClubs = async () => {
-  const { data, error } = await supabase.from('clubs').select('*').order('created_at')
-  if (error) throw error
-  return data
-}
+export const getClubs = (): Club[] => {
+  const json =
+    typeof localStorage === 'undefined'
+      ? null
+      : localStorage.getItem(VZ_CLUBS_KEY);
+  if (json) {
+    try {
+      return JSON.parse(json) as Club[];
+    } catch {
+      // ignore parse errors and fall back to seed
+    }
+  }
+  return seed.clubs as Club[];
+};
 
-export const createClub = async (payload: { name: string; owner_id: string }) => {
-  const { data, error } = await supabase.from('clubs').insert(payload).single()
-  if (error) throw error
-  return data
-}
-
-export const updateClub = async (id: string, fields: Record<string, any>) => {
-  const { data, error } = await supabase.from('clubs').update(fields).eq('id', id).single()
-  if (error) throw error
-  return data
-}
-
-export const deleteClub = async (id: string) => {
-  const { error } = await supabase.from('clubs').delete().eq('id', id)
-  if (error) throw error
-}
+export const saveClubs = (clubs: Club[]): void => {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(VZ_CLUBS_KEY, JSON.stringify(clubs));
+};

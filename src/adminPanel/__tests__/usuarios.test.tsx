@@ -1,7 +1,6 @@
 import  { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import React from 'react'
 import { useGlobalStore } from '../store/globalStore';
 import Usuarios from '../pages/admin/Usuarios';
 
@@ -24,8 +23,7 @@ const mockStore = {
   setLoading: vi.fn()
 };
 
-
-describe.skip('Usuarios Component', () => {
+describe('Usuarios Component', () => {
   beforeEach(() => {
     vi.mocked(useGlobalStore).mockReturnValue(mockStore);
   });

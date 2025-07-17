@@ -15,7 +15,11 @@ const dtUser = {
 
 describe('Player table sorting and filtering', () => {
   beforeEach(() => {
-    cy.visit('/liga-master/plantilla');
+    cy.visit('/liga-master/plantilla', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('vz_current_user', JSON.stringify(dtUser));
+      }
+    });
   });
 
   it('filters players by search term', () => {

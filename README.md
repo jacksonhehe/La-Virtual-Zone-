@@ -111,42 +111,6 @@ The application seeds fictional manager users for the demo clubs. All DT account
 
 The platform now stores all data in a PostgreSQL database managed by Prisma. Run `npm run start:dev` inside `server/` to start the API.
 
-### Using Supabase as the database
-
-1. Create a project in **Supabase** and copy the PostgreSQL connection string.
-2. Duplicate `.env.example` as `.env` and replace `DATABASE_URL` with the string provided by Supabase. Define a strong `JWT_SECRET` as well.
-3. Inside `server/` install dependencies and generate the Prisma client:
-
-   ```bash
-   pnpm install
-   npx prisma generate
-   ```
-
-4. Create the tables in Supabase and seed the demo data:
-
-   ```bash
-   npx prisma migrate deploy
-   npx prisma db seed
-   ```
-
-5. Start the API and the web app as usual. The backend will now connect to Supabase using the credentials from `.env`.
-
-### Seed Supabase
-
-Run the following command to populate the Supabase tables with demo data:
-
-```bash
-pnpm seed:supabase
-```
-
-### Activar RLS
-
-Aplica las políticas de seguridad ejecutando:
-
-```bash
-pnpm migrate:rls
-```
-
 ## Recuperar contraseña
 
 Puedes solicitar un enlace en `/recuperar-password`; con el token recibido podrás definir una nueva contraseña en `/reset/:token`.
@@ -165,6 +129,7 @@ Si intentas acceder a una URL inexistente verás una página 404 con un botón q
 
 El back end expone `GET /healthz` para comprobar que el servicio está en línea.
 
+El archivo `src/data/seed.json` contiene los valores iniciales que se importan en la base de datos al ejecutar `npx prisma db seed` desde el directorio `server`.
 
 ## Health Checks
 
@@ -173,13 +138,3 @@ El back end expone `GET /healthz` para comprobar que el servicio está en línea
 El proyecto se despliega automáticamente mediante **GitHub Actions**. El flujo ejecuta `npm run test` y las pruebas de `server/`, mide el rendimiento con Lighthouse CI y publica el front end en **Vercel** y el back end en **Fly.io**.
 Se requiere definir los secretos `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `FLY_API_TOKEN` y `FLY_APP` en los ajustes del repositorio. También se recomienda configurar `SENTRY_DSN` para el seguimiento de errores.
 
-
-## Despliegue con Docker
-
-Se incluye un `Dockerfile` multi-stage y un `docker-compose.yml` para levantar la base de datos, la API y la web. Ejecuta:
-
-```bash
-docker compose up -d --build
-```
-
-La API quedará disponible en `http://localhost:3000` y la interfaz web en `http://localhost`.

@@ -1,8 +1,7 @@
 import  { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import React from 'react'
-import { useGlobalStore, subscribe } from '../store/globalStore';
+import { useGlobalStore } from '../store/globalStore';
 import Mercado from '../pages/admin/Mercado';
 
 vi.mock('../store/globalStore');
@@ -23,9 +22,7 @@ const mockStore = {
   rejectTransfer: vi.fn()
 };
 
-vi.mocked(subscribe as any).mockReturnValue(() => {})
-
-describe.skip('Mercado Component', () => {
+describe('Mercado Component', () => {
   beforeEach(() => {
     vi.mocked(useGlobalStore).mockReturnValue(mockStore);
   });

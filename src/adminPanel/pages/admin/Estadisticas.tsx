@@ -1,7 +1,6 @@
-import React, { Suspense, useState } from 'react';
-import * as Recharts from 'recharts';
+import  { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useGlobalStore } from '../../store/globalStore';
-import ChartSkeleton from '../../../components/common/ChartSkeleton';
 
 const Estadisticas = () => {
   const { users, clubs, players, transfers } = useGlobalStore();
@@ -73,10 +72,9 @@ const Estadisticas = () => {
         {/* Users by Role */}
         <div className="card">
           <h3 className="text-lg font-semibold mb-4">Usuarios por Rol</h3>
-          <Suspense fallback={<ChartSkeleton />}>
-            <Recharts.ResponsiveContainer width="100%" height={300}>
-              <Recharts.PieChart>
-                <Recharts.Pie
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
                 data={usersByRole}
                 cx="50%"
                 cy="50%"
@@ -84,68 +82,63 @@ const Estadisticas = () => {
                 dataKey="value"
               >
                 {usersByRole.map((entry, index) => (
-                  <Recharts.Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
-              </Recharts.Pie>
-              <Recharts.Tooltip
-                contentStyle={{
-                  backgroundColor: '#1F2937',
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
                   border: '1px solid #374151',
                   borderRadius: '8px',
                   color: '#F3F4F6'
-                }}
+                }} 
               />
-              </Recharts.PieChart>
-            </Recharts.ResponsiveContainer>
-          </Suspense>
+            </PieChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Monthly Activity */}
         <div className="card">
           <h3 className="text-lg font-semibold mb-4">Actividad Mensual</h3>
-          <Suspense fallback={<ChartSkeleton />}>
-            <Recharts.ResponsiveContainer width="100%" height={300}>
-              <Recharts.BarChart data={monthlyData}>
-                <Recharts.CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <Recharts.XAxis dataKey="month" stroke="#9CA3AF" />
-                <Recharts.YAxis stroke="#9CA3AF" />
-                <Recharts.Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F3F4F6'
-                  }}
-                />
-                <Recharts.Bar dataKey="users" fill="#3B82F6" name="Usuarios" />
-                <Recharts.Bar dataKey="transfers" fill="#10B981" name="Transferencias" />
-              </Recharts.BarChart>
-            </Recharts.ResponsiveContainer>
-          </Suspense>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={monthlyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="month" stroke="#9CA3AF" />
+              <YAxis stroke="#9CA3AF" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F3F4F6'
+                }} 
+              />
+              <Bar dataKey="users" fill="#3B82F6" name="Usuarios" />
+              <Bar dataKey="transfers" fill="#10B981" name="Transferencias" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
       {/* Transfers by Status */}
       <div className="card">
         <h3 className="text-lg font-semibold mb-4">Estado de Transferencias</h3>
-        <Suspense fallback={<ChartSkeleton />}>
-          <Recharts.ResponsiveContainer width="100%" height={300}>
-            <Recharts.BarChart data={transfersByStatus} layout="horizontal">
-              <Recharts.CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <Recharts.XAxis type="number" stroke="#9CA3AF" />
-              <Recharts.YAxis dataKey="name" type="category" stroke="#9CA3AF" />
-              <Recharts.Tooltip
-                contentStyle={{
-                  backgroundColor: '#1F2937',
-                  border: '1px solid #374151',
-                  borderRadius: '8px',
-                  color: '#F3F4F6'
-                }}
-              />
-              <Recharts.Bar dataKey="value" fill="#8B5CF6" />
-            </Recharts.BarChart>
-          </Recharts.ResponsiveContainer>
-        </Suspense>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={transfersByStatus} layout="horizontal">
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis type="number" stroke="#9CA3AF" />
+            <YAxis dataKey="name" type="category" stroke="#9CA3AF" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#1F2937', 
+                border: '1px solid #374151',
+                borderRadius: '8px',
+                color: '#F3F4F6'
+              }} 
+            />
+            <Bar dataKey="value" fill="#8B5CF6" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

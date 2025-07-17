@@ -12,7 +12,7 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const { register } = useAuthStore();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -27,7 +27,7 @@ const RegisterForm = () => {
     }
     
     try {
-      await register(email, password, username);
+      register(email, username, password);
       navigate('/usuario');
     } catch {
       setError('Error al registrarse');

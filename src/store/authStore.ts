@@ -1,31 +1,95 @@
-import { create } from 'zustand'
-import { supabase } from '../lib/supabaseClient'
+import { create } from 'zustand';
+import { User } from '../types/shared';
+import { useActivityLogStore } from './activityLogStore';
+import {
+  login as authLogin,
+  register as authRegister,
+  getCurrentUser,
+  logout as authLogout
+} from '../utils/authService';
 
 interface AuthState {
-  user: any | null
-  login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, username: string) => Promise<void>
-  logout: () => Promise<void>
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (username: string, password: string) => void;
+  register: (email: string, username: string, password: string) => void;
+  logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
+  addXP: (amount: number) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  login: async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw error
-    set({ user: data.user })
-  },
-  register: async (email, password, username) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { username } },
-    })
-    if (error) throw error
-    set({ user: data.user })
-  },
-  logout: async () => {
-    await supabase.auth.signOut()
-    set({ user: null })
-  },
-}))
+export const useAuthStore = create<AuthState>((set) => {
+  // Check for stored auth information
+  const initialUser = getCurrentUser();
+  
+  return {
+    user: initialUser,
+    isAuthenticated: !!initialUser,
+    
+    login: (username, password) => {
+      try {
+        const user = authLogin(username, password);
+        set({ user, isAuthenticated: true });
+        useActivityLogStore
+          .getState()
+          .addLog('login', user.id, `${user.username} inició sesión`);
+        return user;
+      } catch (error) {
+        console.error('Login failed:', error);
+        throw error;
+      }
+    },
+    
+    register: (email, username, password) => {
+      try {
+        const user = authRegister(email, username, password);
+        set({ user, isAuthenticated: true });
+        useActivityLogStore
+          .getState()
+          .addLog('register', user.id, `${user.username} se registró`);
+        return user;
+      } catch (error) {
+        console.error('Register failed:', error);
+        throw error;
+      }
+    },
+    
+    logout: () => {
+      const current = getCurrentUser();
+      authLogout();
+      set({ user: null, isAuthenticated: false });
+      if (current) {
+        useActivityLogStore
+          .getState()
+          .addLog('logout', current.id, `${current.username} cerró sesión`);
+      }
+    },
+    
+    updateUser: (userData) => {
+      set((state) => {
+        if (!state.user) return state;
+        
+        const updatedUser = {
+          ...state.user,
+          ...userData
+        };
+        
+        return { user: updatedUser };
+      });
+    },
+    
+    addXP: (amount) => {
+      set((state) => {
+        if (!state.user) return state;
+        
+        const updatedUser = {
+          ...state.user,
+          xp: state.user.xp + amount
+        };
+        
+        return { user: updatedUser };
+      });
+    }
+  };
+});
+ 

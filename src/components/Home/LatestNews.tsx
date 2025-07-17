@@ -5,15 +5,7 @@ import { formatDate, formatNewsType, getNewsTypeColor } from '../../utils/helper
 
 const LatestNews = () => {
   const { newsItems } = useDataStore();
-
-  if (!newsItems?.length) {
-    return (
-      <div className="p-6 text-sm text-gray-400">
-        Cargando noticias…
-      </div>
-    );
-  }
-
+  
   // Get latest 4 news
   const latestNews = newsItems.slice(0, 4);
   

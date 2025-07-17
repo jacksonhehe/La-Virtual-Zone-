@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { useActivityLogStore } from './activityLogStore';
 import { useAuthStore } from './authStore';
-import { supabase } from '../lib/supabaseClient';
+import {
+  getUsers,
+  updateUser as persistUser,
+  deleteUser as persistDeleteUser
+} from '../utils/authService';
 import {
   tournaments,
   transfers,
@@ -20,9 +24,9 @@ import {
   dtPositions,
   dtRankings
 } from '../data/mockData';
-import { fetchClubs } from '../utils/clubService';
-import { fetchPlayers } from '../utils/playerService';
-import { fetchOffers } from '../utils/offerService';
+import { getClubs, saveClubs } from '../utils/clubService';
+import { getPlayers, savePlayers } from '../utils/playerService';
+import { getOffers, saveOffers } from '../utils/offerService';
 import {
   Tournament,
   Transfer,
@@ -43,13 +47,11 @@ import {
 } from '../types';
 import { Club, Player, User } from '../types/shared';
 
-const initialClubs: Club[] = [];
-const initialPlayers: Player[] = [];
-const initialOffers: TransferOffer[] = [];
+const initialClubs = getClubs();
+const initialPlayers = getPlayers();
+const initialOffers = getOffers();
 const initialUser = useAuthStore.getState().user;
-const baseClub =
-  initialClubs.find(c => c.id === initialUser?.clubId) ||
-  initialClubs[0] || { id: '', name: '', slug: '', logo: '', budget: 0 }
+const baseClub = initialClubs.find(c => c.id === initialUser?.clubId) || initialClubs[0];
 const initialClub: DtClub = {
   id: baseClub.id,
   name: baseClub.name,
@@ -57,8 +59,8 @@ const initialClub: DtClub = {
   logo: baseClub.logo,
   formation: '4-3-3',
   budget: baseClub.budget,
-  players: initialPlayers.filter(p => p.clubId === baseClub.id),
-}
+  players: initialPlayers.filter(p => p.clubId === baseClub.id)
+};
 const initialFixtures = tournaments[0].matches
   .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
   .slice(0, 6)
@@ -117,7 +119,6 @@ interface DataState {
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
-  loadNewsItems: () => void;
   setClubFromUser: (user: User | null) => void;
 }
 
@@ -128,7 +129,7 @@ export const useDataStore = create<DataState>((set) => ({
   transfers,
   offers: initialOffers,
   standings: leagueStandings,
-  newsItems: [],
+  newsItems,
   mediaItems,
   faqs,
   storeItems,
@@ -143,10 +144,11 @@ export const useDataStore = create<DataState>((set) => ({
   news: dtNews,
   positions: dtPositions,
   dtRankings,
-  users: [],
+  users: getUsers(),
   
   updateClubs: (newClubs) =>
     set((state) => {
+      saveClubs(newClubs);
       const current = useAuthStore.getState().user;
       let club = state.club;
       if (current?.clubId) {
@@ -159,6 +161,7 @@ export const useDataStore = create<DataState>((set) => ({
     }),
   
   updatePlayers: (newPlayers) => {
+    savePlayers(newPlayers);
     set(state => ({
       players: newPlayers,
       club: {
@@ -173,6 +176,7 @@ export const useDataStore = create<DataState>((set) => ({
   updateTransfers: (newTransfers) => set({ transfers: newTransfers }),
   
   updateOffers: (newOffers) => {
+    saveOffers(newOffers);
     set({ offers: newOffers });
   },
   
@@ -192,6 +196,7 @@ export const useDataStore = create<DataState>((set) => ({
   addOffer: (offer) =>
     set((state) => {
       const updated = [...state.offers, offer];
+      saveOffers(updated);
       return { offers: updated };
     }),
   
@@ -202,6 +207,7 @@ export const useDataStore = create<DataState>((set) => ({
           ? { ...offer, status, responseDate: new Date().toISOString() }
           : offer
       );
+      saveOffers(updated);
       return { offers: updated };
     }),
 
@@ -210,6 +216,7 @@ export const useDataStore = create<DataState>((set) => ({
       const updated = state.offers.map((offer) =>
         offer.id === offerId ? { ...offer, amount } : offer
       );
+      saveOffers(updated);
       return { offers: updated };
     }),
 
@@ -229,12 +236,14 @@ export const useDataStore = create<DataState>((set) => ({
   addClub: (club) =>
     set((state) => {
       const updated = [...state.clubs, club];
+      saveClubs(updated);
       return { clubs: updated };
     }),
 
   addPlayer: (player) =>
     set((state) => {
       const players = [...state.players, player];
+      savePlayers(players);
       return {
         players,
         club: {
@@ -247,7 +256,7 @@ export const useDataStore = create<DataState>((set) => ({
   updateUserEntry: (user) =>
     set((state) => {
       const prev = state.users.find(u => u.id === user.id);
-      supabase.from('users').update(user).eq('id', user.id).catch(console.error);
+      persistUser(user);
       const current = useAuthStore.getState().user?.id || 'system';
       if (prev && prev.role !== user.role) {
         useActivityLogStore
@@ -274,7 +283,7 @@ export const useDataStore = create<DataState>((set) => ({
 
   removeUser: (id) =>
     set((state) => {
-      supabase.from('users').delete().eq('id', id).catch(console.error);
+      persistDeleteUser(id);
       return {
         users: state.users.filter(u => u.id !== id)
       };
@@ -283,18 +292,21 @@ export const useDataStore = create<DataState>((set) => ({
   updateClubEntry: (club) =>
     set((state) => {
       const updated = state.clubs.map(c => (c.id === club.id ? club : c));
+      saveClubs(updated);
       return { clubs: updated };
     }),
 
   removeClub: (id) =>
     set((state) => {
       const updated = state.clubs.filter(c => c.id !== id);
+      saveClubs(updated);
       return { clubs: updated };
     }),
 
   updatePlayerEntry: (player) =>
     set((state) => {
       const players = state.players.map(p => (p.id === player.id ? player : p));
+      savePlayers(players);
       return {
         players,
         club: {
@@ -307,6 +319,7 @@ export const useDataStore = create<DataState>((set) => ({
   removePlayer: (id) =>
     set((state) => {
       const players = state.players.filter(p => p.id !== id);
+      savePlayers(players);
       return {
         players,
         club: {
@@ -363,24 +376,8 @@ export const useDataStore = create<DataState>((set) => ({
       tasks: state.tasks.map(t =>
         t.id === id ? { ...t, done: !t.done } : t
       )
-    })),
-  loadNewsItems: () => set({ newsItems }),
+    }))
 }));
-useDataStore.getState().loadNewsItems();
-supabase.from('users').select('*').then(({ data, error }) => {
-  if (!error && data) {
-    useDataStore.setState({ users: data })
-  }
-})
-fetchClubs().then(data => {
-  useDataStore.setState({ clubs: data })
-})
-fetchPlayers().then(data => {
-  useDataStore.setState({ players: data })
-})
-fetchOffers().then(data => {
-  useDataStore.setState({ offers: data })
-})
 
 // Update DT club when authenticated user changes
 useAuthStore.subscribe(state => {

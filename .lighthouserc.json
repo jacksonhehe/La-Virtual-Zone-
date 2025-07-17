@@ -1,12 +1,13 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost"],
-      "numberOfRuns": 1
+      "staticDistDir": "./dist"
     },
     "assert": {
-      "preset": "lighthouse:recommended",
-      "budgetsFile": "budgets.json"
+      "preset": "lighthouse:recommended"
+    },
+    "upload": {
+      "target": "temporary-public-storage"
     }
   }
 }

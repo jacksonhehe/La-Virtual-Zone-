@@ -1,12 +1,12 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import type { EventClickArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import DtMenuTabs from '../components/DtMenuTabs';
 import EventModal, { CalendarEvent } from '../components/calendar/EventModal';
 import CardSkeleton from '../components/common/CardSkeleton';
-import useCalendarEvents from '../hooks/useCalendarEvents';
-import usePersistentState from '../hooks/usePersistentState';
+import fixtures from '../data/fixtures.json';
+import { VZ_CALENDAR_PREFS_KEY } from '../utils/storageKeys';
 
 const FullCalendar = lazy(() => import('@fullcalendar/react'));
 
@@ -25,19 +25,22 @@ const defaultFilters: Filters = {
 };
 
 const Calendario = () => {
-  const events = useCalendarEvents();
-  const [filters, setFilters] = usePersistentState<Filters>(
-    'calendar_filters',
-    defaultFilters
-  );
+  const [filters, setFilters] = useState<Filters>(() => {
+    const saved = localStorage.getItem(VZ_CALENDAR_PREFS_KEY);
+    return saved ? JSON.parse(saved) : defaultFilters;
+  });
   const [selected, setSelected] = useState<CalendarEvent | null>(null);
 
+  useEffect(() => {
+    localStorage.setItem(VZ_CALENDAR_PREFS_KEY, JSON.stringify(filters));
+  }, [filters]);
+
   const handleEventClick = (arg: EventClickArg) => {
-    const event = events.find(f => f.id === arg.event.id);
+    const event = fixtures.find(f => f.id === arg.event.id);
     if (event) setSelected(event);
   };
 
-  const filteredEvents = events.filter(ev => {
+  const filteredEvents = fixtures.filter(ev => {
     if (ev.category === 'partido' && !filters.partidos) return false;
     if (ev.category === 'entrenamiento' && !filters.entrenos) return false;
     if (ev.category === 'finanzas' && !filters.finanzas) return false;

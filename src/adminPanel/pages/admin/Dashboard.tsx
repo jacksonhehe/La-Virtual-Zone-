@@ -1,11 +1,9 @@
-import React, { Suspense } from 'react';
-import * as Recharts from 'recharts';
-import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target } from 'lucide-react';
+import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target } from 'lucide-react'; 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGlobalStore } from '../../store/globalStore';
-import ChartSkeleton from '../../../components/common/ChartSkeleton';
 
 const Dashboard = () => {
   const { users, clubs, players, transfers, activities } = useGlobalStore();
@@ -195,35 +193,33 @@ const Dashboard = () => {
                 <span className="text-sm text-gray-300">Usuarios</span>
               </div>
             </div>
-            <Suspense fallback={<ChartSkeleton />}>
-              <Recharts.ResponsiveContainer width="100%" height={320}>
-                <Recharts.BarChart data={kpiData}>
-                  <Recharts.CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <Recharts.XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
-                  <Recharts.YAxis stroke="#9CA3AF" fontSize={12} />
-                  <Recharts.Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '12px',
-                      color: '#F3F4F6',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
-                    }}
-                  />
-                  <Recharts.Bar
-                    dataKey="users"
-                    fill="url(#userGradient)"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <defs>
-                    <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#8B5CF6" />
-                      <stop offset="100%" stopColor="#3B82F6" />
-                    </linearGradient>
-                  </defs>
-                </Recharts.BarChart>
-              </Recharts.ResponsiveContainer>
-            </Suspense>
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={kpiData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
+                <YAxis stroke="#9CA3AF" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '12px',
+                    color: '#F3F4F6',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                  }} 
+                />
+                <Bar 
+                  dataKey="users" 
+                  fill="url(#userGradient)" 
+                  radius={[4, 4, 0, 0]}
+                />
+                <defs>
+                  <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#8B5CF6" />
+                    <stop offset="100%" stopColor="#3B82F6" />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Activity Timeline */}

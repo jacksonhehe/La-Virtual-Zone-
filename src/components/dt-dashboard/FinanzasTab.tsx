@@ -1,8 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import  { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, TrendingDown, Target, Users, Trophy } from 'lucide-react';
-import * as Recharts from 'recharts';
-import ChartSkeleton from '../common/ChartSkeleton';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, BarChart, Bar } from 'recharts';
 import { useDataStore } from '../../store/dataStore';
 
 const formatCurrency= (amount: number) => `€${amount.toLocaleString()}`;
@@ -114,39 +112,37 @@ export default function FinanzasTab() {
         >
           <h3 className="text-xl font-bold text-white mb-6">Ingresos vs Gastos</h3>
           <div className="h-64">
-            <Suspense fallback={<ChartSkeleton />}>
-              <Recharts.ResponsiveContainer width="100%" height="100%">
-                <Recharts.LineChart data={monthlyData}>
-                  <Recharts.XAxis dataKey="month" stroke="#9CA3AF" />
-                  <Recharts.YAxis stroke="#9CA3AF" tickFormatter={(value) => `€${value / 1000000}M`} />
-                  <Recharts.Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '12px',
-                      color: '#F9FAFB'
-                    }}
-                    formatter={(value: number) => [formatCurrency(value), '']}
-                  />
-                  <Recharts.Line
-                    type="monotone"
-                    dataKey="income"
-                    stroke="#10B981"
-                    strokeWidth={3}
-                    dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }}
-                    name="Ingresos"
-                  />
-                  <Recharts.Line
-                    type="monotone"
-                    dataKey="expenses"
-                    stroke="#EF4444"
-                    strokeWidth={3}
-                    dot={{ fill: '#EF4444', strokeWidth: 2, r: 6 }}
-                    name="Gastos"
-                  />
-                </Recharts.LineChart>
-              </Recharts.ResponsiveContainer>
-            </Suspense>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthlyData}>
+                <XAxis dataKey="month" stroke="#9CA3AF" />
+                <YAxis stroke="#9CA3AF" tickFormatter={(value) => `€${value / 1000000}M`} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '12px',
+                    color: '#F9FAFB'
+                  }}
+                  formatter={(value: number) => [formatCurrency(value), '']}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="income" 
+                  stroke="#10B981" 
+                  strokeWidth={3}
+                  dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }}
+                  name="Ingresos"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="expenses" 
+                  stroke="#EF4444" 
+                  strokeWidth={3}
+                  dot={{ fill: '#EF4444', strokeWidth: 2, r: 6 }}
+                  name="Gastos"
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </motion.div>
 
@@ -158,28 +154,26 @@ export default function FinanzasTab() {
         >
           <h3 className="text-xl font-bold text-white mb-6">Distribución de Gastos</h3>
           <div className="h-64">
-            <Suspense fallback={<ChartSkeleton />}>
-              <Recharts.ResponsiveContainer width="100%" height="100%">
-                <Recharts.BarChart data={expenseBreakdown} layout="horizontal">
-                  <Recharts.XAxis type="number" stroke="#9CA3AF" tickFormatter={(value) => `€${value / 1000000}M`} />
-                  <Recharts.YAxis type="category" dataKey="category" stroke="#9CA3AF" width={80} />
-                  <Recharts.Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '12px',
-                      color: '#F9FAFB'
-                    }}
-                    formatter={(value: number) => [formatCurrency(value), 'Gasto']}
-                  />
-                  <Recharts.Bar
-                    dataKey="amount"
-                    radius={[0, 8, 8, 0]}
-                    fill={(entry) => entry.color}
-                  />
-                </Recharts.BarChart>
-              </Recharts.ResponsiveContainer>
-            </Suspense>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={expenseBreakdown} layout="horizontal">
+                <XAxis type="number" stroke="#9CA3AF" tickFormatter={(value) => `€${value / 1000000}M`} />
+                <YAxis type="category" dataKey="category" stroke="#9CA3AF" width={80} />
+                <Tooltip
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '12px',
+                    color: '#F9FAFB'
+                  }}
+                  formatter={(value: number) => [formatCurrency(value), 'Gasto']}
+                />
+                <Bar 
+                  dataKey="amount" 
+                  radius={[0, 8, 8, 0]}
+                  fill={(entry) => entry.color}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </motion.div>
       </div>

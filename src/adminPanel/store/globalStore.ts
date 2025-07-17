@@ -11,9 +11,13 @@ import {
   Comment,
 } from '../types';
 import { User, Club, Player } from '../types/shared';
-import { getState, setState } from '../utils/adminStorage';
-import type { AdminData } from '../utils/adminStorage';
-import { supabase } from '../../lib/supabaseClient';
+import {
+  loadAdminData,
+  saveAdminData,
+  AdminData
+} from '../utils/adminStorage';
+import { saveClubs } from '../../utils/clubService';
+import { savePlayers } from '../../utils/playerService';
 import { useDataStore } from '../../store/dataStore';
 
 interface GlobalStore {
@@ -218,28 +222,22 @@ const defaultData: AdminData = {
 
 export const useGlobalStore = create<GlobalStore>()(
   subscribeWithSelector<GlobalStore>((set, get) => {
-  const initial = defaultData;
-  supabase.auth.getUser().then(({ data: { user } }) => {
-    getState('admin_data', user?.id ?? '').then(data => {
-      if (data) set(data as GlobalStore);
-    });
-  });
+  const initial = loadAdminData(defaultData);
 
-  const persist = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    setState('admin_data', {
-      users: get().users,
-      clubs: get().clubs,
-      players: get().players,
-      matches: get().matches,
-      tournaments: get().tournaments,
-      newsItems: get().newsItems,
-      transfers: get().transfers,
-      standings: get().standings,
-      activities: get().activities,
-      comments: get().comments,
-    }, user.id).catch(() => {});
+  const persist = () => {
+      saveAdminData({
+        users: get().users,
+        clubs: get().clubs,
+        players: get().players,
+        matches: get().matches,
+        tournaments: get().tournaments,
+        newsItems: get().newsItems,
+        transfers: get().transfers,
+        standings: get().standings,
+        activities: get().activities,
+        comments: get().comments
+      });
+      savePlayers(get().players);
   };
 
   return {
@@ -305,6 +303,7 @@ export const useGlobalStore = create<GlobalStore>()(
           u.id === club.managerId ? { ...u, clubId: club.id } : u
         );
         const updatedClubs = [...state.clubs, club];
+        saveClubs(updatedClubs);
         return {
           users: updatedUsers,
           clubs: updatedClubs,
@@ -338,6 +337,7 @@ export const useGlobalStore = create<GlobalStore>()(
           );
         }
         const updatedClubs = state.clubs.map(c => (c.id === club.id ? club : c));
+        saveClubs(updatedClubs);
         return {
           users: updatedUsers,
           clubs: updatedClubs
@@ -355,6 +355,7 @@ export const useGlobalStore = create<GlobalStore>()(
             )
           : state.users;
         const updatedClubs = state.clubs.filter(c => c.id !== id);
+        saveClubs(updatedClubs);
         return { users: updatedUsers, clubs: updatedClubs };
       });
       persist();
@@ -363,6 +364,7 @@ export const useGlobalStore = create<GlobalStore>()(
     addPlayer: player => {
       set(state => {
         const updated = [...state.players, player];
+        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().addPlayer(player);
@@ -372,6 +374,7 @@ export const useGlobalStore = create<GlobalStore>()(
     updatePlayer: player => {
       set(state => {
         const updated = state.players.map(p => (p.id === player.id ? player : p));
+        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().updatePlayerEntry(player);
@@ -381,6 +384,7 @@ export const useGlobalStore = create<GlobalStore>()(
     removePlayer: id => {
       set(state => {
         const updated = state.players.filter(p => p.id !== id);
+        savePlayers(updated);
         return { players: updated };
       });
       useDataStore.getState().removePlayer(id);

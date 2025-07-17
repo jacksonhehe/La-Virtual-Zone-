@@ -3,9 +3,6 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 
-process.env.DATABASE_URL = 'postgresql://user:pass@localhost:5432/test';
-process.env.JWT_SECRET = 'supersecretkeysupersecretkey1234';
-
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 

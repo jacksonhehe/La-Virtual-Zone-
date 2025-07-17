@@ -1,16 +1,33 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import seed from '../../src/data/seed.json' assert { type: 'json' };
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
-  // Seed data can be added here if needed
+  for (const user of seed.users ?? []) {
+    await prisma.user.create({
+      data: {
+        email: user.email,
+        username: user.username,
+        password: user.password,
+        role: user.role ?? 'USER',
+      },
+    });
+  }
+  for (const club of seed.clubs ?? []) {
+    await prisma.club.create({
+      data: {
+        name: club.name,
+      },
+    });
+  }
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });

@@ -1,43 +1,22 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { useState, useEffect } from 'react';
 
-function usePersistentState<T>(key: string, defaultValue: T): [T, (v: T) => void] {
-  const [state, setState] = useState<T>(defaultValue)
+function usePersistentState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [state, setState] = useState<T>(() => {
+    if (typeof localStorage === 'undefined') return defaultValue;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) as T : defaultValue;
+  });
 
   useEffect(() => {
-    let cancelled = false
-    const lsKey = `lzui_${key}`
-    const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data, error } = await supabase
-        .from('ui_state')
-        .select('value')
-        .eq('key', key)
-        .eq('user_id', user?.id ?? '')
-        .single()
-      if (!cancelled && !error && data?.value !== undefined) {
-        setState(data.value as T)
-      } else if (!cancelled && typeof localStorage !== 'undefined') {
-        const cached = localStorage.getItem(lsKey)
-        if (cached) setState(JSON.parse(cached) as T)
-      }
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem(key, JSON.stringify(state));
+    } catch {
+      // ignore write errors
     }
-    load()
-    return () => {
-      cancelled = true
-    }
-  }, [key])
+  }, [key, state]);
 
-  const persist = async (newValue: T) => {
-    setState(newValue)
-    const { data: { user } } = await supabase.auth.getUser()
-    supabase.from('ui_state').upsert({ key, value: newValue, user_id: user?.id })
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(`lzui_${key}`, JSON.stringify(newValue))
-    }
-  }
-
-  return [state, persist]
+  return [state, setState];
 }
 
-export default usePersistentState
+export default usePersistentState;
