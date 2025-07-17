@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import RequestClubModal from '../components/common/RequestClubModal';
 import { xpForNextLevel } from '../utils/helpers';
 
 const UserPanel = () => {
@@ -22,6 +23,7 @@ const UserPanel = () => {
   const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState('profile');
+  const [showRequestModal, setShowRequestModal] = useState(false);
   
   // Initialize following property if it doesn't exist
   const following = user?.following || { clubs: [], users: [] };
@@ -281,7 +283,10 @@ const UserPanel = () => {
                   <p className="text-gray-300 mb-4">
                     Para participar en la Liga Master necesitas convertirte en Director Técnico y administrar un club. Solicita un puesto para la próxima temporada.
                   </p>
-                  <button className="btn-primary">
+                  <button
+                    className="btn-primary"
+                    onClick={() => setShowRequestModal(true)}
+                  >
                     Solicitar participación como DT
                   </button>
                 </div>
@@ -945,8 +950,11 @@ const UserPanel = () => {
               </div>
             </div>
           )}
-        </div>
       </div>
+    </div>
+    {showRequestModal && (
+      <RequestClubModal onClose={() => setShowRequestModal(false)} />
+    )}
     </div>
   );
 };
