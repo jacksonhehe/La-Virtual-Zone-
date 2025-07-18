@@ -10,6 +10,14 @@ const Dashboard = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  // Distribución de posiciones de jugadores para PieChart
+  const positionCounts: Record<string, number> = {};
+  players.forEach(p => {
+    positionCounts[p.position] = (positionCounts[p.position] || 0) + 1;
+  });
+  const pieData = Object.entries(positionCounts).map(([pos, value]) => ({ name: pos, value }));
+  const pieColors = ['#8b5cf6', '#22d3ee', '#f59e0b', '#ef4444', '#10b981', '#e11d48'];
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login', { replace: true });
@@ -222,43 +230,34 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Activity Timeline */}
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white">Actividad Reciente</h3>
-              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            </div>
-            <div className="space-y-4 max-h-72 overflow-y-auto custom-scrollbar">
-              {recentActivities.length > 0 ? (
-                recentActivities.map((activity, index) => (
-                  <div key={activity.id} className="relative">
-                    {index !== recentActivities.length - 1 && (
-                      <div className="absolute left-3 top-8 w-px h-8 bg-gray-600"></div>
-                    )}
-                    <div className="flex items-start space-x-4">
-                      <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">{activity.action}</p>
-                        <p className="text-xs text-gray-400 mt-1">{activity.details}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(activity.date).toLocaleString('es-ES')}
-                        </p>
+          {/* Distribución de Posiciones */}
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 flex flex-col items-center justify-center">
+            <h3 className="text-xl font-bold text-white mb-6">Distribución de Posiciones</h3>
+            <ResponsiveContainer width="100%" height={320}>
+              <PieChart>
+                <Pie dataKey="value" data={pieData} cx="50%" cy="50%" outerRadius={110} label={{ fill: '#cbd5e1', fontSize: 12 }}>
+                  {pieData.map((_, idx) => (
+                    <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
                       </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Activity size={20} className="text-gray-400" />
-                  </div>
-                  <p className="text-gray-400 text-sm">No hay actividad reciente</p>
+
+        {/* Activity timeline */}
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 space-y-4">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center"><Activity size={20} className="mr-2 text-purple-400"/>Actividad Reciente</h3>
+          {recentActivities.length === 0 && <p className="text-gray-400 text-sm">Sin movimientos recientes.</p>}
+          {recentActivities.map(act => (
+            <div key={act.id} className="flex items-start space-x-3">
+              <div className="w-2 h-2 mt-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+              <div>
+                <p className="text-sm text-gray-300"><span className="text-purple-400 font-medium">{act.action}</span> — {act.details}</p>
+                <p className="text-xs text-gray-500">{new Date(act.date).toLocaleString('es-ES')}</p>
                 </div>
-              )}
             </div>
-          </div>
+          ))}
         </div> 
 
              {/* Enhanced System Status */}

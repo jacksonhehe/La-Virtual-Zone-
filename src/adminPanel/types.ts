@@ -37,7 +37,20 @@ export interface Tournament {
   prizePool?: number;
   currentTeams?: number;
   maxTeams?: number;
+
+  /* NUEVOS CAMPOS AVANZADOS */
+  categories?: string[];
+  phases?: Phase[];
+  sponsors?: Sponsor[];
+  attachments?: Attachment[];
+  customUrl?: string;
+
+  standings?: import('../types').Standing[];
+  topScorersList?: import('../types').TopScorer[];
 }
+
+// Reexportar tipos auxiliares desde shared index
+import type { Phase, Sponsor, Attachment } from '../types';
 
 export interface NewsItem {
   id: string;

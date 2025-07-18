@@ -8,6 +8,7 @@ import {
   Edit,
   Trash2,
   Eye,
+  Layers,
 } from 'lucide-react';
 import { Tournament } from '../../../types';
 import SearchFilter from './SearchFilter';
@@ -16,6 +17,8 @@ import NewTournamentModal from './NewTournamentModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import TournamentDetailsModal from './TournamentDetailsModal';
 import ManageParticipantsModal from './ManageParticipantsModal';
+import ManageMatchesModal from './ManageMatchesModal';
+import ManagePhasesModal from './ManagePhasesModal';
 import { useGlobalStore } from '../../store/globalStore';
 
 const TournamentsAdminPanel = () => {
@@ -31,6 +34,8 @@ const TournamentsAdminPanel = () => {
   const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
   const [viewingTournament, setViewingTournament] = useState<Tournament | null>(null);
   const [managingParticipants, setManagingParticipants] = useState<Tournament | null>(null);
+  const [managingMatches, setManagingMatches] = useState<Tournament | null>(null);
+  const [managingPhases, setManagingPhases] = useState<Tournament | null>(null);
 
   const filteredTournaments = tournaments.filter(tournament => {
     const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
@@ -113,7 +118,7 @@ const TournamentsAdminPanel = () => {
       </div>
 
       {filteredTournaments.map((tournament) => {
-        const FormatIcon = getFormatIcon(tournament.format);
+        const FormatIcon = getFormatIcon(tournament.type);
         const progress = ((tournament.currentTeams || 0) / (tournament.maxTeams || 1)) * 100;
 
         return (
@@ -152,6 +157,20 @@ const TournamentsAdminPanel = () => {
                   <Users size={16} />
                 </button>
                 <button
+                  onClick={() => setManagingMatches(tournament)}
+                  className="btn-outline text-sm flex items-center"
+                  title="Gestionar partidos"
+                >
+                  <Calendar size={16} />
+                </button>
+                <button
+                  onClick={() => setManagingPhases(tournament)}
+                  className="btn-outline text-sm flex items-center"
+                  title="Gestionar fases"
+                >
+                  <Layers size={16} />
+                </button>
+                <button
                   onClick={() => setDeletingTournament(tournament)}
                   className="btn-outline text-sm flex items-center"
                 >
@@ -161,7 +180,7 @@ const TournamentsAdminPanel = () => {
             </div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400 capitalize">
-                Formato: {tournament.format === 'league' ? 'Liga' : 'Eliminación'}
+                Formato: {tournament.type === 'league' ? 'Liga' : 'Eliminación'}
               </span>
               <button
                 onClick={() => setViewingTournament(tournament)}
@@ -234,6 +253,20 @@ const TournamentsAdminPanel = () => {
         <ManageParticipantsModal
           tournament={managingParticipants}
           onClose={() => setManagingParticipants(null)}
+        />
+      )}
+
+      {managingMatches && (
+        <ManageMatchesModal
+          tournament={managingMatches}
+          onClose={() => setManagingMatches(null)}
+        />
+      )}
+
+      {managingPhases && (
+        <ManagePhasesModal
+          tournament={managingPhases}
+          onClose={() => setManagingPhases(null)}
         />
       )}
     </div>

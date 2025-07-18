@@ -41,6 +41,7 @@ import {
   getClub, saveClub,
   getFixtures, saveFixtures
 } from '../../utils/sharedStorage';
+import { computeStandings, computeTopScorers } from '../../utils/tournamentStats';
 import { VZ_COMMENTS_KEY } from '../../utils/storageKeys';
 
 const loadComments = (): Comment[] => {
@@ -694,8 +695,17 @@ export const useGlobalStore = create<GlobalStore>()(
       persist();
     },
     updateTournaments: tournaments => {
-      set(() => ({ tournaments }));
-      saveTournaments(tournaments);
+      // Recalcular standings y topScorers de cada torneo
+      const recalculated = tournaments.map(t => {
+        const matches = t.matches || [];
+        return {
+          ...t,
+          standings: computeStandings(matches),
+          topScorersList: computeTopScorers(matches),
+        };
+      });
+      set(() => ({ tournaments: recalculated }));
+      saveTournaments(recalculated);
       persist();
     },
     removeTournament: id => {

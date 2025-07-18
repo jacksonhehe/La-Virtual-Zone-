@@ -132,7 +132,7 @@ const UserPanel = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark to-dark-lighter">
+    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-dark">
       <PageHeader 
         title={`Bienvenido, ${user.username}`}
         subtitle="Aquí puedes gestionar tu perfil, seguir tu progreso y configurar tu cuenta."
@@ -191,7 +191,7 @@ const UserPanel = () => {
               </div>
               
               {user.role === 'dt' && userClub && (
-                <div className="mt-4 p-4 bg-gradient-to-r from-dark-lighter to-dark rounded-xl border border-gray-800/50">
+                <div className="mt-4 p-4 bg-gradient-to-r from-dark-light to-dark rounded-xl border border-gray-800/50">
                   <div className="flex items-center justify-center">
                     <img 
                       src={userClub.logo} 

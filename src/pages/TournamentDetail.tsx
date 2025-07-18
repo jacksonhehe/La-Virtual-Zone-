@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense } from 'react';
+import TeamRegistrationModal from '../components/common/TeamRegistrationModal';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { 
@@ -33,6 +34,7 @@ const FullCalendar = lazy(() => import('@fullcalendar/react'));
 const TournamentDetail = () => {
   const { tournamentName } = useParams<{ tournamentName: string }>();
   const [activeTab, setActiveTab] = useState('overview');
+  const [showRegModal, setShowRegModal] = useState(false);
 
   const { tournaments, clubs } = useDataStore();
   
@@ -193,7 +195,7 @@ const TournamentDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 rounded-2xl overflow-hidden shadow-consistent-xl">
+            <div className="bg-gradient-to-br from-dark-light to-dark border border-gray-800/50 rounded-2xl overflow-hidden shadow-consistent-xl">
               {/* Enhanced Tab Navigation */}
               <div className="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700/50">
                 <div className="flex flex-wrap">
@@ -225,7 +227,7 @@ const TournamentDetail = () => {
                 {activeTab === 'overview' && (
                   <div className="space-y-8">
                     {/* Tournament Description */}
-                    <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                    <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                       <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent flex items-center">
                         <Trophy size={28} className="mr-3 text-primary" />
                         Sobre el torneo
@@ -239,7 +241,7 @@ const TournamentDetail = () => {
                     </div>
                     
                     {/* Tournament Rules */}
-                    <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                    <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                       <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent flex items-center">
                         <Target size={28} className="mr-3 text-primary" />
                         Reglas básicas
@@ -340,12 +342,12 @@ const TournamentDetail = () => {
                           key={club.id}
                           club={club}
                           to={`/liga-master/club/${club.slug}`}
-                          className="bg-gradient-to-br from-dark-lighter to-dark hover:from-dark hover:to-dark-lighter border border-gray-700/50 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-xl"
+                          className="bg-gradient-to-br from-dark-light to-dark hover:from-dark hover:to-dark-light border border-gray-700/50 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-xl"
                         />
                       ))}
                       
                       {mapStatus(tournament.status) === 'upcoming' && (tournament.participants || []).length < 8 && (
-                        <div className="bg-gradient-to-br from-dark-lighter to-dark rounded-xl p-6 flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-primary/50 transition-all duration-300">
+                        <div className="bg-gradient-to-br from-dark-light to-dark rounded-xl p-6 flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-primary/50 transition-all duration-300">
                           <div className="text-center">
                             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
                               <Plus size={24} className="text-primary" />
@@ -369,7 +371,7 @@ const TournamentDetail = () => {
                     </h3>
                     
                     {tournament.type === 'cup' ? (
-                      <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                      <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                         <h4 className="text-xl font-semibold mb-4 text-white">Cuadro Final</h4>
                         <div className="h-60 flex items-center justify-center">
                           <div className="text-center">
@@ -388,7 +390,7 @@ const TournamentDetail = () => {
                       </div>
                     ) : (
                       <div className="space-y-6">
-                        <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                        <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                           <h4 className="text-xl font-semibold mb-6 text-white flex items-center">
                             <Play size={24} className="mr-3 text-primary" />
                             Próximos partidos
@@ -397,7 +399,7 @@ const TournamentDetail = () => {
                           {mapStatus(tournament.status) !== 'upcoming' ? (
                             <div className="space-y-4">
                               {tournamentMatches.slice(0, 5).map(match => (
-                                <div key={match.id} className="bg-gradient-to-br from-dark-lighter to-dark rounded-lg p-4 border border-gray-700/50 hover:border-primary/30 transition-all duration-200">
+                                <div key={match.id} className="bg-gradient-to-br from-dark-light to-dark rounded-lg p-4 border border-gray-700/50 hover:border-primary/30 transition-all duration-200">
                                   <div className="flex justify-between items-center">
                                     <div className="flex items-center">
                                       <div className="text-center mr-4">
@@ -447,7 +449,7 @@ const TournamentDetail = () => {
                       Calendario del torneo
                     </h3>
                     
-                    <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                    <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                       <Suspense fallback={<CardSkeleton />}>
                         <FullCalendar
                           plugins={[dayGridPlugin, interactionPlugin]}
@@ -474,10 +476,10 @@ const TournamentDetail = () => {
                       Goleadores del torneo
                     </h3>
                     
-                    <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                    <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                       <div className="space-y-4">
                         {topScorers.map((scorer, index) => (
-                          <div key={scorer.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-dark-lighter to-dark rounded-lg border border-gray-700/50 hover:border-primary/30 transition-all duration-200">
+                          <div key={scorer.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-dark-light to-dark rounded-lg border border-gray-700/50 hover:border-primary/30 transition-all duration-200">
                             <div className="flex items-center">
                               <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mr-4">
                                 <span className="font-bold text-white text-sm">{index + 1}</span>
@@ -505,7 +507,7 @@ const TournamentDetail = () => {
                       Galería del torneo
                     </h3>
                     
-                    <div className="bg-gradient-to-br from-dark to-dark-lighter rounded-xl p-6 border border-gray-700/50">
+                    <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
                       <div className="text-center py-12">
                         <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                           <Image size={32} className="text-primary" />
@@ -522,7 +524,7 @@ const TournamentDetail = () => {
           {/* Enhanced Sidebar */}
           <div className="space-y-6">
             {/* Tournament Status Card */}
-            <div className="bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-dark-light to-dark border border-gray-800/50 rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-white">Estado del torneo</h3>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(tournament.status)}`}>
@@ -554,23 +556,23 @@ const TournamentDetail = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-dark-light to-dark border border-gray-800/50 rounded-2xl p-6 shadow-xl">
               <h3 className="text-lg font-bold text-white mb-4">Acciones rápidas</h3>
               
               <div className="space-y-3">
                 {mapStatus(tournament.status) === 'upcoming' && (
-                  <button className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-medium hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <button onClick={() => setShowRegModal(true)} className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-medium hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 shadow-lg hover:shadow-xl">
                     <Play size={18} className="inline mr-2" />
                     Solicitar participación
                   </button>
                 )}
                 
-                <button className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-lg font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300">
+                <button onClick={() => setActiveTab('calendar')} className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-lg font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300">
                   <Calendar size={18} className="inline mr-2" />
                   Ver calendario
                 </button>
                 
-                <button className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-lg font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300">
+                <button onClick={() => setActiveTab('participants')} className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-lg font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300">
                   <Users size={18} className="inline mr-2" />
                   Ver participantes
                 </button>
@@ -578,7 +580,7 @@ const TournamentDetail = () => {
             </div>
 
             {/* Tournament Info */}
-            <div className="bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-dark-light to-dark border border-gray-800/50 rounded-2xl p-6 shadow-xl">
               <h3 className="text-lg font-bold text-white mb-4">Información del torneo</h3>
               
               <div className="space-y-4">
@@ -608,6 +610,9 @@ const TournamentDetail = () => {
           </div>
         </div>
       </div>
+      {showRegModal && (
+        <TeamRegistrationModal tournament={tournament} isOpen={showRegModal} onClose={() => setShowRegModal(false)} />
+      )}
     </div>
   );
 };

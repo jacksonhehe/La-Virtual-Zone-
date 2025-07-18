@@ -28,8 +28,7 @@ body {
 }
 
 a:focus-visible,
-button:focus-visible,
-input:focus-visible {
+button:focus-visible {
   outline: 2px dashed var(--accent);
   outline-offset: 2px;
 }
@@ -156,7 +155,7 @@ input:focus-visible {
 
   /* Card variations */
   .card-elevated {
-    @apply bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl;
+    @apply bg-gradient-to-br from-dark-light to-dark border border-gray-800/50 shadow-xl rounded-2xl;
   }
 
   .card-subtle {

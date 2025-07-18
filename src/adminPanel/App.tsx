@@ -25,7 +25,7 @@ const AdminLayout = () => {
 
   if (user?.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen admin-bg flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Acceso Denegado</h1>
           <p className="text-gray-400">No tienes permisos para acceder al panel de administración</p>
@@ -35,7 +35,7 @@ const AdminLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex">
+    <div className="min-h-screen admin-bg flex">
       <SidebarAdmin />
       <main className="flex-1 md:ml-0">
         <Suspense fallback={

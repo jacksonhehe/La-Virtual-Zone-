@@ -15,9 +15,9 @@ export default {
           accent: 'var(--accent)',
           'bg-surface': 'var(--bg-surface)',
           'bg-overlay': 'var(--bg-overlay)',
-          dark: '#1a1a24',
-          'dark-light': '#47474f',
-          'dark-lighter': '#75757b',
+          dark: '#111827',            // rgba(17,24,39,1)
+          'dark-light': '#1f2937',    // Tailwind gray-800
+          'dark-lighter': '#374151',  // Tailwind gray-700
           'text-secondary': '#b5b5b5'
         },
       fontFamily: {

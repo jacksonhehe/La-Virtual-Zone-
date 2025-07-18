@@ -1,7 +1,8 @@
 import  { useState, useRef, useEffect } from 'react';
-import { Club } from '../../types/shared';
+import { Club } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 import { slugify } from '../../utils/helpers';
+import { Building } from 'lucide-react';
 
 interface Props {
   onClose: () => void;
@@ -22,6 +23,8 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
     secondaryColor: '#000000',
     description: ''
   });
+  // Previsualización dinámica del logo
+  const [logoPreview, setLogoPreview] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const users = useGlobalStore(state => state.users);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -29,6 +32,17 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
   useEffect(() => {
     setFormData(prev => ({ ...prev, slug: slugify(prev.name) }));
   }, [formData.name]);
+
+  // Actualizar previsualización del logo
+  useEffect(() => {
+    if (formData.logo.trim()) {
+      setLogoPreview(formData.logo.trim());
+    } else if (formData.name.trim()) {
+      setLogoPreview(`https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=111827&color=fff&size=128&bold=true`);
+    } else {
+      setLogoPreview('');
+    }
+  }, [formData.logo, formData.name]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -62,24 +76,60 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div 
         ref={modalRef}
-        className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4"
+        className="bg-gray-800 p-5 rounded-2xl w-full max-w-sm sm:max-w-md mx-4 max-h-[85vh] overflow-y-auto"
         tabIndex={-1}
       >
-        <h3 className="text-lg font-semibold mb-4">Nuevo Club</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="text-center mb-5">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary shadow-lg mb-3">
+              <Building size={28} className="text-white" />
+            </div>
+            <h3 className="text-2xl font-bold gradient-text-primary">Nuevo Club</h3>
+            <p className="text-sm text-gray-400 mt-1">Completa la información para registrar un club</p>
+          </div>
+
+         <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+          {/* Previsualización del logo */}
+          {logoPreview && (
+            <div className="sm:col-span-2 w-24 h-24 mx-auto rounded-xl overflow-hidden bg-gray-700 flex items-center justify-center">
+              <img src={logoPreview} alt="Preview logo" className="w-full h-full object-cover" />
+            </div>
+          )}
           <div>
+            <label className="text-sm text-gray-300 mb-1 inline-block">Nombre del club</label>
             <input
               className={`input w-full ${errors.name ? 'border-red-500' : ''}`}
-              placeholder="Nombre del club"
+              placeholder="Ej: Rayo Digital FC"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
-          <div>
+
+          {/* Slug de solo lectura */}
+          <div className="sm:col-span-2">
+            <label className="text-sm text-gray-300 mb-1 inline-block">Slug (URL)</label>
+            <input
+              className="input w-full opacity-60 cursor-not-allowed"
+              value={formData.slug}
+              readOnly
+            />
+          </div>
+
+          {/* Logo URL */}
+          <div className="sm:col-span-2">
+            <label className="text-sm text-gray-300 mb-1 inline-block">Logo (URL opcional)</label>
             <input
               className="input w-full"
-              placeholder="Estadio"
+              placeholder="https://...png"
+              value={formData.logo}
+              onChange={e => setFormData({ ...formData, logo: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="text-sm text-gray-300 mb-1 inline-block">Estadio</label>
+            <input
+              className="input w-full"
+              placeholder="Nombre del estadio"
               value={formData.stadium}
               onChange={(e) => setFormData({...formData, stadium: e.target.value})}
             />
@@ -101,10 +151,13 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
             )}
           </div>
           <div>
+            <label className="text-sm text-gray-300 mb-1 inline-block">Presupuesto (USD)</label>
             <input
               type="number"
+              min="10000"
+              step="10000"
               className={`input w-full ${errors.budget ? 'border-red-500' : ''}`}
-              placeholder="Presupuesto"
+              placeholder="1 000 000"
               value={formData.budget}
               onChange={(e) => setFormData({...formData, budget: Number(e.target.value)})}
             />
@@ -127,7 +180,7 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
               onChange={e => setFormData({ ...formData, playStyle: e.target.value })}
             />
           </div>
-          <div>
+          <div className="sm:col-span-2">
             <textarea
               className="input w-full"
               placeholder="Descripción"
@@ -135,21 +188,30 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
               onChange={e => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
-          <div className="flex space-x-2">
-            <input
-              type="color"
-              className="input"
-              value={formData.primaryColor}
-              onChange={e => setFormData({ ...formData, primaryColor: e.target.value })}
-            />
-            <input
-              type="color"
-              className="input"
-              value={formData.secondaryColor}
-              onChange={e => setFormData({ ...formData, secondaryColor: e.target.value })}
-            />
+          <div className="sm:col-span-2">
+            <label className="text-sm text-gray-300 mb-1 inline-block">Colores del club</label>
+            <div className="flex space-x-4 items-center">
+              <div className="flex flex-col items-center space-y-1">
+                <input
+                  type="color"
+                  className="input w-10 h-10 p-0"
+                  value={formData.primaryColor}
+                  onChange={e => setFormData({ ...formData, primaryColor: e.target.value })}
+                />
+                <span className="text-xs text-gray-400">Primario</span>
+              </div>
+              <div className="flex flex-col items-center space-y-1">
+                <input
+                  type="color"
+                  className="input w-10 h-10 p-0"
+                  value={formData.secondaryColor}
+                  onChange={e => setFormData({ ...formData, secondaryColor: e.target.value })}
+                />
+                <span className="text-xs text-gray-400">Secundario</span>
+              </div>
+            </div>
           </div>
-          <div className="flex space-x-3 justify-end mt-6">
+          <div className="sm:col-span-2 flex space-x-3 justify-end mt-6">
             <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
             <button type="submit" className="btn-primary">Crear</button>
           </div>

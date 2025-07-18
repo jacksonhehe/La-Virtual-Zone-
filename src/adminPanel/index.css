@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
+@layer components {
+  .admin-bg {
     @apply bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white;
   }
 }

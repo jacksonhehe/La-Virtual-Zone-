@@ -40,6 +40,8 @@ const NewTournamentModal = ({ onClose, onSave }: Props) => {
     location: '',
     prizePool: 0,
     maxTeams: 20,
+    categoriesInput: '', // cadena separada por comas para la UI
+    customUrl: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentStep, setCurrentStep] = useState(1);
@@ -68,13 +70,19 @@ const NewTournamentModal = ({ onClose, onSave }: Props) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      // Convertir categorías a array limpio
+      const categoriesArr = formData.categoriesInput
+        .split(',')
+        .map(c => c.trim())
+        .filter(Boolean);
+
       onSave({
         ...formData,
+        categories: categoriesArr.length > 0 ? categoriesArr : undefined,
+        customUrl: formData.customUrl || undefined,
         teams: [],
         matches: [],
         currentTeams: 0,
-        slug: slugify(formData.name),
-        participants: [], // ← Añadido para robustez
       });
     }
   };
@@ -157,19 +165,51 @@ const NewTournamentModal = ({ onClose, onSave }: Props) => {
                 </h4>
                 
                 <div className="space-y-4">
-                  <div>
+          <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Nombre del Torneo
                     </label>
                     <div className="relative">
-                      <input
+            <input
                         className={`input w-full bg-dark border-gray-700 focus:border-primary ${errors.name ? 'border-red-500' : ''}`}
                         placeholder="Ej: Liga Master 2025"
-                        value={formData.name}
-                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+              value={formData.name}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
+            />
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          </div>
+                  </div>
+
+                  {/* Categorías */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Categorías (separadas por coma)
+                    </label>
+                    <input
+                      className="input w-full bg-dark border-gray-700 focus:border-primary"
+                      placeholder="Sub-18, Libre, Femenino"
+                      value={formData.categoriesInput}
+                      onChange={e => setFormData({ ...formData, categoriesInput: e.target.value })}
+                    />
+                  </div>
+
+                  {/* URL personalizada */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      URL Personalizada
+                    </label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-3 rounded-l-md bg-dark border border-r-0 border-gray-700 text-gray-400 text-sm">
+                        virtualzone.com/
+                      </span>
+                      <input
+                        className="input w-full bg-dark border-gray-700 focus:border-primary rounded-l-none"
+                        placeholder="ligamaster2025"
+                        value={formData.customUrl}
+                        onChange={e => setFormData({ ...formData, customUrl: e.target.value })}
                       />
-                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">Déjalo vacío para usar el slug por defecto.</p>
                   </div>
 
                   <div>
@@ -187,31 +227,31 @@ const NewTournamentModal = ({ onClose, onSave }: Props) => {
                     </select>
                   </div>
 
-                  <div>
+          <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       <Image size={16} className="inline mr-2" />
                       Logo del Torneo
                     </label>
-                    <input
+            <input
                       className="input w-full bg-dark border-gray-700 focus:border-primary"
                       placeholder="URL del logo"
                       value={formData.logo}
                       onChange={e => setFormData({ ...formData, logo: e.target.value })}
-                    />
+            />
                     <p className="text-xs text-gray-500 mt-1">
                       URL de la imagen del logo del torneo
                     </p>
-                  </div>
+          </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Estado del Torneo
                     </label>
-                    <select
+          <select
                       className="input w-full bg-dark border-gray-700 focus:border-primary"
-                      value={formData.status}
-                      onChange={e => setFormData({ ...formData, status: e.target.value as Tournament['status'] })}
-                    >
+            value={formData.status}
+            onChange={e => setFormData({ ...formData, status: e.target.value as Tournament['status'] })}
+          >
                       <option value="upcoming">⏳ Próximo</option>
                       <option value="active">▶️ Activo</option>
                       <option value="finished">🏁 Finalizado</option>
@@ -342,7 +382,7 @@ const NewTournamentModal = ({ onClose, onSave }: Props) => {
                     <option value="league">🏆 Liga (Todos contra todos)</option>
                     <option value="elimination">⚔️ Eliminación directa</option>
                     <option value="group">👥 Grupos + Eliminación</option>
-                  </select>
+          </select>
                 </div>
               </div>
             </div>

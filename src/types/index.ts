@@ -23,6 +23,23 @@ export interface Tournament {
   prizePool?: number;
   currentTeams?: number;
   location?: string;
+
+  /* NUEVOS CAMPOS AVANZADOS */
+  /** Categorías o divisiones del torneo (ej: Sub-18, Libre, Femenino) */
+  categories?: string[];
+  /** Fases múltiples que componen el torneo (grupos, eliminatoria, finales, etc.) */
+  phases?: Phase[];
+  /** Patrocinadores asociados al torneo */
+  sponsors?: Sponsor[];
+  /** Adjuntos (documentos, reglamentos, imágenes) */
+  attachments?: Attachment[];
+  /** URL personalizada pública (sin protocolo) */
+  customUrl?: string;
+
+  /** Tabla de posiciones calculada */
+  standings?: Standing[];
+  /** Ranking de goleadores */
+  topScorersList?: TopScorer[];
 }
 
 export interface TopScorer {
@@ -234,4 +251,31 @@ export interface DtRanking {
   clubName: string;
   clubLogo: string;
   elo: number;
+}
+
+// ------------------ Tipos auxiliares ------------------
+
+export interface Phase {
+  id: string;
+  name: string;
+  /** Tipo de fase, por ejemplo group, knockout, final */
+  type: 'group' | 'knockout' | 'round_robin' | 'final';
+  /** Número de rondas o jornadas en la fase */
+  rounds: number;
+  /** Partidos pertenecientes a esta fase */
+  matches?: Match[];
+}
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  logo: string;
+  website?: string;
+}
+
+export interface Attachment {
+  id: string;
+  title: string;
+  url: string;
+  uploadedAt?: string;
 }

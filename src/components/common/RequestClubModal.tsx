@@ -107,7 +107,7 @@ const RequestClubModal = ({ isOpen, onClose }: Props) => {
             <p className="text-sm text-gray-400">Te contactaremos por WhatsApp cuando haya un club disponible.</p>
           </div>
         ) : (
-          <div>
+            <div>
             {/* Header */}
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
@@ -330,7 +330,7 @@ const RequestClubModal = ({ isOpen, onClose }: Props) => {
                   </button>
                 )}
               </div>
-            </form>
+          </form>
           </div>
         )}
       </div>
