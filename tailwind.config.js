@@ -7,6 +7,7 @@ export default {
           primary: 'var(--primary)',
           'primary-light': 'var(--primary-light)',
           'primary-dark': 'var(--primary-dark)',
+          secondary: 'var(--secondary)',
           'neon-red': 'var(--neon-red)',
           'neon-blue': 'var(--neon-blue)',
           'neon-green': 'var(--neon-green)',

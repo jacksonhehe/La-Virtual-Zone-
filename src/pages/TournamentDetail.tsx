@@ -85,7 +85,14 @@ const TournamentDetail = () => {
     { id: '3', name: 'Miguel Pixardo', club: 'Rayo Digital FC', goals: 2 }
   ];
 
+  const mapStatus = (s: string): 'active' | 'upcoming' | 'finished' => {
+    if (s === 'ongoing') return 'active';
+    if (s === 'open') return 'upcoming';
+    return s as 'active' | 'upcoming' | 'finished';
+  };
+
   const getStatusColor = (status: string) => {
+    status = mapStatus(status);
     switch (status) {
       case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'upcoming': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
@@ -95,6 +102,7 @@ const TournamentDetail = () => {
   };
 
   const getStatusText = (status: string) => {
+    status = mapStatus(status);
     switch (status) {
       case 'active': return 'En Curso';
       case 'upcoming': return 'Próximo';
@@ -125,7 +133,7 @@ const TournamentDetail = () => {
 
         {/* Tournament Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6 backdrop-blur-sm shadow-consistent-xl hover-lift">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-400 text-sm font-medium mb-1">Formato</p>
@@ -139,7 +147,7 @@ const TournamentDetail = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-sm shadow-consistent-xl hover-lift">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-green-400 text-sm font-medium mb-1">Participantes</p>
@@ -153,7 +161,7 @@ const TournamentDetail = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6 backdrop-blur-sm shadow-consistent-xl hover-lift">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-purple-400 text-sm font-medium mb-1">Fechas</p>
@@ -167,7 +175,7 @@ const TournamentDetail = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-xl p-6 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-xl p-6 backdrop-blur-sm shadow-consistent-xl hover-lift">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-orange-400 text-sm font-medium mb-1">Estado</p>
@@ -185,7 +193,7 @@ const TournamentDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 rounded-2xl overflow-hidden shadow-consistent-xl">
               {/* Enhanced Tab Navigation */}
               <div className="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700/50">
                 <div className="flex flex-wrap">
@@ -224,9 +232,9 @@ const TournamentDetail = () => {
                       </h3>
                       <p className="text-gray-300 text-lg leading-relaxed">
                         {tournament.name} es {tournament.type === 'league' ? 'una liga' : tournament.type === 'cup' ? 'un torneo de copa' : 'un partido amistoso'} organizado por La Virtual Zone para la temporada 2025.
-                        {tournament.status === 'active' && ' Actualmente se encuentra en fase de grupos con partidos disputándose cada semana.'}
-                        {tournament.status === 'upcoming' && ' Las inscripciones están abiertas y se cerrarán próximamente. ¡Regístrate para participar!'}
-                        {tournament.status === 'finished' && ` El torneo ha finalizado y el campeón fue ${tournament.winner}.`}
+                        {mapStatus(tournament.status) === 'active' && ' Actualmente se encuentra en fase de grupos con partidos disputándose cada semana.'}
+                        {mapStatus(tournament.status) === 'upcoming' && ' Las inscripciones están abiertas y se cerrarán próximamente. ¡Regístrate para participar!'}
+                        {mapStatus(tournament.status) === 'finished' && ` El torneo ha finalizado y el campeón fue ${tournament.winner}.`}
                       </p>
                     </div>
                     
@@ -272,7 +280,7 @@ const TournamentDetail = () => {
                     </div>
                     
                     {/* Registration Call to Action */}
-                    {tournament.status === 'upcoming' && (
+                    {mapStatus(tournament.status) === 'upcoming' && (
                       <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/30 rounded-xl p-8 text-center">
                         <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
                           <Play size={32} className="text-white" />
@@ -288,7 +296,7 @@ const TournamentDetail = () => {
                     )}
                     
                     {/* Winner Section */}
-                    {tournament.status === 'finished' && tournament.winner && (
+                    {mapStatus(tournament.status) === 'finished' && tournament.winner && (
                       <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-8 text-center">
                         <div className="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
                           <Trophy size={40} className="text-white" />
@@ -319,7 +327,7 @@ const TournamentDetail = () => {
                         <Users size={28} className="mr-3 text-primary" />
                         Participantes ({(tournament.participants || []).length})
                       </h3>
-                      {tournament.status === 'upcoming' && (tournament.participants || []).length < 8 && (
+                      {mapStatus(tournament.status) === 'upcoming' && (tournament.participants || []).length < 8 && (
                         <button className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded-lg font-medium hover:from-primary-dark hover:to-secondary-dark transition-all duration-300">
                           Solicitar participación
                         </button>
@@ -336,7 +344,7 @@ const TournamentDetail = () => {
                         />
                       ))}
                       
-                      {tournament.status === 'upcoming' && (tournament.participants || []).length < 8 && (
+                      {mapStatus(tournament.status) === 'upcoming' && (tournament.participants || []).length < 8 && (
                         <div className="bg-gradient-to-br from-dark-lighter to-dark rounded-xl p-6 flex items-center justify-center border-2 border-dashed border-gray-600 hover:border-primary/50 transition-all duration-300">
                           <div className="text-center">
                             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -369,9 +377,9 @@ const TournamentDetail = () => {
                               <Trophy size={32} className="text-primary" />
                             </div>
                             <p className="text-gray-400 text-lg">
-                              {tournament.status === 'upcoming' 
+                              {mapStatus(tournament.status) === 'upcoming' 
                                 ? 'El cuadro se definirá al cerrarse las inscripciones' 
-                                : tournament.status === 'active' 
+                                : mapStatus(tournament.status) === 'active' 
                                   ? 'El torneo está en progreso, el cuadro se actualiza tras cada fase' 
                                   : 'Torneo finalizado'}
                             </p>
@@ -386,7 +394,7 @@ const TournamentDetail = () => {
                             Próximos partidos
                           </h4>
                           
-                          {tournament.status !== 'upcoming' ? (
+                          {mapStatus(tournament.status) !== 'upcoming' ? (
                             <div className="space-y-4">
                               {tournamentMatches.slice(0, 5).map(match => (
                                 <div key={match.id} className="bg-gradient-to-br from-dark-lighter to-dark rounded-lg p-4 border border-gray-700/50 hover:border-primary/30 transition-all duration-200">
@@ -550,7 +558,7 @@ const TournamentDetail = () => {
               <h3 className="text-lg font-bold text-white mb-4">Acciones rápidas</h3>
               
               <div className="space-y-3">
-                {tournament.status === 'upcoming' && (
+                {mapStatus(tournament.status) === 'upcoming' && (
                   <button className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-medium hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 shadow-lg hover:shadow-xl">
                     <Play size={18} className="inline mr-2" />
                     Solicitar participación

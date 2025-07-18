@@ -6,6 +6,7 @@
   --primary: #7f39fb;
   --primary-light: #9f65fd;
   --primary-dark: #5f2cb8;
+  --secondary: #3b82f6;
   --neon-red: #ff003c;
   --neon-blue: #00b3ff;
   --neon-green: #00ff8f;
@@ -168,7 +169,7 @@ input:focus-visible {
 
   /* Button variations */
   .btn-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-medium transition-all duration-200 shadow-lg;
+    @apply bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium transition-all duration-200 shadow-lg;  
   }
 
   .btn-gradient-success {
@@ -226,6 +227,31 @@ input:focus-visible {
 
   .hover-glow {
     @apply hover:shadow-lg hover:shadow-primary/25 transition-all duration-200;
+  }
+
+  .badge-tournament-active {
+    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-green/20 text-neon-green;
+  }
+
+  .badge-tournament-upcoming {
+    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-blue/20 text-neon-blue;
+  }
+
+  .badge-tournament-finished {
+    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-700/70 text-gray-300;
+  }
+
+  .badge-tournament-ongoing {
+    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-green/20 text-neon-green;
+  }
+
+  .badge-tournament-open {
+    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-blue/20 text-neon-blue;
+  }
+
+  /* Tarjetas de estadísticas unificadas */
+  .stat-card {
+    @apply card-elevated shadow-consistent-xl hover-lift backdrop-blur-sm;
   }
 }
 

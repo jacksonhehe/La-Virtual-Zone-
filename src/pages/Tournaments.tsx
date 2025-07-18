@@ -5,14 +5,20 @@ import { useDataStore } from '../store/dataStore';
 import usePersistentState from '../hooks/usePersistentState';
 
 const Tournaments = () => {
-  const [filter, setFilter] = usePersistentState<'all' | 'ongoing' | 'open' | 'finished'>('tournaments_filter', 'all');
+  const [filter, setFilter] = usePersistentState<'all' | 'active' | 'upcoming' | 'finished'>('tournaments_filter', 'all');
 
   const { tournaments } = useDataStore();
   
   // Filter tournaments
-  const filteredTournaments = filter === 'all' 
-    ? tournaments 
-    : tournaments.filter(tournament => tournament.status === filter);
+  const mapStatus = (status: string): 'active' | 'upcoming' | 'finished' => {
+    if (status === 'ongoing') return 'active';
+    if (status === 'open') return 'upcoming';
+    return status as 'active' | 'upcoming' | 'finished';
+  };
+
+  const filteredTournaments = filter === 'all'
+    ? tournaments
+    : tournaments.filter(t => mapStatus(t.status) === filter);
   
   return (
     <div>
@@ -38,14 +44,14 @@ const Tournaments = () => {
                 Todos
               </button>
               <button 
-                onClick={() => setFilter('ongoing')}
-                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'ongoing' ? 'bg-neon-green text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
+                onClick={() => setFilter('active')}
+                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'active' ? 'bg-neon-green text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
               >
                 En curso
               </button>
               <button 
-                onClick={() => setFilter('open')}
-                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'open' ? 'bg-neon-blue text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
+                onClick={() => setFilter('upcoming')}
+                className={`px-3 py-1.5 rounded-lg text-sm ${filter === 'upcoming' ? 'bg-neon-blue text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
               >
                 Inscripciones
               </button>
@@ -63,20 +69,15 @@ const Tournaments = () => {
               <div key={tournament.id} className="card overflow-hidden group">
                 <div className="h-48 overflow-hidden relative">
                   <img 
-                    src={tournament.image} 
+                    src={tournament.logo} 
                     alt={tournament.name} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
                   
                   <div className="absolute top-3 left-3">
-                    <span className={`
-                      inline-block px-3 py-1 text-xs font-medium rounded-full
-                      ${tournament.status === 'ongoing' ? 'bg-neon-green/20 text-neon-green' : ''}
-                      ${tournament.status === 'open' ? 'bg-neon-blue/20 text-neon-blue' : ''}
-                      ${tournament.status === 'finished' ? 'bg-gray-700/70 text-gray-300' : ''}
-                    `}>
-                      {tournament.status === 'ongoing' ? 'En curso' : tournament.status === 'open' ? 'Inscripciones' : 'Finalizado'}
+                    <span className={`badge-tournament-${tournament.status}`.replace('ongoing','active').replace('open','upcoming')}>
+                      {mapStatus(tournament.status) === 'active' ? 'En curso' : mapStatus(tournament.status) === 'upcoming' ? 'Inscripciones' : 'Finalizado'}
                     </span>
                   </div>
                   
@@ -92,12 +93,12 @@ const Tournaments = () => {
                     <div className="flex items-center text-sm text-gray-300">
                       <span className={`
                         inline-block w-2 h-2 rounded-full mr-2
-                        ${tournament.status === 'ongoing' ? 'bg-neon-green' : ''}
-                        ${tournament.status === 'open' ? 'bg-neon-blue' : ''}
-                        ${tournament.status === 'finished' ? 'bg-gray-500' : ''}
+                        ${mapStatus(tournament.status) === 'active' ? 'bg-neon-green' : ''}
+                        ${mapStatus(tournament.status) === 'upcoming' ? 'bg-neon-blue' : ''}
+                        ${mapStatus(tournament.status) === 'finished' ? 'bg-gray-500' : ''}
                       `}></span>
                       <span className="capitalize">
-                        {tournament.format === 'league' ? 'Liga' : tournament.format === 'cup' ? 'Copa' : 'Playoff'}
+                        {tournament.type === 'league' ? 'Liga' : tournament.type === 'cup' ? 'Copa' : 'Amistoso'}
                       </span>
                     </div>
                   </div>

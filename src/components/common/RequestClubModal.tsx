@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useActivityLogStore } from '../../store/activityLogStore';
 
 interface Props {
+  isOpen: boolean;
   onClose: () => void;
 }
 
@@ -18,7 +19,7 @@ interface RequestForm {
   timezone: string;
 }
 
-const RequestClubModal = ({ onClose }: Props) => {
+const RequestClubModal = ({ isOpen, onClose }: Props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
   const [sent, setSent] = useState(false);
@@ -72,6 +73,10 @@ const RequestClubModal = ({ onClose }: Props) => {
         return true;
     }
   };
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
