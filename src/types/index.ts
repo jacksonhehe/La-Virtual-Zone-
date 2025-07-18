@@ -1,9 +1,11 @@
 export * from './shared';
+import { Player } from './shared';
 
 // Tournament types
 export interface Tournament {
   id: string;
   name: string;
+  slug?: string;
   type: 'league' | 'cup' | 'friendly';
   logo: string;
   startDate: string;
@@ -16,6 +18,11 @@ export interface Tournament {
   winner?: string;
   topScorer?: TopScorer;
   description: string;
+  participants?: string[];
+  maxTeams?: number;
+  prizePool?: number;
+  currentTeams?: number;
+  location?: string;
 }
 
 export interface TopScorer {
@@ -177,6 +184,12 @@ export interface Comment {
   date: string;
   reported: boolean;
   hidden: boolean;
+  status?: 'approved' | 'pending' | 'hidden';
+  userId?: string;
+  likes?: number;
+  flags?: number;
+  replies?: Comment[];
+  updatedAt?: string;
 }
 
 // --- DT dashboard specific types ---

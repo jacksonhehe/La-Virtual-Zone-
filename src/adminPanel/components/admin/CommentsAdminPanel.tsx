@@ -33,7 +33,7 @@ const CommentsAdminPanel = () => {
 
   const approvedCount = comments.filter(c => c.status === 'approved').length;
   const hiddenCount = comments.filter(c => c.status === 'hidden').length;
-  const flaggedCount = comments.filter(c => c.flags > 0).length;
+  const flaggedCount = comments.filter(c => (c.flags || 0) > 0).length;
 
   const handleApprove = (id: string) => {
     approveComment(id);
@@ -53,8 +53,9 @@ const CommentsAdminPanel = () => {
   };
 
   const getPriorityColor = (comment: any) => {
-    if (comment.flags > 5) return 'border-red-500/50 bg-red-500/10';
-    if (comment.flags > 2) return 'border-yellow-500/50 bg-yellow-500/10';
+    const flags = comment.flags || 0;
+    if (flags > 5) return 'border-red-500/50 bg-red-500/10';
+    if (flags > 2) return 'border-yellow-500/50 bg-yellow-500/10';
     return 'border-gray-700/50';
   };
 
@@ -151,14 +152,14 @@ const CommentsAdminPanel = () => {
                               {comment.status === 'pending' ? 'Pendiente' : 
                                comment.status === 'approved' ? 'Aprobado' : 'Oculto'}
                             </span>
-                            {comment.flags > 0 && (
+                            {(comment.flags || 0) > 0 && (
                               <span className="px-2 py-1 rounded-full text-xs bg-red-500/20 text-red-400 border border-red-500/30">
-                                {comment.flags} reportes
+                                {comment.flags || 0} reportes
                               </span>
                             )}
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
-                            Post ID: {comment.postId} • {new Date(comment.createdAt).toLocaleString()}
+                            Post ID: {comment.postId} • {new Date(comment.date).toLocaleString()}
                           </div>
                         </div>
                       </div>
@@ -198,14 +199,14 @@ const CommentsAdminPanel = () => {
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center space-x-4">
                         <div className="text-gray-400">
-                          <span className="font-medium text-white">{comment.likes}</span> likes
+                          <span className="font-medium text-white">{comment.likes || 0}</span> likes
                         </div>
                         <div className="text-gray-400">
                           <span className="font-medium text-white">{comment.replies?.length || 0}</span> respuestas
                         </div>
                       </div>
                       <div className="text-gray-400">
-                        Última actividad: {new Date(comment.updatedAt).toLocaleDateString()}
+                        Última actividad: {new Date(comment.updatedAt || comment.date).toLocaleDateString()}
                       </div>
                     </div>
                   </div>

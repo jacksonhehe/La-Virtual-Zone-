@@ -2,7 +2,25 @@ import {
   VZ_USERS_KEY,
   VZ_CLUBS_KEY,
   VZ_PLAYERS_KEY,
-  VZ_FIXTURES_KEY
+  VZ_FIXTURES_KEY,
+  VZ_TOURNAMENTS_KEY,
+  VZ_NEWS_KEY,
+  VZ_TRANSFERS_KEY,
+  VZ_STANDINGS_KEY,
+  VZ_ACTIVITIES_KEY,
+  VZ_COMMENTS_KEY,
+  VZ_OFFERS_KEY,
+  VZ_FAQS_KEY,
+  VZ_POSTS_KEY,
+  VZ_MARKET_STATUS_KEY,
+  VZ_MEDIA_ITEMS_KEY,
+  VZ_STORE_ITEMS_KEY,
+  VZ_POSITIONS_KEY,
+  VZ_DT_RANKINGS_KEY,
+  VZ_TASKS_KEY,
+  VZ_EVENTS_KEY,
+  VZ_OBJECTIVES_KEY,
+  VZ_MARKET_KEY
 } from '../../utils/storageKeys';
 
 export interface AdminData {
@@ -18,49 +36,31 @@ export interface AdminData {
   comments: import('../types').Comment[];
 }
 
-const PREFIX = 'vz_';
-
-// Keys previously used by older admin panel versions
-const OLD_KEYS = {
-  users: `${PREFIX}users_admin`,
-  clubs: `${PREFIX}clubs_admin`,
-  players: `${PREFIX}players_admin`,
-  tournaments: `${PREFIX}tournaments_admin`,
-  matches: `${PREFIX}fixtures_admin`,
-  newsItems: `${PREFIX}news_admin`,
-  transfers: `${PREFIX}transfers_admin`,
-  standings: `${PREFIX}standings_admin`,
-  activities: `${PREFIX}activities_admin`,
-  comments: `${PREFIX}comments_admin`
-} as const;
-
-// Updated keys aligned with the main application
+// Eliminar OLD_KEYS y migraciones
+// Usar solo las claves importadas de storageKeys
 const keys = {
   users: VZ_USERS_KEY,
   clubs: VZ_CLUBS_KEY,
   players: VZ_PLAYERS_KEY,
   matches: VZ_FIXTURES_KEY,
-  tournaments: OLD_KEYS.tournaments,
-  newsItems: OLD_KEYS.newsItems,
-  transfers: OLD_KEYS.transfers,
-  standings: OLD_KEYS.standings,
-  activities: OLD_KEYS.activities,
-  comments: OLD_KEYS.comments
-} as const;
-
-const migrateOldKeys = () => {
-  Object.entries(OLD_KEYS).forEach(([prop, oldKey]) => {
-    const newKey = (keys as any)[prop];
-    if (oldKey !== newKey) {
-      const oldVal = localStorage.getItem(oldKey);
-      if (oldVal && !localStorage.getItem(newKey)) {
-        localStorage.setItem(newKey, oldVal);
-      }
-      if (oldVal) {
-        localStorage.removeItem(oldKey);
-      }
-    }
-  });
+  tournaments: VZ_TOURNAMENTS_KEY,
+  newsItems: VZ_NEWS_KEY,
+  transfers: VZ_TRANSFERS_KEY,
+  standings: VZ_STANDINGS_KEY,
+  activities: VZ_ACTIVITIES_KEY,
+  comments: VZ_COMMENTS_KEY,
+  offers: VZ_OFFERS_KEY,
+  faqs: VZ_FAQS_KEY,
+  posts: VZ_POSTS_KEY,
+  marketStatus: VZ_MARKET_STATUS_KEY,
+  mediaItems: VZ_MEDIA_ITEMS_KEY,
+  storeItems: VZ_STORE_ITEMS_KEY,
+  positions: VZ_POSITIONS_KEY,
+  dtRankings: VZ_DT_RANKINGS_KEY,
+  tasks: VZ_TASKS_KEY,
+  events: VZ_EVENTS_KEY,
+  objectives: VZ_OBJECTIVES_KEY,
+  market: VZ_MARKET_KEY
 };
 
 export const loadAdminData = (defaults: AdminData): AdminData => {
@@ -68,7 +68,6 @@ export const loadAdminData = (defaults: AdminData): AdminData => {
     return defaults;
   }
   const data: AdminData = { ...defaults };
-  migrateOldKeys();
   Object.entries(keys).forEach(([prop, key]) => {
     const json = localStorage.getItem(key);
     if (json) {

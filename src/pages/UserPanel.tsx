@@ -1,4 +1,4 @@
-import   { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { 
   User, 
@@ -10,7 +10,19 @@ import {
   ShoppingCart, 
   Bell,
   Star,
-  
+  Edit,
+  Save,
+  X,
+  Crown,
+  Award,
+  Calendar,
+  Mail,
+  Shield,
+  TrendingUp,
+  Activity,
+  Heart,
+  Eye,
+  Lock
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -18,26 +30,32 @@ import RequestClubModal from '../components/common/RequestClubModal';
 import { xpForNextLevel } from '../utils/helpers';
 
 const UserPanel = () => {
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, logout, updateUser } = useAuthStore();
   const { clubs } = useDataStore();
   const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState('profile');
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    email: user?.email || '',
+    bio: user?.bio || '',
+    avatar: user?.avatar || ''
+  });
   
   // Initialize following property if it doesn't exist
-  const following = user?.following || { clubs: [], users: [] };
+  const following = user?.following || 0;
   
   // Get user's club if they are a DT
-  const userClub = user?.role === 'dt' && user?.club
-    ? clubs.find(club => club.name === user.club)
+  const userClub = user?.role === 'dt' && user?.clubId
+    ? clubs.find(club => club.id === user.clubId)
     : null;
 
   // Calculate XP progress for the level bar
   const currentLevelXp = xpForNextLevel((user?.level ?? 1) - 1);
   const nextLevelXp = xpForNextLevel(user?.level ?? 1);
-  const levelProgress = user
-    ? ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100
+  const levelProgress = user && user.xp
+    ? Math.max(0, Math.min(100, ((user.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100))
     : 0;
   const [levelPulse, setLevelPulse] = useState(false);
   const prevLevel = useRef(levelProgress);
@@ -50,9 +68,60 @@ const UserPanel = () => {
       return () => clearTimeout(id);
     }
   }, [levelProgress]);
+
+  // Update edit form when user changes
+  useEffect(() => {
+    if (user) {
+      setEditForm({
+        email: user.email || '',
+        bio: user.bio || '',
+        avatar: user.avatar || ''
+      });
+    }
+  }, [user]);
   
   // Initialize achievements array if it doesn't exist
-  const achievements = user?.achievements || [];
+  const achievements = (user as any)?.achievements || [];
+
+  // Handle form submission
+  const handleSaveProfile = () => {
+    if (user) {
+      updateUser({
+        ...user,
+        ...editForm
+      });
+      setIsEditing(false);
+    }
+  };
+
+  // Handle form cancellation
+  const handleCancelEdit = () => {
+    setEditForm({
+      email: user?.email || '',
+      bio: user?.bio || '',
+      avatar: user?.avatar || ''
+    });
+    setIsEditing(false);
+  };
+
+  // Mock data for following (since we changed the type)
+  const followingUsers: string[] = [];
+  const followingClubs: string[] = [];
+
+  // Get role badge info
+  const getRoleInfo = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return { label: 'Administrador', icon: Crown, color: 'from-red-500 to-pink-500', bgColor: 'bg-red-500/10' };
+      case 'dt':
+        return { label: 'Director Técnico', icon: Trophy, color: 'from-blue-500 to-cyan-500', bgColor: 'bg-blue-500/10' };
+      default:
+        return { label: 'Usuario', icon: User, color: 'from-gray-500 to-gray-600', bgColor: 'bg-gray-500/10' };
+    }
+  };
+
+  const roleInfo = getRoleInfo(user?.role || 'user');
+  const RoleIcon = roleInfo.icon;
 
   // If not authenticated, redirect to login
   if (!isAuthenticated || !user) {
@@ -60,901 +129,764 @@ const UserPanel = () => {
   }
   
   return (
-    <div className="container mx-auto px-4 py-8 pt-24">
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {/* Sidebar */}
-        <div className="md:col-span-1">
-          <div className="card p-6 text-center mb-6">
-            <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden mb-4 bg-dark">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt={user.username} 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-primary/20">
-                  <User size={32} className="text-primary" />
+    <div className="min-h-screen bg-gradient-to-br from-dark via-dark to-dark-lighter">
+      <div className="container mx-auto px-4 py-8 pt-24">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar mejorado */}
+          <div className="lg:col-span-1">
+            <div className="card p-8 text-center mb-6 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+              <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden mb-6 bg-gradient-to-br from-primary to-secondary p-1">
+                {user.avatar ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.username} 
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full">
+                    <User size={40} className="text-primary" />
+                  </div>
+                )}
+                <div className="absolute -bottom-2 -right-2 bg-dark rounded-full p-1 border-2 border-dark-lighter">
+                  <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-r from-primary to-secondary text-dark text-xs font-bold rounded-full">
+                    {user.level || 1}
+                  </div>
+                </div>
+              </div>
+              
+              <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                {user.username}
+              </h2>
+              
+              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-4 ${roleInfo.bgColor} bg-gradient-to-r ${roleInfo.color} bg-clip-text text-transparent`}>
+                <RoleIcon size={16} className="mr-2" />
+                {roleInfo.label}
+              </div>
+              
+              <div className="mb-6">
+                <div className="flex justify-between text-xs text-gray-400 mb-2">
+                  <span>Nivel {user.level || 1}</span>
+                  <span>Nivel {(user.level || 1) + 1}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-3 flex-1 bg-dark rounded-full overflow-hidden border border-gray-700">
+                    <div
+                      className={`h-full bg-gradient-to-r from-primary to-secondary ${levelPulse ? 'animate-pulse' : ''} transition-all duration-300`}
+                      style={{ width: `${levelProgress}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs w-12 text-right font-medium">{Math.round(levelProgress)}%</span>
+                </div>
+                <div className="text-xs text-gray-400 mt-2">
+                  {user.xp || 0} / {nextLevelXp} XP
+                </div>
+              </div>
+              
+              {user.role === 'dt' && userClub && (
+                <div className="mt-4 p-4 bg-gradient-to-r from-dark-lighter to-dark rounded-xl border border-gray-800/50">
+                  <div className="flex items-center justify-center">
+                    <img 
+                      src={userClub.logo} 
+                      alt={userClub.name} 
+                      className="w-10 h-10 mr-3 rounded-full"
+                    />
+                    <span className="font-medium text-sm">{userClub.name}</span>
+                  </div>
                 </div>
               )}
-              <div className="absolute -bottom-1 -right-1 bg-dark rounded-full p-0.5">
-                <div className="w-6 h-6 flex items-center justify-center bg-primary text-dark text-xs font-bold rounded-full">
-                  {user.level}
-                </div>
-              </div>
             </div>
             
-            <h2 className="text-xl font-bold mb-1">{user.username}</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              {user.role === 'dt' ? 'Director Técnico' : 
-               user.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
-            </p>
-            
-            <div className="mb-4">
-              <div className="flex justify-between text-xs text-gray-400 mb-1">
-                <span>Nivel {user.level}</span>
-                <span>Nivel {user.level + 1}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 flex-1 bg-dark rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${levelProgress >= 50 ? 'bg-green-500' : 'bg-red-500'} ${levelPulse ? 'animate-pulse' : ''}`}
-                    style={{ width: `${levelProgress}%` }}
-                  ></div>
-                </div>
-                <span className="text-xs w-10 text-right">{Math.round(levelProgress)}%</span>
-              </div>
-              <div className="text-xs text-gray-400 mt-1">
-                {user.xp} / {nextLevelXp} XP
-              </div>
-            </div>
-            
-            {user.role === 'dt' && userClub && (
-              <div className="mt-3 p-3 bg-dark rounded-lg">
-                <div className="flex items-center justify-center">
-                  <img 
-                    src={userClub.logo} 
-                    alt={userClub.name} 
-                    className="w-8 h-8 mr-2"
-                  />
-                  <span className="font-medium">{userClub.name}</span>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          <div className="card overflow-hidden">
-            <nav>
-              <button
-                onClick={() => setActiveTab('profile')}
-                className={`w-full flex items-center p-3 ${
-                  activeTab === 'profile' ? 'bg-primary text-dark' : 'text-gray-300 hover:bg-dark'
-                }`}
-              >
-                <User size={18} className="mr-3" />
-                <span>Mi Perfil</span>
-              </button>
-              
-              {user.role === 'dt' && (
+            <div className="card overflow-hidden bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+              <nav>
                 <button
-                  onClick={() => setActiveTab('club')}
-                  className={`w-full flex items-center p-3 ${
-                    activeTab === 'club' ? 'bg-primary text-dark' : 'text-gray-300 hover:bg-dark'
+                  onClick={() => setActiveTab('profile')}
+                  className={`w-full flex items-center p-4 transition-all duration-200 ${
+                    activeTab === 'profile' 
+                      ? 'bg-gradient-to-r from-primary to-secondary text-dark font-medium' 
+                      : 'text-gray-300 hover:bg-dark hover:text-white'
                   }`}
                 >
-                  <Trophy size={18} className="mr-3" />
-                  <span>Mi Club</span>
+                  <User size={20} className="mr-3" />
+                  <span>Mi Perfil</span>
                 </button>
-              )}
-              
-              <button
-                onClick={() => setActiveTab('activity')}
-                className={`w-full flex items-center p-3 ${
-                  activeTab === 'activity' ? 'bg-primary text-dark' : 'text-gray-300 hover:bg-dark'
-                }`}
-              >
-                <Clipboard size={18} className="mr-3" />
-                <span>Actividad</span>
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('community')}
-                className={`w-full flex items-center p-3 ${
-                  activeTab === 'community' ? 'bg-primary text-dark' : 'text-gray-300 hover:bg-dark'
-                }`}
-              >
-                <Users size={18} className="mr-3" />
-                <span>Comunidad</span>
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`w-full flex items-center p-3 ${
-                  activeTab === 'settings' ? 'bg-primary text-dark' : 'text-gray-300 hover:bg-dark'
-                }`}
-              >
-                <Settings size={18} className="mr-3" />
-                <span>Configuración</span>
-              </button>
-              
-              {user.role === 'admin' && (
+                
+                {user.role === 'dt' && (
+                  <button
+                    onClick={() => setActiveTab('club')}
+                    className={`w-full flex items-center p-4 transition-all duration-200 ${
+                      activeTab === 'club' 
+                        ? 'bg-gradient-to-r from-primary to-secondary text-dark font-medium' 
+                        : 'text-gray-300 hover:bg-dark hover:text-white'
+                    }`}
+                  >
+                    <Trophy size={20} className="mr-3" />
+                    <span>Mi Club</span>
+                  </button>
+                )}
+                
                 <button
-                  onClick={() => navigate('/admin')}
-                  className="w-full flex items-center p-3 rounded-md bg-neon-red text-white"
+                  onClick={() => setActiveTab('activity')}
+                  className={`w-full flex items-center p-4 transition-all duration-200 ${
+                    activeTab === 'activity' 
+                      ? 'bg-gradient-to-r from-primary to-secondary text-dark font-medium' 
+                      : 'text-gray-300 hover:bg-dark hover:text-white'
+                  }`}
                 >
-                  <Settings size={18} className="mr-3" />
-                  <span>Panel de Admin</span>
+                  <Activity size={20} className="mr-3" />
+                  <span>Actividad</span>
                 </button>
-              )}
-            </nav>
-            
-            <div className="border-t border-gray-800 p-3">
-              <button
-                onClick={logout}
-                className="w-full flex items-center p-2 rounded-md text-gray-400 hover:bg-dark hover:text-white"
-              >
-                <LogOut size={18} className="mr-3" />
-                <span>Cerrar Sesión</span>
-              </button>
+                
+                <button
+                  onClick={() => setActiveTab('community')}
+                  className={`w-full flex items-center p-4 transition-all duration-200 ${
+                    activeTab === 'community' 
+                      ? 'bg-gradient-to-r from-primary to-secondary text-dark font-medium' 
+                      : 'text-gray-300 hover:bg-dark hover:text-white'
+                  }`}
+                >
+                  <Users size={20} className="mr-3" />
+                  <span>Comunidad</span>
+                </button>
+                
+                <button
+                  onClick={() => setActiveTab('settings')}
+                  className={`w-full flex items-center p-4 transition-all duration-200 ${
+                    activeTab === 'settings' 
+                      ? 'bg-gradient-to-r from-primary to-secondary text-dark font-medium' 
+                      : 'text-gray-300 hover:bg-dark hover:text-white'
+                  }`}
+                >
+                  <Settings size={20} className="mr-3" />
+                  <span>Configuración</span>
+                </button>
+                
+                {user.role === 'admin' && (
+                  <button
+                    onClick={() => navigate('/admin')}
+                    className="w-full flex items-center p-4 rounded-md bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium transition-all duration-200 hover:from-red-600 hover:to-pink-600"
+                  >
+                    <Settings size={20} className="mr-3" />
+                    <span>Panel de Admin</span>
+                  </button>
+                )}
+              </nav>
+              
+              <div className="border-t border-gray-800 p-4">
+                <button
+                  onClick={logout}
+                  className="w-full flex items-center p-3 rounded-md text-gray-400 hover:bg-dark hover:text-white transition-all duration-200"
+                >
+                  <LogOut size={20} className="mr-3" />
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        
-        {/* Main content */}
-        <div className="md:col-span-2 lg:col-span-3">
-          {/* Profile tab */}
-          {activeTab === 'profile' && (
-            <div className="space-y-6">
-              <div className="card p-6">
-                <h2 className="text-xl font-bold mb-4">Mi Perfil</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Información Personal</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm text-gray-400 mb-1">Nombre de usuario</label>
-                        <div className="font-medium">{user.username}</div>
+          
+          {/* Main content mejorado */}
+          <div className="lg:col-span-3">
+            {/* Profile tab */}
+            {activeTab === 'profile' && (
+              <div className="space-y-8">
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <div className="flex justify-between items-center mb-8">
+                    <div>
+                      <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                        Mi Perfil
+                      </h2>
+                      <p className="text-gray-400">Gestiona tu información personal y estadísticas</p>
+                    </div>
+                    {!isEditing ? (
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="btn-primary flex items-center px-6 py-3 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transition-all duration-200 shadow-lg"
+                      >
+                        <Edit size={18} className="mr-2" />
+                        Editar Perfil
+                      </button>
+                    ) : (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={handleSaveProfile}
+                          className="btn-primary flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg"
+                        >
+                          <Save size={18} className="mr-2" />
+                          Guardar
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="btn-outline flex items-center px-6 py-3 border-gray-600 hover:bg-gray-800 transition-all duration-200"
+                        >
+                          <X size={18} className="mr-2" />
+                          Cancelar
+                        </button>
                       </div>
-                      <div>
-                        <label className="block text-sm text-gray-400 mb-1">Correo electrónico</label>
-                        <div className="font-medium">{user.email}</div>
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-400 mb-1">Rol</label>
-                        <div className="font-medium">
-                          {user.role === 'dt' ? 'Director Técnico' : 
-                           user.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                        <h3 className="text-xl font-semibold mb-6 flex items-center">
+                          <User size={24} className="mr-3 text-primary" />
+                          Información Personal
+                        </h3>
+                        <div className="space-y-4">
+                          <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                            <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                              <User size={20} className="text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-400 mb-1">Nombre de usuario</label>
+                              <div className="font-medium text-white">{user.username}</div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                            <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                              <Mail size={20} className="text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-400 mb-1">Correo electrónico</label>
+                              {isEditing ? (
+                                <input
+                                  type="email"
+                                  className="input w-full bg-dark border-gray-700 focus:border-primary"
+                                  value={editForm.email}
+                                  onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                                />
+                              ) : (
+                                <div className="font-medium text-white">{user.email}</div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                            <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                              <Shield size={20} className="text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-400 mb-1">Rol</label>
+                              <div className="font-medium text-white">
+                                {user.role === 'dt' ? 'Director Técnico' : 
+                                 user.role === 'admin' ? 'Administrador' : 'Usuario Estándar'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                            <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                              <Calendar size={20} className="text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-400 mb-1">Fecha de registro</label>
+                              <div className="font-medium text-white">
+                                {user.joinDate ? new Date(user.joinDate).toLocaleDateString('es-ES') : '-'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-start p-3 bg-dark-lighter/50 rounded-lg">
+                            <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4 mt-1">
+                              <Heart size={20} className="text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-sm text-gray-400 mb-1">Biografía</label>
+                              {isEditing ? (
+                                <textarea
+                                  className="input w-full bg-dark border-gray-700 focus:border-primary"
+                                  rows={3}
+                                  value={editForm.bio}
+                                  onChange={(e) => setEditForm({...editForm, bio: e.target.value})}
+                                  placeholder="Cuéntanos sobre ti..."
+                                />
+                              ) : (
+                                <div className="font-medium text-white">{user.bio || 'Sin biografía'}</div>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <label className="block text-sm text-gray-400 mb-1">Fecha de registro</label>
-                        <div className="font-medium">
-                          {user.joinDate ? new Date(user.joinDate).toLocaleDateString('es-ES') : '-'}
+                    </div>
+                    
+                    <div className="space-y-6">
+                      <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                        <h3 className="text-xl font-semibold mb-6 flex items-center">
+                          <TrendingUp size={24} className="mr-3 text-primary" />
+                          Estadísticas y Logros
+                        </h3>
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                          <div className="text-center p-4 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl border border-primary/20 shadow-lg">
+                            <div className="text-3xl font-bold text-primary mb-1">{user.level || 1}</div>
+                            <div className="text-sm text-gray-400">Nivel</div>
+                          </div>
+                          <div className="text-center p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl border border-green-500/20 shadow-lg">
+                            <div className="text-3xl font-bold text-green-400 mb-1">{user.xp || 0}</div>
+                            <div className="text-sm text-gray-400">Experiencia</div>
+                          </div>
+                          <div className="text-center p-4 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-500/20 shadow-lg">
+                            <div className="text-3xl font-bold text-yellow-400 mb-1">{achievements.length}</div>
+                            <div className="text-sm text-gray-400">Logros</div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-lg font-semibold mb-4 flex items-center">
+                            <Award size={20} className="mr-2 text-primary" />
+                            Logros Desbloqueados
+                          </h4>
+                          <div className="space-y-3">
+                            {achievements.length > 0 ? (
+                              achievements.map((achievement: string) => (
+                                <div key={achievement} className="flex items-center p-3 bg-dark-lighter/50 rounded-lg border border-gray-700/50 shadow-md">
+                                  <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-4">
+                                    <Trophy size={20} className="text-dark" />
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-white">
+                                      {achievement === 'founder' ? 'Fundador' : 
+                                       achievement === 'first_win' ? 'Primera Victoria' :
+                                       achievement === 'first_transfer' ? 'Primer Fichaje' :
+                                       achievement}
+                                    </div>
+                                    <div className="text-sm text-gray-400">
+                                      {achievement === 'founder' ? 'Fundador de La Virtual Zone' : 
+                                       achievement === 'first_win' ? 'Ganaste tu primer partido' :
+                                       achievement === 'first_transfer' ? 'Completaste tu primer fichaje' :
+                                       'Logro desbloqueado'}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="text-center py-8 text-gray-500">
+                                <Award size={48} className="mx-auto mb-4 text-gray-600" />
+                                <p className="text-lg font-medium mb-2">No has desbloqueado logros todavía</p>
+                                <p className="text-sm">Participa en partidos y torneos para desbloquear logros</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Estadísticas y Logros</h3>
-                    <div className="flex items-center justify-between mb-4">
+                </div>
+                
+                {user.role !== 'dt' && (
+                  <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                    <div className="text-center">
+                      <Trophy size={64} className="mx-auto mb-6 text-primary/50" />
+                      <h3 className="text-2xl font-bold mb-4">¿Quieres ser Director Técnico?</h3>
+                      <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                        Para participar en la Liga Master necesitas convertirte en Director Técnico y administrar un club. 
+                        Solicita un puesto para la próxima temporada y comienza tu carrera como DT.
+                      </p>
+                      <button
+                        className="btn-primary px-8 py-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transition-all duration-200 text-lg font-medium shadow-lg"
+                        onClick={() => setShowRequestModal(true)}
+                      >
+                        Solicitar participación como DT
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <div className="text-center">
+                    <Eye size={64} className="mx-auto mb-6 text-primary/50" />
+                    <h3 className="text-2xl font-bold mb-4">Perfil Público</h3>
+                    <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                      Tu perfil público muestra tu información a otros usuarios de la comunidad. 
+                      Puedes personalizar lo que se muestra y gestionar tu visibilidad.
+                    </p>
+                    <a 
+                      href={`/usuarios/${user.username}`}
+                      className="btn-secondary px-8 py-4 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 transition-all duration-200 text-lg font-medium shadow-lg"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Ver mi perfil público
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Club tab (only for DT) */}
+            {activeTab === 'club' && user.role === 'dt' && userClub && (
+              <div className="space-y-8">
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+                    <div className="flex items-center mb-6 md:mb-0">
+                      <img 
+                        src={userClub.logo} 
+                        alt={userClub.name} 
+                        className="w-20 h-20 mr-6 rounded-xl"
+                      />
                       <div>
-                        <div className="text-3xl font-bold">{user.level}</div>
-                        <div className="text-sm text-gray-400">Nivel</div>
-                      </div>
-                      <div>
-                        <div className="text-3xl font-bold">{user.xp}</div>
-                        <div className="text-sm text-gray-400">Experiencia</div>
-                      </div>
-                      <div>
-                        <div className="text-3xl font-bold">{achievements.length}</div>
-                        <div className="text-sm text-gray-400">Logros</div>
+                        <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                          {userClub.name}
+                        </h2>
+                        <p className="text-gray-400">
+                          Fundado en {userClub.foundedYear} • {userClub.stadium}
+                        </p>
                       </div>
                     </div>
                     
-                    <div>
-                      <h4 className="text-sm text-gray-400 mb-2">Logros Desbloqueados</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {achievements.length > 0 ? (
-                          achievements.map(achievement => (
-                            <span 
-                              key={achievement}
-                              className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-md"
-                            >
-                              {achievement === 'founder' ? 'Fundador' : 
-                               achievement === 'first_win' ? 'Primera Victoria' :
-                               achievement === 'first_transfer' ? 'Primer Fichaje' :
-                               achievement}
-                            </span>
+                    <div className="flex flex-wrap gap-3">
+                      <a
+                        href={`/liga-master/club/${userClub.slug}`}
+                        className="btn-secondary px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 transition-all duration-200 shadow-lg"
+                      >
+                        Ver Perfil
+                      </a>
+                      <a
+                        href={`/liga-master/club/${userClub.slug}/plantilla`}
+                        className="btn-outline px-6 py-3 border-gray-600 hover:bg-gray-800 transition-all duration-200"
+                      >
+                        Plantilla
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-6 rounded-xl border border-green-500/20 text-center shadow-lg">
+                      <div className="text-3xl font-bold text-green-400 mb-2">{(userClub as any).wins || 0}</div>
+                      <div className="text-sm text-gray-400">Victorias</div>
+                    </div>
+                    <div className="bg-gradient-to-br from-gray-500/20 to-gray-600/20 p-6 rounded-xl border border-gray-500/20 text-center shadow-lg">
+                      <div className="text-3xl font-bold text-gray-400 mb-2">{(userClub as any).draws || 0}</div>
+                      <div className="text-sm text-gray-400">Empates</div>
+                    </div>
+                    <div className="bg-gradient-to-br from-red-500/20 to-pink-500/20 p-6 rounded-xl border border-red-500/20 text-center shadow-lg">
+                      <div className="text-3xl font-bold text-red-400 mb-2">{(userClub as any).losses || 0}</div>
+                      <div className="text-sm text-gray-400">Derrotas</div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-dark/50 p-6 rounded-xl border border-gray-800/50 shadow-lg">
+                    <h4 className="text-xl font-semibold mb-4 flex items-center">
+                      <Shield size={24} className="mr-3 text-primary" />
+                      Información del Club
+                    </h4>
+                    <div className="grid grid-cols-2 gap-6 text-sm">
+                      <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                        <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                          <TrendingUp size={20} className="text-primary" />
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Presupuesto:</span>
+                          <div className="font-medium text-white">{userClub.budget ? `$${userClub.budget.toLocaleString()}` : 'N/A'}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                        <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                          <Trophy size={20} className="text-primary" />
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Estadio:</span>
+                          <div className="font-medium text-white">{userClub.stadium}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                        <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                          <Activity size={20} className="text-primary" />
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Estilo de juego:</span>
+                          <div className="font-medium text-white">{userClub.playStyle}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center p-3 bg-dark-lighter/50 rounded-lg">
+                        <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                          <Calendar size={20} className="text-primary" />
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Fundado:</span>
+                          <div className="font-medium text-white">{userClub.foundedYear}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Activity tab */}
+            {activeTab === 'activity' && (
+              <div className="space-y-8">
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    Actividad Reciente
+                  </h2>
+                  <p className="text-gray-400 mb-8">Tu historial de actividades y logros</p>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                      <h3 className="text-xl font-semibold mb-6 flex items-center">
+                        <Activity size={24} className="mr-3 text-primary" />
+                        Últimas Actividades
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center p-4 bg-dark-lighter/50 rounded-lg border border-gray-700/50 shadow-md">
+                          <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-4">
+                            <Trophy size={20} className="text-dark" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium text-white">Logro desbloqueado: Fundador</div>
+                            <div className="text-sm text-gray-400">Hace 2 días</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center p-4 bg-dark-lighter/50 rounded-lg border border-gray-700/50 shadow-md">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-4">
+                            <User size={20} className="text-dark" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium text-white">Cuenta creada</div>
+                            <div className="text-sm text-gray-400">Hace 1 semana</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Community tab */}
+            {activeTab === 'community' && (
+              <div className="space-y-8">
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    Comunidad
+                  </h2>
+                  <p className="text-gray-400 mb-8">Conecta con otros usuarios y clubes</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                      <h3 className="text-xl font-semibold mb-6 flex items-center">
+                        <Users size={24} className="mr-3 text-primary" />
+                        Usuarios seguidos
+                      </h3>
+                      <div className="space-y-4">
+                        {followingUsers.length > 0 ? (
+                          followingUsers.map((followedUser: string, index: number) => (
+                            <div key={index} className="flex items-center justify-between p-4 bg-dark-lighter/50 rounded-xl border border-gray-700/50 shadow-md">
+                              <div className="flex items-center">
+                                <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center mr-4">
+                                  <User size={20} className="text-dark" />
+                                </div>
+                                <span className="font-medium text-white">{followedUser}</span>
+                              </div>
+                              <button className="text-xs text-gray-400 hover:text-white transition-colors">
+                                Ver perfil
+                              </button>
+                            </div>
                           ))
                         ) : (
-                          <span className="text-gray-500 text-sm">No has desbloqueado logros todavía</span>
+                          <div className="text-center py-8 text-gray-500">
+                            <Users size={48} className="mx-auto mb-4 text-gray-600" />
+                            <p className="text-lg font-medium mb-2">No sigues a ningún usuario</p>
+                            <p className="text-sm">Descubre usuarios interesantes para seguir</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                      <h3 className="text-xl font-semibold mb-6 flex items-center">
+                        <Trophy size={24} className="mr-3 text-primary" />
+                        Clubes seguidos
+                      </h3>
+                      <div className="space-y-4">
+                        {followingClubs.length > 0 ? (
+                          followingClubs.map((followedClub: string, index: number) => (
+                            <div key={index} className="flex items-center justify-between p-4 bg-dark-lighter/50 rounded-xl border border-gray-700/50 shadow-md">
+                              <div className="flex items-center">
+                                <div className="w-10 h-10 bg-gradient-to-r from-secondary to-blue-500 rounded-lg flex items-center justify-center mr-4">
+                                  <Trophy size={20} className="text-dark" />
+                                </div>
+                                <span className="font-medium text-white">{followedClub}</span>
+                              </div>
+                              <button className="text-xs text-gray-400 hover:text-white transition-colors">
+                                Ver club
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <Trophy size={48} className="mx-auto mb-4 text-gray-600" />
+                            <p className="text-lg font-medium mb-2">No sigues a ningún club</p>
+                            <p className="text-sm">Descubre clubes interesantes para seguir</p>
+                          </div>
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              
-              {user.role !== 'dt' && (
-                <div className="card p-6">
-                  <h3 className="text-lg font-semibold mb-3">Solicitar Club</h3>
-                  <p className="text-gray-300 mb-4">
-                    Para participar en la Liga Master necesitas convertirte en Director Técnico y administrar un club. Solicita un puesto para la próxima temporada.
-                  </p>
-                  <button
-                    className="btn-primary"
-                    onClick={() => setShowRequestModal(true)}
-                  >
-                    Solicitar participación como DT
-                  </button>
-                </div>
-              )}
-              
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold mb-4">Perfil Público</h3>
-                <p className="text-gray-300 mb-4">
-                  Tu perfil público muestra tu información a otros usuarios de la comunidad. Puedes personalizar lo que se muestra.
-                </p>
-                <a 
-                  href={`/usuarios/${user.username}`}
-                  className="btn-secondary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Ver mi perfil público
-                </a>
-              </div>
-            </div>
-          )}
-          
-          {/* Club tab (only for DT) */}
-          {activeTab === 'club' && user.role === 'dt' && userClub && (
-            <div className="space-y-6">
-              <div className="card p-6">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
-                  <div className="flex items-center mb-4 md:mb-0">
-                    <img 
-                      src={userClub.logo} 
-                      alt={userClub.name} 
-                      className="w-16 h-16 mr-4"
-                    />
-                    <div>
-                      <h2 className="text-xl font-bold">{userClub.name}</h2>
-                      <p className="text-gray-400">
-                        Fundado en {userClub.foundedYear} • {userClub.stadium}
-                      </p>
-                    </div>
-                  </div>
+            )}
+            
+            {/* Settings tab */}
+            {activeTab === 'settings' && (
+              <div className="space-y-8">
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    Configuración de Cuenta
+                  </h2>
+                  <p className="text-gray-400 mb-8">Gestiona tus preferencias y configuración</p>
                   
-                  <div className="flex flex-wrap gap-2">
-                    <a
-                      href={`/liga-master/club/${userClub.slug}`}
-                      className="btn-secondary"
-                    >
-                      Ver Perfil
-                    </a>
-                    <a
-                      href={`/liga-master/club/${userClub.slug}/plantilla`}
-                      className="btn-outline"
-                    >
-                      Plantilla
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-dark p-4 rounded-lg">
-                    <h3 className="font-medium mb-2 text-sm text-gray-400">Presupuesto</h3>
-                    <p className="text-xl font-bold text-primary">
-                      €{(userClub.budget / 1000000).toFixed(1)}M
-                    </p>
-                    <a
-                      href={`/liga-master/club/${userClub.slug}/finanzas`}
-                      className="text-xs text-primary hover:underline mt-1 inline-block"
-                    >
-                      Ver finanzas
-                    </a>
-                  </div>
-                  
-                  <div className="bg-dark p-4 rounded-lg">
-                    <h3 className="font-medium mb-2 text-sm text-gray-400">Posición actual</h3>
-                    <p className="text-xl font-bold">
-                      {userClub.season?.position || '?'}º lugar
-                    </p>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {userClub.season?.wins || 0}V {userClub.season?.draws || 0}E {userClub.season?.losses || 0}D
-                    </div>
-                  </div>
-                  
-                  <div className="bg-dark p-4 rounded-lg">
-                    <h3 className="font-medium mb-2 text-sm text-gray-400">Jugadores</h3>
-                    <p className="text-xl font-bold">
-                      {userClub.players?.length || 0} <span className="text-gray-400 text-base font-normal">jugadores</span>
-                    </p>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {userClub.players ? userClub.players.filter(p => p.startsWith('p')).length : 0} activos
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="card p-6">
-                  <h3 className="text-lg font-semibold mb-4">Acciones Rápidas</h3>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    
-                    <a 
-                      href="/liga-master/fixture"
-                      className="p-4 bg-dark rounded-lg hover:bg-gray-800 transition-colors flex flex-col items-center text-center"
-                    >
-                      <Clipboard size={24} className="text-primary mb-2" />
-                      <span className="font-medium">Fixture</span>
-                      <span className="text-xs text-gray-400 mt-1">Próximos partidos</span>
-                    </a>
-                    
-                    <a
-                      href="/liga-master/tacticas"
-                      className="p-4 bg-dark rounded-lg hover:bg-gray-800 transition-colors flex flex-col items-center text-center"
-                    >
-                      <Clipboard size={24} className="text-primary mb-2" />
-                      <span className="font-medium">Tácticas</span>
-                      <span className="text-xs text-gray-400 mt-1">Alineación y formación</span>
-                    </a>
-                    
-                    <a 
-                      href={`/liga-master/feed`}
-                      className="p-4 bg-dark rounded-lg hover:bg-gray-800 transition-colors flex flex-col items-center text-center"
-                    >
-                      <Bell size={24} className="text-primary mb-2" />
-                      <span className="font-medium">Feed</span>
-                      <span className="text-xs text-gray-400 mt-1">Últimas noticias</span>
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="card p-6">
-                  <h3 className="text-lg font-semibold mb-4">Temporada 2025</h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm text-gray-400 mb-2">Estilo de juego</h4>
-                      <div className="flex items-center">
-                        <span className="inline-block px-2 py-1 bg-primary/20 text-primary text-sm rounded-md">
-                          {userClub.style === 'possession' ? 'Posesión' :
-                           userClub.style === 'counter' ? 'Contraataque' :
-                           userClub.style === 'offensive' ? 'Ofensivo' :
-                           userClub.style === 'defensive' ? 'Defensivo' : 'Equilibrado'}
-                        </span>
-                        <span className="mx-2 text-gray-500">•</span>
-                        <span className="text-sm text-gray-300">Formación: {userClub.formation}</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-sm text-gray-400 mb-2">Objetivos</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">Top 3 en la liga</span>
-                          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">En progreso</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">Alcanzar cuartos de Copa Virtual</span>
-                          <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Pendiente</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">Fichar un jugador estrella</span>
-                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded">Completado</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-sm text-gray-400 mb-2">Títulos históricos</h4>
-                      <div className="flex items-center space-x-4">
-                        <div className="flex flex-col items-center">
-                          <span className="text-xl font-bold">{userClub.titles?.league || 0}</span>
-                          <span className="text-xs text-gray-400">Liga</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <span className="text-xl font-bold">{userClub.titles?.cup || 0}</span>
-                          <span className="text-xs text-gray-400">Copa</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <span className="text-xl font-bold">{userClub.titles?.supercup || 0}</span>
-                          <span className="text-xs text-gray-400">Supercopa</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold mb-4">Jugadores Destacados</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Just show 3 mock players since we don't have the full player details */}
-                  <div className="bg-dark p-4 rounded-lg">
-                    <div className="flex items-center mb-2">
-                      <div className="w-10 h-10 bg-red-500/20 rounded-md text-red-400 flex items-center justify-center font-bold mr-3">
-                        ST
-                      </div>
-                      <div>
-                        <div className="font-medium">Carlos Martínez</div>
-                        <div className="text-xs text-gray-400">Delantero • 26 años</div>
-                      </div>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div>
-                        <div className="font-medium">85</div>
-                        <div className="text-xs text-gray-400">Media</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">8</div>
-                        <div className="text-xs text-gray-400">Goles</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">3</div>
-                        <div className="text-xs text-gray-400">Asist.</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-dark p-4 rounded-lg">
-                    <div className="flex items-center mb-2">
-                      <div className="w-10 h-10 bg-green-500/20 rounded-md text-green-400 flex items-center justify-center font-bold mr-3">
-                        CM
-                      </div>
-                      <div>
-                        <div className="font-medium">Fernando López</div>
-                        <div className="text-xs text-gray-400">Mediocampista • 28 años</div>
-                      </div>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div>
-                        <div className="font-medium">82</div>
-                        <div className="text-xs text-gray-400">Media</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">3</div>
-                        <div className="text-xs text-gray-400">Goles</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">7</div>
-                        <div className="text-xs text-gray-400">Asist.</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-dark p-4 rounded-lg">
-                    <div className="flex items-center mb-2">
-                      <div className="w-10 h-10 bg-yellow-500/20 rounded-md text-yellow-400 flex items-center justify-center font-bold mr-3">
-                        GK
-                      </div>
-                      <div>
-                        <div className="font-medium">Miguel Santos</div>
-                        <div className="text-xs text-gray-400">Portero • 30 años</div>
-                      </div>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <div>
-                        <div className="font-medium">80</div>
-                        <div className="text-xs text-gray-400">Media</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">3</div>
-                        <div className="text-xs text-gray-400">Imbatido</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">13</div>
-                        <div className="text-xs text-gray-400">Paradas</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Activity tab */}
-          {activeTab === 'activity' && (
-            <div className="space-y-6">
-              <div className="card p-6">
-                <h2 className="text-xl font-bold mb-4">Actividad Reciente</h2>
-                
-                <div className="space-y-4">
-                  {/* Some mock activities */}
-                  <div className="p-3 border-b border-gray-800 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-4 flex-shrink-0">
-                      <Trophy size={18} />
-                    </div>
-                    <div>
-                      <p className="font-medium">Participaste en el torneo "Copa Virtual 2025"</p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 3 días</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 border-b border-gray-800 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-4 flex-shrink-0">
-                      <ShoppingCart size={18} />
-                    </div>
-                    <div>
-                      <p className="font-medium">Realizaste una oferta por el jugador Carlos Martínez</p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 5 días</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 border-b border-gray-800 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-4 flex-shrink-0">
-                      <Star size={18} />
-                    </div>
-                    <div>
-                      <p className="font-medium">Subiste al nivel 5</p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 1 semana</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-4 flex-shrink-0">
-                      <Users size={18} />
-                    </div>
-                    <div>
-                      <p className="font-medium">Te uniste a La Virtual Zone</p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 3 semanas</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold mb-4">Estadísticas de Actividad</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-dark p-4 rounded-lg">
-                    <h4 className="text-sm text-gray-400 mb-1">Partidos</h4>
-                    <p className="text-2xl font-bold">12</p>
-                    <p className="text-xs text-gray-400 mt-1">7 victorias, 3 empates, 2 derrotas</p>
-                  </div>
-                  
-                  <div className="bg-dark p-4 rounded-lg">
-                    <h4 className="text-sm text-gray-400 mb-1">Torneos</h4>
-                    <p className="text-2xl font-bold">3</p>
-                    <p className="text-xs text-gray-400 mt-1">1 copa, 2 ligas</p>
-                  </div>
-                  
-                  <div className="bg-dark p-4 rounded-lg">
-                    <h4 className="text-sm text-gray-400 mb-1">Transacciones</h4>
-                    <p className="text-2xl font-bold">8</p>
-                    <p className="text-xs text-gray-400 mt-1">5 compras, 3 ventas</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold mb-4">Notificaciones</h3>
-                
-                <div className="space-y-2">
-                  <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-start">
-                    <Bell size={18} className="text-yellow-400 mr-3 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium">Recordatorio: Próximo partido en 2 días</p>
-                      <p className="text-sm text-gray-400 mt-1">vs. Atlético Pixelado • 20/07/2025 • 20:00</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-start">
-                    <ShoppingCart size={18} className="text-green-400 mr-3 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium">Nueva oferta recibida</p>
-                      <p className="text-sm text-gray-400 mt-1">Por Fernando López • €12M • De Atlético Pixelado</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-start">
-                    <Trophy size={18} className="text-blue-400 mr-3 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium">Inscripciones abiertas: Copa Virtual</p>
-                      <p className="text-sm text-gray-400 mt-1">Abierto hasta 01/08/2025 • 16 equipos</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Community tab */}
-          {activeTab === 'community' && (
-            <div className="space-y-6">
-              <div className="card p-6">
-                <h2 className="text-xl font-bold mb-4">Mi Comunidad</h2>
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3">Clubes que sigues</h3>
-                  
-                  {following.clubs.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {following.clubs.map(clubName => {
-                        const club = clubs.find(c => c.name === clubName || c.slug === clubName);
-                        if (!club) return null;
-                        
-                        return (
-                          <a
-                            key={club.id}
-                            href={`/liga-master/club/${club.slug}`}
-                            className="flex items-center p-3 bg-dark rounded-lg hover:bg-gray-800"
-                          >
-                            <img 
-                              src={club.logo} 
-                              alt={club.name} 
-                              className="w-10 h-10 mr-3"
+                  <form className="space-y-8">
+                    <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                      <h3 className="text-xl font-semibold mb-6 flex items-center">
+                        <User size={24} className="mr-3 text-primary" />
+                        Información Personal
+                      </h3>
+                      
+                      <div className="space-y-6">
+                        <div className="flex items-center p-4 bg-dark-lighter/50 rounded-lg">
+                          <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                            <User size={20} className="text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Nombre de usuario
+                            </label>
+                            <input
+                              type="text"
+                              className="input w-full bg-dark border-gray-700 focus:border-primary"
+                              value={user.username}
+                              disabled
                             />
-                            <div>
-                              <p className="font-medium">{club.name}</p>
-                              <p className="text-xs text-gray-400">
-                                DT: {club.dt} • Pos: {club.season?.position || '?'}º
-                              </p>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="bg-dark p-4 rounded-lg text-center">
-                      <p className="text-gray-400 mb-3">No sigues a ningún club todavía.</p>
-                      <a href="/liga-master" className="btn-outline text-sm">
-                        Explorar clubes
-                      </a>
-                    </div>
-                  )}
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Usuarios que sigues</h3>
-                  
-                  {following.users.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {/* Render followed users - mock for now */}
-                      <div className="flex items-center p-3 bg-dark rounded-lg">
-                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                          <User size={16} className="text-primary" />
+                            <p className="text-xs text-gray-500 mt-1">
+                              El nombre de usuario no se puede cambiar
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">Carlos Vega</p>
-                          <p className="text-xs text-gray-400">
-                            DT • Rayo Digital FC
-                          </p>
+                        
+                        <div className="flex items-center p-4 bg-dark-lighter/50 rounded-lg">
+                          <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
+                            <Mail size={20} className="text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Correo electrónico
+                            </label>
+                            <input
+                              type="email"
+                              className="input w-full bg-dark border-gray-700 focus:border-primary"
+                              defaultValue={user.email}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-start p-4 bg-dark-lighter/50 rounded-lg">
+                          <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-4 mt-1">
+                            <Heart size={20} className="text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Biografía
+                            </label>
+                            <textarea
+                              className="input w-full bg-dark border-gray-700 focus:border-primary"
+                              rows={3}
+                              defaultValue={user.bio || ''}
+                              placeholder="Cuéntanos sobre ti..."
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ) : (
-                    <div className="bg-dark p-4 rounded-lg text-center">
-                      <p className="text-gray-400 mb-3">No sigues a ningún usuario todavía.</p>
-                      <a href="/usuarios" className="btn-outline text-sm">
-                        Explorar usuarios
-                      </a>
+                    
+                    <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                      <h3 className="text-xl font-semibold mb-6 flex items-center">
+                        <Bell size={24} className="mr-3 text-primary" />
+                        Notificaciones
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" defaultChecked />
+                          <span className="text-white">Notificaciones de partidos</span>
+                        </label>
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" defaultChecked />
+                          <span className="text-white">Notificaciones de fichajes</span>
+                        </label>
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" />
+                          <span className="text-white">Notificaciones de la comunidad</span>
+                        </label>
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" defaultChecked />
+                          <span className="text-white">Notificaciones de logros</span>
+                        </label>
+                      </div>
                     </div>
-                  )}
+                    
+                    <div className="bg-dark/50 rounded-xl p-6 border border-gray-800/50 shadow-lg">
+                      <h3 className="text-xl font-semibold mb-6 flex items-center">
+                        <Lock size={24} className="mr-3 text-primary" />
+                        Privacidad
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" defaultChecked />
+                          <span className="text-white">Perfil público visible</span>
+                        </label>
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" />
+                          <span className="text-white">Mostrar estadísticas detalladas</span>
+                        </label>
+                        <label className="flex items-center p-3 bg-dark-lighter/50 rounded-lg hover:bg-dark-lighter/70 transition-colors shadow-md">
+                          <input type="checkbox" className="mr-4" defaultChecked />
+                          <span className="text-white">Permitir mensajes de otros usuarios</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <button type="submit" className="btn-primary px-8 py-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transition-all duration-200 text-lg font-medium shadow-lg">
+                        Guardar cambios
+                      </button>
+                      <button type="button" className="btn-outline px-8 py-4 border-gray-600 hover:bg-gray-800 transition-all duration-200 text-lg font-medium">
+                        Restablecer
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </div>
-              
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold mb-4">Actividad de la Comunidad</h3>
                 
-                <div className="space-y-4">
-                  <div className="p-3 border-b border-gray-800 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center mr-4 flex-shrink-0">
-                      <img 
-                        src="https://i.imgur.com/uZQt48s.png" 
-                        alt="Rayo Digital FC" 
-                        className="w-8 h-8"
-                      />
-                    </div>
-                    <div>
-                      <p>
-                        <span className="font-medium">Rayo Digital FC</span> 
-                        <span className="text-gray-400"> venció a </span>
-                        <span className="font-medium">Atlético Pixelado</span>
-                        <span className="text-gray-400"> por 3-2</span>
+                <div className="card p-8 bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl">
+                  <h3 className="text-2xl font-semibold mb-6 text-red-400 flex items-center">
+                    <Lock size={24} className="mr-3" />
+                    Zona de Peligro
+                  </h3>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 shadow-lg">
+                      <h4 className="font-medium mb-3 text-red-400">Eliminar cuenta</h4>
+                      <p className="text-gray-300 text-sm mb-4">
+                        Esta acción no se puede deshacer. Se eliminarán todos tus datos, logros y progreso.
                       </p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 2 días</p>
+                      <button className="btn-outline px-6 py-3 text-red-400 border-red-400 hover:bg-red-400 hover:text-dark transition-all duration-200">
+                        Eliminar cuenta
+                      </button>
                     </div>
-                  </div>
-                  
-                  <div className="p-3 border-b border-gray-800 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center mr-4 flex-shrink-0">
-                      <img 
-                        src="https://i.imgur.com/0JMOEVt.png" 
-                        alt="Atlético Pixelado" 
-                        className="w-8 h-8"
-                      />
-                    </div>
-                    <div>
-                      <p>
-                        <span className="font-medium">Atlético Pixelado</span> 
-                        <span className="text-gray-400"> fichó a </span>
-                        <span className="font-medium">Ricardo Vega</span>
-                        <span className="text-gray-400"> por </span>
-                        <span className="text-primary">€15M</span>
-                      </p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 5 días</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-4 flex-shrink-0">
-                      <Trophy size={18} />
-                    </div>
-                    <div>
-                      <p>
-                        <span className="text-gray-400">Se abrieron las inscripciones para el torneo </span>
-                        <span className="font-medium">Copa Virtual 2025</span>
-                      </p>
-                      <p className="text-sm text-gray-400 mt-1">Hace 1 semana</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Settings tab */}
-          {activeTab === 'settings' && (
-            <div className="space-y-6">
-              <div className="card p-6">
-                <h2 className="text-xl font-bold mb-4">Configuración de Cuenta</h2>
-                
-                <form className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Información Personal</h3>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Nombre de usuario
-                        </label>
-                        <input
-                          type="text"
-                          className="input w-full"
-                          value={user.username}
-                          disabled
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          El nombre de usuario no se puede cambiar
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Correo electrónico
-                        </label>
-                        <input
-                          type="email"
-                          className="input w-full"
-                          defaultValue={user.email}
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Avatar (URL)
-                        </label>
-                        <input
-                          type="text"
-                          className="input w-full"
-                          defaultValue={user.avatar || ''}
-                          placeholder="https://ejemplo.com/mi-avatar.jpg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Cambiar Contraseña</h3>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Contraseña actual
-                        </label>
-                        <input
-                          type="password"
-                          className="input w-full"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Nueva contraseña
-                        </label>
-                        <input
-                          type="password"
-                          className="input w-full"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Confirmar nueva contraseña
-                        </label>
-                        <input
-                          type="password"
-                          className="input w-full"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Notificaciones</h3>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="text-gray-300">Correos electrónicos</label>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" defaultChecked className="sr-only peer" />
-                          <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                        </label>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <label className="text-gray-300">Notificaciones de mercado</label>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" defaultChecked className="sr-only peer" />
-                          <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                        </label>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <label className="text-gray-300">Notificaciones de partidos</label>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" defaultChecked className="sr-only peer" />
-                          <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4 flex justify-end space-x-3">
-                    <button type="button" className="btn-outline">
-                      Cancelar
-                    </button>
-                    <button type="submit" className="btn-primary">
-                      Guardar Cambios
-                    </button>
-                  </div>
-                </form>
-              </div>
-              
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold mb-3 text-red-400">Zona Peligrosa</h3>
-                <p className="text-gray-300 mb-4">
-                  Estas acciones son irreversibles. Por favor, procede con precaución.
-                </p>
-                
-                <div className="space-y-4">
-                  <div>
-                    <button className="btn w-full bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/20">
-                      Descargar mis datos
-                    </button>
-                  </div>
-                  
-                  <div>
-                    <button className="btn w-full bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/20">
-                      Eliminar mi cuenta
-                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+        
+        {showRequestModal && (
+          <RequestClubModal
+            onClose={() => setShowRequestModal(false)}
+          />
+        )}
       </div>
-    </div>
-    {showRequestModal && (
-      <RequestClubModal onClose={() => setShowRequestModal(false)} />
-    )}
     </div>
   );
 };

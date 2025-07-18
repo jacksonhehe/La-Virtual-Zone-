@@ -9,7 +9,10 @@ import {
   Briefcase, 
   Award, 
   BarChart4, 
-  ChevronRight 
+  ChevronRight,
+  Star,
+  Target,
+  Zap
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
@@ -36,29 +39,28 @@ const LigaMaster = () => {
     );
   }
   
-  // Get active tournament (Liga Master)
-  const ligaMaster = tournaments.find(t => t.id === 'tournament1');
-
-  if (!ligaMaster) {
-    return <DashboardSkeleton />;
-  }
+  // Liga Master es un modo de juego, no un torneo específico
+  // Mostrar información general del modo Liga Master
   
-  // Get upcoming matches
-  const upcomingMatches = ligaMaster 
-    ? ligaMaster.matches
+  // Get active tournament for stats (if any)
+  const activeTournament = tournaments.find(t => t.status === 'active') || tournaments[0];
+  
+  // Get upcoming matches from active tournament
+  const upcomingMatches = activeTournament 
+    ? activeTournament.matches
       .filter(match => match.status === 'scheduled')
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(0, 3)
     : [];
   
   // Get top scorers
-const topScorers = [...players]
-  .sort((a, b) => b.goals - a.goals)
-  .slice(0, 5);
+  const topScorers = [...players]
+    .sort((a, b) => b.goals - a.goals)
+    .slice(0, 5);
 
-  const totalMatches = ligaMaster ? ligaMaster.matches.length : 0;
-  const playedMatches = ligaMaster
-    ? ligaMaster.matches.filter(m => m.status === 'finished').length
+  const totalMatches = activeTournament ? activeTournament.matches.length : 0;
+  const playedMatches = activeTournament
+    ? activeTournament.matches.filter(m => m.status === 'finished').length
     : 0;
   const seasonProgress = totalMatches > 0
     ? Math.round((playedMatches / totalMatches) * 100)
@@ -67,17 +69,73 @@ const topScorers = [...players]
   return (
     <div>
       <PageHeader
-        title={ligaMaster.name}
-        subtitle={ligaMaster.description}
+        title="Liga Master"
+        subtitle="El modo de juego principal de La Virtual Zone. Gestiona tu club, compite por el título y construye tu legado."
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
         breadcrumb={(
           <nav className="text-xs md:text-sm mb-4" aria-label="breadcrumb">
-            /Inicio › {ligaMaster.name}
+            /Inicio › Liga Master
           </nav>
         )}
       />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Liga Master Info */}
+        <div className="card p-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">¿Qué es Liga Master?</h2>
+              <p className="text-gray-300 mb-4">
+                Liga Master es el modo de juego principal de La Virtual Zone. Una competición cerrada donde cada club es dirigido por un DT (Director Técnico) real.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <Target size={20} className="text-primary mr-3" />
+                  <span>Gestiona tu club completo</span>
+                </div>
+                <div className="flex items-center">
+                  <Users size={20} className="text-primary mr-3" />
+                  <span>Compite contra otros DTs</span>
+                </div>
+                <div className="flex items-center">
+                  <Trophy size={20} className="text-primary mr-3" />
+                  <span>Construye tu legado</span>
+                </div>
+                <div className="flex items-center">
+                  <Zap size={20} className="text-primary mr-3" />
+                  <span>Participa en temporadas regulares</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-6">
+              <h3 className="text-xl font-bold mb-4">¿Cómo Participar?</h3>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">1</div>
+                  <div>
+                    <p className="font-medium">Regístrate como DT</p>
+                    <p className="text-sm text-gray-400">Crea tu cuenta y solicita ser DT</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">2</div>
+                  <div>
+                    <p className="font-medium">Recibe tu club</p>
+                    <p className="text-sm text-gray-400">Los administradores te asignarán un club</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">3</div>
+                  <div>
+                    <p className="font-medium">¡Comienza a jugar!</p>
+                    <p className="text-sm text-gray-400">Gestiona fichajes, tácticas y compite</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Stats cards */}
         <div
           className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-8"
@@ -100,7 +158,7 @@ const topScorers = [...players]
           />
           <StatsCard
             title="Partidos Disputados"
-            value={ligaMaster ? ligaMaster.matches.filter(m => m.status === 'finished').length : 0}
+            value={activeTournament ? activeTournament.matches.filter(m => m.status === 'finished').length : 0}
             icon={<Calendar size={24} className="text-primary" />}
             trend="up"
             trendValue="+3 última semana"
@@ -115,7 +173,6 @@ const topScorers = [...players]
         
         {/* Quick access */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          
           <Link to="/liga-master/fixture" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
             <Calendar size={32} className="text-neon-blue mb-4" />
             <h3 className="text-xl font-bold mb-2">Fixture y Resultados</h3>
@@ -136,6 +193,18 @@ const topScorers = [...players]
             </p>
             <div className="text-primary flex items-center text-sm font-medium">
               <span>Ver rankings</span>
+              <ChevronRight size={16} className="ml-1" />
+            </div>
+          </Link>
+
+          <Link to="/liga-master/hall-of-fame" className="card card-hover bg-gradient-to-br from-dark to-gray-800 p-6">
+            <Star size={32} className="text-yellow-400 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Hall of Fame</h3>
+            <p className="text-gray-400 mb-4">
+              Los legendarios de La Virtual Zone.
+            </p>
+            <div className="text-primary flex items-center text-sm font-medium">
+              <span>Ver leyendas</span>
               <ChevronRight size={16} className="ml-1" />
             </div>
           </Link>
@@ -234,45 +303,45 @@ const topScorers = [...players]
               </div>
               
               <div className="divide-y divide-gray-800">
-                {upcomingMatches.map((match) => {
-                  const homeClub = clubs.find(c => c.name === match.homeTeam);
-                  const awayClub = clubs.find(c => c.name === match.awayTeam);
+                {upcomingMatches.length > 0 ? (
+                  upcomingMatches.map((match) => {
+                    const homeClub = clubs.find(c => c.name === match.homeTeam);
+                    const awayClub = clubs.find(c => c.name === match.awayTeam);
 
-                  return (
-                    <div
-                      key={match.id}
-                      className="p-4 bg-gradient-to-br from-dark to-gray-800 border border-gray-700 rounded-lg"
-                    >
-                      <div className="text-sm text-gray-400 text-center mb-3">
-                        {formatDate(match.date)} • Jornada {match.round}
+                    return (
+                      <div
+                        key={match.id}
+                        className="p-4 bg-gradient-to-br from-dark to-gray-800 border border-gray-700 rounded-lg"
+                      >
+                        <div className="text-sm text-gray-400 text-center mb-3">
+                          {formatDate(match.date)} • Jornada {match.round}
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex flex-col items-center w-2/5">
+                            <img
+                              src={homeClub?.logo}
+                              alt={homeClub?.name}
+                              className="w-16 h-16 object-contain mb-1"
+                            />
+                            <span className="font-medium text-center">{homeClub?.name}</span>
+                          </div>
+                          <div className="flex-shrink-0 flex-1 text-center">
+                            <span className="text-2xl font-bold neon-text-blue">VS</span>
+                          </div>
+                          <div className="flex flex-col items-center w-2/5">
+                            <img
+                              src={awayClub?.logo}
+                              alt={awayClub?.name}
+                              className="w-16 h-16 object-contain mb-1"
+                            />
+                            <span className="font-medium text-center">{awayClub?.name}</span>
+                          </div>
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col items-center w-2/5">
-                          <img
-                            src={homeClub?.logo}
-                            alt={homeClub?.name}
-                            className="w-16 h-16 object-contain mb-1"
-                          />
-                          <span className="font-medium text-center">{homeClub?.name}</span>
-                        </div>
-                        <div className="flex-shrink-0 flex-1 text-center">
-                          <span className="text-2xl font-bold neon-text-blue">VS</span>
-                        </div>
-                        <div className="flex flex-col items-center w-2/5">
-                          <img
-                            src={awayClub?.logo}
-                            alt={awayClub?.name}
-                            className="w-16 h-16 object-contain mb-1"
-                          />
-                          <span className="font-medium text-center">{awayClub?.name}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                
-                {upcomingMatches.length === 0 && (
+                    );
+                  })
+                ) : (
                   <div className="p-6 text-center">
                     <p className="text-gray-400">No hay partidos programados próximamente.</p>
                   </div>
@@ -380,17 +449,9 @@ const topScorers = [...players]
             </div>
             
             {/* Season info */}
-            <div className="card p-6 bg-gradient-to-br from-gray-800 to-dark">
+            <div className="card p-6">
               <h2 className="text-xl font-bold mb-4">Información de Temporada</h2>
               <div className="space-y-4">
-                <div>
-                  <p className="text-gray-400 text-sm mb-1">Inicio de temporada</p>
-                  <p className="font-medium">{ligaMaster ? formatDate(ligaMaster.startDate) : 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-gray-400 text-sm mb-1">Fin de temporada</p>
-                  <p className="font-medium">{ligaMaster ? formatDate(ligaMaster.endDate) : 'N/A'}</p>
-                </div>
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Estado del mercado</p>
                   <p className="font-medium text-green-400">
@@ -398,9 +459,25 @@ const topScorers = [...players]
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm mb-1">Jornadas totales</p>
-                  <p className="font-medium">{ligaMaster ? ligaMaster.rounds : 'N/A'}</p>
+                  <p className="text-gray-400 text-sm mb-1">Clubes activos</p>
+                  <p className="font-medium">{clubs.length}</p>
                 </div>
+                <div>
+                  <p className="text-gray-400 text-sm mb-1">Jugadores totales</p>
+                  <p className="font-medium">{players.length}</p>
+                </div>
+                {activeTournament && (
+                  <>
+                    <div>
+                      <p className="text-gray-400 text-sm mb-1">Torneo activo</p>
+                      <p className="font-medium">{activeTournament.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-sm mb-1">Jornadas totales</p>
+                      <p className="font-medium">{activeTournament.rounds}</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -411,4 +488,5 @@ const topScorers = [...players]
 };
 
 export default LigaMaster;
+
 

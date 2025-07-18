@@ -2,14 +2,20 @@ import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { Link } from 'react-router-dom';
 import { Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, FileText, Info } from 'lucide-react';
+import { useDataStore } from '../store/dataStore';
 
 const Help = () => {
   const [activeSection, setActiveSection] = useState('account');
   const [openFaq, setOpenFaq] = useState<string | null>('faq-1');
+  const { marketStatus, tournaments } = useDataStore();
   
   const toggleFaq = (id: string) => {
     setOpenFaq(openFaq === id ? null : id);
   };
+
+  // Get system status
+  const activeTournaments = tournaments.filter(t => t.status === 'active').length;
+  const upcomingTournaments = tournaments.filter(t => t.status === 'upcoming').length;
   
   return (
     <div>
@@ -76,14 +82,21 @@ const Help = () => {
                     <span className="text-gray-400">Mercado</span>
                     <span className="flex items-center text-green-500">
                       <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                      Abierto
+                      {marketStatus ? 'Abierto' : 'Cerrado'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Torneos activos</span>
+                    <span className="flex items-center text-blue-500">
+                      <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                      {activeTournaments}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Inscripciones</span>
                     <span className="flex items-center text-yellow-500">
                       <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>
-                      En curso
+                      {upcomingTournaments > 0 ? `${upcomingTournaments} próximos` : 'Sin torneos próximos'}
                     </span>
                   </div>
                 </div>
@@ -258,7 +271,7 @@ const Help = () => {
                       {openFaq === 'league-1' && (
                         <div className="p-4 bg-dark">
                           <p className="text-gray-300">
-                            La Liga Master es la competición principal de La Virtual Zone. Es una liga cerrada con hasta 40 clubes ficticios, donde cada equipo es administrado por un usuario con rol de DT (Director Técnico).
+                            La Liga Master es el modo de juego principal de La Virtual Zone. Es una liga cerrada con hasta 40 clubes ficticios, donde cada equipo es administrado por un usuario con rol de DT (Director Técnico).
                           </p>
                           <p className="mt-2 text-gray-300">
                             Características principales:
@@ -578,9 +591,13 @@ const Help = () => {
                   <div className="bg-dark rounded-lg p-6">
                     <h3 className="font-bold mb-4">Enlaces útiles</h3>
                     <div className="space-y-2">
-                      <Link to="/terminos" className="flex items-center text-primary hover:text-primary-light">
+                      <Link to="/terms" className="flex items-center text-primary hover:text-primary-light">
                         <FileText size={16} className="mr-2" />
-                        <span>Reglamento general</span>
+                        <span>Términos y Condiciones</span>
+                      </Link>
+                      <Link to="/privacy" className="flex items-center text-primary hover:text-primary-light">
+                        <FileText size={16} className="mr-2" />
+                        <span>Política de Privacidad</span>
                       </Link>
                       <Link to="/liga-master" className="flex items-center text-primary hover:text-primary-light">
                         <Trophy size={16} className="mr-2" />
@@ -590,7 +607,7 @@ const Help = () => {
                         <Calendar size={16} className="mr-2" />
                         <span>Calendario de eventos</span>
                       </Link>
-                      <Link to="/tienda" className="flex items-center text-primary hover:text-primary-light">
+                      <Link to="/store" className="flex items-center text-primary hover:text-primary-light">
                         <ShoppingBag size={16} className="mr-2" />
                         <span>Guía de la tienda</span>
                       </Link>

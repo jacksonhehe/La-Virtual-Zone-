@@ -6,21 +6,37 @@ import {
   PlayerAttributes,
   PlayerContract,
 } from '../types/shared';
-
-export { Club, Title, Player, PlayerAttributes, PlayerContract } from '../types/shared';
+export type { Club, Title, Player, PlayerAttributes, PlayerContract } from '../types/shared';
+// Importa los tipos necesarios para torneos
+import type { Match, TopScorer } from '../types/index';
 
 export interface User extends SharedUser {
   role: 'admin' | 'dt' | 'user';
-  status: 'active' | 'inactive';
+  status: 'active' | 'suspended' | 'banned' | 'inactive';
   createdAt: string;
 }
 
 export interface Tournament {
   id: string;
   name: string;
-  status: 'active' | 'completed' | 'upcoming';
-  currentRound: number;
-  totalRounds: number;
+  type: 'league' | 'cup' | 'friendly';
+  logo: string;
+  startDate: string;
+  endDate: string;
+  status: 'upcoming' | 'active' | 'finished';
+  teams: string[];
+  rounds: number;
+  matches: Match[];
+  results?: Match[];
+  winner?: string;
+  topScorer?: TopScorer;
+  description: string;
+  // Campos opcionales para compatibilidad UI
+  format?: string;
+  location?: string;
+  prizePool?: number;
+  currentTeams?: number;
+  maxTeams?: number;
 }
 
 export interface NewsItem {
@@ -30,6 +46,11 @@ export interface NewsItem {
   author: string;
   publishedAt: string;
   status: 'published' | 'draft';
+  image?: string;
+  category?: string;
+  featured?: boolean;
+  tags?: string[];
+  views?: number;
 }
 
 export interface Transfer {
@@ -62,10 +83,18 @@ export interface ActivityLog {
 
 export interface Comment {
   id: string;
-  userId: string;
+  postId: string;
+  author: string;
   content: string;
+  date: string;
+  reported: boolean;
+  hidden: boolean;
   status: 'approved' | 'pending' | 'hidden';
-  createdAt: string;
+  userId?: string;
+  likes?: number;
+  replies?: Comment[];
+  flags?: number;
+  updatedAt?: string;
 }
 
 export interface Fixture {

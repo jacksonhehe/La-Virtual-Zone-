@@ -1,24 +1,56 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import {
-  Tournament,
   Fixture,
-  Match,
   NewsItem,
   Transfer,
   Standing,
   ActivityLog,
   Comment,
 } from '../types';
-import { User, Club, Player } from '../types/shared';
+import { Tournament } from '../../types';
+import { User, Club, Player } from '../../types/shared';
 import {
   loadAdminData,
   saveAdminData,
   AdminData
 } from '../utils/adminStorage';
-import { saveClubs } from '../../utils/clubService';
-import { savePlayers } from '../../utils/playerService';
+import { getClubs, saveClubs } from '../../utils/clubService';
+import { getPlayers, savePlayers } from '../../utils/playerService';
+import { getUsers, saveUsers } from '../../utils/authService';
 import { useDataStore } from '../../store/dataStore';
+import {
+  getTournaments, saveTournaments,
+  getNews, saveNews,
+  getTransfers, saveTransfers,
+  getStandings, saveStandings,
+  getActivities, saveActivities,
+  getComments, saveComments,
+  getOffers, saveOffers,
+  getFaqs, saveFaqs,
+  getPosts, savePosts,
+  getMarketStatus, saveMarketStatus,
+  getMediaItems, saveMediaItems,
+  getStoreItems, saveStoreItems,
+  getPositions, savePositions,
+  getDtRankings, saveDtRankings,
+  getTasks, saveTasks,
+  getEvents, saveEvents,
+  getObjectives, saveObjectives,
+  getMarket, saveMarket,
+  getClub, saveClub,
+  getFixtures, saveFixtures
+} from '../../utils/sharedStorage';
+import { VZ_COMMENTS_KEY } from '../../utils/storageKeys';
+
+const loadComments = (): Comment[] => {
+  const json = localStorage.getItem(VZ_COMMENTS_KEY);
+  return json ? JSON.parse(json) : [];
+};
+
+const saveCommentsToStorage = (comments: Comment[]) => {
+  localStorage.setItem(VZ_COMMENTS_KEY, JSON.stringify(comments));
+};
 
 interface GlobalStore {
   users: User[];
@@ -31,6 +63,19 @@ interface GlobalStore {
   standings: Standing[];
   activities: ActivityLog[];
   comments: Comment[];
+  offers: any[];
+  faqs: any[];
+  posts: any[];
+  marketStatus: any;
+  mediaItems: any[];
+  storeItems: any[];
+  positions: any[];
+  dtRankings: any[];
+  tasks: any[];
+  events: any[];
+  objectives: any[];
+  market: any;
+  club: any;
   loading: boolean;
   
   setLoading: (loading: boolean) => void;
@@ -57,6 +102,9 @@ interface GlobalStore {
 
   // Tournaments
   updateTournamentStatus: (id: string, status: Tournament['status']) => void;
+  addTournament: (tournament: Tournament) => void;
+  updateTournaments: (tournaments: Tournament[]) => void;
+  removeTournament: (id: string) => void;
   
   // Transfers
   approveTransfer: (id: string) => void;
@@ -71,6 +119,8 @@ interface GlobalStore {
   approveComment: (id: string) => void;
   hideComment: (id: string) => void;
   deleteComment: (id: string) => void;
+  addComment: (comment: Comment) => void;
+  reportComment: (id: string) => void;
   
   // Activities
   addActivity: (activity: ActivityLog) => void;
@@ -205,39 +255,85 @@ const defaultData: AdminData = {
   comments: [
     {
       id: '1',
-      userId: 'user123',
+      postId: 'post1',
+      author: 'user123',
       content: '¡Excelente partido! Muy emocionante hasta el final.',
+      date: '2023-12-10T00:00:00.000Z',
+      reported: false,
+      hidden: false,
       status: 'pending',
-      createdAt: '2023-12-10T00:00:00.000Z'
+      userId: 'user123',
+      likes: 5,
+      flags: 0
     },
     {
       id: '2',
-      userId: 'user456',
+      postId: 'post2',
+      author: 'user456',
       content: 'El árbitro estuvo muy mal, claramente favoreció al equipo local.',
+      date: '2023-12-09T00:00:00.000Z',
+      reported: true,
+      hidden: false,
       status: 'pending',
-      createdAt: '2023-12-09T00:00:00.000Z'
+      userId: 'user456',
+      likes: 2,
+      flags: 3
     }
   ]
 };
 
 export const useGlobalStore = create<GlobalStore>()(
   subscribeWithSelector<GlobalStore>((set, get) => {
-  const initial = loadAdminData(defaultData);
+  const initial = {
+    users: getUsers(),
+    clubs: getClubs(),
+    players: getPlayers(),
+    matches: getFixtures(),
+    tournaments: getTournaments(),
+    newsItems: getNews(),
+    transfers: getTransfers(),
+    standings: getStandings(),
+    activities: getActivities(),
+    comments: loadComments(),
+    offers: getOffers(),
+    faqs: getFaqs(),
+    posts: getPosts(),
+    marketStatus: getMarketStatus(),
+    mediaItems: getMediaItems(),
+    storeItems: getStoreItems(),
+    positions: getPositions(),
+    dtRankings: getDtRankings(),
+    tasks: getTasks(),
+    events: getEvents(),
+    objectives: getObjectives(),
+    market: getMarket(),
+    club: getClub()
+  };
 
   const persist = () => {
-      saveAdminData({
-        users: get().users,
-        clubs: get().clubs,
-        players: get().players,
-        matches: get().matches,
-        tournaments: get().tournaments,
-        newsItems: get().newsItems,
-        transfers: get().transfers,
-        standings: get().standings,
-        activities: get().activities,
-        comments: get().comments
-      });
-      savePlayers(get().players);
+    saveUsers(get().users);
+    saveClubs(get().clubs);
+    savePlayers(get().players);
+    saveFixtures(get().matches);
+    saveTournaments(get().tournaments);
+    saveNews(get().newsItems);
+    saveTransfers(get().transfers);
+    saveStandings(get().standings);
+    saveActivities(get().activities);
+    saveCommentsToStorage(get().comments);
+    saveOffers(get().offers);
+    saveFaqs(get().faqs);
+    savePosts(get().posts);
+    saveMarketStatus(get().marketStatus);
+    saveMediaItems(get().mediaItems);
+    saveStoreItems(get().storeItems);
+    savePositions(get().positions);
+    saveDtRankings(get().dtRankings);
+    saveTasks(get().tasks);
+    saveEvents(get().events);
+    saveObjectives(get().objectives);
+    saveMarket(get().market);
+    saveClub(get().club);
   };
 
   return {
@@ -367,7 +463,6 @@ export const useGlobalStore = create<GlobalStore>()(
         savePlayers(updated);
         return { players: updated };
       });
-      useDataStore.getState().addPlayer(player);
       persist();
     },
 
@@ -377,7 +472,6 @@ export const useGlobalStore = create<GlobalStore>()(
         savePlayers(updated);
         return { players: updated };
       });
-      useDataStore.getState().updatePlayerEntry(player);
       persist();
     },
 
@@ -387,7 +481,6 @@ export const useGlobalStore = create<GlobalStore>()(
         savePlayers(updated);
         return { players: updated };
       });
-      useDataStore.getState().removePlayer(id);
       persist();
     },
 
@@ -450,41 +543,167 @@ export const useGlobalStore = create<GlobalStore>()(
     },
 
     addNewsItem: item => {
-      set(state => ({ newsItems: [...state.newsItems, item] }));
+      set(state => {
+        // Agregar noticia
+        const updatedNews = [...state.newsItems, item];
+        saveNews(updatedNews);
+        // Convertir a post
+        const post = {
+          id: item.id,
+          title: item.title,
+          excerpt: item.content?.slice(0, 120) || '',
+          content: item.content,
+          image: '',
+          category: 'Noticias',
+          author: item.author,
+          date: item.publishedAt,
+          slug: item.title ? item.title.toLowerCase().replace(/\s+/g, '-') : item.id
+        };
+        const updatedPosts = [...state.posts, post];
+        savePosts(updatedPosts);
+        return { newsItems: updatedNews, posts: updatedPosts };
+      });
       persist();
     },
 
     updateNewsItem: item => {
-      set(state => ({ newsItems: state.newsItems.map(n => (n.id === item.id ? item : n)) }));
+      set(state => {
+        // Actualizar noticia
+        const updatedNews = state.newsItems.map(n => (n.id === item.id ? item : n));
+        // Actualizar post relacionado
+        const updatedPosts = state.posts.map(p =>
+          p.id === item.id
+            ? {
+                ...p,
+                title: item.title,
+                excerpt: item.content?.slice(0, 120) || '',
+                content: item.content,
+                image: item.image || '',
+                category: item.category || 'Noticias',
+                author: item.author,
+                date: item.publishedAt,
+                slug: item.title ? item.title.toLowerCase().replace(/\s+/g, '-') : item.id
+              }
+            : p
+        );
+        saveNews(updatedNews);
+        savePosts(updatedPosts);
+        return { newsItems: updatedNews, posts: updatedPosts };
+      });
       persist();
     },
 
     removeNewsItem: id => {
-      set(state => ({ newsItems: state.newsItems.filter(n => n.id !== id) }));
+      set(state => {
+        const updatedNews = state.newsItems.filter(n => n.id !== id);
+        const updatedPosts = state.posts.filter(p => p.id !== id);
+        saveNews(updatedNews);
+        savePosts(updatedPosts);
+        return { newsItems: updatedNews, posts: updatedPosts };
+      });
       persist();
     },
 
     approveComment: id => {
-      set(state => ({
-        comments: state.comments.map(c => (c.id === id ? { ...c, status: 'approved' as const } : c))
-      }));
+      set(state => {
+        const updated = state.comments.map(c => 
+          c.id === id 
+            ? { 
+                ...c, 
+                status: 'approved' as const,
+                reported: false,
+                hidden: false,
+                updatedAt: new Date().toISOString()
+              } 
+            : c
+        );
+        saveCommentsToStorage(updated);
+        return { comments: updated };
+      });
       persist();
     },
 
     hideComment: id => {
-      set(state => ({
-        comments: state.comments.map(c => (c.id === id ? { ...c, status: 'hidden' as const } : c))
-      }));
+      set(state => {
+        const updated = state.comments.map(c => 
+          c.id === id 
+            ? { 
+                ...c, 
+                status: 'hidden' as const,
+                hidden: true,
+                updatedAt: new Date().toISOString()
+              } 
+            : c
+        );
+        saveCommentsToStorage(updated);
+        return { comments: updated };
+      });
       persist();
     },
 
     deleteComment: id => {
-      set(state => ({ comments: state.comments.filter(c => c.id !== id) }));
+      set(state => {
+        const updated = state.comments.filter(c => c.id !== id);
+        saveCommentsToStorage(updated);
+        return { comments: updated };
+      });
+      persist();
+    },
+
+    addComment: comment => {
+      set(state => {
+        const newComment = {
+          ...comment,
+          status: 'pending' as const,
+          reported: false,
+          hidden: false,
+          likes: 0,
+          flags: 0,
+          userId: comment.userId || comment.author
+        };
+        const updated = [newComment, ...state.comments];
+        saveCommentsToStorage(updated);
+        return { comments: updated };
+      });
+      persist();
+    },
+
+    reportComment: id => {
+      set(state => {
+        const updated = state.comments.map(c =>
+          c.id === id ? { ...c, reported: true, flags: (c.flags || 0) + 1 } : c
+        );
+        saveCommentsToStorage(updated);
+        return { comments: updated };
+      });
       persist();
     },
 
     addActivity: activity => {
       set(state => ({ activities: [...state.activities, activity] }));
+      persist();
+    },
+
+    // Torneos
+    addTournament: tournament => {
+      set(state => {
+        const updated = [...state.tournaments, tournament];
+        saveTournaments(updated);
+        return { tournaments: updated };
+      });
+      persist();
+    },
+    updateTournaments: tournaments => {
+      set(() => ({ tournaments }));
+      saveTournaments(tournaments);
+      persist();
+    },
+    removeTournament: id => {
+      set(state => {
+        const updated = state.tournaments.filter(t => t.id !== id);
+        saveTournaments(updated);
+        return { tournaments: updated };
+      });
       persist();
     }
   };

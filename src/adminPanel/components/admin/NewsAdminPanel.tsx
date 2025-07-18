@@ -2,6 +2,8 @@ import  React, { useState } from 'react';
 import { Edit, Plus, Trash, Search, Filter, Calendar, User, Eye, EyeOff, FileText, Image, Star } from 'lucide-react';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
+import { useGlobalStore } from '../../store/globalStore';
+import type { NewsItem } from '../../types';
 
 interface NewsArticle {
   id: string;
@@ -17,50 +19,109 @@ interface NewsArticle {
   tags: string[];
 }
 
-const NewsAdminPanel = () => {
-  const [articles, setArticles] = useState<NewsArticle[]>([
-    {
-      id: '1',
-      title: 'Nueva temporada de La Virtual Zone comienza en enero',
-      content: 'La nueva temporada promete grandes emociones...',
-      author: 'Admin Principal',
-      date: '2024-12-15',
-      status: 'published',
-      category: 'Anuncios',
-      views: 1250,
-      featured: true,
-      image: 'https://images.unsplash.com/photo-1742805382179-d22698ed535a?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwzfHxuZXdzJTIwbWFuYWdlbWVudCUyMGFkbWluJTIwcGFuZWwlMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzUxNDcyOTkyfDA&ixlib=rb-4.1.0&fit=fillmax&h=600&w=800',
-      tags: ['temporada', 'anuncio']
-    },
-    {
-      id: '2',
-      title: 'Nuevas reglas del mercado de fichajes',
-      content: 'Se implementan cambios importantes en las transferencias...',
-      author: 'Admin Deportivo',
-      date: '2024-12-10',
-      status: 'published',
-      category: 'Reglas',
-      views: 890,
-      featured: false,
-      tags: ['mercado', 'reglas']
-    },
-    {
-      id: '3',
-      title: 'Mantenimiento programado del sistema',
-      content: 'El sistema estará en mantenimiento el próximo viernes...',
-      author: 'Admin Técnico',
-      date: '2024-12-08',
-      status: 'draft',
-      category: 'Técnico',
-      views: 0,
-      featured: false,
-      tags: ['mantenimiento', 'sistema']
+function NewNewsModal({ onClose, onSave, initialData, isEdit }: { onClose: () => void; onSave: (news: NewsItem) => void; initialData?: NewsItem; isEdit?: boolean }) {
+  const [form, setForm] = React.useState({
+    title: initialData?.title || '',
+    content: initialData?.content || '',
+    author: initialData?.author || '',
+    status: initialData?.status || 'draft',
+    image: initialData?.image || '',
+    category: initialData?.category || '',
+    featured: initialData?.featured || false,
+    tags: initialData?.tags?.join(', ') || '',
+  });
+  const [error, setError] = React.useState('');
+  React.useEffect(() => {
+    if (initialData) {
+      setForm({
+        title: initialData.title,
+        content: initialData.content,
+        author: initialData.author,
+        status: initialData.status,
+        image: initialData.image || '',
+        category: initialData.category || '',
+        featured: initialData.featured || false,
+        tags: initialData.tags?.join(', ') || '',
+      });
     }
-  ]);
+  }, [initialData]);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title.trim() || !form.content.trim() || !form.author.trim()) {
+      setError('Todos los campos obligatorios');
+      return;
+    }
+    onSave({
+      id: initialData?.id || Date.now().toString(),
+      title: form.title,
+      content: form.content,
+      author: form.author,
+      publishedAt: initialData?.publishedAt || new Date().toISOString(),
+      status: form.status as 'draft' | 'published',
+      image: form.image,
+      category: form.category,
+      featured: form.featured,
+      tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
+    } as any);
+    onClose();
+  };
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+        <h3 className="text-lg font-semibold mb-4">{isEdit ? 'Editar Noticia' : 'Nueva Noticia'}</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input className="input w-full" placeholder="Título" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+          <textarea className="input w-full" placeholder="Contenido" value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} />
+          <input className="input w-full" placeholder="Autor" value={form.author} onChange={e => setForm({ ...form, author: e.target.value })} />
+          <input className="input w-full" placeholder="Imagen (URL)" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} />
+          <input className="input w-full" placeholder="Categoría" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
+          <div className="flex items-center space-x-2">
+            <input type="checkbox" id="featured" checked={form.featured} onChange={e => setForm({ ...form, featured: e.target.checked })} />
+            <label htmlFor="featured" className="text-white">Destacada</label>
+          </div>
+          <input className="input w-full" placeholder="Tags (separados por coma)" value={form.tags} onChange={e => setForm({ ...form, tags: e.target.value })} />
+          <select className="input w-full" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+            <option value="draft">Borrador</option>
+            <option value="published">Publicada</option>
+          </select>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="flex space-x-3 justify-end mt-6">
+            <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
+            <button type="submit" className="btn-primary">{isEdit ? 'Guardar' : 'Crear'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
+const NewsAdminPanel = () => {
+  const newsItems = useGlobalStore(state => state.newsItems);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
+  const addNewsItem = useGlobalStore(state => state.addNewsItem);
+  const updateNewsItem = useGlobalStore(state => state.updateNewsItem);
+  const removeNewsItem = useGlobalStore(state => state.removeNewsItem);
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editArticle, setEditArticle] = useState<NewsItem | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  // Adaptar los datos para la UI
+  const articles = newsItems.map(n => ({
+    id: n.id,
+    title: n.title,
+    content: n.content,
+    author: n.author,
+    date: n.publishedAt,
+    status: n.status,
+    category: (n as any).category || 'Noticias',
+    views: (n as any).views || 0,
+    featured: (n as any).featured || false,
+    image: (n as any).image || '',
+    tags: (n as any).tags || [],
+  }));
 
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -114,13 +175,39 @@ const NewsAdminPanel = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-green-500/25 flex items-center space-x-2">
+              <button onClick={() => setShowNewModal(true)} className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-green-500/25 flex items-center space-x-2">
                 <Plus size={20} />
                 <span>Nueva Noticia</span>
               </button>
             </div>
           </div>
         </div>
+        {showNewModal && (
+          <NewNewsModal
+            onClose={() => setShowNewModal(false)}
+            onSave={(news: NewsItem) => addNewsItem(news)}
+          />
+        )}
+        {showEditModal && editArticle && (
+          <NewNewsModal
+            onClose={() => { setShowEditModal(false); setEditArticle(null); }}
+            onSave={(news: NewsItem) => { updateNewsItem(news); setShowEditModal(false); setEditArticle(null); }}
+            initialData={editArticle}
+            isEdit
+          />
+        )}
+        {deleteId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold mb-4">¿Eliminar noticia?</h3>
+              <p className="mb-6 text-gray-300">Esta acción no se puede deshacer.</p>
+              <div className="flex space-x-3 justify-end">
+                <button onClick={() => setDeleteId(null)} className="btn-outline">Cancelar</button>
+                <button onClick={() => { removeNewsItem(deleteId); setDeleteId(null); }} className="btn-danger">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -244,7 +331,7 @@ const NewsAdminPanel = () => {
                       
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2">
-                        {article.tags.map((tag, index) => (
+                        {article.tags.map((tag: string, index: number) => (
                           <span
                             key={index}
                             className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-md text-xs"
@@ -257,13 +344,13 @@ const NewsAdminPanel = () => {
                     
                     {/* Actions */}
                     <div className="flex items-center space-x-2">
-                      <button className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors">
+                      <button className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors" onClick={() => { setEditArticle(newsItems.find(n => n.id === article.id) as NewsItem); setShowEditModal(true); }}>
                         <Edit size={18} />
                       </button>
                       <button className="p-2 text-gray-400 hover:bg-gray-500/10 rounded-lg transition-colors">
                         {article.status === 'published' ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
-                      <button className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+                      <button className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" onClick={() => setDeleteId(article.id)}>
                         <Trash size={18} />
                       </button>
                     </div>

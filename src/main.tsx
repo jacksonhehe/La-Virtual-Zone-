@@ -8,6 +8,7 @@ import './index.css';
 import seed from './data/seed.json';
 import { players as mockPlayers } from './data/mockData';
 import { VZ_CLUBS_KEY, VZ_PLAYERS_KEY, VZ_FIXTURES_KEY } from './utils/storageKeys';
+import './utils/fixTournaments';
 
 // Update this value when modifying seed.json to force re-seeding
 const SEED_VERSION_KEY = 'vz_seed_version';

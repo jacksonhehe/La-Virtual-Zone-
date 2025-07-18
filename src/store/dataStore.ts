@@ -27,6 +27,7 @@ import {
 import { getClubs, saveClubs } from '../utils/clubService';
 import { getPlayers, savePlayers } from '../utils/playerService';
 import { getOffers, saveOffers } from '../utils/offerService';
+import { getTournaments, getNews, getPosts, saveTournaments } from '../utils/sharedStorage';
 import {
   Tournament,
   Transfer,
@@ -65,6 +66,10 @@ const initialFixtures = tournaments[0].matches
   .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
   .slice(0, 6)
   .map(m => ({ ...m, played: m.status === 'finished' }));
+
+const initialTournaments = getTournaments();
+const initialNews = getNews();
+const initialPosts = getPosts();
 
 const refreshClubPlayers = (players: Player[], clubId: string) =>
   players.filter(p => p.clubId === clubId);
@@ -125,15 +130,15 @@ interface DataState {
 export const useDataStore = create<DataState>((set) => ({
   clubs: initialClubs,
   players: initialPlayers,
-  tournaments,
+  tournaments: initialTournaments,
+  newsItems: initialNews,
+  posts: initialPosts,
   transfers,
   offers: initialOffers,
   standings: leagueStandings,
-  newsItems,
   mediaItems,
   faqs,
   storeItems,
-  posts,
   marketStatus,
   club: initialClub,
   fixtures: initialFixtures,
@@ -171,7 +176,10 @@ export const useDataStore = create<DataState>((set) => ({
     }));
   },
   
-  updateTournaments: (newTournaments) => set({ tournaments: newTournaments }),
+  updateTournaments: (newTournaments) => {
+    saveTournaments(newTournaments);
+    set({ tournaments: newTournaments });
+  },
   
   updateTransfers: (newTransfers) => set({ transfers: newTransfers }),
   

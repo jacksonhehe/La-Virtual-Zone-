@@ -125,8 +125,109 @@ input:focus-visible {
       background-position: 0% 50%;
     }
   }
-}
 
+  /* Consistent shadows for better visual hierarchy */
+  .shadow-consistent {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-consistent-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-consistent-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Smooth transitions for all interactive elements */
+  .transition-smooth {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Gradient text utilities */
+  .gradient-text-primary {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  .gradient-text-white {
+    @apply bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent;
+  }
+
+  /* Card variations */
+  .card-elevated {
+    @apply bg-gradient-to-br from-dark-lighter to-dark border border-gray-800/50 shadow-xl;
+  }
+
+  .card-subtle {
+    @apply bg-dark/50 border border-gray-800/50 shadow-lg;
+  }
+
+  .card-interactive {
+    @apply bg-dark-lighter/50 border border-gray-700/50 shadow-md hover:shadow-lg transition-all duration-200;
+  }
+
+  /* Button variations */
+  .btn-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-medium transition-all duration-200 shadow-lg;
+  }
+
+  .btn-gradient-success {
+    @apply bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium transition-all duration-200 shadow-lg;
+  }
+
+  .btn-gradient-secondary {
+    @apply bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-medium transition-all duration-200 shadow-lg;
+  }
+
+  /* Icon containers */
+  .icon-container {
+    @apply w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center;
+  }
+
+  .icon-container-success {
+    @apply w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center;
+  }
+
+  .icon-container-warning {
+    @apply w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center;
+  }
+
+  .icon-container-danger {
+    @apply w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center;
+  }
+
+  /* Status indicators */
+  .status-online {
+    @apply w-3 h-3 bg-green-400 rounded-full;
+  }
+
+  .status-offline {
+    @apply w-3 h-3 bg-gray-400 rounded-full;
+  }
+
+  .status-busy {
+    @apply w-3 h-3 bg-red-400 rounded-full;
+  }
+
+  /* Loading states */
+  .loading-skeleton {
+    @apply animate-pulse bg-gray-700 rounded;
+  }
+
+  /* Focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply hover:transform hover:-translate-y-1 hover:shadow-xl transition-all duration-200;
+  }
+
+  .hover-glow {
+    @apply hover:shadow-lg hover:shadow-primary/25 transition-all duration-200;
+  }
+}
 
 /* FullCalendar dark overrides */
 .fc-theme-standard,
@@ -146,4 +247,45 @@ input:focus-visible {
 .fc .fc-daygrid-event {
   background-color: rgb(127 57 251 / 0.2);
   @apply border border-primary text-primary text-xs rounded px-1;
+}
+
+/* Ensure consistent font rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent layout shift during loading */
+img {
+  @apply transition-opacity duration-200;
+}
+
+img[loading] {
+  @apply opacity-0;
+}
+
+img:not([loading]) {
+  @apply opacity-100;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
 }

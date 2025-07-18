@@ -24,14 +24,23 @@ export const useCommentStore = create<CommentState>(set => ({
   comments: loadComments(),
   addComment: comment =>
     set(state => {
-      const updated = [comment, ...state.comments];
+      const newComment = {
+        ...comment,
+        status: 'pending' as const,
+        reported: false,
+        hidden: false,
+        likes: 0,
+        flags: 0,
+        userId: comment.userId || comment.author
+      };
+      const updated = [newComment, ...state.comments];
       saveComments(updated);
       return { comments: updated };
     }),
   reportComment: id =>
     set(state => {
       const updated = state.comments.map(c =>
-        c.id === id ? { ...c, reported: true } : c
+        c.id === id ? { ...c, reported: true, flags: (c.flags || 0) + 1 } : c
       );
       saveComments(updated);
       return { comments: updated };
@@ -39,7 +48,7 @@ export const useCommentStore = create<CommentState>(set => ({
   approveComment: id =>
     set(state => {
       const updated = state.comments.map(c =>
-        c.id === id ? { ...c, reported: false, hidden: false } : c
+        c.id === id ? { ...c, reported: false, hidden: false, status: 'approved' as const } : c
       );
       saveComments(updated);
       return { comments: updated };
@@ -47,7 +56,7 @@ export const useCommentStore = create<CommentState>(set => ({
   hideComment: id =>
     set(state => {
       const updated = state.comments.map(c =>
-        c.id === id ? { ...c, hidden: true, reported: false } : c
+        c.id === id ? { ...c, hidden: true, reported: false, status: 'hidden' as const } : c
       );
       saveComments(updated);
       return { comments: updated };

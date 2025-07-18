@@ -4,6 +4,7 @@ import {
   VZ_CURRENT_USER_KEY,
   VZ_RESET_TOKENS_KEY
 } from './storageKeys';
+import { fixUserData } from './clearUserData';
 
 // Simulated backend - using localStorage for persistence
 
@@ -15,6 +16,9 @@ export const hashPassword = (pwd: string): string => {
   return Buffer.from(pwd).toString('base64');
 };
 
+// Corregir datos de usuarios al cargar el módulo
+fixUserData();
+
 // Mock test users
 const TEST_PASSWORD = hashPassword('password');
 
@@ -23,44 +27,36 @@ const TEST_USERS = [
     id: '1',
     username: 'admin',
     email: 'admin@virtualzone.com',
-    role: 'admin',
-    level: 10,
-    xp: 1000,
+    role: 'admin' as const,
+    level: 3,
+    xp: 2500,
     avatar: 'https://ui-avatars.com/api/?name=Admin&background=9f65fd&color=fff&size=128&bold=true',
     bio: 'Fundador y administrador de La Virtual Zone.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['founder'],
-    following: {
-      users: [],
-      clubs: [],
-      players: []
-    },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '2',
     username: 'usuario',
     email: 'usuario@test.com',
-    role: 'user',
+    role: 'user' as const,
     level: 1,
     xp: 0,
     bio: 'Jugador casual que disfruta los torneos online.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: [],
-    following: {
-      users: [],
-      clubs: [],
-      players: []
-    },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '3',
     username: 'entrenador',
     email: 'dt@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Neón FC',
@@ -68,20 +64,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Apasionado entrenador de Neón FC.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: {
-      users: [],
-      clubs: ['Rayo Digital FC'],
-      players: []
-    },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '4',
     username: 'jacksonhehe11',
     email: 'jacksonhehe11@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Real Madrid',
@@ -89,20 +81,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'DT madridista con experiencia en torneos virtuales.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: {
-      users: [],
-      clubs: ['Rayo Digital FC'],
-      players: []
-    },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '5',
     username: 'dtdefensor',
     email: 'dtdefensor@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Defensores del Lag',
@@ -110,16 +98,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Especialista en defensas sólidas y tácticas cerradas.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '6',
     username: 'dtneon',
     email: 'dtneon@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Neón FC',
@@ -127,16 +115,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Fanático del juego ofensivo con tácticas de presión alta.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '7',
     username: 'dthax',
     email: 'dthax@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Haxball United',
@@ -144,16 +132,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Jugador experimentado en Haxball ahora en PES.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '8',
     username: 'dtglitch',
     email: 'dtglitch@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Glitchers 404',
@@ -161,16 +149,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Amante de la tecnología y los glitches.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '9',
     username: 'dtcyber',
     email: 'dtcyber@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Cyber Warriors',
@@ -178,16 +166,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Estratega con enfoque en ciencia ficción y ciberespacio.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '10',
     username: 'dtbinary',
     email: 'dtbinary@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Binary Strikers',
@@ -195,33 +183,33 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Analítico y preciso, amante de los datos y binarios.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '11',
-    username: 'dtconnect',
-    email: 'dtconnect@test.com',
-    role: 'dt',
+    username: 'dtpixel',
+    email: 'dtpixel@test.com',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
-    club: 'Connection FC',
+    club: 'Atlético Pixelado',
     clubId: 'club9',
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
-    bio: 'Entusiasta de la conectividad y las comunidades online.',
+    bio: 'Especialista en tácticas pixeladas y gráficos retro.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '12',
     username: 'dtgalaxy',
     email: 'dtgalaxy@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Pixel Galaxy',
@@ -229,16 +217,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Explorador del universo virtual y fan de la ciencia ficción.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '13',
     username: 'dtmadrid',
     email: 'dtmadrid@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Real Madrid',
@@ -246,16 +234,16 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Hincha merengue con amplia trayectoria en ligas virtuales.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   },
   {
     id: '14',
     username: 'dtquantum',
     email: 'dtquantum@test.com',
-    role: 'dt',
+    role: 'dt' as const,
     level: 5,
     xp: 500,
     club: 'Quantum Rangers',
@@ -263,9 +251,9 @@ const TEST_USERS = [
     avatar: 'https://ui-avatars.com/api/?name=Coach&background=00b3ff&color=fff&size=128&bold=true',
     bio: 'Siempre buscando la próxima frontera táctica.',
     joinDate: new Date().toISOString(),
-    status: 'active',
+    status: 'active' as const,
     achievements: ['first_win', 'first_transfer'],
-    following: { users: [], clubs: ['Rayo Digital FC'], players: [] },
+    following: 0,
     password: TEST_PASSWORD
   }
 ];
@@ -282,8 +270,13 @@ export const getUsers = (): User[] => {
 };
 
 // Save users to localStorage
-const saveUsers = (users: User[]): void => {
-  localStorage.setItem(VZ_USERS_KEY, JSON.stringify(users));
+export const saveUsers = (users: User[]): void => {
+  // Forzar el tipado correcto de 'role' al guardar
+  const safeUsers = users.map(u => ({
+    ...u,
+    role: (u.role === 'admin' || u.role === 'user' || u.role === 'dt') ? u.role : 'user'
+  })) as User[];
+  localStorage.setItem(VZ_USERS_KEY, JSON.stringify(safeUsers));
 };
 
 // Get current logged in user
