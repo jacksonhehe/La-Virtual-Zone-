@@ -47,6 +47,7 @@ import {
   DtRanking
 } from '../types';
 import { Club, Player, User } from '../types/shared';
+import { slugify } from '../utils/slugify';
 
 const initialClubs = getClubs();
 const initialPlayers = getPlayers();
@@ -339,6 +340,10 @@ export const useDataStore = create<DataState>((set) => ({
 
   addTournament: (tournament) =>
     set((state) => {
+      // Garantizar slug válido
+      if (!tournament.slug) {
+        tournament.slug = slugify(tournament.customUrl || tournament.name);
+      }
       const current = useAuthStore.getState().user?.id || 'system';
       useActivityLogStore
         .getState()

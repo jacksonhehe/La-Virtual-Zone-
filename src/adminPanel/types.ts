@@ -19,6 +19,8 @@ export interface User extends SharedUser {
 export interface Tournament {
   id: string;
   name: string;
+  /** Identificador URL amigable */
+  slug?: string;
   type: 'league' | 'cup' | 'friendly';
   logo: string;
   startDate: string;

@@ -76,8 +76,12 @@ const NewTournamentModal = ({ onClose, onSave }: Props) => {
         .map(c => c.trim())
         .filter(Boolean);
 
+      // Generar slug basado en la URL personalizada o el nombre
+      const slug = formData.customUrl ? slugify(formData.customUrl) : slugify(formData.name);
+
       onSave({
         ...formData,
+        slug,
         categories: categoriesArr.length > 0 ? categoriesArr : undefined,
         customUrl: formData.customUrl || undefined,
         teams: [],
