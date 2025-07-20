@@ -1,13 +1,33 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { Image, Search, Calendar, User, Tag, Plus } from 'lucide-react';
+import OptimizedImage from '../components/common/OptimizedImage';
+import UploadModal from '../components/gallery/UploadModal';
+
+// Definir interfaz para los elementos de la galería
+interface GalleryItem {
+  id: string;
+  type: 'image' | 'video';
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  author: string;
+  date: string;
+}
+
+const STORAGE_KEY = 'lvz-gallery-items';
 
 const Gallery = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   
-  // Mock gallery items
-  const galleryItems = [
+  // Estado para los elementos de la galería
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(() => {
+    // Intentar cargar desde localStorage al iniciar
+    const savedItems = localStorage.getItem(STORAGE_KEY);
+    return savedItems ? JSON.parse(savedItems) : [
     {
       id: '1',
       type: 'image',
@@ -68,20 +88,32 @@ const Gallery = () => {
       author: 'pixelmanager',
       date: '2025-01-20'
     }
-  ];
+  ]});
   
-  // Filter gallery items
-  const filteredItems = galleryItems.filter(item => {
-    if (activeFilter !== 'all' && item.category !== activeFilter) {
-      return false;
-    }
-    
-    if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase()) && !item.description.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    
-    return true;
-  });
+  // Guardar en localStorage cuando cambian los elementos
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(galleryItems));
+  }, [galleryItems]);
+  
+  // Manejar la subida de un nuevo elemento
+  const handleUpload = (newItem: GalleryItem) => {
+    setGalleryItems(prevItems => [newItem, ...prevItems]);
+  };
+  
+  // Filter gallery items with memoization
+  const filteredItems = useMemo(() => {
+    return galleryItems.filter(item => {
+      if (activeFilter !== 'all' && item.category !== activeFilter) {
+        return false;
+      }
+      
+      if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase()) && !item.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [galleryItems, activeFilter, searchQuery]);
   
   return (
     <div>
@@ -147,7 +179,10 @@ const Gallery = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <button className="btn-primary">
+            <button
+              className="btn-primary"
+              onClick={() => setIsUploadModalOpen(true)}
+            >
               <Plus size={16} className="mr-2" />
               Subir
             </button>
@@ -159,10 +194,11 @@ const Gallery = () => {
             {filteredItems.map(item => (
               <div key={item.id} className="card overflow-hidden group">
                 <div className="aspect-video relative overflow-hidden">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  <OptimizedImage
+                    src={item.image}
+                    alt={item.title}
+                    className="transition-transform duration-500 group-hover:scale-110"
+                    aspectRatio="16/9"
                   />
                   <div className="absolute top-3 left-3">
                     <span className={`
@@ -227,6 +263,13 @@ const Gallery = () => {
           </div>
         )}
       </div>
+      
+      {/* Modal de subida */}
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onUpload={handleUpload}
+      />
     </div>
   );
 };
