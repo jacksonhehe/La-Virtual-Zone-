@@ -30,6 +30,7 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 
 const Gallery = lazy(() => import("./pages/Gallery"));
+const GalleryDetail = lazy(() => import("./pages/GalleryDetail"));
 const Store = lazy(() => import("./pages/Store"));
 const Help = lazy(() => import("./pages/Help"));
 const DtDashboard = lazy(() => import("./pages/DtDashboard"));
@@ -76,6 +77,7 @@ function App() {
             </Route>
 
             <Route path="galeria" element={<Gallery />} />
+            <Route path="galeria/:mediaId" element={<GalleryDetail />} />
             <Route path="tienda" element={<Store />} />
             <Route path="ayuda" element={<Help />} />
 

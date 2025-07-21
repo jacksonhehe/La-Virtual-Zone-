@@ -7,6 +7,7 @@ import {
   MediaItem,
   Post,
   Standing,
+  Comment,
   FAQ,
   StoreItem,
   DtClub,
@@ -14,7 +15,8 @@ import {
   DtMarket,
   DtObjectives,
   DtTask,
-  DtEvent
+  DtEvent,
+  DtRanking
 } from '../types';
 import { Club, Player } from '../types/shared';
 import { slugify } from '../utils/slugify';
@@ -500,6 +502,14 @@ export const tournaments: Tournament[] = [
     rounds: 18,
     matches: [],
     results: [],
+    phases: [
+      {
+        id: 'phase_lm_rr',
+        name: 'Todos contra todos',
+        type: 'round_robin',
+        rounds: 18
+      }
+    ],
     description: 'La competición principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 10 equipos participantes.'
   },
   {
@@ -514,6 +524,20 @@ export const tournaments: Tournament[] = [
     rounds: 4,
     matches: [],
     results: [],
+    phases: [
+      {
+        id: 'phase_cp_grupos',
+        name: 'Fase de Grupos',
+        type: 'group',
+        rounds: 3
+      },
+      {
+        id: 'phase_cp_eliminatorias',
+        name: 'Eliminatorias',
+        type: 'knockout',
+        rounds: 1
+      }
+    ],
     description: 'Torneo eliminatorio con emparejamientos por sorteo. El ganador obtiene plaza para la Supercopa Digital.'
   },
   {
@@ -528,6 +552,14 @@ export const tournaments: Tournament[] = [
     rounds: 1,
     matches: [],
     results: [],
+    phases: [
+      {
+        id: 'phase_sd_final',
+        name: 'Final Única',
+        type: 'final',
+        rounds: 1
+      }
+    ],
     description: 'Partido único entre el campeón de Liga y el campeón de Copa. El evento más prestigioso de la temporada.'
   },
   {
@@ -551,6 +583,14 @@ export const tournaments: Tournament[] = [
       clubName: 'Rayo Digital FC',
       goals: 7
     },
+    phases: [
+      {
+        id: 'phase_tp_grupos',
+        name: 'Grupos',
+        type: 'group',
+        rounds: 3
+      }
+    ],
     description: 'Torneo amistoso previo al inicio de la temporada oficial. Sirve como preparación para los equipos.'
   }
 ];
@@ -798,6 +838,46 @@ export function generateStandings(tournamentId: string): Standing[] {
 
 // Get standings for the main league
 export const leagueStandings = generateStandings('tournament1');
+
+// Comentarios ficticios
+export const comments: Comment[] = [
+  {
+    id: 'comment1',
+    postId: 'news1',
+    author: 'admin',
+    content: '¡Qué ganas de que empiece la temporada!',
+    date: '2025-01-15T10:00:00Z',
+    reported: false,
+    hidden: false,
+    status: 'approved',
+    likes: 12,
+    flags: 0,
+  },
+  {
+    id: 'comment2',
+    postId: 'post1',
+    author: 'fanatico123',
+    content: 'Excelente análisis, gracias por compartir.',
+    date: '2025-01-16T08:34:00Z',
+    reported: false,
+    hidden: false,
+    status: 'approved',
+    likes: 4,
+    flags: 0,
+  },
+  {
+    id: 'comment3',
+    postId: 'news4',
+    author: 'hater99',
+    content: 'No estoy de acuerdo, el árbitro ayudó mucho.',
+    date: '2025-01-20T18:20:00Z',
+    reported: false,
+    hidden: false,
+    status: 'pending',
+    likes: 1,
+    flags: 0,
+  }
+];
 
 // News items
 export const newsItems: NewsItem[] = [

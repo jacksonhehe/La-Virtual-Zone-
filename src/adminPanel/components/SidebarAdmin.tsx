@@ -1,11 +1,13 @@
 import  { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar } from 'lucide-react';
+import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
 import { useAuth } from '../contexts/AuthContext';
+import { useSidebarStore } from '../store/sidebarStore';
 
 const SidebarAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { collapsed, toggle } = useSidebarStore();
   const { transfers } = useGlobalStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -63,22 +65,32 @@ const SidebarAdmin = () => {
 
       {/* Sidebar */}
            <div className={`
-        fixed md:static top-0 left-0 h-full w-72 bg-gradient-to-b from-gray-800/95 to-gray-900/95 border-r border-gray-700/50 backdrop-blur-xl z-50 transform transition-all duration-300 ease-in-out
+        fixed md:static top-0 left-0 h-full ${collapsed ? 'w-20' : 'w-72'} bg-gradient-to-b from-gray-800/95 to-gray-900/95 border-r border-gray-700/50 backdrop-blur-xl z-50 transform transition-all duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 border-b border-gray-700/50">
+        <div className="p-6 border-b border-gray-700/50 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-lg">VZ</span>
             </div>
-            <div>
-              <h1 className="text-xl font-bold gradient-text">La Virtual Zone</h1>
-              <p className="text-gray-400 text-sm">Panel de Administración</p>
-            </div>
+            {!collapsed && (
+              <div>
+                <h1 className="text-xl font-bold gradient-text">La Virtual Zone</h1>
+                <p className="text-gray-400 text-sm">Panel de Administración</p>
+              </div>
+            )}
           </div>
+          {/* Botón colapsar */}
+          <button
+            onClick={toggle}
+            className="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-700/50 transition-colors"
+            aria-label="Collapse sidebar"
+          >
+            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
         </div> 
         
-               <nav className="px-4 space-y-2 mt-6">
+               <nav className="px-2 md:px-4 space-y-2 mt-6">
           {menuItems.map((item) => (
             <NavLink
               key={item.name}
@@ -90,11 +102,11 @@ const SidebarAdmin = () => {
               onClick={() => setIsOpen(false)}
               aria-label={item.name}
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-700/50 group-hover:bg-gray-600/50 transition-colors">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-700/50 group-hover:bg-gray-600/50 transition-colors">
                 <item.icon size={18} />
               </div>
-              <span className="font-medium">{item.name}</span>
-              {item.badge && item.badge > 0 && (
+              {!collapsed && <span className="font-medium">{item.name}</span>}
+              {item.badge && item.badge > 0 && !collapsed && (
                 <span className="ml-auto bg-gradient-to-r from-red-600 to-pink-600 text-white text-xs rounded-full px-2.5 py-1 font-bold shadow-lg animate-pulse">
                   {item.badge}
                 </span>

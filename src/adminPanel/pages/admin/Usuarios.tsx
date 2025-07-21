@@ -211,21 +211,24 @@ const Usuarios = () => {
                     
                     <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button 
-                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all duration-300"
+                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all duration-300 focus-visible:outline-dashed focus-visible:outline-accent"
                         onClick={() => setEditUser(user)}
+                        aria-label="Editar usuario"
                         title="Editar usuario"
                       >
                         <Edit size={18} />
                       </button>
                       <button 
-                        className="p-2 text-gray-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all duration-300"
+                        className="p-2 text-gray-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all duration-300 focus-visible:outline-dashed focus-visible:outline-accent"
+                        aria-label="Ver detalles"
                         title="Ver detalles"
                       >
                         <Eye size={18} />
                       </button>
                       <button 
-                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-300"
+                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-300 focus-visible:outline-dashed focus-visible:outline-accent"
                         onClick={() => setDeleteUser(user)}
+                        aria-label="Eliminar usuario"
                         title="Eliminar usuario"
                       >
                         <Trash size={18} />

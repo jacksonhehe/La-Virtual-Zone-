@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { Comment } from '../types';
 import { VZ_COMMENTS_KEY } from '../utils/storageKeys';
+import { comments as seedComments } from '../data/mockData';
 
 const loadComments = (): Comment[] => {
   const json = localStorage.getItem(VZ_COMMENTS_KEY);
-  return json ? JSON.parse(json) : [];
+  return json ? JSON.parse(json) : seedComments;
 };
 
 const saveComments = (comments: Comment[]) => {

@@ -4,7 +4,9 @@ import { useAuthStore } from './authStore';
 import {
   getUsers,
   updateUser as persistUser,
-  deleteUser as persistDeleteUser
+  deleteUser as persistDeleteUser,
+  addUser as persistAddUser,
+  saveUsers
 } from '../utils/authService';
 import {
   tournaments,
@@ -27,7 +29,7 @@ import {
 import { getClubs, saveClubs } from '../utils/clubService';
 import { getPlayers, savePlayers } from '../utils/playerService';
 import { getOffers, saveOffers } from '../utils/offerService';
-import { getTournaments, getNews, getPosts, saveTournaments } from '../utils/sharedStorage';
+import { getTournaments, getNews, getPosts, saveTournaments, saveNews, savePosts } from '../utils/sharedStorage';
 import {
   Tournament,
   Transfer,
@@ -48,6 +50,7 @@ import {
 } from '../types';
 import { Club, Player, User } from '../types/shared';
 import { slugify } from '../utils/slugify';
+import { getMediaItems, saveMediaItems } from '../utils/sharedStorage';
 
 const initialClubs = getClubs();
 const initialPlayers = getPlayers();
@@ -68,9 +71,22 @@ const initialFixtures = tournaments[0].matches
   .slice(0, 6)
   .map(m => ({ ...m, played: m.status === 'finished' }));
 
-const initialTournaments = getTournaments();
-const initialNews = getNews();
-const initialPosts = getPosts();
+// Seed de datos si localStorage está vacío
+const storedTournaments = getTournaments();
+const initialTournaments = storedTournaments.length ? storedTournaments : tournaments;
+if (!storedTournaments.length) saveTournaments(initialTournaments);
+
+const storedNews = getNews();
+const initialNews = storedNews.length ? storedNews : newsItems;
+if (!storedNews.length) saveNews(initialNews);
+
+const storedMedia = getMediaItems();
+const initialMediaItems = storedMedia.length ? storedMedia : mediaItems;
+if (!storedMedia.length) saveMediaItems(initialMediaItems);
+
+const storedPosts = getPosts();
+const initialPosts = storedPosts.length ? storedPosts : posts;
+if (!storedPosts.length) savePosts(initialPosts);
 
 const refreshClubPlayers = (players: Player[], clubId: string) =>
   players.filter(p => p.clubId === clubId);
@@ -122,6 +138,7 @@ interface DataState {
   removePlayer: (id: string) => void;
   addTournament: (tournament: Tournament) => void;
   addNewsItem: (item: NewsItem) => void;
+  addMediaItem: (item: MediaItem) => void;
   removeNewsItem: (id: string) => void;
   updateStandings: (newStandings: Standing[]) => void;
   toggleTask: (id: string) => void;
@@ -137,7 +154,7 @@ export const useDataStore = create<DataState>((set) => ({
   transfers,
   offers: initialOffers,
   standings: leagueStandings,
-  mediaItems,
+  mediaItems: initialMediaItems,
   faqs,
   storeItems,
   marketStatus,
@@ -238,9 +255,11 @@ export const useDataStore = create<DataState>((set) => ({
       transfers: state.transfers.filter(t => t.id !== id)
     })),
 
-  addUser: (user) => set((state) => ({
-    users: [...state.users, user]
-  })),
+  addUser: (user) => set((state) => {
+    const updated = [...state.users, user];
+    saveUsers(updated);
+    return { users: updated };
+  }),
 
   addClub: (club) =>
     set((state) => {
@@ -290,13 +309,14 @@ export const useDataStore = create<DataState>((set) => ({
       };
     }),
 
-  removeUser: (id) =>
-    set((state) => {
-      persistDeleteUser(id);
-      return {
-        users: state.users.filter(u => u.id !== id)
-      };
-    }),
+  removeUser: (id) => set((state) => {
+    persistDeleteUser(id);
+    const updated = state.users.filter(u => u.id !== id);
+    saveUsers(updated);
+    return {
+      users: updated
+    };
+  }),
 
   updateClubEntry: (club) =>
     set((state) => {
@@ -354,6 +374,12 @@ export const useDataStore = create<DataState>((set) => ({
   addNewsItem: (item) => set((state) => ({
     newsItems: [item, ...state.newsItems]
   })),
+
+  addMediaItem: (item) => set((state) => {
+    const updated = [item, ...state.mediaItems];
+    saveMediaItems(updated);
+    return { mediaItems: updated };
+  }),
 
   removeNewsItem: (id) => set((state) => ({
     newsItems: state.newsItems.filter(n => n.id !== id)
