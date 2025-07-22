@@ -23,16 +23,21 @@ import {
   Heart,
   Eye,
   Lock,
-  Camera
+  Camera,
+  Sun,
+  Moon,
+  Globe,
+  Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
+import usePersistentState from '../hooks/usePersistentState';
+import ConfirmModal from '../components/common/ConfirmModal';
 import RequestClubModal from '../components/common/RequestClubModal';
 import { xpForNextLevel } from '../utils/helpers';
 import PageHeader from '../components/common/PageHeader';
 import ProgressRing from '../components/common/ProgressRing';
-import FlipCard from '../components/common/FlipCard';
 
 const UserPanel = () => {
   const { user, isAuthenticated, logout, updateUser } = useAuthStore();
@@ -47,6 +52,49 @@ const UserPanel = () => {
     bio: user?.bio || '',
     avatar: user?.avatar || ''
   });
+
+  /* ================= Preferencias de Usuario ================= */
+  const [language, setLanguage] = usePersistentState<'es' | 'en'>('vz_language', 'es');
+  const [notificationsEnabled, setNotificationsEnabled] = usePersistentState<boolean>('vz_notifications', true);
+  const [theme, setTheme] = usePersistentState<'dark' | 'light'>('vz_theme', 'dark');
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (theme === 'dark') {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+  }, [theme]);
+
+  /* ================= Cambio de contraseña ================= */
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwLoading, setPwLoading] = useState(false);
+
+  const handlePasswordChangeSubmit = () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Completa todos los campos');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Las contraseñas no coinciden');
+      return;
+    }
+    setPwLoading(true);
+    // Simulación de llamada API
+    setTimeout(() => {
+      setPwLoading(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      toast.success('Contraseña actualizada correctamente');
+    }, 1500);
+  };
+
+  /* ================= Confirmación de logout ================= */
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   
   // Initialize following property if it doesn't exist
   const following = user?.following || 0;
@@ -64,6 +112,16 @@ const UserPanel = () => {
     : 0;
   const [levelPulse, setLevelPulse] = useState(false);
   const prevLevel = useRef(levelProgress);
+
+  // Color dinámico de la barra según porcentaje
+  const progressColorClass = levelProgress >= 70
+    ? 'bg-green-500'
+    : levelProgress >= 40
+      ? 'bg-yellow-500'
+      : 'bg-red-500';
+
+  // XP restante para siguiente nivel
+  const xpRemaining = Math.max(0, nextLevelXp - ((user?.xp) || 0));
 
   useEffect(() => {
     if (prevLevel.current !== levelProgress) {
@@ -134,7 +192,7 @@ const UserPanel = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-dark">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       <PageHeader 
         title={`Bienvenido, ${user.username}`}
         subtitle="Aquí puedes gestionar tu perfil, seguir tu progreso y configurar tu cuenta."
@@ -145,7 +203,7 @@ const UserPanel = () => {
           {/* Sidebar mejorado */}
           <div className="lg:col-span-1">
             <div className="card-elevated p-8 text-center mb-6 shadow-consistent-xl">
-              <div className="relative mx-auto w-24 h-24 rounded-full overflow-visible mb-6 bg-gradient-to-br from-primary to-secondary p-1">
+              <div className="relative mx-auto w-24 h-24 rounded-full overflow-visible mb-6 bg-gradient-to-br from-primary to-secondary p-1 ring-4 ring-primary/20 shadow-lg shadow-primary/30">
                 <div className="w-full h-full rounded-full overflow-hidden">
                   {user.avatar ? (
                     <img 
@@ -187,14 +245,14 @@ const UserPanel = () => {
                     </>
                   )}
                 </div>
-                <div className="absolute -bottom-2 -right-2 bg-dark rounded-full p-1 border-2 border-dark-lighter">
-                  <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-r from-primary to-secondary text-dark text-xs font-bold rounded-full">
+                <div className="absolute -bottom-3 -right-3 bg-dark rounded-full p-1 border-2 border-dark-lighter">
+                  <div className={`w-12 h-12 flex items-center justify-center bg-gradient-to-r from-primary to-secondary text-dark text-sm font-extrabold rounded-full ${levelPulse ? 'ring-2 ring-primary/80 animate-pulse' : ''}`}>
                     {user.level || 1}
                   </div>
                 </div>
               </div>
               
-              <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 {user.username}
               </h2>
               
@@ -211,14 +269,14 @@ const UserPanel = () => {
                 <div className="flex items-center gap-3">
                   <div className="h-3 flex-1 bg-dark rounded-full overflow-hidden border border-gray-700">
                     <div
-                      className={`h-full bg-gradient-to-r from-primary to-secondary ${levelPulse ? 'animate-pulse' : ''} transition-all duration-300`}
+                      className={`h-full ${progressColorClass} ${levelPulse ? 'animate-pulse' : ''} transition-all duration-300`}
                       style={{ width: `${levelProgress}%` }}
                     ></div>
                   </div>
                   <span className="text-xs w-12 text-right font-medium">{Math.round(levelProgress)}%</span>
                 </div>
                 <div className="text-xs text-gray-400 mt-2">
-                  {user.xp || 0} / {nextLevelXp} XP
+                  {Math.max(0, nextLevelXp - (user.xp || 0))} XP restantes para el siguiente nivel
                 </div>
               </div>
               
@@ -237,83 +295,100 @@ const UserPanel = () => {
             </div>
             
             <div className="card-elevated overflow-hidden shadow-consistent-xl">
-              <nav className="p-2">
+              <nav className="p-2 space-y-1">
+                {/* Grupo: Mi cuenta */}
+                <p className="text-xs text-gray-500 uppercase px-3 mt-2 mb-1">Mi cuenta</p>
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`w-full flex items-center p-3 rounded-lg transition-smooth ${
+                  className={`w-full flex items-center p-3 rounded-lg transition-smooth transform hover:scale-105 border-l-4 ${
                     activeTab === 'profile' 
-                      ? 'bg-primary/20 text-primary font-medium' 
-                      : 'text-gray-300 hover:bg-dark/50 hover:text-white'
+                      ? 'border-primary bg-primary/10 text-primary font-medium shadow-inner ring-2 ring-primary/30' 
+                      : 'border-transparent text-gray-300 hover:bg-dark/50 hover:text-white'
                   }`}
                 >
                   <User size={20} className="mr-3" />
                   <span>Mi Perfil</span>
                 </button>
                 
+                {/* Grupo Club (solo DT) */}
                 {user.role === 'dt' && (
-                  <button
-                    onClick={() => setActiveTab('club')}
-                    className={`w-full flex items-center p-3 mt-1 rounded-lg transition-smooth ${
-                      activeTab === 'club' 
-                        ? 'bg-primary/20 text-primary font-medium' 
-                        : 'text-gray-300 hover:bg-dark/50 hover:text-white'
-                    }`}
-                  >
-                    <Trophy size={20} className="mr-3" />
-                    <span>Mi Club</span>
-                  </button>
+                  <>
+                    <div className="border-t border-gray-700 mt-4 pt-2" />
+                    <p className="text-xs text-gray-500 uppercase px-3 mb-1">Club</p>
+                    <button
+                      onClick={() => setActiveTab('club')}
+                      className={`w-full flex items-center p-3 rounded-lg transition-smooth transform hover:scale-105 border-l-4 ${
+                        activeTab === 'club' 
+                          ? 'border-primary bg-primary/10 text-primary font-medium shadow-inner ring-2 ring-primary/30' 
+                          : 'border-transparent text-gray-300 hover:bg-dark/50 hover:text-white'
+                      }`}
+                    >
+                      <Trophy size={20} className="mr-3" />
+                      <span>Mi Club</span>
+                    </button>
+                  </>
                 )}
-                
+
+                {/* Grupo Actividad */}
+                <div className="border-t border-gray-700 mt-4 pt-2" />
+                <p className="text-xs text-gray-500 uppercase px-3 mb-1">Actividad</p>
                 <button
                   onClick={() => setActiveTab('activity')}
-                  className={`w-full flex items-center p-3 mt-1 rounded-lg transition-smooth ${
+                  className={`w-full flex items-center p-3 rounded-lg transition-smooth transform hover:scale-105 border-l-4 ${
                     activeTab === 'activity' 
-                      ? 'bg-primary/20 text-primary font-medium' 
-                      : 'text-gray-300 hover:bg-dark/50 hover:text-white'
+                      ? 'border-primary bg-primary/10 text-primary font-medium shadow-inner ring-2 ring-primary/30' 
+                      : 'border-transparent text-gray-300 hover:bg-dark/50 hover:text-white'
                   }`}
                 >
                   <Activity size={20} className="mr-3" />
                   <span>Actividad</span>
                 </button>
-                
                 <button
                   onClick={() => setActiveTab('community')}
-                  className={`w-full flex items-center p-3 mt-1 rounded-lg transition-smooth ${
+                  className={`w-full flex items-center p-3 mt-1 rounded-lg transition-smooth transform hover:scale-105 border-l-4 ${
                     activeTab === 'community' 
-                      ? 'bg-primary/20 text-primary font-medium' 
-                      : 'text-gray-300 hover:bg-dark/50 hover:text-white'
+                      ? 'border-primary bg-primary/10 text-primary font-medium shadow-inner ring-2 ring-primary/30' 
+                      : 'border-transparent text-gray-300 hover:bg-dark/50 hover:text-white'
                   }`}
                 >
                   <Users size={20} className="mr-3" />
                   <span>Comunidad</span>
                 </button>
-                
+
+                {/* Grupo Configuración */}
+                <div className="border-t border-gray-700 mt-4 pt-2" />
+                <p className="text-xs text-gray-500 uppercase px-3 mb-1">Configuración</p>
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className={`w-full flex items-center p-3 mt-1 rounded-lg transition-smooth ${
+                  className={`w-full flex items-center p-3 rounded-lg transition-smooth transform hover:scale-105 border-l-4 ${
                     activeTab === 'settings' 
-                      ? 'bg-primary/20 text-primary font-medium' 
-                      : 'text-gray-300 hover:bg-dark/50 hover:text-white'
+                      ? 'border-primary bg-primary/10 text-primary font-medium shadow-inner ring-2 ring-primary/30' 
+                      : 'border-transparent text-gray-300 hover:bg-dark/50 hover:text-white'
                   }`}
                 >
                   <Settings size={20} className="mr-3" />
                   <span>Configuración</span>
                 </button>
-                
+
+                {/* Admin */}
                 {user.role === 'admin' && (
-                  <button
-                    onClick={() => navigate('/admin')}
-                    className="w-full flex items-center p-3 mt-2 text-white font-medium transition-all duration-200 bg-red-500/20 hover:bg-red-500/30 rounded-lg"
-                  >
-                    <Shield size={20} className="mr-3 text-red-400" />
-                    <span className="text-red-400">Panel de Admin</span>
-                  </button>
+                  <>
+                    <div className="border-t border-gray-700 mt-4 pt-2" />
+                    <p className="text-xs text-gray-500 uppercase px-3 mb-1">Admin</p>
+                    <button
+                      onClick={() => navigate('/admin')}
+                      className="w-full flex items-center p-3 rounded-lg transition-smooth transform hover:scale-105 border-l-4 border-red-500 bg-red-500/10 text-red-400 font-medium ring-2 ring-red-500/30"
+                    >
+                      <Shield size={20} className="mr-3 text-red-400" />
+                      <span>Panel de Admin</span>
+                    </button>
+                  </>
                 )}
               </nav>
               
               <div className="p-2 mt-2 border-t border-gray-800/50">
                 <button
-                  onClick={logout}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="w-full flex items-center p-3 rounded-lg text-gray-400 hover:bg-dark/50 hover:text-white transition-smooth"
                 >
                   <LogOut size={20} className="mr-3" />
@@ -455,32 +530,35 @@ const UserPanel = () => {
                           <TrendingUp size={24} className="mr-3 text-primary" />
                           Estadísticas y Logros
                         </h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-                          {/* Nivel */}
-                          <FlipCard
-                            className="bg-dark/50 border border-primary/20 shadow-lg"
-                            front={
-                              <div className="flex flex-col items-center justify-center h-full p-4">
-                                <ProgressRing value={levelProgress} color="var(--primary)" />
-                                <p className="text-sm text-gray-400 mt-2">Nivel</p>
-                              </div>
-                            }
-                            back={
-                              <div className="flex flex-col items-center justify-center h-full p-4">
-                                <p className="font-medium text-white text-center text-sm">XP: {user.xp || 0}</p>
-                                <p className="text-xs text-gray-400 mt-1">Hasta siguiente nivel: {nextLevelXp - (user.xp || 0)} XP</p>
-                              </div>
-                            }
-                          />
-                          {/* Experiencia */}
-                          <div className="text-center p-4 bg-dark/50 rounded-xl border border-green-500/20 shadow-lg hover-lift transition-smooth">
-                            <div className="text-3xl font-bold text-green-400 mb-1">{user.xp || 0}</div>
-                            <div className="text-sm text-gray-400">Experiencia</div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                          {/* Progreso de Nivel */}
+                          <div
+                            className="stat-card group border border-primary/40 hover:border-primary/70 transition-smooth p-6 text-center"
+                            title={`${xpRemaining} XP restantes para subir de nivel`}
+                          >
+                            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Progreso de Nivel</h4>
+                            <div className="flex flex-col items-center justify-center">
+                              <ProgressRing value={levelProgress} color="var(--primary)" />
+                              <p className="text-xs text-gray-400 mt-2">Nivel {user.level || 1}</p>
+                            </div>
                           </div>
+
+                          {/* XP Total */}
+                          <div
+                            className="stat-card group border border-green-500/40 hover:border-green-500/70 transition-smooth p-6 text-center"
+                            title={`XP total acumulada`}
+                          >
+                            <h4 className="text-sm font-semibold text-green-400 mb-3 uppercase tracking-wide">XP Total</h4>
+                            <div className="text-4xl font-extrabold text-green-400 group-hover:scale-105 transition-transform">{user.xp || 0}</div>
+                          </div>
+
                           {/* Logros */}
-                          <div className="text-center p-4 bg-dark/50 rounded-xl border border-yellow-500/20 shadow-lg hover-lift transition-smooth">
-                            <div className="text-3xl font-bold text-yellow-400 mb-1">{achievements.length}</div>
-                            <div className="text-sm text-gray-400">Logros</div>
+                          <div
+                            className="stat-card group border border-yellow-500/40 hover:border-yellow-500/70 transition-smooth p-6 text-center"
+                            title={`Has desbloqueado ${achievements.length} logro(s)`}
+                          >
+                            <h4 className="text-sm font-semibold text-yellow-400 mb-3 uppercase tracking-wide">Logros</h4>
+                            <div className="text-4xl font-extrabold text-yellow-400 group-hover:scale-105 transition-transform">{achievements.length}</div>
                           </div>
                         </div>
                         
@@ -714,38 +792,95 @@ const UserPanel = () => {
 
             {/* Settings tab */}
             {activeTab === 'settings' && (
-              <div className="card-elevated p-8">
-                <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  Configuración
-                </h2>
-                <div className="space-y-8">
-                  <div className="card-subtle p-6">
-                    <h3 className="text-xl font-semibold mb-4 flex items-center">
-                      <Bell size={20} className="mr-3 text-primary" />
-                      Notificaciones
-                    </h3>
-                    <div className="flex items-center justify-between p-3 bg-dark/50 rounded-lg">
-                      <span className="text-gray-300">Notificaciones por correo</span>
-                      <button className="w-12 h-6 rounded-full bg-gray-600 flex items-center p-1">
-                        <span className="w-4 h-4 rounded-full bg-white block"></span>
-                      </button>
-                    </div>
-                  </div>
-                  <div className="card-subtle p-6">
-                    <h3 className="text-xl font-semibold mb-4 flex items-center">
-                      <Lock size={20} className="mr-3 text-primary" />
-                      Cambiar Contraseña
-                    </h3>
-                    <div className="space-y-4">
-                      <input type="password" placeholder="Contraseña actual" className="input w-full bg-dark" />
-                      <input type="password" placeholder="Nueva contraseña" className="input w-full bg-dark" />
-                      <input type="password" placeholder="Confirmar nueva contraseña" className="input w-full bg-dark" />
-                      <button className="btn-gradient-primary px-6 py-2 rounded-lg">Guardar Cambios</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+  <div className="card-elevated p-8">
+    <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+      Configuración
+    </h2>
+
+    {/* Cambio de contraseña */}
+    <div className="card-subtle p-6">
+      <h3 className="text-xl font-semibold mb-4 flex items-center">
+        <Lock size={20} className="mr-3 text-primary" />
+        Cambiar Contraseña
+      </h3>
+      <div className="space-y-4">
+        <input
+          type="password"
+          placeholder="Contraseña actual"
+          className="input w-full bg-dark"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Nueva contraseña"
+          className="input w-full bg-dark"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Confirmar nueva contraseña"
+          className="input w-full bg-dark"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <button
+          onClick={handlePasswordChangeSubmit}
+          className="btn-gradient-primary px-6 py-2 rounded-lg flex items-center justify-center"
+          disabled={pwLoading}
+        >
+          {pwLoading ? <Loader2 size={18} className="animate-spin" /> : 'Guardar Cambios'}
+        </button>
+      </div>
+    </div>
+
+    {/* Preferencias */}
+    <div className="card-subtle p-6 mt-6 border-t border-gray-700 pt-6">
+      <h3 className="text-xl font-semibold mb-4 flex items-center">
+        <Settings size={20} className="mr-3 text-primary" />
+        Preferencias
+      </h3>
+
+      {/* Idioma */}
+      <div className="mb-4">
+        <label className="block text-sm text-gray-400 mb-1 flex items-center">
+          <Globe size={18} className="mr-2" />Idioma
+        </label>
+        <select
+          className="input w-full bg-dark cursor-pointer"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value as 'es' | 'en')}
+        >
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      {/* Notificaciones */}
+      <div className="flex items-center justify-between p-3 bg-dark/50 rounded-lg mb-4">
+        <span className="text-gray-300 flex items-center"><Bell size={18} className="mr-2"/> Notificaciones en sitio</span>
+        <button
+          onClick={() => setNotificationsEnabled(prev => !prev)}
+          className={`w-12 h-6 rounded-full flex items-center p-1 transition-smooth ${notificationsEnabled ? 'bg-green-500' : 'bg-gray-600'}`}
+        >
+          <span className={`w-4 h-4 rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : ''}`}></span>
+        </button>
+      </div>
+
+      {/* Tema */}
+      <div className="flex items-center justify-between p-3 bg-dark/50 rounded-lg">
+        <span className="text-gray-300 flex items-center">{theme === 'dark' ? <Moon size={18} className="mr-2"/> : <Sun size={18} className="mr-2"/>}Tema {theme === 'dark' ? 'Oscuro' : 'Claro'}</span>
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className={`w-12 h-6 rounded-full flex items-center p-1 transition-smooth ${theme === 'dark' ? 'bg-purple-600' : 'bg-yellow-400'}`}
+        >
+          <span className={`w-4 h-4 rounded-full bg-white transition-transform ${theme === 'dark' ? 'translate-x-6' : ''}`}></span>
+        </button>
+      </div>
+    </div>
+  </div>
+)}
           </div>
         </div>
       </div>
@@ -754,6 +889,16 @@ const UserPanel = () => {
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
       />
+      {showLogoutConfirm && (
+        <ConfirmModal
+          title="Cerrar Sesión"
+          message="¿Estás seguro de que quieres cerrar sesión?"
+          confirmText="Sí, salir"
+          cancelText="Cancelar"
+          onConfirm={() => { setShowLogoutConfirm(false); logout(); }}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+      )}
     </div>
   );
 };
