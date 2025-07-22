@@ -160,10 +160,12 @@ export interface StoreItem {
   id: string;
   name: string;
   description: string;
-  category: 'club' | 'user' | 'achievement';
+  category: 'club' | 'user' | 'achievement' | 'background' | 'frame' | 'badge' | 'emoji' | 'theme' | 'booster';
   price: number;
   image: string;
   minLevel: number;
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
+  assetURL?: string; // link al recurso a aplicar (imagen, css, etc.)
   inStock: boolean;
 }
 

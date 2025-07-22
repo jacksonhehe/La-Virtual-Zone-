@@ -5,7 +5,8 @@ import {
   login as authLogin,
   register as authRegister,
   getCurrentUser,
-  logout as authLogout
+  logout as authLogout,
+  updateUser as persistUser
 } from '../utils/authService';
 
 interface AuthState {
@@ -68,12 +69,8 @@ export const useAuthStore = create<AuthState>((set) => {
     updateUser: (userData) => {
       set((state) => {
         if (!state.user) return state;
-        
-        const updatedUser = {
-          ...state.user,
-          ...userData
-        };
-        
+        const updatedUser: User = { ...state.user, ...userData } as User;
+        persistUser(updatedUser);
         return { user: updatedUser };
       });
     },
@@ -84,8 +81,8 @@ export const useAuthStore = create<AuthState>((set) => {
         
         const updatedUser = {
           ...state.user,
-          xp: state.user.xp + amount
-        };
+          xp: (state.user.xp || 0) + amount
+        } as User;
         
         return { user: updatedUser };
       });

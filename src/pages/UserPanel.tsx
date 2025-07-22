@@ -22,8 +22,10 @@ import {
   Activity,
   Heart,
   Eye,
-  Lock
+  Lock,
+  Camera
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import RequestClubModal from '../components/common/RequestClubModal';
@@ -143,18 +145,48 @@ const UserPanel = () => {
           {/* Sidebar mejorado */}
           <div className="lg:col-span-1">
             <div className="card-elevated p-8 text-center mb-6 shadow-consistent-xl">
-              <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden mb-6 bg-gradient-to-br from-primary to-secondary p-1">
-                {user.avatar ? (
-                  <img 
-                    src={user.avatar} 
-                    alt={user.username} 
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full">
-                    <User size={40} className="text-primary" />
-                  </div>
-                )}
+              <div className="relative mx-auto w-24 h-24 rounded-full overflow-visible mb-6 bg-gradient-to-br from-primary to-secondary p-1">
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  {user.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.username} 
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full">
+                      <User size={40} className="text-primary" />
+                    </div>
+                  )}
+                  {true && (
+                    <>
+                      <button
+                        className="absolute bottom-1 right-1 z-10 bg-primary p-1 rounded-full text-white hover:bg-primary/80 w-6 h-6 flex items-center justify-center transform hover:scale-110 transition-transform"
+                        onClick={() => document.getElementById('avatarUpload')?.click()}
+                        title="Cambiar foto"
+                      >
+                        <Camera size={14} />
+                      </button>
+                      <input
+                        id="avatarUpload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e)=>{
+                          const file=e.target.files?.[0];
+                          if(!file) return;
+                          const reader=new FileReader();
+                          reader.onload=()=>{
+                            useAuthStore.getState().updateUser({avatar: reader.result as string});
+                            toast.success('Avatar actualizado');
+                          };
+                          if (file.size>2*1024*1024){toast.error('La imagen supera 2 MB');return;}
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
                 <div className="absolute -bottom-2 -right-2 bg-dark rounded-full p-1 border-2 border-dark-lighter">
                   <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-r from-primary to-secondary text-dark text-xs font-bold rounded-full">
                     {user.level || 1}

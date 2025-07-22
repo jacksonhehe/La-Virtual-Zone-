@@ -1,17 +1,29 @@
 import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
-import { Search, AlertCircle } from 'lucide-react';
+import { Search, AlertCircle, ShoppingCart, X } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
+import { useAuthStore } from '../store/authStore';
+import { useShopStore } from '../store/shopStore';
+import toast from 'react-hot-toast';
 import { formatCurrency } from '../utils/helpers';
+import { getRarityClasses } from '../utils/rarity';
+import { StoreItem } from '../types';
 
 const Store = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortKey, setSortKey] = useState<'price' | 'rarity'>('price');
+  const [showOwned, setShowOwned] = useState(false);
+  const [previewItem, setPreviewItem] = useState<StoreItem | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const { storeItems } = useDataStore();
+  const { coins, ownedItemIds, cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
+  const { user } = useAuthStore();
+  const userLevel = user?.level ?? 1;
   
   // Filter store items
-  const filteredItems = storeItems.filter(product => {
+  let filteredItems = storeItems.filter(product => {
     if (activeCategory !== 'all' && product.category !== activeCategory) {
       return false;
     }
@@ -22,6 +34,17 @@ const Store = () => {
     
     return true;
   });
+
+  if (showOwned) {
+    filteredItems = filteredItems.filter(i => !ownedItemIds.includes(i.id));
+  }
+
+  if (sortKey === 'price') {
+    filteredItems.sort((a, b) => a.price - b.price);
+  } else {
+    const order = { common: 0, rare: 1, epic: 2, legendary: 3 } as any;
+    filteredItems.sort((a, b) => (order[a.rarity ?? 'common'] - order[b.rarity ?? 'common']));
+  }
   
   return (
     <div>
@@ -80,8 +103,30 @@ const Store = () => {
               Potenciadores
             </button>
           </div>
+
+          {/* Extras */}
+          <div className="flex items-center space-x-3">
+            <select value={sortKey} onChange={e => setSortKey(e.target.value as any)} className="input">
+              <option value="price">Precio</option>
+              <option value="rarity">Rareza</option>
+            </select>
+            <label className="flex items-center space-x-1 text-sm">
+              <input type="checkbox" checked={showOwned} onChange={e => setShowOwned(e.target.checked)} />
+              <span>Ocultar comprados</span>
+            </label>
+            {/* Cart icon */}
+            <button className="relative" onClick={() => setShowConfirm(true)}>
+              <ShoppingCart />
+              {cartIds.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-xs rounded-full px-1">{cartIds.length}</span>
+              )}
+            </button>
+          </div>
         </div>
         
+        {/* Saldo */}
+        <div className="mb-6 text-right font-bold text-primary">Saldo: {coins} Z-Coins</div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredItems.map(product => (
             <div key={product.id} className="card overflow-hidden group">
@@ -104,6 +149,8 @@ const Store = () => {
                      product.category === 'achievement' ? 'Logro' : 'Potenciador'}
                   </span>
                 </div>
+                {/* rarity ring overlay using getRarityClasses */}
+                <div className={`absolute inset-0 rounded-lg pointer-events-none ${getRarityClasses(product.rarity)}`}></div>
                 <div className="absolute top-3 right-3">
                   <span className="inline-block bg-dark-light px-2 py-1 text-xs font-medium rounded-full">
                     Nivel {product.minLevel}+
@@ -119,9 +166,29 @@ const Store = () => {
                   <div className="text-lg font-bold text-primary">
                     {formatCurrency(product.price).replace('€', '')} <span className="text-sm text-gray-400">Z-Coins</span>
                   </div>
-                  <button className="btn-primary text-sm py-1 px-3">
-                    Canjear
-                  </button>
+                  {ownedItemIds.includes(product.id) ? (
+                    <button
+                      className="btn-secondary text-sm py-1 px-3"
+                      onClick={() => setPreviewItem(product)}
+                    >
+                      Ver
+                    </button>
+                  ) : cartIds.includes(product.id) ? (
+                    <button
+                      className="btn-warning text-sm py-1 px-3"
+                      onClick={() => removeFromCart(product.id)}
+                    >
+                      Quitar
+                    </button>
+                  ) : (
+                    <button
+                      className="btn-primary text-sm py-1 px-3 disabled:opacity-50"
+                      disabled={userLevel < product.minLevel}
+                      onClick={() => addToCart(product)}
+                    >
+                      Añadir
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -210,6 +277,68 @@ const Store = () => {
           </div>
         </div>
       </div>
+
+        {/* Preview Modal */}
+        {previewItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/70" onClick={() => setPreviewItem(null)}></div>
+            <div className="relative bg-gray-900 rounded-lg p-6 w-full max-w-md">
+              <button className="absolute top-3 right-3 text-gray-400 hover:text-white" onClick={() => setPreviewItem(null)}><X /></button>
+              <img src={previewItem.image} alt={previewItem.name} className="w-full rounded-lg mb-4" />
+              <h3 className="text-xl font-bold mb-2">{previewItem.name}</h3>
+              <p className="text-gray-400 mb-4">{previewItem.description}</p>
+              <button className="btn-secondary" onClick={() => {
+                if (ownedItemIds.includes(previewItem.id)) {
+                  removeFromCart(previewItem.id);
+                } else {
+                  addToCart(previewItem);
+                }
+                setPreviewItem(null);
+              }}>
+                {cartIds.includes(previewItem.id) ? 'Quitar del carrito' : 'Añadir al carrito'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Cart Modal */}
+        {showConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/70" onClick={() => setShowConfirm(false)}></div>
+            <div className="relative bg-gray-900 rounded-lg p-6 w-full max-w-sm">
+              <button className="absolute top-3 right-3 text-gray-400 hover:text-white" onClick={() => setShowConfirm(false)}><X /></button>
+              <h3 className="text-xl font-bold mb-4">Carrito</h3>
+              {cartIds.length === 0 ? (
+                <p className="text-gray-400">Carrito vacío.</p>
+              ) : (
+                <>
+                  <ul className="space-y-2 mb-4 max-h-60 overflow-y-auto">
+                    {cartIds.map(id => {
+                      const item = storeItems.find(i => i.id === id)!;
+                      return (
+                        <li key={id} className="flex justify-between items-center">
+                          <span>{item.name}</span>
+                          <span>{item.price}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <div className="font-bold mb-4">Total: {cartIds.reduce((sum, id) => sum + (storeItems.find(i => i.id === id)?.price || 0), 0)} Z-Coins</div>
+                  <div className="flex justify-end space-x-3">
+                    <button className="btn-secondary" onClick={() => { clearCart(); }}>Vaciar</button>
+                    <button className="btn-primary" onClick={() => {
+                      const items = cartIds.map(id => storeItems.find(i => i.id === id)!) ;
+                      const res = checkout(items, userLevel);
+                      if (res.success) toast.success(res.message);
+                      else toast.error(res.message);
+                      setShowConfirm(false);
+                    }}>Pagar</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
     </div>
   );
 };

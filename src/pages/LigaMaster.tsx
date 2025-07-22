@@ -17,7 +17,6 @@ import {
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import ClubListItem from '../components/common/ClubListItem';
-import DashboardSkeleton from '../components/common/DashboardSkeleton';
 import { useDataStore } from '../store/dataStore';
 import { formatDate, formatCurrency } from '../utils/helpers';
 

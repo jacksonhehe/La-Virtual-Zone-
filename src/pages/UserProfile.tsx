@@ -1,13 +1,17 @@
 import { useParams, Link } from 'react-router-dom';
-import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight, Trophy } from 'lucide-react';
+import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight, Trophy, Camera } from 'lucide-react';
+import toast from 'react-hot-toast';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
+import { useAuthStore } from '../store/authStore';
 import { slugify } from '../utils/helpers';
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
 
   const { clubs } = useDataStore();
+  const { user: current } = useAuthStore();
+  const updateUser = useAuthStore(state => state.updateUser);
   
   // Mock user for demo
   const user = {
@@ -66,12 +70,47 @@ const UserProfile = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="card p-6 text-center mb-6">
-              <div className="w-24 h-24 mx-auto mb-4 relative group">
-                <img 
-                  src={user.avatar} 
-                  alt={user.username} 
-                  className="w-full h-full rounded-full"
-                />
+              <div className="w-24 h-24 mx-auto mb-4 relative group overflow-visible">
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <img 
+                    src={user.avatar} 
+                    alt={user.username} 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                </div>
+                {current?.username === user.username && (
+                  <>
+                    <button
+                      className="absolute bottom-1 right-1 z-10 bg-primary p-1 rounded-full text-white hover:bg-primary/80 shadow w-6 h-6 flex items-center justify-center transform hover:scale-110 transition-transform"
+                      onClick={() => document.getElementById('avatarInput')?.click()}
+                      title="Cambiar foto"
+                    >
+                      <Camera size={16} />
+                    </button>
+                    <input
+                      type="file"
+                      id="avatarInput"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          const base64 = reader.result as string;
+                          updateUser({ avatar: base64 });
+                          toast.success('Avatar actualizado');
+                        };
+                        // Validar peso (2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast.error('La imagen supera 2 MB');
+                          return;
+                        }
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                  </>
+                )}
                 <div className="absolute top-0 right-0">
                   <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role)}`}>
                     {getRoleLabel(user.role)}
@@ -172,15 +211,15 @@ const UserProfile = () => {
                 
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="bg-dark-lighter p-2 rounded-lg">
-                    <p className="text-lg font-bold">{club.position}°</p>
+                    <p className="text-lg font-bold">{(club as any)?.position ?? '-' }°</p>
                     <p className="text-xs text-gray-400">Posición</p>
                   </div>
                   <div className="bg-dark-lighter p-2 rounded-lg">
-                    <p className="text-lg font-bold">{club.points}</p>
+                    <p className="text-lg font-bold">{(club as any)?.points ?? '-'}</p>
                     <p className="text-xs text-gray-400">Puntos</p>
                   </div>
                   <div className="bg-dark-lighter p-2 rounded-lg">
-                    <p className="text-lg font-bold">{club.wins}</p>
+                    <p className="text-lg font-bold">{(club as any)?.wins ?? '-'}</p>
                     <p className="text-xs text-gray-400">Victorias</p>
                   </div>
                 </div>
