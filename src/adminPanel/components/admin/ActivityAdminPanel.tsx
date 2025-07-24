@@ -1,4 +1,4 @@
-import  React, { useState, useEffect } from 'react';
+import  React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 // For CSV export utility
 // (no extra lib needed)
@@ -198,7 +198,7 @@ const ActivityAdminPanel = () => {
               </select>
               <select
                 value={limit}
-                onChange={(e) => setLimit(e.target.value as any)}
+                onChange={(e) => setLimit(e.target.value as '5' | '10' | '20' | 'all')}
                 className="input min-w-[100px]"
               >
                 <option value="5">5</option>
