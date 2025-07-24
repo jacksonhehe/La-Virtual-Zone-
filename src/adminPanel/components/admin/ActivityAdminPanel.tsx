@@ -1,17 +1,18 @@
 import  React, { useState, useEffect } from 'react';
-import { Activity, User, Clock, AlertCircle, Eye, Filter, Calendar, CheckCircle, X } from 'lucide-react';
-import { useGlobalStore, subscribe as subscribeGlobal } from '../../store/globalStore';
-import { useActivityStore } from '../../store/activityStore';
+import { motion, AnimatePresence } from 'framer-motion';
+// For CSV export utility
+// (no extra lib needed)
+import { Activity, User, Clock, AlertCircle, Eye, Calendar } from 'lucide-react';
+// Store imports removed as not used currently
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 
 const ActivityAdminPanel = () => {
-  const { users } = useGlobalStore();
-  const { activities } = useActivityStore();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [timeFilter, setTimeFilter] = useState('today');
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
+  const [limit, setLimit] = useState<'5' | '10' | '20' | 'all'>('10');
 
   const mockActivities = [
     { id: '1', type: 'login', user: 'admin', timestamp: new Date().toISOString(), details: 'Sesión iniciada', ip: '192.168.1.1', status: 'success' },
@@ -93,6 +94,31 @@ const ActivityAdminPanel = () => {
     return date.toLocaleDateString();
   };
 
+  const limitedActivities = limit === 'all' ? filteredActivities : filteredActivities.slice(0, parseInt(limit));
+
+  const exportCSV = () => {
+    const headers = ['ID','Tipo','Usuario','Fecha','Detalles','IP','Estado'];
+    const rows = limitedActivities.map(a => [
+      a.id,
+      a.type,
+      a.user,
+      new Date(a.timestamp).toLocaleString(),
+      a.details,
+      a.ip,
+      a.status
+    ]);
+    const csv = [headers, ...rows]
+      .map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'actividad.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <div className="space-y-6">
@@ -170,25 +196,51 @@ const ActivityAdminPanel = () => {
                 <option value="month">Este mes</option>
                 <option value="all">Todo</option>
               </select>
+              <select
+                value={limit}
+                onChange={(e) => setLimit(e.target.value as any)}
+                className="input min-w-[100px]"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="all">Todas</option>
+              </select>
             </div>
+
+            {/* Export CSV */}
+            <button
+              onClick={exportCSV}
+              className="btn-outline flex items-center space-x-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+              <span>CSV</span>
+            </button>
           </div>
 
-          <div className="space-y-3">
-            {filteredActivities.length > 0 ? (
-              filteredActivities.map((activity) => {
+          <div className="space-y-3" role="list">
+            <AnimatePresence>
+            {limitedActivities.length > 0 ? (
+              limitedActivities.map((activity) => {
                 const ActivityIcon = getActivityIcon(activity.type);
                 const isExpanded = selectedActivity === activity.id;
                 
                 return (
-                  <div 
-                    key={activity.id} 
+                  <motion.div 
+                    key={activity.id}
+                    role="listitem"
+                    initial={{ opacity:0, translateY:8 }}
+                    animate={{ opacity:1, translateY:0 }}
+                    exit={{ opacity:0, translateY:-8 }}
+                    transition={{ duration:0.25 }}
                     className={`bg-gray-900/50 rounded-lg border hover:border-primary/30 transition-all ${getActivityColor(activity.status)}`}
+                    tabIndex={0}
                   >
                     <div className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div className="p-2 bg-primary/20 rounded-lg">
-                            <ActivityIcon size={18} className="text-primary" />
+                          <div className="p-2 bg-primary/20 rounded-lg" aria-label={activity.type}>
+                            <ActivityIcon size={18} />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center space-x-3">
@@ -199,7 +251,7 @@ const ActivityAdminPanel = () => {
                               </span>
                               <span className="text-xs text-gray-400">{formatTime(activity.timestamp)}</span>
                             </div>
-                            <p className="text-gray-300 mt-1">{activity.details}</p>
+                            <p className="text-gray-300 mt-1 truncate" title={activity.details}>{activity.details}</p>
                           </div>
                         </div>
                         <button
@@ -231,7 +283,7 @@ const ActivityAdminPanel = () => {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })
             ) : (
@@ -241,6 +293,7 @@ const ActivityAdminPanel = () => {
                 <p className="text-gray-500">Intenta ajustar los filtros de búsqueda</p>
               </div>
             )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

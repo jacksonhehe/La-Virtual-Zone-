@@ -90,29 +90,45 @@ const SidebarAdmin = () => {
           </button>
         </div> 
         
-               <nav className="px-2 md:px-4 space-y-2 mt-6">
+        <nav className="px-2 md:px-4 space-y-2 mt-6">
           {menuItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.href}
               end={item.href === '/admin'}
               className={({ isActive }) =>
-                `sidebar-link ${isActive ? 'active' : ''}`
+                `sidebar-link group relative ${isActive ? 'active border-l-4 border-purple-500' : ''}`
               }
               onClick={() => setIsOpen(false)}
               aria-label={item.name}
             >
+              {/* Icon Container */}
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-700/50 group-hover:bg-gray-600/50 transition-colors">
                 <item.icon size={18} />
               </div>
-              {!collapsed && <span className="font-medium">{item.name}</span>}
+
+              {/* Tooltip when collapsed */}
+              {collapsed && (
+                <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800 text-gray-100 text-xs px-2 py-1 rounded-lg shadow-lg opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 z-50">
+                  {item.name}
+                </span>
+              )}
+
+              {/* Text label for expanded mode */}
+              {!collapsed && (
+                <span className="font-medium transition-opacity duration-200">
+                  {item.name}
+                </span>
+              )}
+
+              {/* Badge */}
               {item.badge && item.badge > 0 && !collapsed && (
                 <span className="ml-auto bg-gradient-to-r from-red-600 to-pink-600 text-white text-xs rounded-full px-2.5 py-1 font-bold shadow-lg animate-pulse">
                   {item.badge}
                 </span>
               )}
             </NavLink>
-          ))} 
+          ))}
         </nav>
       </div>
     </>

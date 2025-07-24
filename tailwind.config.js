@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -34,7 +35,7 @@ export default {
       boxShadow: {
         neon: '0 0 6px rgba(0, 224, 255, .45)'
       }
-    }
+    },
   },
   safelist: [
     'hover:border-primary',

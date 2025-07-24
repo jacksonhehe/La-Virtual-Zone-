@@ -1,6 +1,7 @@
 import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target } from 'lucide-react'; 
-import { useEffect } from 'react';
+import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target, Sun, Moon } from 'lucide-react'; 
+import { useEffect, useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGlobalStore } from '../../store/globalStore';
@@ -9,6 +10,43 @@ const Dashboard = () => {
   const { users, clubs, players, transfers, activities } = useGlobalStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const [isDark, setIsDark] = useState(true);
+  const [activitiesCount, setActivitiesCount] = useState(5);
+
+  const usersChartRef = useRef<HTMLDivElement>(null);
+  const positionsChartRef = useRef<HTMLDivElement>(null);
+
+  const downloadChart = async (ref: React.RefObject<HTMLDivElement>, filename: string) => {
+    if (!ref.current) return;
+    const canvas = await html2canvas(ref.current, { backgroundColor: null });
+    const link = document.createElement('a');
+    link.download = `${filename}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? 'light' : 'dark';
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', newTheme);
+    setIsDark(!isDark);
+  };
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme') ?? 'dark';
+    if (storedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setIsDark(false);
+    }
+  }, []);
 
   // Distribución de posiciones de jugadores para PieChart
   const positionCounts: Record<string, number> = {};
@@ -34,13 +72,21 @@ const Dashboard = () => {
   ];
 
   const pendingTransfers = transfers.filter(t => t.status === 'pending').length;
-  const recentActivities = activities.slice(-5);
+  const recentActivities = activities.slice(-activitiesCount);
 
    return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20 p-6">
+    <div className={`min-h-screen p-6 ${isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20' : 'bg-gradient-to-br from-gray-100 via-white to-gray-200'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Hero Header */}
         <div className="relative overflow-hidden bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="absolute top-4 right-4 bg-gray-700/50 hover:bg-gray-600 text-gray-300 hover:text-white p-2 rounded-full transition-colors"
+            aria-label="Toggle Theme"
+          >
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div> 
           <div className="relative flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6">
             <div className="space-y-4">
@@ -201,53 +247,91 @@ const Dashboard = () => {
                 <span className="text-sm text-gray-300">Usuarios</span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={kpiData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
-                <YAxis stroke="#9CA3AF" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '12px',
-                    color: '#F3F4F6',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
-                  }} 
-                />
-                <Bar 
-                  dataKey="users" 
-                  fill="url(#userGradient)" 
-                  radius={[4, 4, 0, 0]}
-                />
-                <defs>
-                  <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8B5CF6" />
-                    <stop offset="100%" stopColor="#3B82F6" />
-                  </linearGradient>
-                </defs>
-              </BarChart>
-            </ResponsiveContainer>
+            <div ref={usersChartRef}>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={kpiData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
+                  <YAxis stroke="#9CA3AF" fontSize={12} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1F2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '12px',
+                      color: '#F3F4F6',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                    }} 
+                  />
+                  <Bar 
+                    dataKey="users" 
+                    fill="url(#userGradient)" 
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={800}
+                    animationEasing="ease-out"
+                  />
+                  <defs>
+                    <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#8B5CF6" />
+                      <stop offset="100%" stopColor="#3B82F6" />
+                    </linearGradient>
+                  </defs>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <button
+              onClick={() => downloadChart(usersChartRef, 'crecimiento_usuarios')}
+              className="mt-2 text-xs text-gray-300 hover:text-white underline"
+            >
+              Descargar PNG
+            </button>
           </div>
 
           {/* Distribución de Posiciones */}
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 flex flex-col items-center justify-center">
             <h3 className="text-xl font-bold text-white mb-6">Distribución de Posiciones</h3>
-            <ResponsiveContainer width="100%" height={320}>
-              <PieChart>
-                <Pie dataKey="value" data={pieData} cx="50%" cy="50%" outerRadius={110} label={{ fill: '#cbd5e1', fontSize: 12 }}>
-                  {pieData.map((_, idx) => (
-                    <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-                      </div>
-                    </div>
+            <div ref={positionsChartRef}>
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie 
+                    dataKey="value" 
+                    data={pieData} 
+                    cx="50%" 
+                    cy="50%" 
+                    outerRadius={110} 
+                    label={{ fill: '#cbd5e1', fontSize: 12 }}
+                    animationDuration={800}
+                    animationEasing="ease-out"
+                  >
+                    {pieData.map((_, idx) => (
+                      <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <button
+              onClick={() => downloadChart(positionsChartRef, 'distribucion_posiciones')}
+              className="mt-2 text-xs text-gray-300 hover:text-white underline"
+            >
+              Descargar PNG
+            </button>
+          </div>
+        </div>
 
         {/* Activity timeline */}
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 space-y-4">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center"><Activity size={20} className="mr-2 text-purple-400"/>Actividad Reciente</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-white flex items-center"><Activity size={20} className="mr-2 text-purple-400"/>Actividad Reciente</h3>
+            <select
+              className="bg-gray-700/50 text-gray-300 text-sm rounded-lg p-2 focus:outline-none"
+              value={activitiesCount}
+              onChange={(e) => setActivitiesCount(parseInt(e.target.value))}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
           {recentActivities.length === 0 && <p className="text-gray-400 text-sm">Sin movimientos recientes.</p>}
           {recentActivities.map(act => (
             <div key={act.id} className="flex items-start space-x-3">

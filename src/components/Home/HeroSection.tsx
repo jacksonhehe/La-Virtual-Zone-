@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Users, TrendingUp, Trophy } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 
 const HeroSection = () => {
+  const { isAuthenticated } = useAuthStore();
   return (
     <div className="relative min-h-[80vh] flex items-center bg-gray-900 overflow-hidden">
       {/* Background image with overlay */}
@@ -40,11 +42,13 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link to="/registro" className="btn-primary">
-              Crear Cuenta
-            </Link>
+            {!isAuthenticated && (
+              <Link to="/registro" className="btn-primary">
+                Crear Cuenta
+              </Link>
+            )}
             <Link to="/liga-master" className="btn-secondary">
-              Explorar Liga Master
+              {isAuthenticated ? 'Ir a Liga Master' : 'Explorar Liga Master'}
             </Link>
           </div>
           

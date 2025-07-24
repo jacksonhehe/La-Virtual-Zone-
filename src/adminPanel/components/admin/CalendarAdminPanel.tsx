@@ -1,5 +1,8 @@
 import  React, { useState, useEffect } from 'react';
-import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, Filter, MapPin, Settings } from 'lucide-react'; 
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings, Download } from 'lucide-react'; 
+import { v4 as uuidv4 } from 'uuid';
 import { useGlobalStore } from '../../store/globalStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
@@ -27,6 +30,38 @@ const CalendarAdminPanel = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showEventModal, setShowEventModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+
+  // Form state for new event
+  const initialForm = { title:'', type:'match', date:'', time:'', description:'', priority:'medium', location:'' };
+  const [eventForm, setEventForm] = useState<any>(initialForm);
+
+  const handleSaveEvent = () => {
+    if(!eventForm.title || !eventForm.date || !eventForm.time) {
+      toast.error('Título, fecha y hora son obligatorios');
+      return;
+    }
+    const newEvent: CalendarEvent = {
+      id: uuidv4(),
+      title: eventForm.title,
+      type: eventForm.type,
+      date: eventForm.date,
+      time: eventForm.time,
+      description: eventForm.description,
+      location: eventForm.location,
+      participants: [],
+      status: 'scheduled',
+      priority: eventForm.priority,
+      createdBy: 'admin'
+    };
+    setEvents(prev => [...prev, newEvent]);
+    // Si estamos en vista calendario, mostrar inmediatamente el nuevo día
+    if(viewMode === 'calendar' && selectedDate !== newEvent.date){
+      setSelectedDate(newEvent.date);
+    }
+    toast.success('Evento creado');
+    setShowEventModal(false);
+    setEventForm(initialForm);
+  };
 
   const mockEvents: CalendarEvent[] = [
     {
@@ -291,7 +326,7 @@ const CalendarAdminPanel = () => {
                   >
                     <div className="p-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
+                        <div className={`flex items-center space-x-4 ${isEventToday && event.priority==='high' ? 'animate-pulse' : ''}`}> 
                           <div className="p-2 bg-primary/20 rounded-lg">
                             <EventIcon size={18} className="text-primary" />
                           </div>
@@ -381,6 +416,61 @@ const CalendarAdminPanel = () => {
               </div>
             )}
           </div>
+          {/* Modal */}
+          {showEventModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+              <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-lg border border-gray-700 relative">
+                <h2 className="text-xl font-bold text-white mb-4">{selectedEvent ? 'Editar Evento' : 'Nuevo Evento'}</h2>
+                <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+                  <div>
+                    <label className="text-sm text-gray-300">Título *</label>
+                    <input className="input w-full mt-1" value={eventForm.title} onChange={e=>setEventForm({...eventForm,title:e.target.value})} required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm text-gray-300">Fecha *</label>
+                      <input type="date" className="input w-full mt-1" value={eventForm.date} onChange={e=>setEventForm({...eventForm,date:e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">Hora *</label>
+                      <input type="time" className="input w-full mt-1" value={eventForm.time} onChange={e=>setEventForm({...eventForm,time:e.target.value})} required />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">Tipo</label>
+                    <select className="input w-full mt-1" value={eventForm.type} onChange={e=>setEventForm({...eventForm,type:e.target.value})}>
+                      <option value="match">Partido</option>
+                      <option value="training">Entrenamiento</option>
+                      <option value="meeting">Reunión</option>
+                      <option value="deadline">Fecha límite</option>
+                      <option value="maintenance">Mantenimiento</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">Prioridad</label>
+                    <select className="input w-full mt-1" value={eventForm.priority} onChange={e=>setEventForm({...eventForm,priority:e.target.value})}>
+                      <option value="high">Alta</option>
+                      <option value="medium">Media</option>
+                      <option value="low">Baja</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">Ubicación</label>
+                    <input className="input w-full mt-1" value={eventForm.location} onChange={e=>setEventForm({...eventForm,location:e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">Descripción</label>
+                    <textarea className="input w-full mt-1" rows={3} value={eventForm.description} onChange={e=>setEventForm({...eventForm,description:e.target.value})}></textarea>
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button onClick={()=>{setShowEventModal(false);setEventForm(initialForm);}} className="btn-outline">Cancelar</button>
+                  <button onClick={handleSaveEvent} className="btn-primary">Guardar</button>
+                </div>
+                <button aria-label="Cerrar" onClick={()=>{setShowEventModal(false);setEventForm(initialForm);}} className="absolute top-3 right-3 p-1 text-gray-400 hover:text-white">✕</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
