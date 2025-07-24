@@ -1,23 +1,9 @@
 import  React, { useState } from 'react';
-import { Edit, Plus, Trash, Search, Filter, Calendar, User, Eye, EyeOff, FileText, Image, Star } from 'lucide-react';
-import SearchFilter from './SearchFilter';
+import { Edit, Plus, Trash, Search, Calendar, User, Eye, EyeOff, FileText, Star } from 'lucide-react';
 import StatsCard from './StatsCard';
 import { useGlobalStore } from '../../store/globalStore';
 import type { NewsItem } from '../../types';
 
-interface NewsArticle {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  date: string;
-  status: 'draft' | 'published' | 'archived';
-  category: string;
-  views: number;
-  featured: boolean;
-  image?: string;
-  tags: string[];
-}
 
 function NewNewsModal({ onClose, onSave, initialData, isEdit }: { onClose: () => void; onSave: (news: NewsItem) => void; initialData?: NewsItem; isEdit?: boolean }) {
   const [form, setForm] = React.useState({
@@ -51,7 +37,7 @@ function NewNewsModal({ onClose, onSave, initialData, isEdit }: { onClose: () =>
       setError('Todos los campos obligatorios');
       return;
     }
-    onSave({
+    const newItem: NewsItem = {
       id: initialData?.id || Date.now().toString(),
       title: form.title,
       content: form.content,
@@ -62,7 +48,8 @@ function NewNewsModal({ onClose, onSave, initialData, isEdit }: { onClose: () =>
       category: form.category,
       featured: form.featured,
       tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
-    } as any);
+    };
+    onSave(newItem);
     onClose();
   };
   return (
@@ -99,7 +86,6 @@ const NewsAdminPanel = () => {
   const newsItems = useGlobalStore(state => state.newsItems);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
   const addNewsItem = useGlobalStore(state => state.addNewsItem);
   const updateNewsItem = useGlobalStore(state => state.updateNewsItem);
   const removeNewsItem = useGlobalStore(state => state.removeNewsItem);
@@ -116,11 +102,11 @@ const NewsAdminPanel = () => {
     author: n.author,
     date: n.publishedAt,
     status: n.status,
-    category: (n as any).category || 'Noticias',
-    views: (n as any).views || 0,
-    featured: (n as any).featured || false,
-    image: (n as any).image || '',
-    tags: (n as any).tags || [],
+    category: n.category ?? 'Noticias',
+    views: n.views ?? 0,
+    featured: n.featured ?? false,
+    image: n.image ?? '',
+    tags: n.tags ?? [],
   }));
 
   const filteredArticles = articles.filter(article => {

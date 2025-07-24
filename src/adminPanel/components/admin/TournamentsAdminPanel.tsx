@@ -119,7 +119,6 @@ const TournamentsAdminPanel = () => {
 
       {filteredTournaments.map((tournament) => {
         const FormatIcon = getFormatIcon(tournament.type);
-        const progress = ((tournament.currentTeams || 0) / (tournament.maxTeams || 1)) * 100;
 
         return (
           <div key={tournament.id} className="bg-gray-900/50 rounded-lg p-6 border border-gray-700/30 hover:border-primary/30 transition-all">
