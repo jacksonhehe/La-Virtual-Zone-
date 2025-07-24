@@ -70,7 +70,7 @@ starting the E2E tests.
 To access the administrator interface:
 
 1. Start the development server with `npm run dev`.
-nTo start the API server run:
+To start the API server run:
 ```bash
 (cd server && npm install && npm run start:dev)
 ```
