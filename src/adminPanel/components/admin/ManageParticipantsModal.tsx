@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { X, Users, Search, Plus, Trash2, CheckCircle } from 'lucide-react';
-import { Club, Tournament } from '../../../types';
+import { Tournament } from '../../../types';
 import ClubListItem from '../../../components/common/ClubListItem';
 import { useGlobalStore } from '../../store/globalStore';
 
@@ -18,8 +18,6 @@ const ManageParticipantsModal: React.FC<Props> = ({ tournament: initialTournamen
   const tournament = useMemo(() => tournaments.find(t => t.id === initialTournament.id) || initialTournament, [tournaments, initialTournament]);
 
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   // Participantes actuales (club objects)
   const participantClubs = useMemo(
@@ -56,7 +54,6 @@ const ManageParticipantsModal: React.FC<Props> = ({ tournament: initialTournamen
   };
 
   const handleClose = () => {
-    setSuccess(false);
     onClose();
   };
 

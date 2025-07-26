@@ -49,8 +49,10 @@ function DataTable<T>({ data, columns, keyExtractor, pageSize = 10, onSelectionC
     if (!col) return data;
     const dir = sort.dir === 'asc' ? 1 : -1;
     return [...data].sort((a, b) => {
-      const v1 = col.accessor(a) as any;
-      const v2 = col.accessor(b) as any;
+      const raw1 = col.accessor(a);
+      const raw2 = col.accessor(b);
+      const v1 = typeof raw1 === 'number' ? raw1 : String(raw1);
+      const v2 = typeof raw2 === 'number' ? raw2 : String(raw2);
       if (v1 === v2) return 0;
       return (v1 > v2 ? 1 : -1) * dir;
     });

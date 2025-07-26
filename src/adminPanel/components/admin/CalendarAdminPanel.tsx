@@ -1,12 +1,7 @@
-import  React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import  React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { DndContext, PointerSensor, useSensor, useSensors, DragEndEvent, closestCenter } from '@dnd-kit/core';
-import { useDraggable, useDroppable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
-import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings, Download } from 'lucide-react'; 
+import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { useGlobalStore } from '../../store/globalStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 
@@ -25,7 +20,6 @@ interface CalendarEvent {
 }
 
 const CalendarAdminPanel = () => {
-  const { users } = useGlobalStore();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
@@ -35,8 +29,18 @@ const CalendarAdminPanel = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
   // Form state for new event
-  const initialForm = { title:'', type:'match', date:'', time:'', description:'', priority:'medium', location:'' };
-  const [eventForm, setEventForm] = useState<any>(initialForm);
+  interface EventForm {
+    title: string;
+    type: CalendarEvent['type'];
+    date: string;
+    time: string;
+    description: string;
+    priority: CalendarEvent['priority'];
+    location: string;
+  }
+
+  const initialForm: EventForm = { title:'', type:'match', date:'', time:'', description:'', priority:'medium', location:'' };
+  const [eventForm, setEventForm] = useState<EventForm>(initialForm);
 
   const handleSaveEvent = () => {
     if(!eventForm.title || !eventForm.date || !eventForm.time) {
@@ -66,7 +70,7 @@ const CalendarAdminPanel = () => {
     setEventForm(initialForm);
   };
 
-  const mockEvents: CalendarEvent[] = [
+  const mockEvents: CalendarEvent[] = useMemo(() => [
     {
       id: '1',
       title: 'Liga Master - Jornada 15',
@@ -128,7 +132,7 @@ const CalendarAdminPanel = () => {
       priority: 'high',
       createdBy: 'system'
     }
-  ];
+  ], []);
 
   /* ---------------- Persistencia local ---------------- */
   useEffect(() => {
@@ -141,8 +145,7 @@ const CalendarAdminPanel = () => {
       }
     } else {
     setEvents(mockEvents);
-    }
-  }, []);
+  }, [mockEvents]);
 
   useEffect(() => {
     localStorage.setItem('admin_events', JSON.stringify(events));
