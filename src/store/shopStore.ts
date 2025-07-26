@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { StoreItem } from '../types';
 import { useEconomySlice } from './economySlice';
+import { useStoreSlice } from './storeSlice';
 
 interface ActiveAssets {
   background?: string; // id del item aplicado
@@ -28,7 +29,7 @@ interface ShopState {
 export const useShopStore = create<ShopState>()(
   persist(
     (set, get) => ({
-      coins: 5000, // saldo inicial para pruebas
+      coins: 0,
       ownedItemIds: [],
       cartIds: [],
       activeAssets: {},
@@ -41,16 +42,18 @@ export const useShopStore = create<ShopState>()(
         if (userLevel < item.minLevel) {
           return { success: false, message: `Necesitas nivel ${item.minLevel}` };
         }
-        if (state.coins < item.price) {
+        const balance = useEconomySlice.getState().getBalance(userId);
+        if (balance < item.price) {
           return { success: false, message: 'Z-Coins insuficientes' };
         }
-        set({
-          coins: state.coins - item.price,
-          ownedItemIds: [...state.ownedItemIds, item.id]
-        });
-        // registrar gasto en economía
-        useEconomySlice.getState().addExpense(userId, item.price, 'store', `Compra ${item.id}`, item.id);
-        return { success: true, message: 'Compra realizada' };
+        const res = useStoreSlice.getState().purchaseProduct(item.id, userId);
+        if (res.success) {
+          set({
+            coins: useEconomySlice.getState().getBalance(userId),
+            ownedItemIds: [...state.ownedItemIds, item.id],
+          });
+        }
+        return res;
       },
 
       addToCart: (item) => {
@@ -67,16 +70,20 @@ export const useShopStore = create<ShopState>()(
       checkout: (items, userLevel = 1, userId = 'anonymous') => {
         const state = get();
         const total = items.reduce((sum, i) => sum + i.price, 0);
-        if (total > state.coins) return { success: false, message: 'Z-Coins insuficientes' };
+        const balance = useEconomySlice.getState().getBalance(userId);
+        if (total > balance) return { success: false, message: 'Z-Coins insuficientes' };
         // nivel check
         const insufficient = items.find(i => userLevel < i.minLevel);
         if (insufficient) return { success: false, message: `Necesitas nivel ${insufficient.minLevel} para ${insufficient.name}` };
+        for (const item of items) {
+          const r = useStoreSlice.getState().purchaseProduct(item.id, userId);
+          if (!r.success) return r;
+        }
         set({
-          coins: state.coins - total,
+          coins: useEconomySlice.getState().getBalance(userId),
           ownedItemIds: [...state.ownedItemIds, ...items.map(i => i.id)],
-          cartIds: []
+          cartIds: [],
         });
-        useEconomySlice.getState().addExpense(userId, total, 'store', 'Compra múltiple', 'cart');
         return { success: true, message: 'Compra realizada' };
       },
 
