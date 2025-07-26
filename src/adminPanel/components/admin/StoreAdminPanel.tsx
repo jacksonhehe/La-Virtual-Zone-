@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { useStoreStore, Product, Rarity } from '../../store/storeStore';
+import { useStoreSlice, PurchaseTx } from '../../../store/storeSlice';
+import { StoreItem } from '../../../types';
+type Rarity = NonNullable<StoreItem['rarity']>;
 import Button from '../../../components/ui/Button';
 import Modal from '../../../components/ui/Modal';
 
@@ -9,7 +11,7 @@ const initialForm = {
   name: '',
   description: '',
   category: '',
-  rarity: 'comun' as Rarity,
+  rarity: 'common' as Rarity,
   price: 0,
   tags: '' as string,
   stockLimited: false,
@@ -21,16 +23,50 @@ const initialForm = {
 };
 
 const StoreAdminPanel = () => {
-  const { addStoreItem } = useStoreStore();
+  const { addStoreItem, updateStoreItem, removeStoreItem, products } = useStoreSlice();
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(initialForm);
+  const [editingProduct, setEditingProduct] = useState<StoreItem | null>(null);
+
+  const { purchases } = useStoreSlice();
+
+  const [filterUser, setFilterUser] = useState('');
+  const [filterProduct, setFilterProduct] = useState('');
+  const [filterState, setFilterState] = useState<'all' | 'success' | 'refunded'>('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  const filteredPurchases = purchases.filter((tx)=>{
+    if(filterUser && !tx.userId.includes(filterUser)) return false;
+    if(filterProduct && !tx.productId.includes(filterProduct)) return false;
+    if(filterState!=='all' && tx.status!==filterState) return false;
+    const ts = new Date(tx.date).getTime();
+    if(dateFrom && ts < new Date(dateFrom).getTime()) return false;
+    if(dateTo && ts > new Date(dateTo).getTime()) return false;
+    return true;
+  });
+
+  const exportCsv = () => {
+    const rows = [
+      ['ID','Producto','Usuario','Fecha','Estado'],
+      ...filteredPurchases.map(p=>[p.id,p.productId,p.userId,p.date,p.status])
+    ];
+    const csv = rows.map(r=>r.join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url;
+    a.download='compras.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleSave = () => {
     if (!form.name.trim() || !form.category.trim() || form.price <= 0) {
       toast.error('Nombre, categoría y precio son obligatorios.');
       return;
     }
-    const productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'active'> = {
+    const productData = {
       name: form.name.trim(),
       description: form.description.trim(),
       category: form.category.trim(),
@@ -43,10 +79,26 @@ const StoreAdminPanel = () => {
       expireAt: form.expireAt || undefined,
       stock: form.stockLimited ? form.stock : null,
     } as any;
-    addStoreItem(productData);
-    toast.success('Producto creado');
+    if(editingProduct){
+      updateStoreItem(editingProduct.id, productData);
+      toast.success('Producto actualizado');
+    } else {
+      addStoreItem(productData);
+      toast.success('Producto creado');
+    }
     setShowModal(false);
     setForm(initialForm);
+    setEditingProduct(null);
+  };
+
+  /* helpers para rareza */
+  const rarityRing = (rarity: Rarity | undefined) => {
+    switch(rarity){
+      case 'rare': return 'ring-2 ring-neon-blue';
+      case 'epic': return 'ring-2 ring-neon-purple';
+      case 'legendary': return 'ring-2 ring-neon-yellow';
+      default: return '';
+    }
   };
 
   return (
@@ -81,20 +133,96 @@ const StoreAdminPanel = () => {
         </div>
       </div>
 
-      {/* Placeholder catalog */}
-      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 min-h-[300px] flex items-center justify-center text-gray-500">
-        Catálogo próximamente...
+      {/* Catálogo real */}
+      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map(p=> (
+            <div key={p.id} className="relative group rounded-xl overflow-hidden border border-gray-700/40 bg-gray-900/40">
+              <img src={p.image} alt={p.name} className={`w-full h-40 object-cover ${rarityRing(p.rarity)}`} />
+              <div className="p-4 space-y-1">
+                <h3 className="text-white font-semibold flex items-center justify-between">
+                  {p.name}
+                  {p.featured && <span className="text-xs text-yellow-400" title="Destacado">★</span>}
+                </h3>
+                <p className="text-sm text-gray-400 line-clamp-2">{p.description}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="font-bold text-primary">{p.price} ZC</span>
+                  <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button aria-label="Editar" title="Editar" className="text-blue-400 hover:text-blue-300" onClick={()=>{setEditingProduct(p); setForm({
+                      name:p.name,
+                      description:p.description,
+                      category:p.category,
+                      rarity:(p.rarity||'common') as Rarity,
+                      price:p.price,
+                      tags:(p.tags||[]).join(', '),
+                      stockLimited:p.stock!==null && p.stock!==undefined,
+                      stock:p.stock??0,
+                      image:p.image,
+                      launchAt:p.launchAt||'',
+                      expireAt:p.expireAt||'',
+                      featured:!!p.featured,
+                    }); setShowModal(true);}}>
+                      ✏️
+                    </button>
+                    <button aria-label="Eliminar" title="Eliminar" className="text-red-400 hover:text-red-300" onClick={()=>{ if(confirm('¿Eliminar?')){ removeStoreItem(p.id); toast.success('Producto eliminado');}}}>
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Placeholder purchase history */}
-      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 min-h-[300px] flex items-center justify-center text-gray-500">
-        Historial de compras próximamente...
+      {/* Historial de compras */}
+      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
+        <h3 className="text-xl font-bold text-white mb-4">Historial de compras</h3>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+          <input placeholder="Filtrar usuario" className="input" value={filterUser} onChange={e=>setFilterUser(e.target.value)} />
+          <input placeholder="Filtrar producto" className="input" value={filterProduct} onChange={e=>setFilterProduct(e.target.value)} />
+          <select className="input" value={filterState} onChange={e=>setFilterState(e.target.value as any)}>
+            <option value="all">Todos</option>
+            <option value="success">Entregados</option>
+            <option value="refunded">Revertidos</option>
+          </select>
+          <input type="date" className="input" value={dateFrom} onChange={e=>setDateFrom(e.target.value)} />
+          <input type="date" className="input" value={dateTo} onChange={e=>setDateTo(e.target.value)} />
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr className="text-gray-400 border-b border-gray-700 text-xs">
+                <th className="py-2">ID</th>
+                <th className="py-2">Producto</th>
+                <th className="py-2">Usuario</th>
+                <th className="py-2">Fecha</th>
+                <th className="py-2">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPurchases.map(tx=> (
+                <tr key={tx.id} className="border-b border-gray-800 hover:bg-gray-800/30">
+                  <td className="py-2">{tx.id.slice(0,6)}…</td>
+                  <td className="py-2">{tx.productId}</td>
+                  <td className="py-2">{tx.userId}</td>
+                  <td className="py-2">{new Date(tx.date).toLocaleString()}</td>
+                  <td className="py-2">{tx.status==='success' ? <span className="text-green-400">Entregado</span> : <span className="text-red-400">Revertido</span>}</td>
+                </tr>
+              ))}
+              {filteredPurchases.length===0 && (<tr><td colSpan={5} className="text-center py-6 text-gray-500">Sin resultados</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex justify-end mt-4">
+          <button className="btn-secondary" onClick={exportCsv}>Exportar CSV</button>
+        </div>
       </div>
 
       {/* Modal Nuevo Artículo */}
-      <Modal open={showModal} onClose={()=>{setShowModal(false); setForm(initialForm);}} className="w-full max-w-xl">
+      <Modal open={showModal} onClose={()=>{setShowModal(false); setForm(initialForm); setEditingProduct(null);}} className="w-full max-w-xl">
           <div className="relative">
-            <h2 className="text-xl font-bold text-white mb-4">Nuevo Artículo</h2>
+            <h2 className="text-xl font-bold text-white mb-4">{editingProduct? 'Editar Artículo':'Nuevo Artículo'}</h2>
             <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
               <div>
                 <label className="text-sm text-gray-300">Nombre *</label>
@@ -112,10 +240,10 @@ const StoreAdminPanel = () => {
                 <div>
                   <label className="text-sm text-gray-300">Rareza</label>
                   <select className="input w-full mt-1" value={form.rarity} onChange={e=>setForm({...form,rarity:e.target.value as Rarity})}>
-                    <option value="comun">Común</option>
-                    <option value="raro">Raro</option>
-                    <option value="epico">Épico</option>
-                    <option value="legendario">Legendario</option>
+                    <option value="common">Común</option>
+                    <option value="rare">Raro</option>
+                    <option value="epic">Épico</option>
+                    <option value="legendary">Legendario</option>
                   </select>
                 </div>
               </div>
@@ -154,10 +282,10 @@ const StoreAdminPanel = () => {
               <label className="text-sm text-gray-300 flex items-center space-x-2"><input type="checkbox" className="mr-1" checked={form.featured} onChange={e=>setForm({...form,featured:e.target.checked})}/> <span>Destacado</span></label>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
-              <Button variant="outline" onClick={()=>{setShowModal(false); setForm(initialForm);}}>Cancelar</Button>
+              <Button variant="outline" onClick={()=>{setShowModal(false); setForm(initialForm); setEditingProduct(null);}}>Cancelar</Button>
               <Button onClick={handleSave}>Guardar</Button>
             </div>
-            <button aria-label="Cerrar" onClick={()=>{setShowModal(false); setForm(initialForm);}} className="absolute top-3 right-3 p-1 text-gray-400 hover:text-white">✕</button>
+            <button aria-label="Cerrar" onClick={()=>{setShowModal(false); setForm(initialForm); setEditingProduct(null);}} className="absolute top-3 right-3 p-1 text-gray-400 hover:text-white">✕</button>
           </div>
       </Modal>
       )

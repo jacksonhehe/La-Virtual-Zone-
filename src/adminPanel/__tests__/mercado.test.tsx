@@ -1,10 +1,13 @@
-import  { describe, it, expect, vi } from 'vitest';
+import  { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useGlobalStore } from '../store/globalStore';
+import { useGlobalStore, subscribe as subscribeGlobal } from '../store/globalStore';
 import Mercado from '../pages/admin/Mercado';
 
 vi.mock('../store/globalStore');
+
+// A helper noop function to simulate unsubscribe
+const noop = () => {};
 
 const mockStore = {
   transfers: [
@@ -24,7 +27,9 @@ const mockStore = {
 
 describe('Mercado Component', () => {
   beforeEach(() => {
-    vi.mocked(useGlobalStore).mockReturnValue(mockStore);
+    vi.mocked(useGlobalStore).mockReturnValue(mockStore as any);
+    // Ensure the subscribe mock returns a noop unsubscribe function
+    vi.mocked(subscribeGlobal as any).mockReturnValue(noop);
   });
 
   it('should render pending transfers', () => {
@@ -35,7 +40,7 @@ describe('Mercado Component', () => {
 
   it('should approve transfer', () => {
     render(<Mercado />);
-    const approveButton = screen.getByTitle('Aprobar');
+    const approveButton = screen.getByTitle('Aprobar transferencia');
     
     fireEvent.click(approveButton);
     

@@ -166,7 +166,19 @@ export interface StoreItem {
   minLevel: number;
   rarity?: 'common' | 'rare' | 'epic' | 'legendary';
   assetURL?: string; // link al recurso a aplicar (imagen, css, etc.)
+  /** true si aún puede comprarse (stock >0 y activo) */
   inStock: boolean;
+  /** Stock numérico limitado; null = ilimitado */
+  stock?: number | null;
+  /** Etiquetas visuales, ej: Nuevo, Limitado */
+  tags?: string[];
+  /** Destacado en portada */
+  featured?: boolean;
+  /** Fecha de lanzamiento y expiración opcionales (ISO) */
+  launchAt?: string;
+  expireAt?: string;
+  /** Control interno para ocultar sin borrar */
+  active?: boolean;
 }
 
 // League standings type

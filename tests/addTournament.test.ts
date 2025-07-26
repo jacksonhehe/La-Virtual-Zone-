@@ -35,11 +35,11 @@ describe('useGlobalStore addTournament', () => {
       totalRounds: 2,
     };
 
-    useGlobalStore.getState().addTournament(tournament);
+    useGlobalStore.getState().addTournament(tournament as any);
 
     expect(useGlobalStore.getState().tournaments).toContainEqual(tournament);
 
-    const stored = JSON.parse(mockStorage.getItem('vz_tournaments_admin') || '[]');
+    const stored = JSON.parse(mockStorage.getItem('vz_tournaments') || '[]');
     expect(stored).toContainEqual(tournament);
 
     vi.resetModules();

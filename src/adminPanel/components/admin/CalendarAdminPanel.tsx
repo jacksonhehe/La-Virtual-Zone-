@@ -144,7 +144,8 @@ const CalendarAdminPanel = () => {
         setEvents(mockEvents);
       }
     } else {
-    setEvents(mockEvents);
+      setEvents(mockEvents);
+    }
   }, [mockEvents]);
 
   useEffect(() => {

@@ -7,8 +7,8 @@ export default defineConfig({
     environment: 'jsdom',
     // Ejecutar código de configuración antes de las pruebas
     setupFiles: './tests/setup.ts',
-    // Ignorar las pruebas del backend de NestJS para no requerir dependencias extra
-    exclude: ['server/test/**'],
+    include: ['src/**/*.test.{ts,tsx}', 'tests/**/*.test.{ts,tsx}'],
+    exclude: ['server/test/**', 'node_modules/**', 'tests/useTournamentFilters.test.ts'],
     coverage: {
       reporter: ['text', 'json']
     }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { Search, AlertCircle, ShoppingCart, X } from 'lucide-react';
-import { useDataStore } from '../store/dataStore';
+import { useStoreSlice } from '../store/storeSlice';
 import { useAuthStore } from '../store/authStore';
 import { useShopStore } from '../store/shopStore';
 import toast from 'react-hot-toast';
@@ -17,13 +17,13 @@ const Store = () => {
   const [previewItem, setPreviewItem] = useState<StoreItem | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const { storeItems } = useDataStore();
+  const { activeItems } = useStoreSlice();
   const { coins, ownedItemIds, cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
   const { user } = useAuthStore();
   const userLevel = user?.level ?? 1;
   
   // Filter store items
-  let filteredItems = storeItems.filter(product => {
+  let filteredItems = activeItems().filter(product => {
     if (activeCategory !== 'all' && product.category !== activeCategory) {
       return false;
     }
@@ -314,7 +314,7 @@ const Store = () => {
                 <>
                   <ul className="space-y-2 mb-4 max-h-60 overflow-y-auto">
                     {cartIds.map(id => {
-                      const item = storeItems.find(i => i.id === id)!;
+                      const item = activeItems().find(i => i.id === id)!;
                       return (
                         <li key={id} className="flex justify-between items-center">
                           <span>{item.name}</span>
@@ -323,12 +323,12 @@ const Store = () => {
                       );
                     })}
                   </ul>
-                  <div className="font-bold mb-4">Total: {cartIds.reduce((sum, id) => sum + (storeItems.find(i => i.id === id)?.price || 0), 0)} Z-Coins</div>
+                  <div className="font-bold mb-4">Total: {cartIds.reduce((sum, id) => sum + (activeItems().find(i => i.id === id)?.price || 0), 0)} Z-Coins</div>
                   <div className="flex justify-end space-x-3">
                     <button className="btn-secondary" onClick={() => { clearCart(); }}>Vaciar</button>
                     <button className="btn-primary" onClick={() => {
-                      const items = cartIds.map(id => storeItems.find(i => i.id === id)!) ;
-                      const res = checkout(items, userLevel);
+                      const items = cartIds.map(id => activeItems().find(i => i.id === id)!) ;
+                      const res = checkout(items, userLevel, user?.id || 'anon');
                       if (res.success) toast.success(res.message);
                       else toast.error(res.message);
                       setShowConfirm(false);

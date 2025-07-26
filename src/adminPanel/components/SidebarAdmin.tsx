@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
 import { Coins } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
-import { useStoreStore } from '../store/storeStore';
+import { useStoreSlice } from '../../store/storeSlice';
 import { useAuth } from '../contexts/AuthContext';
 import { useSidebarStore } from '../store/sidebarStore';
 
@@ -11,7 +11,7 @@ const SidebarAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { collapsed, toggle } = useSidebarStore();
   const { transfers } = useGlobalStore();
-  const { products } = useStoreStore();
+  const { products } = useStoreSlice();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
