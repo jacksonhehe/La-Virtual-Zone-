@@ -4,6 +4,7 @@ import { Search, AlertCircle, ShoppingCart, X } from 'lucide-react';
 import { useStoreSlice } from '../store/storeSlice';
 import { useAuthStore } from '../store/authStore';
 import { useShopStore } from '../store/shopStore';
+import { useEconomySlice } from '../store/economySlice';
 import toast from 'react-hot-toast';
 import { formatCurrency } from '../utils/helpers';
 import { getRarityClasses } from '../utils/rarity';
@@ -18,8 +19,10 @@ const Store = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const { activeItems } = useStoreSlice();
-  const { coins, ownedItemIds, cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
+  const { ownedItemIds, cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
   const { user } = useAuthStore();
+  const { getBalance } = useEconomySlice();
+  const coins = getBalance(user?.id || 'anonymous');
   const userLevel = user?.level ?? 1;
   
   // Filter store items

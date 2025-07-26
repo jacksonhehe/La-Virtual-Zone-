@@ -28,7 +28,7 @@ const StoreAdminPanel = () => {
   const [form, setForm] = useState(initialForm);
   const [editingProduct, setEditingProduct] = useState<StoreItem | null>(null);
 
-  const { purchases } = useStoreSlice();
+  const { purchases, refundPurchase } = useStoreSlice();
 
   const [filterUser, setFilterUser] = useState('');
   const [filterProduct, setFilterProduct] = useState('');
@@ -207,7 +207,15 @@ const StoreAdminPanel = () => {
                   <td className="py-2">{tx.productId}</td>
                   <td className="py-2">{tx.userId}</td>
                   <td className="py-2">{new Date(tx.date).toLocaleString()}</td>
-                  <td className="py-2">{tx.status==='success' ? <span className="text-green-400">Entregado</span> : <span className="text-red-400">Revertido</span>}</td>
+                  <td className="py-2">
+                    {tx.status==='success' ? (
+                      <button aria-label="Revertir" className="text-yellow-400" onClick={()=>{refundPurchase(tx.id); toast.success('Compra revertida');}}>
+                        Revertir
+                      </button>
+                    ) : (
+                      <span className="text-red-400">Revertido</span>
+                    )}
+                  </td>
                 </tr>
               ))}
               {filteredPurchases.length===0 && (<tr><td colSpan={5} className="text-center py-6 text-gray-500">Sin resultados</td></tr>)}
