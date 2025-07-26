@@ -26,6 +26,11 @@ const EconomyAdminPanel = () => {
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
 
+  const [filterUser, setFilterUser] = useState('');
+  const [filterType, setFilterType] = useState<'all'|'credit'|'debit'>('all');
+  const [filterSource, setFilterSource] = useState('');
+  const [filterReason, setFilterReason] = useState('');
+
   const handleSave = () => {
     if (!userId || amount === 0 || reason.trim() === '') {
       toast.error('Todos los campos son obligatorios');
@@ -56,30 +61,40 @@ const EconomyAdminPanel = () => {
   },[rangeKey, customFrom, customTo]);
 
   const txInRange = useMemo(()=> transactions.filter(tx=>{
-    const ts = new Date(tx.date).getTime();
+    const ts = new Date(tx.createdAt).getTime();
     return ts>=fromDate.getTime() && ts<=toDate.getTime();
   }),[transactions,fromDate,toDate]);
 
   // KPI metrics
-  const emitted = txInRange.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const spent = txInRange.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const emitted = txInRange.filter(t=>t.type==='credit').reduce((s,t)=>s+t.amount,0);
+  const spent = txInRange.filter(t=>t.type==='debit').reduce((s,t)=>s+t.amount,0);
   const net = emitted - spent;
 
   // Chart data by day
-  const dailyMap: Record<string,{ date:string, income:number, expense:number}> = {};
+  const dailyMap: Record<string,{ date:string, credit:number, debit:number}> = {};
   txInRange.forEach(t=>{
-    const d = new Date(t.date).toLocaleDateString();
-    if(!dailyMap[d]) dailyMap[d]={ date:d, income:0, expense:0};
-    if(t.type==='income') dailyMap[d].income += t.amount; else if(t.type==='expense') dailyMap[d].expense += t.amount;
+    const d = new Date(t.createdAt).toLocaleDateString();
+    if(!dailyMap[d]) dailyMap[d]={ date:d, credit:0, debit:0};
+    if(t.type==='credit') dailyMap[d].credit += t.amount; else if(t.type==='debit') dailyMap[d].debit += t.amount;
   });
   const chartData = Object.values(dailyMap).sort((a,b)=> new Date(a.date).getTime()-new Date(b.date).getTime());
 
   // pie data
   const catMap: Record<string,number> = {};
-  txInRange.filter(t=>t.type==='expense').forEach(t=>{ catMap[t.category]=(catMap[t.category]||0)+t.amount;});
+  txInRange.filter(t=>t.type==='debit').forEach(t=>{ catMap[t.source]=(catMap[t.source]||0)+t.amount;});
   const pieData = Object.entries(catMap).map(([name,value])=>({name,value}));
 
   const COLORS = ['#60a5fa','#e879f9','#facc15','#34d399','#f87171','#a78bfa'];
+
+  const filteredTx = useMemo(()=>{
+    return txInRange.filter(tx=>{
+      if(filterUser && !tx.userId.includes(filterUser)) return false;
+      if(filterType!=='all' && tx.type!==filterType) return false;
+      if(filterSource && !tx.source.includes(filterSource)) return false;
+      if(filterReason && !tx.reason.toLowerCase().includes(filterReason.toLowerCase())) return false;
+      return true;
+    });
+  },[txInRange,filterUser,filterType,filterSource,filterReason]);
 
   return (
     <div className="space-y-6">
@@ -135,8 +150,8 @@ const EconomyAdminPanel = () => {
               <YAxis stroke="#888" />
               <Tooltip />
               <Legend />
-              <Bar dataKey="income" fill="#10b981" animationDuration={800} />
-              <Bar dataKey="expense" fill="#ef4444" animationDuration={800} />
+              <Bar dataKey="credit" fill="#10b981" animationDuration={800} />
+              <Bar dataKey="debit" fill="#ef4444" animationDuration={800} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -156,19 +171,29 @@ const EconomyAdminPanel = () => {
       {/* Tabla transacciones */}
       <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
         <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Filter size={16}/>Transacciones</h3>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
+          <input className="input" placeholder="Usuario" value={filterUser} onChange={e=>setFilterUser(e.target.value)} />
+          <select className="input" value={filterType} onChange={e=>setFilterType(e.target.value as any)}>
+            <option value="all">Todos</option>
+            <option value="credit">Créditos</option>
+            <option value="debit">Débitos</option>
+          </select>
+          <input className="input" placeholder="Categoría" value={filterSource} onChange={e=>setFilterSource(e.target.value)} />
+          <input className="input" placeholder="Motivo" value={filterReason} onChange={e=>setFilterReason(e.target.value)} />
+        </div>
         <div className="overflow-x-auto max-h-96">
           <table className="w-full text-sm text-left">
             <thead><tr className="text-gray-400 text-xs border-b border-gray-700"><th>ID</th><th>Usuario</th><th>Tipo</th><th>Monto</th><th>Categoría</th><th>Motivo</th><th>Fecha</th></tr></thead>
             <tbody>
-              {txInRange.map(tx=> (
+              {filteredTx.map(tx=> (
                 <tr key={tx.id} className="border-b border-gray-800 hover:bg-gray-800/30">
                   <td>{tx.id.slice(0,6)}…</td>
                   <td>{tx.userId}</td>
-                  <td>{tx.type==='income'? 'Ingreso': tx.type==='expense'?'Gasto':'Ajuste'}</td>
-                  <td className={tx.type==='expense'? 'text-red-400':'text-green-400'}>{tx.type==='expense'? '-':''}{tx.amount}</td>
-                  <td>{tx.category}</td>
+                  <td>{tx.type==='credit'? 'Ingreso': 'Gasto'}</td>
+                  <td className={tx.type==='debit'? 'text-red-400':'text-green-400'}>{tx.type==='debit'? '-':''}{tx.amount}</td>
+                  <td>{tx.source}</td>
                   <td>{tx.reason}</td>
-                  <td>{new Date(tx.date).toLocaleString()}</td>
+                  <td>{new Date(tx.createdAt).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -176,12 +201,12 @@ const EconomyAdminPanel = () => {
         </div>
         <div className="flex justify-end mt-4">
           <button className="btn-secondary" onClick={()=>{
-            const rows=[['ID','Usuario','Tipo','Monto','Categoría','Motivo','Fecha'],...txInRange.map(tx=>[tx.id,tx.userId,tx.type,tx.amount,tx.category,tx.reason,tx.date])];
+            const rows=[['ID','Usuario','Tipo','Monto','Categoría','Motivo','Fecha'],...filteredTx.map(tx=>[tx.id,tx.userId,tx.type,tx.amount,tx.source,tx.reason,tx.createdAt])];
             const csv=rows.map(r=>r.join(',')).join('\n');
             const blob=new Blob([csv],{type:'text/csv'});
             const url=URL.createObjectURL(blob);
             const a=document.createElement('a');a.href=url;a.download='economy.csv';a.click();URL.revokeObjectURL(url);
-          }}>Exportar CSV</button>
+          }} aria-label="Exportar CSV">Exportar CSV</button>
         </div>
       </div>
 
