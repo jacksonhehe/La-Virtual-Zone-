@@ -1,5 +1,8 @@
+import Modal from '../../../components/ui/Modal';
+import Button from '../../../components/ui/Button';
+import { toast } from 'react-hot-toast';
 import  { useState, useRef, useEffect } from 'react';
-import { Club } from '../../types/shared';
+import { Club } from '../../../types/shared';
 import { useGlobalStore } from '../../store/globalStore';
 import { slugify } from '../../utils/helpers';
 
@@ -56,16 +59,13 @@ const EditClubModal = ({ club, onClose, onSave }: Props) => {
       const logo = formData.logo ||
         `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=111827&color=fff&size=128&bold=true`;
       onSave({ ...club, ...formData, logo, slug: slugify(formData.name) });
+      toast.success('Club actualizado');
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div 
-        ref={modalRef}
-        className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4"
-        tabIndex={-1}
-      >
+    <Modal open={true} onClose={onClose} className="max-w-md" initialFocusRef={modalRef}>
+      <div ref={modalRef} className="max-h-[75vh] overflow-y-auto">
         <h3 className="text-lg font-semibold mb-4">Editar Club</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -151,12 +151,12 @@ const EditClubModal = ({ club, onClose, onSave }: Props) => {
             />
           </div>
           <div className="flex space-x-3 justify-end mt-6">
-            <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
-            <button type="submit" className="btn-primary">Guardar</button>
+            <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Guardar</Button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };
 

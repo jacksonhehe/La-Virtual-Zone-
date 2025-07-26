@@ -1,7 +1,9 @@
 import  { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
+import { Coins } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
+import { useStoreStore } from '../store/storeStore';
 import { useAuth } from '../contexts/AuthContext';
 import { useSidebarStore } from '../store/sidebarStore';
 
@@ -9,6 +11,7 @@ const SidebarAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { collapsed, toggle } = useSidebarStore();
   const { transfers } = useGlobalStore();
+  const { products } = useStoreStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -31,6 +34,8 @@ const SidebarAdmin = () => {
     { name: 'Comentarios', href: '/admin/comentarios', icon: MessageCircle },
     { name: 'Actividad', href: '/admin/actividad', icon: Activity },
     { name: 'Estadísticas', href: '/admin/estadisticas', icon: BarChart },
+    { name: 'Tienda', href: '/admin/store', icon: ShoppingCart, badge: (products?.filter((p) => p.stock !== null && p.stock !== undefined && (p.stock as number) <= 5).length) || undefined },
+    { name: 'Economía', href: '/admin/economy', icon: Coins },
     { name: 'Calendario', href: '/admin/calendario', icon: Calendar }
   ];
 
@@ -90,7 +95,7 @@ const SidebarAdmin = () => {
           </button>
         </div> 
         
-        <nav className="px-2 md:px-4 space-y-2 mt-6">
+               <nav className="px-2 md:px-4 space-y-2 mt-6">
           {menuItems.map((item) => (
             <NavLink
               key={item.name}
@@ -128,7 +133,7 @@ const SidebarAdmin = () => {
                 </span>
               )}
             </NavLink>
-          ))}
+          ))} 
         </nav>
       </div>
     </>

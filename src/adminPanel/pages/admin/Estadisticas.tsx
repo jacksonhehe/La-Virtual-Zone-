@@ -88,31 +88,31 @@ const Estadisticas = () => {
         <div className="card">
           <h3 className="text-lg font-semibold mb-4">Usuarios por Rol</h3>
           <div ref={usersRoleRef}>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={usersByRole}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={usersByRole}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                dataKey="value"
                   animationDuration={800}
                   animationEasing="ease-out"
-                >
-                  {usersByRole.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F3F4F6'
-                  }} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
+              >
+                {usersByRole.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F3F4F6'
+                }} 
+              />
+            </PieChart>
+          </ResponsiveContainer>
           </div>
           <button onClick={() => downloadChart(usersRoleRef, 'usuarios_por_rol')} className="mt-2 text-xs text-gray-300 hover:text-white underline">Descargar PNG</button>
         </div>
@@ -121,23 +121,23 @@ const Estadisticas = () => {
         <div className="card">
           <h3 className="text-lg font-semibold mb-4">Actividad Mensual</h3>
           <div ref={monthlyRef}>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="month" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F3F4F6'
-                  }} 
-                />
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={monthlyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="month" stroke="#9CA3AF" />
+              <YAxis stroke="#9CA3AF" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F3F4F6'
+                }} 
+              />
                 <Bar dataKey="users" fill="#3B82F6" name="Usuarios" animationDuration={800} animationEasing="ease-out" />
                 <Bar dataKey="transfers" fill="#10B981" name="Transferencias" animationDuration={800} animationEasing="ease-out" />
-              </BarChart>
-            </ResponsiveContainer>
+            </BarChart>
+          </ResponsiveContainer>
           </div>
           <button onClick={() => downloadChart(monthlyRef, 'actividad_mensual')} className="mt-2 text-xs text-gray-300 hover:text-white underline">Descargar PNG</button>
         </div>
@@ -147,22 +147,22 @@ const Estadisticas = () => {
       <div className="card">
         <h3 className="text-lg font-semibold mb-4">Estado de Transferencias</h3>
         <div ref={transfersRef}>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={transfersByStatus} layout="horizontal">
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis type="number" stroke="#9CA3AF" />
-              <YAxis dataKey="name" type="category" stroke="#9CA3AF" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px',
-                  color: '#F3F4F6'
-                }} 
-              />
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={transfersByStatus} layout="horizontal">
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis type="number" stroke="#9CA3AF" />
+            <YAxis dataKey="name" type="category" stroke="#9CA3AF" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#1F2937', 
+                border: '1px solid #374151',
+                borderRadius: '8px',
+                color: '#F3F4F6'
+              }} 
+            />
               <Bar dataKey="value" fill="#8B5CF6" animationDuration={800} animationEasing="ease-out" />
-            </BarChart>
-          </ResponsiveContainer>
+          </BarChart>
+        </ResponsiveContainer>
         </div>
         <button onClick={() => downloadChart(transfersRef, 'transferencias_por_estado')} className="mt-2 text-xs text-gray-300 hover:text-white underline">Descargar PNG</button>
       </div>

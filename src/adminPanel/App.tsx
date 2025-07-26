@@ -14,6 +14,8 @@ const Noticias = lazy(() => import('./pages/admin/Noticias'));
 const Comentarios = lazy(() => import('./pages/admin/Comentarios'));
 const Actividad = lazy(() => import('./pages/admin/Actividad'));
 const Estadisticas = lazy(() => import('./pages/admin/Estadisticas'));
+const Store = lazy(() => import('./pages/admin/Store'));
+const Economy = lazy(() => import('./pages/admin/Economy'));
 const Calendario = lazy(() => import('./pages/admin/Calendario'));
 
 const AdminLayout = () => {
@@ -57,6 +59,8 @@ const AdminLayout = () => {
             <Route path="comentarios" element={<Comentarios />} />
             <Route path="actividad" element={<Actividad />} />
             <Route path="estadisticas" element={<Estadisticas />} />
+            <Route path="store" element={<Store />} />
+            <Route path="economy" element={<Economy />} />
             <Route path="calendario" element={<Calendario />} />
             <Route path="*" element={<Navigate to="." replace />} />
           </Routes>

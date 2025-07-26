@@ -1,5 +1,8 @@
+import Modal from '../../../components/ui/Modal';
+import Button from '../../../components/ui/Button';
+import { toast } from 'react-hot-toast';
 import  { useState, useRef, useEffect } from 'react';
-import { Player } from '../../types/shared';
+import { Player } from '../../../types/shared';
 import { useGlobalStore } from '../../store/globalStore';
 
 interface Props {
@@ -64,16 +67,13 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
         assists: 0,
         appearances: 0
       });
+      toast.success('Jugador creado');
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div 
-        ref={modalRef}
-        className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4"
-        tabIndex={-1}
-      >
+    <Modal open={true} onClose={onClose} className="max-w-md" initialFocusRef={modalRef}>
+      <div ref={modalRef} className="max-h-[75vh] overflow-y-auto">
         <h3 className="text-lg font-semibold mb-4">Nuevo Jugador</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -185,12 +185,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
             />
           </div>
           <div className="flex space-x-3 justify-end mt-6">
-            <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
-            <button type="submit" className="btn-primary">Crear</button>
+            <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Crear</Button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };
 

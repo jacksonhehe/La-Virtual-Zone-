@@ -3,6 +3,9 @@ import { Club } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 import { slugify } from '../../utils/helpers';
 import { Building } from 'lucide-react';
+import Modal from '../../../components/ui/Modal';
+import Button from '../../../components/ui/Button';
+import { toast } from 'react-hot-toast';
 
 interface Props {
   onClose: () => void;
@@ -69,15 +72,15 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
       const logo = formData.logo ||
         `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=111827&color=fff&size=128&bold=true`;
       onSave({ ...formData, logo, slug: slugify(formData.name) });
+      toast.success('Club creado');
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <Modal open={true} onClose={onClose} className="w-full max-w-md" initialFocusRef={modalRef}>
       <div 
         ref={modalRef}
-        className="bg-gray-800 p-5 rounded-2xl w-full max-w-sm sm:max-w-md mx-4 max-h-[85vh] overflow-y-auto"
-        tabIndex={-1}
+        className="max-h-[75vh] overflow-y-auto"
       >
         <div className="text-center mb-5">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary shadow-lg mb-3">
@@ -211,13 +214,13 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
               </div>
             </div>
           </div>
-          <div className="sm:col-span-2 flex space-x-3 justify-end mt-6">
-            <button type="button" onClick={onClose} className="btn-outline">Cancelar</button>
-            <button type="submit" className="btn-primary">Crear</button>
+          <div className="sm:col-span-2 flex justify-end space-x-3 mt-4">
+            <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Crear Club</Button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };
 

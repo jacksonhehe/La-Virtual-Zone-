@@ -1,6 +1,9 @@
 import  React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { DndContext, PointerSensor, useSensor, useSensors, DragEndEvent, closestCenter } from '@dnd-kit/core';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings, Download } from 'lucide-react'; 
 import { v4 as uuidv4 } from 'uuid';
 import { useGlobalStore } from '../../store/globalStore';
@@ -127,9 +130,23 @@ const CalendarAdminPanel = () => {
     }
   ];
 
+  /* ---------------- Persistencia local ---------------- */
   useEffect(() => {
+    const stored = localStorage.getItem('admin_events');
+    if (stored) {
+      try {
+        setEvents(JSON.parse(stored));
+      } catch {
+        setEvents(mockEvents);
+      }
+    } else {
     setEvents(mockEvents);
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('admin_events', JSON.stringify(events));
+  }, [events]);
 
   const filteredEvents = events.filter(event => {
     const matchesFilter = filter === 'all' || event.type === filter;
@@ -203,6 +220,46 @@ const CalendarAdminPanel = () => {
   const isPast = (dateStr: string) => {
     return new Date(dateStr) < new Date();
   };
+
+  /* ---------------- CSV Export ---------------- */
+  const exportCSV = () => {
+    const headers = ['ID','Título','Tipo','Fecha','Hora','Prioridad','Estado'];
+    const rows = filteredEvents.map(e => [e.id,e.title,e.type,e.date,e.time,e.priority,e.status]);
+    const csv = [headers,...rows].map(r=>r.join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'eventos.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  /* ---------------- Drag & Drop ---------------- */
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const eventId = active.id as string;
+    const newDate = over.id as string; // droppable id is date string
+    setEvents((prev) => prev.map(ev => ev.id === eventId ? { ...ev, date: newDate } : ev));
+    toast.success('Fecha del evento actualizada');
+  };
+
+  // Helper to generate all ISO dates for current month based on selectedDate
+  const getCalendarDays = (dateStr: string) => {
+    const base = new Date(dateStr);
+    const year = base.getFullYear();
+    const month = base.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const days: string[] = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      days.push(new Date(year, month, d).toISOString().split('T')[0]);
+    }
+    return days;
+  };
+  const calendarDays = getCalendarDays(selectedDate);
 
   return (
     <>
@@ -298,20 +355,56 @@ const CalendarAdminPanel = () => {
                   Calendario
                 </button>
               </div>
+              <button onClick={exportCSV} className="btn-outline flex items-center space-x-1" aria-label="Exportar CSV" title="Exportar CSV">
+                <Download size={16} />
+                <span>CSV</span>
+              </button>
             </div>
           </div>
 
           {viewMode === 'calendar' && (
-            <div className="mb-6">
+            <div className="mb-6 space-y-4">
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="input w-auto"
               />
+
+              {/* Calendar Grid with Drag & Drop */}
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <div className="grid grid-cols-7 gap-2">
+                  {calendarDays.map(day => {
+                    const dayEvents = events.filter(ev => ev.date === day);
+                    const DayCell = () => {
+                      const { setNodeRef, isOver } = useDroppable({ id: day });
+                      return (
+                        <div ref={setNodeRef} id={day} className={`border border-gray-700/50 rounded-md p-1 min-h-[100px] ${isOver ? 'bg-primary/10' : 'bg-gray-900/40'}`}> 
+                          <span className="text-xs text-gray-400">{new Date(day).getDate()}</span>
+                          {dayEvents.map(ev => {
+                            const { attributes, listeners, setNodeRef: dragRef, transform, transition } = useDraggable({ id: ev.id });
+                            const style = {
+                              transform: CSS.Translate.toString(transform),
+                              transition
+                            } as React.CSSProperties;
+                            return (
+                              <motion.div key={ev.id} ref={dragRef} style={style} {...listeners} {...attributes} className="mt-1 bg-gray-800/80 border border-gray-700/50 rounded px-1 py-0.5 text-xs text-gray-200 cursor-grab hover:bg-primary/20" initial={{opacity:0, y:4}} animate={{opacity:1,y:0}} exit={{opacity:0}}>
+                                {ev.title}
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      );
+                    };
+                    return <DayCell key={day} />;
+                  })}
+                </div>
+              </DndContext>
             </div>
           )}
 
+          {/* List view */}
+          {viewMode === 'list' && (
           <div className="space-y-3">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event) => {
@@ -377,7 +470,7 @@ const CalendarAdminPanel = () => {
                           <button
                             onClick={() => setSelectedEvent(event)}
                             className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                            title="Ver detalles"
+                            title="Ver detalles" aria-label="Ver detalles"
                           >
                             <Eye size={16} />
                           </button>
@@ -387,13 +480,13 @@ const CalendarAdminPanel = () => {
                               setShowEventModal(true);
                             }}
                             className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                            title="Editar evento"
+                            title="Editar evento" aria-label="Editar evento"
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                            title="Eliminar evento"
+                            title="Eliminar evento" aria-label="Eliminar evento"
                           >
                             <Trash size={16} />
                           </button>
@@ -416,6 +509,7 @@ const CalendarAdminPanel = () => {
               </div>
             )}
           </div>
+          )}
           {/* Modal */}
           {showEventModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">

@@ -227,7 +227,7 @@ const ActivityAdminPanel = () => {
                 
                 return (
                   <motion.div 
-                    key={activity.id}
+                    key={activity.id} 
                     role="listitem"
                     initial={{ opacity:0, translateY:8 }}
                     animate={{ opacity:1, translateY:0 }}

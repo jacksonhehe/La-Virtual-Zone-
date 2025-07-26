@@ -248,35 +248,35 @@ const Dashboard = () => {
               </div>
             </div>
             <div ref={usersChartRef}>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={kpiData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
-                  <YAxis stroke="#9CA3AF" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1F2937', 
-                      border: '1px solid #374151',
-                      borderRadius: '12px',
-                      color: '#F3F4F6',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
-                    }} 
-                  />
-                  <Bar 
-                    dataKey="users" 
-                    fill="url(#userGradient)" 
-                    radius={[4, 4, 0, 0]}
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={kpiData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
+                <YAxis stroke="#9CA3AF" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '12px',
+                    color: '#F3F4F6',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                  }} 
+                />
+                <Bar 
+                  dataKey="users" 
+                  fill="url(#userGradient)" 
+                  radius={[4, 4, 0, 0]}
                     animationDuration={800}
                     animationEasing="ease-out"
-                  />
-                  <defs>
-                    <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#8B5CF6" />
-                      <stop offset="100%" stopColor="#3B82F6" />
-                    </linearGradient>
-                  </defs>
-                </BarChart>
-              </ResponsiveContainer>
+                />
+                <defs>
+                  <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#8B5CF6" />
+                    <stop offset="100%" stopColor="#3B82F6" />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
             </div>
             <button
               onClick={() => downloadChart(usersChartRef, 'crecimiento_usuarios')}
@@ -290,8 +290,8 @@ const Dashboard = () => {
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 flex flex-col items-center justify-center">
             <h3 className="text-xl font-bold text-white mb-6">Distribución de Posiciones</h3>
             <div ref={positionsChartRef}>
-              <ResponsiveContainer width="100%" height={320}>
-                <PieChart>
+            <ResponsiveContainer width="100%" height={320}>
+              <PieChart>
                   <Pie 
                     dataKey="value" 
                     data={pieData} 
@@ -302,12 +302,12 @@ const Dashboard = () => {
                     animationDuration={800}
                     animationEasing="ease-out"
                   >
-                    {pieData.map((_, idx) => (
-                      <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+                  {pieData.map((_, idx) => (
+                    <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
             </div>
             <button
               onClick={() => downloadChart(positionsChartRef, 'distribucion_posiciones')}
@@ -315,8 +315,8 @@ const Dashboard = () => {
             >
               Descargar PNG
             </button>
-          </div>
-        </div>
+                      </div>
+                    </div>
 
         {/* Activity timeline */}
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 space-y-4">
