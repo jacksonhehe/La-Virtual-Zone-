@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import SidebarAdmin from './components/SidebarAdmin';
 
@@ -26,14 +26,8 @@ const AdminLayout = () => {
   }
 
   if (user?.role !== 'admin') {
-    return (
-      <div className="min-h-screen admin-bg flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Acceso Denegado</h1>
-          <p className="text-gray-400">No tienes permisos para acceder al panel de administración</p>
-        </div>
-      </div>
-    );
+    toast.error('Acceso denegado');
+    return <Navigate to="/403" replace />;
   }
 
   return (

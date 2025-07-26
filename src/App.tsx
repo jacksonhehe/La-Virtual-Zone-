@@ -22,6 +22,7 @@ const RecuperarContrasena = lazy(() => import("./pages/RecuperarContrasena"));
 const DefinirContrasena = lazy(() => import("./pages/DefinirContrasena"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Forbidden = lazy(() => import("./pages/Forbidden"));
 
 const Tournaments = lazy(() => import("./pages/Tournaments"));
 const TournamentDetail = lazy(() => import("./pages/TournamentDetail"));
@@ -60,6 +61,7 @@ function App() {
             <Route path="reset/:token" element={<DefinirContrasena />} />
             <Route path="terminos" element={<Terms />} />
             <Route path="privacidad" element={<Privacy />} />
+            <Route path="403" element={<Forbidden />} />
             <Route path="usuarios" element={<Users />} />
             <Route path="usuarios/:username" element={<PublicProfile />} />
             <Route path="usuario" element={<UserPanel />} />

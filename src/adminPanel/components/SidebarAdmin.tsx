@@ -1,5 +1,6 @@
 import  { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Menu, X, Home, Users, Globe, User, ShoppingBag, Award, FileText, MessageCircle, Activity, BarChart, Calendar, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
 import { Coins } from 'lucide-react';
 import { useGlobalStore } from '../store/globalStore';
@@ -62,17 +63,21 @@ const SidebarAdmin = () => {
 
       {/* Overlay */}
       {isOpen && (
-        <div 
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+        <div
+          className="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
           onClick={() => setIsOpen(false)}
+          aria-hidden="true"
         />
       )}
 
       {/* Sidebar */}
-           <div className={`
-        fixed md:static top-0 left-0 h-full ${collapsed ? 'w-20' : 'w-72'} bg-gradient-to-b from-gray-800/95 to-gray-900/95 border-r border-gray-700/50 backdrop-blur-xl z-50 transform transition-all duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-      `}>
+      <motion.aside
+        initial={{ width: collapsed ? 80 : 288 }}
+        animate={{ width: collapsed ? 80 : 288 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className={`fixed md:static top-0 left-0 h-full bg-gradient-to-b from-gray-800/95 to-gray-900/95 border-r border-gray-700/50 backdrop-blur-xl z-50 transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+        aria-label="Menú lateral"
+      >
         <div className="p-6 border-b border-gray-700/50 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -102,7 +107,7 @@ const SidebarAdmin = () => {
               to={item.href}
               end={item.href === '/admin'}
               className={({ isActive }) =>
-                `sidebar-link group relative ${isActive ? 'active border-l-4 border-purple-500' : ''}`
+                `sidebar-link group relative ${isActive ? 'active border-l-4 border-purple-500' : ''} focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-500`
               }
               onClick={() => setIsOpen(false)}
               aria-label={item.name}
@@ -114,7 +119,7 @@ const SidebarAdmin = () => {
 
               {/* Tooltip when collapsed */}
               {collapsed && (
-                <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800 text-gray-100 text-xs px-2 py-1 rounded-lg shadow-lg opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 z-50">
+                <span role="tooltip" className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800/90 text-gray-100 text-xs px-2 py-1 rounded-lg shadow-xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 z-[60]">
                   {item.name}
                 </span>
               )}
@@ -135,7 +140,7 @@ const SidebarAdmin = () => {
             </NavLink>
           ))} 
         </nav>
-      </div>
+      </motion.aside>
     </>
   );
 };

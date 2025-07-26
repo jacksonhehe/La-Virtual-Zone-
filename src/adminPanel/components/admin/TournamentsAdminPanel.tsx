@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { toast } from 'react-hot-toast';
 import {
   Trophy,
   Calendar,
@@ -9,6 +10,7 @@ import {
   Trash2,
   Eye,
   Layers,
+  Download,
 } from 'lucide-react';
 import { Tournament } from '../../../types';
 import SearchFilter from './SearchFilter';
@@ -30,6 +32,10 @@ const TournamentsAdminPanel = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
+  const [sortKey, setSortKey] = useState<'name'|'startDate'|'status'>('startDate');
+  const [sortDir, setSortDir] = useState<'asc'|'desc'>('asc');
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
   const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
   const [viewingTournament, setViewingTournament] = useState<Tournament | null>(null);
@@ -37,11 +43,23 @@ const TournamentsAdminPanel = () => {
   const [managingMatches, setManagingMatches] = useState<Tournament | null>(null);
   const [managingPhases, setManagingPhases] = useState<Tournament | null>(null);
 
-  const filteredTournaments = tournaments.filter(tournament => {
-    const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || tournament.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredSorted = useMemo(()=>{
+    const base = tournaments.filter(tournament => {
+      const matchesSearch = tournament.name.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || tournament.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+    base.sort((a,b)=>{
+      let v=0;
+      if(sortKey==='name') v = a.name.localeCompare(b.name);
+      else if(sortKey==='startDate') v = new Date(a.startDate).getTime()-new Date(b.startDate).getTime();
+      else v = a.status.localeCompare(b.status);
+      return sortDir==='asc'? v : -v;
+    });
+    return base;
+  },[tournaments,search,statusFilter,sortKey,sortDir]);
+
+  const paginated = filteredSorted.slice(0,page*pageSize);
 
   const activeTournaments = tournaments.filter(t => t.status === 'active').length;
   const totalPrizePool = tournaments.reduce((sum, t) => sum + (t.prizePool || 0), 0);
@@ -105,19 +123,28 @@ const TournamentsAdminPanel = () => {
             placeholder="Buscar torneos..."
           />
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="input min-w-[150px]"
-        >
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="input min-w-[150px]">
           <option value="all">Todos los estados</option>
           <option value="active">Activos</option>
           <option value="upcoming">Próximos</option>
           <option value="finished">Finalizados</option>
         </select>
+        <select value={sortKey} onChange={e=>setSortKey(e.target.value as any)} className="input min-w-[150px]">
+          <option value="startDate">Orden: Fecha</option>
+          <option value="name">Nombre</option>
+          <option value="status">Estado</option>
+        </select>
+        <button className="btn-outline" onClick={()=>setSortDir(sortDir==='asc'?'desc':'asc')} aria-label="Cambiar dirección orden">{sortDir==='asc'?'▲':'▼'}</button>
+        <button className="btn-outline flex items-center space-x-1" onClick={()=>{
+          const rows=[['id','name','status','startDate','endDate','maxTeams'] , ...filteredSorted.map(t=>[t.id,t.name,t.status,t.startDate,t.endDate,t.maxTeams])];
+          const csv=rows.map(r=>r.join(',')).join('\n');
+          const blob=new Blob([csv],{type:'text/csv'});
+          const url=URL.createObjectURL(blob);
+          const a=document.createElement('a');a.href=url;a.download='torneos.csv';a.click();URL.revokeObjectURL(url);
+        }}><Download size={14}/> <span className="hidden sm:inline">CSV</span></button>
       </div>
 
-      {filteredTournaments.map((tournament) => {
+      {paginated.map((tournament) => {
         const FormatIcon = getFormatIcon(tournament.type);
 
         return (
@@ -193,7 +220,13 @@ const TournamentsAdminPanel = () => {
         );
       })}
 
-      {filteredTournaments.length === 0 && (
+      {paginated.length < filteredSorted.length && (
+        <div className="text-center mt-6">
+          <button className="btn-secondary" onClick={()=>setPage(page+1)}>Cargar más</button>
+        </div>
+      )}
+
+      {filteredSorted.length === 0 && (
         <div className="text-center py-12">
           <Trophy size={48} className="text-gray-600 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-400 mb-2">No se encontraron torneos</h3>
@@ -211,6 +244,7 @@ const TournamentsAdminPanel = () => {
               ...data
             } as Tournament;
             addTournament(newTournament);
+            toast.success('Torneo creado');
             setShowNewModal(false);
           }}
         />
@@ -223,6 +257,7 @@ const TournamentsAdminPanel = () => {
             updateTournaments(tournaments.map(t =>
               t.id === editingTournament.id ? { ...t, ...data } : t
             ));
+            toast.success('Torneo actualizado');
             setEditingTournament(null);
           }}
         />
@@ -234,6 +269,7 @@ const TournamentsAdminPanel = () => {
           onConfirm={() => {
             if (deletingTournament.id) {
               removeTournament(deletingTournament.id);
+              toast.success('Torneo eliminado');
             }
             setDeletingTournament(null);
           }}

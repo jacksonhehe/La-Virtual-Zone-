@@ -1,6 +1,7 @@
 import  React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings } from 'lucide-react';
+import  { Calendar, Clock, Plus, Edit, Trash, Users, Trophy, AlertCircle, Eye, MapPin, Settings, Download, Copy as Clone } from 'lucide-react';
+import { DndContext, useSensor, useSensors, PointerSensor, closestCenter, DragEndEvent, useDraggable, useDroppable } from '@dnd-kit/core';
 import { v4 as uuidv4 } from 'uuid';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
@@ -240,15 +241,15 @@ const CalendarAdminPanel = () => {
   };
 
   /* ---------------- Drag & Drop ---------------- */
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over) return;
-    const eventId = active.id as string;
-    const newDate = over.id as string; // droppable id is date string
-    setEvents((prev) => prev.map(ev => ev.id === eventId ? { ...ev, date: newDate } : ev));
-    toast.success('Fecha del evento actualizada');
+    if (!over || active.id === over.id) return;
+    const eventId = String(active.id);
+    const newDate = String(over.id); // droppable day cell id is date string
+    setEvents(prev => prev.map(ev => ev.id === eventId ? { ...ev, date: newDate } : ev));
+    toast.success('Evento movido');
   };
 
   // Helper to generate all ISO dates for current month based on selectedDate
@@ -359,9 +360,8 @@ const CalendarAdminPanel = () => {
                   Calendario
                 </button>
               </div>
-              <button onClick={exportCSV} className="btn-outline flex items-center space-x-1" aria-label="Exportar CSV" title="Exportar CSV">
-                <Download size={16} />
-                <span>CSV</span>
+              <button className="btn-secondary flex items-center space-x-1" onClick={exportCSV} aria-label="Exportar CSV">
+                <Download size={16} /> <span className="hidden sm:inline">Exportar CSV</span>
               </button>
             </div>
           </div>
@@ -473,8 +473,8 @@ const CalendarAdminPanel = () => {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => setSelectedEvent(event)}
-                            className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                            title="Ver detalles" aria-label="Ver detalles"
+                            className="p-1 text-blue-400 hover:text-blue-300"
+                            title="Ver Detalles" aria-label="Ver Detalles"
                           >
                             <Eye size={16} />
                           </button>
