@@ -1,0 +1,24 @@
+import { formatDate } from '@/utils/helpers';
+import type { FeedItem } from '@/types';
+import { Calendar } from 'lucide-react';
+
+interface Props { item: Extract<FeedItem, { type: 'event' }>; }
+
+const EventCard = ({ item }: Props) => (
+  <a
+    href={item.link}
+    className="card p-4 flex gap-3 hover:border-primary focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-accent"
+    title={item.title}
+  >
+    <div className="w-10 h-10 bg-blue-500/20 rounded flex items-center justify-center" aria-hidden="true">
+      <Calendar size={20} className="text-blue-400" />
+    </div>
+    <div className="flex-1">
+      <div className="text-xs text-gray-400 mb-1">{formatDate(item.date)}</div>
+      <h3 className="font-medium mb-1">{item.title}</h3>
+      <p className="text-sm text-gray-300">{item.summary}</p>
+    </div>
+  </a>
+);
+
+export default EventCard;
