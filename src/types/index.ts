@@ -293,3 +293,13 @@ export interface Attachment {
   url: string;
   uploadedAt?: string;
 }
+
+export interface FeedItem {
+  id: string;
+  type: 'news' | 'match' | 'transfer' | 'achievement';
+  title: string;
+  date: string;
+  summary: string;
+  link: string;
+  media?: string;
+}
