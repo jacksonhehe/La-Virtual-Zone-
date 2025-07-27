@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+
+const prefetchBlog = () => import('../../pages/Blog');
 import { useDataStore } from '../../store/dataStore';
 import { formatDate, formatNewsType, getNewsTypeColor } from '../../utils/helpers';
 
@@ -14,8 +16,9 @@ const LatestNews = () => {
       <div className="p-6 border-b border-gray-800">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Últimas Noticias</h2>
-          <Link 
-            to="/blog" 
+          <Link
+            to="/blog"
+            onMouseEnter={prefetchBlog}
             className="text-primary hover:text-primary-light flex items-center text-sm"
           >
             <span>Ver todo</span>

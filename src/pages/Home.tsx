@@ -4,7 +4,12 @@ import FeaturedTournaments from '../components/Home/FeaturedTournaments';
 import LatestNews from '../components/Home/LatestNews';
 import UpcomingMatches from '../components/Home/UpcomingMatches';
 import { Link } from 'react-router-dom';
+import { useCallback } from 'react';
 import { Users, ShoppingCart, Trophy, HelpCircle } from 'lucide-react';
+
+const prefetchTournaments = () => import('./Tournaments');
+const prefetchStore = () => import('./Store');
+const prefetchBlog = () => import('./Blog');
 
 const Home = () => {
   return (
@@ -69,7 +74,11 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/tienda" className="card card-hover p-5 flex items-center">
+                <Link
+                  to="/tienda"
+                  className="card card-hover p-5 flex items-center"
+                  onMouseEnter={prefetchStore}
+                >
                   <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mr-4">
                     <ShoppingCart size={20} />
                   </div>
@@ -79,7 +88,11 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/torneos" className="card card-hover p-5 flex items-center">
+                <Link
+                  to="/torneos"
+                  className="card card-hover p-5 flex items-center"
+                  onMouseEnter={prefetchTournaments}
+                >
                   <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400 mr-4">
                     <Trophy size={20} />
                   </div>

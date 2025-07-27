@@ -219,10 +219,11 @@ const OffersPanel = ({
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-3">
-                <img 
-                  src={getClubLogo(offer.toClub)} 
+                <img
+                  src={getClubLogo(offer.toClub)}
                   alt={offer.toClub}
                   className="w-8 h-8 object-contain"
+                  loading="lazy"
                 />
                 <div>
                   <p className="font-medium text-sm">
@@ -284,10 +285,11 @@ const OffersPanel = ({
                 <div>
                   <p className="text-xs text-gray-400 mb-1">Club vendedor</p>
                   <div className="flex items-center space-x-2">
-                    <img 
-                      src={getClubLogo(offer.fromClub)} 
+                    <img
+                      src={getClubLogo(offer.fromClub)}
                       alt={offer.fromClub}
                       className="w-6 h-6 object-contain"
+                      loading="lazy"
                     />
                     <span>{offer.fromClub}</span>
                   </div>
@@ -295,10 +297,11 @@ const OffersPanel = ({
                 <div>
                   <p className="text-xs text-gray-400 mb-1">Club comprador</p>
                   <div className="flex items-center space-x-2">
-                    <img 
-                      src={getClubLogo(offer.toClub)} 
+                    <img
+                      src={getClubLogo(offer.toClub)}
                       alt={offer.toClub}
                       className="w-6 h-6 object-contain"
+                      loading="lazy"
                     />
                     <span>{offer.toClub}</span>
                   </div>
