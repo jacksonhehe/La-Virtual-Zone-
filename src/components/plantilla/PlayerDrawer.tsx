@@ -33,6 +33,7 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
         onKeyDown={handleKeyDown}
       >
         <button
+          aria-label="Cerrar"
           onClick={onClose}
           className="text-gray-400 hover:text-white absolute right-4 top-4"
         >
