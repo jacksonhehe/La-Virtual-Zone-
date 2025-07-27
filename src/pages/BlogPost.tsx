@@ -3,6 +3,7 @@ import { Calendar, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } fro
 import { useDataStore } from '../store/dataStore';
 import Comments from '../components/comments/Comments';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
+import SEO from '../components/SEO';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
