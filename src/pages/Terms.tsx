@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ShieldCheck, ArrowUp } from "lucide-react";
+import SEO from "../components/SEO";
 
 /** Simple slugify for heading ids */
 function slugify(text: string): string {
@@ -70,7 +71,9 @@ const Terms = () => {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <section className="relative w-full py-10 md:py-16">
+    <>
+      <SEO title="Términos y Condiciones" description="Políticas y reglas de La Virtual Zone" canonical="https://lavirtualzone.com/terminos" />
+      <section className="relative w-full py-10 md:py-16">
       {/* Hero */}
       <div className="container mx-auto px-4 text-center mb-10 md:mb-16">
         <span className="inline-flex items-center justify-center bg-gradient-to-br from-primary to-primary-light rounded-full p-4 shadow-neon mb-4">
@@ -122,6 +125,7 @@ const Terms = () => {
         <ArrowUp size={20} />
       </button>
     </section>
+    </>
   );
 };
 

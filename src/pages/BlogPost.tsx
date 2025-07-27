@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Calendar, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import Comments from '../components/comments/Comments';
+import SEO from '../components/SEO';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -14,6 +15,7 @@ const BlogPost = () => {
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
+        <SEO title="Artículo no encontrado" description="El artículo solicitado no existe." />
         <h2 className="text-2xl font-bold mb-4">Artículo no encontrado</h2>
         <p className="text-gray-400 mb-8">El artículo que estás buscando no existe o ha sido eliminado.</p>
         <Link to="/blog" className="btn-primary">
@@ -27,8 +29,28 @@ const BlogPost = () => {
   const relatedPosts = posts.filter(p => p.id !== post.id && p.category === post.category).slice(0, 2);
   
   return (
-    <div>
-      <div className="relative h-80 overflow-hidden">
+    <>
+      <SEO
+        title={`${post.title} | La Virtual Zone`}
+        description={post.excerpt}
+        canonical={`https://lavirtualzone.com/blog/${post.slug}`}
+        image={post.image}
+        type="article"
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: post.title,
+            image: post.image,
+            author: post.author,
+            datePublished: post.date,
+            description: post.excerpt
+          })}
+        </script>
+      </SEO>
+      <div>
+        <div className="relative h-80 overflow-hidden">
         <div className="absolute inset-0">
           <img 
             src={post.image}
@@ -212,7 +234,7 @@ const BlogPost = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
