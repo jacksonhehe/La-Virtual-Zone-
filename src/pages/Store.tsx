@@ -18,12 +18,15 @@ const Store = () => {
   const [previewItem, setPreviewItem] = useState<StoreItem | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const { activeItems } = useStoreSlice();
-  const { ownedItemIds, cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
+  const { activeItems, purchases } = useStoreSlice();
+  const { cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
   const { user } = useAuthStore();
   const { getBalance } = useEconomySlice();
   const coins = getBalance(user?.id || 'anonymous');
   const userLevel = user?.level ?? 1;
+  const ownedItemIds = purchases
+    .filter(p => p.status === 'success' && p.userId === (user?.id || 'anonymous'))
+    .map(p => p.productId);
   
   // Filter store items
   let filteredItems = activeItems().filter(product => {
