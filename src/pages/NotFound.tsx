@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const NotFound = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
+    <>
+      <SEO title="404 - Página no encontrada" description="La URL solicitada no existe en La Virtual Zone" />
+      <div className="flex items-center justify-center min-h-screen px-4">
       <div className="max-w-md w-full text-center">
         <h1 className="text-6xl font-bold mb-6 text-primary">404</h1>
         <h2 className="text-2xl font-bold mb-4">Página no encontrada</h2>
@@ -19,6 +22,7 @@ const NotFound = () => {
         </Link>
       </div>
     </div>
+    </>
   );
 };
 

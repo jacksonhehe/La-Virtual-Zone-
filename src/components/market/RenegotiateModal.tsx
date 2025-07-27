@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { TransferOffer } from '../../types';
 import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 import { formatCurrency } from '../../utils/helpers';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 const RenegotiateModal = ({ offer, onClose }: Props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  useEscapeKey(onClose, true);
   const [amount, setAmount] = useState<number>(offer.amount);
   const [sent, setSent] = useState(false);
 
@@ -33,7 +35,11 @@ const RenegotiateModal = ({ offer, onClose }: Props) => {
         aria-labelledby="renegotiate-title"
         ref={dialogRef}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <button
+          aria-label="Cerrar"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white"
+        >
           <X size={24} />
         </button>
         {sent ? (

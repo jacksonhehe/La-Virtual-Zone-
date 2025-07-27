@@ -314,3 +314,7 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-500;
 }
+
+/* Improve contrast for dark theme */
+.dark .text-gray-500 { color: #9ca3af; }
+

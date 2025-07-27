@@ -1,7 +1,8 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, AlertCircle, Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { useAuthStore } from '../store/authStore'; 
+import { useAuthStore } from '../store/authStore';
+import SEO from '../components/SEO';
 
 const  Register = () => {
   const [username, setUsername] = useState('');
@@ -59,9 +60,11 @@ const  Register = () => {
     }
   };
   
-   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="w-full max-w-md">
+  return (
+    <>
+      <SEO title="Registrarse" description="Crea una cuenta en La Virtual Zone" canonical="https://lavirtualzone.com/registro" />
+      <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="w-full max-w-md">
         <div className="backdrop-blur-xl bg-gray-800/30 border border-gray-700/50 rounded-2xl shadow-2xl">
           <div className="p-8">
             <div className="text-center mb-8">
@@ -212,7 +215,8 @@ const  Register = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

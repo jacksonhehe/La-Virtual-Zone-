@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { X, Phone, Mail, Clock, Trophy, MessageSquare, User, Calendar, Heart } from 'lucide-react';
 import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 import { useAuthStore } from '../../store/authStore';
 import { useActivityLogStore } from '../../store/activityLogStore';
 
@@ -22,6 +23,7 @@ interface RequestForm {
 const RequestClubModal = ({ isOpen, onClose }: Props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  useEscapeKey(onClose, isOpen);
   const [sent, setSent] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useAuthStore();
@@ -88,8 +90,9 @@ const RequestClubModal = ({ isOpen, onClose }: Props) => {
         aria-labelledby="request-club-title"
         ref={dialogRef}
       >
-        <button 
-          onClick={onClose} 
+        <button
+          aria-label="Cerrar"
+          onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
         >
           <X size={24} />

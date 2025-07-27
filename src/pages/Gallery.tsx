@@ -7,6 +7,7 @@ import Masonry from 'react-masonry-css';
 import MediaCard from '../components/common/MediaCard';
 import UploadMediaModal from '../components/common/UploadMediaModal';
 import { useDataStore } from '../store/dataStore';
+import SEO from '../components/SEO';
 
 const Gallery = () => {
   const navigate = useNavigate();
@@ -39,7 +40,13 @@ const Gallery = () => {
   };
 
   return (
-    <div>
+    <>
+      <SEO
+        title="Galería | La Virtual Zone"
+        description="Contenido multimedia de la comunidad"
+        canonical="https://lavirtualzone.com/galeria"
+      />
+      <div>
       <PageHeader
         title="Galería"
         subtitle="Colección de imágenes, videos y contenido multimedia de La Virtual Zone."
@@ -115,6 +122,7 @@ const Gallery = () => {
       {/* Modal de subida */}
       <UploadMediaModal isOpen={showUpload} onClose={() => setShowUpload(false)} />
     </div>
+    </>
   );
 };
 

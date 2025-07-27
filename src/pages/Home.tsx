@@ -3,6 +3,7 @@ import LeagueStandings from '../components/Home/LeagueStandings';
 import FeaturedTournaments from '../components/Home/FeaturedTournaments';
 import LatestNews from '../components/Home/LatestNews';
 import UpcomingMatches from '../components/Home/UpcomingMatches';
+import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 import { useCallback } from 'react';
 import { Users, ShoppingCart, Trophy, HelpCircle } from 'lucide-react';
@@ -13,8 +14,12 @@ const prefetchBlog = () => import('./Blog');
 
 const Home = () => {
   return (
-    <div>
-      <HeroSection />
+    <>
+      <SEO
+        title="La Virtual Zone - Plataforma de Torneos PES 2021"
+        description="La Virtual Zone es la plataforma líder para torneos y ligas de PES 2021. Gestiona tu club y compite."/>
+      <div>
+        <HeroSection />
       
       <div className="container mx-auto px-4 py-12 md:py-20">
         <FeaturedTournaments />
@@ -134,6 +139,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

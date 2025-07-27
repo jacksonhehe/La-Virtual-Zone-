@@ -28,6 +28,7 @@ import ClubListItem from '../components/common/ClubListItem';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import CardSkeleton from '../components/common/CardSkeleton';
+import SEO from '../components/SEO';
 
 const FullCalendar = lazy(() => import('@fullcalendar/react'));
 
@@ -44,6 +45,7 @@ const TournamentDetail = () => {
   if (!tournament) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-dark flex items-center justify-center">
+        <SEO title="Torneo no encontrado" description="El torneo solicitado no existe." />
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-24 h-24 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <AlertCircle size={48} className="text-white" />
@@ -114,9 +116,31 @@ const TournamentDetail = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-dark">
-      <PageHeader 
-        title={tournament.name} 
+    <>
+      <SEO
+        title={`${tournament.name} | La Virtual Zone`}
+        description={tournament.description}
+        canonical={`https://lavirtualzone.com/torneos/${tournament.slug}`}
+        image={tournament.logo}
+        type="event"
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SportsEvent',
+            name: tournament.name,
+            startDate: tournament.startDate,
+            endDate: tournament.endDate,
+            eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+            location: { '@type': 'VirtualLocation', url: `https://lavirtualzone.com/torneos/${tournament.slug}` },
+            image: tournament.logo,
+            description: tournament.description
+          })}
+        </script>
+      </SEO>
+      <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-dark">
+      <PageHeader
+        title={tournament.name}
         subtitle={`${tournament.type === 'league' ? 'Liga' : tournament.type === 'cup' ? 'Copa' : 'Amistoso'} • ${getStatusText(tournament.status)}`}
         image={tournament.logo || "https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"}
       />
@@ -614,6 +638,7 @@ const TournamentDetail = () => {
         <TeamRegistrationModal tournament={tournament} isOpen={showRegModal} onClose={() => setShowRegModal(false)} />
       )}
     </div>
+    </>
   );
 };
 

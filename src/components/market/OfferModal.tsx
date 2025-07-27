@@ -7,6 +7,7 @@ import { makeOffer, getMinOfferAmount, getMaxOfferAmount } from '../../utils/tra
 import { formatCurrency } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 interface OfferModalProps {
   player: Player;
@@ -17,6 +18,7 @@ interface OfferModalProps {
 const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  useEscapeKey(onClose, true);
   const [offerAmount, setOfferAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -111,7 +113,8 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
         aria-labelledby="offer-modal-title"
         ref={dialogRef}
       >
-        <button 
+        <button
+          aria-label="Cerrar"
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white"
         >

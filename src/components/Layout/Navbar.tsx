@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut, ChevronDown, Settings, Trophy, Shield, ShoppingCart } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { calculateLevel } from '../../utils/helpers';
+import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   
@@ -23,6 +26,16 @@ const Navbar = () => {
       window.removeEventListener('popstate', closeMenu);
     };
   }, []);
+
+  useFocusTrap(userMenuRef);
+  useEscapeKey(() => setUserMenuOpen(false), userMenuOpen);
+
+  useEffect(() => {
+    if (userMenuOpen && userMenuRef.current) {
+      const first = userMenuRef.current.querySelector<HTMLElement>('a,button');
+      first?.focus();
+    }
+  }, [userMenuOpen]);
   
   const handleLogout = () => {
     logout();
@@ -95,6 +108,7 @@ const Navbar = () => {
               <div className="relative ml-3">
                 <div>
                   <button
+                    aria-label="Menú de usuario"
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center text-sm rounded-full focus:outline-none"
                   >
@@ -114,8 +128,8 @@ const Navbar = () => {
                 
                 {/* User dropdown menu */}
                 {userMenuOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                    <div className="py-1">
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10" ref={userMenuRef}>
+                    <div className="py-1" role="menu">
                       <Link
                         to="/usuario"
                         className="text-gray-300 hover:bg-gray-700 hover:text-white block px-4 py-2 text-sm"
@@ -208,10 +222,11 @@ const Navbar = () => {
             {/* Mobile menu button */}
             <div className="flex md:hidden ml-3">
               <button
+                aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
                 onClick={() => setIsOpen(!isOpen)}
                 className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
               >
-                <span className="sr-only">Open main menu</span>
+                <span className="sr-only">{isOpen ? 'Cerrar menú' : 'Abrir menú'}</span>
                 {isOpen ? (
                   <X size={24} aria-hidden="true" />
                 ) : (

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { X } from 'lucide-react';
 import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 interface Props {
   onClose: () => void;
@@ -9,6 +10,7 @@ interface Props {
 const RequestFundsModal = ({ onClose }: Props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  useEscapeKey(onClose, true);
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,7 +29,11 @@ const RequestFundsModal = ({ onClose }: Props) => {
         aria-labelledby="request-funds-title"
         ref={dialogRef}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <button
+          aria-label="Cerrar"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white"
+        >
           <X size={24} />
         </button>
         {sent ? (

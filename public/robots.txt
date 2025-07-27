@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lavirtualzone.com/sitemap.xml
