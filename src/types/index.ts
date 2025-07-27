@@ -294,12 +294,48 @@ export interface Attachment {
   uploadedAt?: string;
 }
 
-export interface FeedItem {
+// ----- Modelo unificado para el feed público -----
+export interface FeedItemBase {
   id: string;
-  type: 'news' | 'match' | 'transfer' | 'achievement';
+  type: 'news' | 'match' | 'event' | 'transfer' | 'achievement';
   title: string;
+  /** Fecha normalizada en UTC ISO */
   date: string;
   summary: string;
   link: string;
-  media?: string;
 }
+
+export interface NewsMeta {
+  category?: string;
+  image?: string;
+}
+
+export interface MatchMeta {
+  homeTeam: string;
+  awayTeam: string;
+  status: 'scheduled' | 'live' | 'finished';
+  score?: { home: number; away: number };
+  tournament?: string;
+  venue?: string;
+}
+
+export interface TransferMeta {
+  player: string;
+  from: string;
+  to: string;
+  fee?: number;
+}
+
+export interface AchievementMeta {
+  user?: string;
+  club?: string;
+  emblem?: string;
+  level?: number;
+}
+
+export type FeedItem =
+  | (FeedItemBase & { type: 'news'; meta: NewsMeta })
+  | (FeedItemBase & { type: 'match'; meta: MatchMeta })
+  | (FeedItemBase & { type: 'event'; meta: { label: string } })
+  | (FeedItemBase & { type: 'transfer'; meta: TransferMeta })
+  | (FeedItemBase & { type: 'achievement'; meta: AchievementMeta });

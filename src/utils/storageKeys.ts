@@ -25,3 +25,4 @@ export const VZ_EVENTS_KEY = 'vz_events';
 export const VZ_OBJECTIVES_KEY = 'vz_objectives';
 export const VZ_MARKET_KEY = 'vz_market';
 export const VZ_CLUB_KEY = 'vz_club';
+export const VZ_FEED_PREFS_KEY = 'vz_feed_prefs';
