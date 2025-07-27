@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useDataStore } from '../../store/dataStore';
 import { MediaItem } from '@/types';
 import { notifySuccess, notifyError } from '../../utils/toast';
+import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 interface UploadMediaModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const UploadMediaModal: React.FC<UploadMediaModalProps> = ({ 
-  isOpen, 
-  onClose 
+const UploadMediaModal: React.FC<UploadMediaModalProps> = ({
+  isOpen,
+  onClose
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef);
+  useEscapeKey(onClose, isOpen);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -66,9 +71,15 @@ const UploadMediaModal: React.FC<UploadMediaModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-lg rounded-2xl bg-[#1f1f2c] border border-white/10 shadow-xl">
+      <div
+        ref={dialogRef}
+        className="relative w-full max-w-lg rounded-2xl bg-[#1f1f2c] border border-white/10 shadow-xl"
+        role="dialog"
+        aria-modal="true"
+      >
         {/* Botón cerrar */}
         <button
+          aria-label="Cerrar"
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-400 hover:text-white focus-visible:outline-dashed focus-visible:outline-accent"
         >

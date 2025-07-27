@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 interface DropdownContextValue {
   open: boolean;
@@ -14,6 +16,18 @@ interface DropdownMenuProps {
 export const DropdownMenu = ({ children }: DropdownMenuProps) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(itemsRef);
+  useEscapeKey(() => setOpen(false), open);
+
+  useEffect(() => {
+    if (open && itemsRef.current) {
+      const first = itemsRef.current.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      first?.focus();
+    }
+  }, [open]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -37,7 +51,7 @@ export const DropdownMenu = ({ children }: DropdownMenuProps) => {
         {trigger}
         {open && (
           <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-            <div className="py-1" role="menu">
+            <div ref={itemsRef} className="py-1" role="menu">
               {items}
             </div>
           </div>

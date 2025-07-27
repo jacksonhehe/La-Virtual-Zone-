@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { X } from 'lucide-react';
 import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 interface ConfirmModalProps {
   title?: string;
@@ -21,6 +22,7 @@ export default function ConfirmModal({
 }: ConfirmModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  useEscapeKey(onCancel, true);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70" onClick={onCancel}></div>
@@ -31,6 +33,7 @@ export default function ConfirmModal({
         ref={dialogRef}
       >
         <button
+          aria-label="Cerrar"
           onClick={onCancel}
           className="absolute top-4 right-4 text-gray-400 hover:text-white"
         >

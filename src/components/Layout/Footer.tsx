@@ -31,6 +31,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white"
+                aria-label="GitHub"
               >
                 <Github size={20} />
               </a>
@@ -39,6 +40,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white"
+                aria-label="Twitter"
               >
                 <Twitter size={20} />
               </a>
@@ -47,6 +49,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white"
+                aria-label="Instagram"
               >
                 <Instagram size={20} />
               </a>
@@ -55,6 +58,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white"
+                aria-label="Facebook"
               >
                 <Facebook size={20} />
               </a>

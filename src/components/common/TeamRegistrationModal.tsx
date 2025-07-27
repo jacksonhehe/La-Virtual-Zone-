@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { X, Trophy, Users } from 'lucide-react';
 import useFocusTrap from '../../hooks/useFocusTrap';
+import useEscapeKey from '../../hooks/useEscapeKey';
 import { useDataStore } from '../../store/dataStore';
 import { Tournament } from '../../types';
 
@@ -13,6 +14,7 @@ interface Props {
 const TeamRegistrationModal: React.FC<Props> = ({ tournament, isOpen, onClose }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap(dialogRef);
+  useEscapeKey(onClose, isOpen);
   const { tournaments, updateTournaments } = useDataStore();
   const [teamName, setTeamName] = useState('');
   const [contactName, setContactName] = useState('');
@@ -48,6 +50,7 @@ const TeamRegistrationModal: React.FC<Props> = ({ tournament, isOpen, onClose })
         ref={dialogRef}
       >
         <button
+          aria-label="Cerrar"
           onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
         >
