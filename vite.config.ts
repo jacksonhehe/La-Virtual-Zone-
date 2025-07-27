@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mdx from './scripts/mdxPlugin';
 import path from 'node:path';
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
