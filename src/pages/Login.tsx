@@ -1,7 +1,8 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { useAuthStore } from '../store/authStore'; 
+import { useAuthStore } from '../store/authStore';
+import SEO from '../components/SEO';
 
 const  Login = () => {
   const [username, setUsername] = useState('');
@@ -38,9 +39,11 @@ const  Login = () => {
     }
   };
   
-   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="w-full max-w-md">
+  return (
+    <>
+      <SEO title="Iniciar sesión" description="Accede a tu cuenta en La Virtual Zone" canonical="https://lavirtualzone.com/login" />
+      <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="w-full max-w-md">
         <div className="backdrop-blur-xl bg-gray-800/30 border border-gray-700/50 rounded-2xl shadow-2xl">
           <div className="p-8">
             <div className="text-center mb-8">
@@ -150,7 +153,8 @@ const  Login = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

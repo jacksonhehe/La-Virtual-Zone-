@@ -3,6 +3,7 @@ import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import usePersistentState from '../hooks/usePersistentState';
+import SEO from '../components/SEO';
 
 const Tournaments = () => {
   const [filter, setFilter] = usePersistentState<'all' | 'active' | 'upcoming' | 'finished'>('tournaments_filter', 'all');
@@ -19,11 +20,17 @@ const Tournaments = () => {
   const filteredTournaments = filter === 'all'
     ? tournaments
     : tournaments.filter(t => mapStatus(t.status) === filter);
-  
+
   return (
-    <div>
-      <PageHeader 
-        title="Torneos" 
+    <>
+      <SEO
+        title="Torneos | La Virtual Zone"
+        description="Participa y sigue los torneos de PES 2021 en La Virtual Zone."
+        canonical="https://lavirtualzone.com/torneos"
+      />
+      <div>
+      <PageHeader
+        title="Torneos"
         subtitle="Participa en torneos abiertos, sigue los torneos en curso y revisa los resultados de torneos anteriores."
         image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"
       />
@@ -190,7 +197,7 @@ const Tournaments = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

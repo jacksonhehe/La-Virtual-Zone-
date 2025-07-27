@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDataStore } from '../store/dataStore';
 import { Heart, Eye, Share2, Download } from 'lucide-react';
 import { useState } from 'react';
+import SEO from '../components/SEO';
 
 const GalleryDetail = () => {
   const { mediaId } = useParams();
@@ -11,6 +12,7 @@ const GalleryDetail = () => {
   if (!media) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
+        <SEO title="Elemento no encontrado" description="El elemento solicitado no existe." />
         <h2 className="text-2xl font-bold mb-4">Elemento no encontrado</h2>
         <button onClick={() => navigate(-1)} className="btn-primary">Volver</button>
       </div>
@@ -30,7 +32,14 @@ const GalleryDetail = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
+      <SEO
+        title={`${media.title} | La Virtual Zone`}
+        description={`Contenido multimedia de ${media.uploader}`}
+        canonical={`https://lavirtualzone.com/galeria/${media.id}`}
+        image={media.thumbnailUrl}
+      />
+      <div className="container mx-auto px-4 py-8">
       <button onClick={() => navigate(-1)} className="btn-outline mb-4">&larr; Volver</button>
 
       <div className="max-w-4xl mx-auto bg-[#1f1f2c]/60 border border-white/10 rounded-2xl p-6 shadow-lg">
@@ -83,6 +92,7 @@ const GalleryDetail = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

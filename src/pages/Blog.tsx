@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Calendar, Search, ChevronRight, FileText } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
+import SEO from '../components/SEO';
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,9 +28,15 @@ const Blog = () => {
   const categories = ['Noticias', 'Análisis', 'Fichajes', 'Comunidad', 'Humor'];
   
   return (
-    <div>
-      <PageHeader 
-        title="Blog" 
+    <>
+      <SEO
+        title="Blog | La Virtual Zone"
+        description="Noticias y artículos de La Virtual Zone"
+        canonical="https://lavirtualzone.com/blog"
+      />
+      <div>
+      <PageHeader
+        title="Blog"
         subtitle="Noticias, análisis, entrevistas y todo el contenido editorial sobre La Virtual Zone."
         image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"
       />
@@ -203,7 +210,7 @@ const Blog = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
