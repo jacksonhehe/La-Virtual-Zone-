@@ -201,6 +201,7 @@ const Tournaments = () => {
           </div>
         </div>
       </div>
+    </div>
     </>
   );
 };
