@@ -112,10 +112,11 @@ const Navbar = () => {
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center text-sm rounded-full focus:outline-none"
                   >
-                    <img 
-                      src={user?.avatar} 
+                    <img
+                      src={user?.avatar}
                       alt={user?.username}
                       className="h-8 w-8 rounded-full"
+                      loading="lazy"
                     />
                     <div className="hidden md:flex md:flex-col md:ml-2 md:items-start">
                       <span className="text-white text-sm">{user?.username}</span>

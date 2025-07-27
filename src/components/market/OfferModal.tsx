@@ -138,10 +138,11 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
             )}
             
             <div className="flex items-center space-x-4 mb-6">
-              <img 
-                src={player.image} 
+              <img
+                src={player.image}
                 alt={player.name}
                 className="w-16 h-16 rounded-full object-cover"
+                loading="lazy"
               />
               <div>
                 <h4 className="font-bold text-lg">{player.name}</h4>

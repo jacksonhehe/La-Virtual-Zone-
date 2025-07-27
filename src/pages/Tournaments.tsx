@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
+import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import { useDataStore } from '../store/dataStore';
 import usePersistentState from '../hooks/usePersistentState';
 import SEO from '../components/SEO';
@@ -75,10 +76,13 @@ const Tournaments = () => {
             {filteredTournaments.map(tournament => (
               <div key={tournament.id} className="card overflow-hidden group">
                 <div className="h-48 overflow-hidden relative">
-                  <img 
-                    src={tournament.logo} 
-                    alt={tournament.name} 
+                  <img
+                    src={withWidth(tournament.logo, 480)}
+                    srcSet={srcSet(tournament.logo)}
+                    sizes={defaultSizes}
+                    alt={tournament.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
                   

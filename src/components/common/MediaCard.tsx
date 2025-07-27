@@ -1,6 +1,7 @@
 import React from 'react';
 import { MediaItem } from '@/types';
 import LazyLoad from 'react-lazy-load';
+import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import { PlayCircle, Heart, Eye } from 'lucide-react';
 
 interface MediaCardProps {
@@ -28,7 +29,9 @@ const MediaCard: React.FC<MediaCardProps> = ({ media, onClick }) => {
           <div className="relative w-full aspect-video bg-gray-700">
             {/* Poster/miniatura */}
             <img
-              src={media.thumbnailUrl}
+              src={withWidth(media.thumbnailUrl, 640)}
+              srcSet={srcSet(media.thumbnailUrl)}
+              sizes={defaultSizes}
               alt={media.title}
               className="w-full h-full object-cover"
               loading="lazy"
@@ -40,7 +43,9 @@ const MediaCard: React.FC<MediaCardProps> = ({ media, onClick }) => {
           </div>
         ) : (
           <img
-            src={media.thumbnailUrl || media.url}
+            src={withWidth(media.thumbnailUrl || media.url, 640)}
+            srcSet={srcSet(media.thumbnailUrl || media.url)}
+            sizes={defaultSizes}
             alt={media.title}
             className="w-full h-auto object-cover rounded-lg bg-gray-700"
             loading="lazy"

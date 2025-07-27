@@ -6,12 +6,16 @@ interface PageHeaderProps {
   children?: React.ReactNode;
 }
 
+import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
+
 const PageHeader = ({ title, subtitle, image, breadcrumb, children }: PageHeaderProps) => {
   return (
     <div className="relative bg-gray-900 py-16 md:py-24 overflow-hidden">
       {image && (
         <img
-          src={image}
+          src={withWidth(image, 800)}
+          srcSet={srcSet(image)}
+          sizes={defaultSizes}
           alt="Estadio iluminado estilo eSports"
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"

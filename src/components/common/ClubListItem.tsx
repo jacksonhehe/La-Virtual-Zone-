@@ -16,6 +16,7 @@ const ClubListItem = ({ club, to, className = '' }: ClubListItemProps) => {
         src={club.logo}
         alt={club.name}
         className="w-12 h-12 object-contain mr-4"
+        loading="lazy"
       />
       <div>
         <h3 className="font-bold" aria-live="polite">
