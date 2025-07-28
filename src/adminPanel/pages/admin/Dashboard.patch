@@ -1,0 +1,29 @@
+*** Begin Patch
+*** Update File: src/adminPanel/pages/admin/Dashboard.tsx
+@@
+-import React, { useEffect, useMemo } from 'react';
++import React, { useEffect, useMemo } from 'react';
++import { asArray } from '../../../utils/asArray';
+@@
+-  const { transfers, tournaments, clubs, players, matches, loadDashboard } = useGlobalStore();
++  const { transfers, tournaments, clubs, players, matches, loadDashboard } = useGlobalStore();
+ 
+   useEffect(() => {
+-    loadDashboard?.();
++    // Evita doble carga si ya hay datos
++    if (!asArray(tournaments).length) {
++      loadDashboard?.();
++    }
+   }, []);
+@@
+-  const tList = tournaments || [];
+-  const cList = clubs || [];
+-  const pList = players || [];
+-  const mList = matches || [];
+-  const trList = transfers || [];
++  const tList = asArray(tournaments);
++  const cList = asArray(clubs);
++  const pList = asArray(players);
++  const mList = asArray(matches);
++  const trList = asArray(transfers);
+*** End Patch
