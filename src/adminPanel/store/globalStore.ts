@@ -31,9 +31,12 @@ export type User = {
 
 type Listener = () => void;
 
+import { getMarket, saveMarket } from "@/utils/sharedStorage";
+
 class Store {
   private _transfers: Transfer[] = [];
   private _users: User[] = [];
+  private _market: { marketStart?: string; marketEnd?: string; salaryCap?: string } = getMarket();
   private _listeners: Listener[] = [];
 
   subscribe(fn: Listener) {
@@ -102,6 +105,22 @@ class Store {
     this._transfers = this._transfers.map(t => t.id === id ? { ...t, status: "rejected" as TransferStatus, rejectReason: reason } : t);
     this.emit();
   };
+
+  // ---- Market ----
+  get market() {
+    return this._market;
+  }
+
+  loadMarketSettings = () => {
+    this._market = getMarket();
+    this.emit();
+  };
+
+  saveMarketSettings = (data: { marketStart?: string; marketEnd?: string; salaryCap?: string }) => {
+    this._market = { ...data };
+    saveMarket(this._market);
+    this.emit();
+  };
 }
 
 const singleton = new Store();
@@ -113,23 +132,33 @@ const singleton = new Store();
  */
 import { useSyncExternalStore } from "react";
 
+let snapshot = {
+  users: singleton.users,
+  transfers: singleton.transfers,
+  market: singleton.market,
+};
+
+const subscribe = (cb: () => void) =>
+  singleton.subscribe(() => {
+    snapshot = { users: singleton.users, transfers: singleton.transfers, market: singleton.market };
+    cb();
+  });
+
+const getSnapshot = () => snapshot;
+
 export function useGlobalStore() {
-  const snapshot = useSyncExternalStore(
-    (cb) => singleton.subscribe(cb),
-    () => ({
-      users: singleton.users,
-      transfers: singleton.transfers,
-    })
-  );
+  const state = useSyncExternalStore(subscribe, getSnapshot);
 
   return {
-    ...snapshot,
+    ...state,
     refreshUsers: singleton.refreshUsers,
     banUser: singleton.banUser,
     activateUser: singleton.activateUser,
     refreshTransfers: singleton.refreshTransfers,
     approveTransfer: singleton.approveTransfer,
     rejectTransfer: singleton.rejectTransfer,
+    loadMarketSettings: singleton.loadMarketSettings,
+    saveMarketSettings: singleton.saveMarketSettings,
   };
 }
 
