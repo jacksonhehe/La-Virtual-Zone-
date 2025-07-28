@@ -113,17 +113,24 @@ const singleton = new Store();
  */
 import { useSyncExternalStore } from "react";
 
+let snapshot = {
+  users: singleton.users,
+  transfers: singleton.transfers,
+};
+
+const subscribe = (cb: () => void) =>
+  singleton.subscribe(() => {
+    snapshot = { users: singleton.users, transfers: singleton.transfers };
+    cb();
+  });
+
+const getSnapshot = () => snapshot;
+
 export function useGlobalStore() {
-  const snapshot = useSyncExternalStore(
-    (cb) => singleton.subscribe(cb),
-    () => ({
-      users: singleton.users,
-      transfers: singleton.transfers,
-    })
-  );
+  const state = useSyncExternalStore(subscribe, getSnapshot);
 
   return {
-    ...snapshot,
+    ...state,
     refreshUsers: singleton.refreshUsers,
     banUser: singleton.banUser,
     activateUser: singleton.activateUser,
