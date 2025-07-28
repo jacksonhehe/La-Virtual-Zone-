@@ -1,156 +1,136 @@
-// src/adminPanel/store/globalStore.ts
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { seedData, type Transfer, type TransferStatus, type Club, type Player, type User } from '../seed/seedData'
+/**
+ * Simple global store with in-memory mock data.
+ * If you already have Zustand or another store, replace this with your real implementation.
+ */
+type TransferStatus = "pending" | "approved" | "rejected";
 
-export type Activity = {
-  id: string
-  type: 'transfer:created' | 'transfer:approved' | 'transfer:rejected'
-  refId?: string
-  message: string
-  at: string // ISO
-  meta?: Record<string, any>
+export type Transfer = {
+  id: string;
+  playerId: string;
+  playerName?: string;
+  fromClubId?: string;
+  fromClubName?: string;
+  toClubId?: string;
+  toClubName?: string;
+  amount?: number;
+  fee?: number;
+  status: TransferStatus;
+  createdAt?: string;
+  date?: string;
+  rejectReason?: string;
+};
+
+export type User = {
+  id: string;
+  name?: string;
+  email?: string;
+  role?: "admin" | "mod" | "user";
+  active?: boolean;
+  createdAt?: string;
+};
+
+type Listener = () => void;
+
+class Store {
+  private _transfers: Transfer[] = [];
+  private _users: User[] = [];
+  private _listeners: Listener[] = [];
+
+  subscribe(fn: Listener) {
+    this._listeners.push(fn);
+    return () => {
+      this._listeners = this._listeners.filter(l => l !== fn);
+    };
+  }
+
+  private emit() {
+    this._listeners.forEach(l => l());
+  }
+
+  // ---- Users ----
+  get users() {
+    return this._users;
+  }
+
+  refreshUsers = async () => {
+    // Mock: seed predictable users if empty
+    if (this._users.length === 0) {
+      this._users = [
+        { id: "u1", name: "Admin Test", email: "admin@test.com", role: "admin", active: true, createdAt: new Date().toISOString() },
+        { id: "u2", name: "María López", email: "maria@example.com", role: "user", active: true, createdAt: new Date().toISOString() },
+        { id: "u3", name: "Juan Pérez", email: "juan@example.com", role: "mod", active: false, createdAt: new Date().toISOString() },
+      ];
+    }
+    this.emit();
+  };
+
+  banUser = (id: string) => {
+    this._users = this._users.map(u => u.id === id ? { ...u, active: false } : u);
+    this.emit();
+  };
+
+  activateUser = (id: string) => {
+    this._users = this._users.map(u => u.id === id ? { ...u, active: true } : u);
+    this.emit();
+  };
+
+  // ---- Transfers ----
+  get transfers() {
+    return this._transfers;
+  }
+
+  refreshTransfers = async () => {
+    // Mock: seed predictable transfers if empty
+    if (this._transfers.length === 0) {
+      const now = new Date();
+      const today = now.toISOString();
+      this._transfers = [
+        { id: "t1", playerId: "p1", playerName: "Carlos Díaz", fromClubName: "Club A", toClubName: "Club B", amount: 1000000, status: "pending", createdAt: today },
+        { id: "t2", playerId: "p2", playerName: "Luis García", fromClubName: "Club C", toClubName: "Club D", amount: 2500000, status: "approved", createdAt: today },
+        { id: "t3", playerId: "p3", playerName: "Pedro Gómez", fromClubName: "Club E", toClubName: "Club F", amount: 500000, status: "rejected", createdAt: today, rejectReason: "Fuera de periodo" },
+      ];
+    }
+    this.emit();
+  };
+
+  approveTransfer = (id: string) => {
+    this._transfers = this._transfers.map(t => t.id === id ? { ...t, status: "approved" as TransferStatus } : t);
+    this.emit();
+  };
+
+  rejectTransfer = (id: string, reason?: string) => {
+    this._transfers = this._transfers.map(t => t.id === id ? { ...t, status: "rejected" as TransferStatus, rejectReason: reason } : t);
+    this.emit();
+  };
 }
 
-type StoreState = {
-  users: User[]
-  clubs: Club[]
-  players: Player[]
-  transfers: Transfer[]
-  activities: Activity[]
+const singleton = new Store();
 
-  refreshAll?: () => void
-  refreshTransfers?: () => void
-  approveTransfer?: (id: string) => void
-  rejectTransfer?: (id: string, reason?: string) => void
-  addMockTransfers?: (n?: number) => void
+/**
+ * React-friendly hook API without external libs.
+ * Usage:
+ *   const { users, refreshUsers } = useGlobalStore();
+ */
+import { useSyncExternalStore } from "react";
+
+export function useGlobalStore() {
+  const snapshot = useSyncExternalStore(
+    (cb) => singleton.subscribe(cb),
+    () => ({
+      users: singleton.users,
+      transfers: singleton.transfers,
+    })
+  );
+
+  return {
+    ...snapshot,
+    refreshUsers: singleton.refreshUsers,
+    banUser: singleton.banUser,
+    activateUser: singleton.activateUser,
+    refreshTransfers: singleton.refreshTransfers,
+    approveTransfer: singleton.approveTransfer,
+    rejectTransfer: singleton.rejectTransfer,
+  };
 }
 
-const ensureArr = <T,>(v: T[] | undefined | null): T[] => Array.isArray(v) ? v : []
-
-function pushActivity(activities: Activity[], a: Activity, max = 100) {
-  const out = [a, ...activities]
-  if (out.length > max) out.length = max
-  return out
-}
-
-export const useGlobalStore = create<StoreState>()(persist(
-  (set, get) => ({
-    users: seedData.users,
-    clubs: seedData.clubs,
-    players: seedData.players,
-    transfers: seedData.transfers,
-    activities: [],
-
-    refreshAll: () => {
-      const raw = localStorage.getItem('mock-db')
-      if (raw) {
-        try {
-          const data = JSON.parse(raw)
-          set({
-            users: ensureArr<User>(data.users) ?? seedData.users,
-            clubs: ensureArr<Club>(data.clubs) ?? seedData.clubs,
-            players: ensureArr<Player>(data.players) ?? seedData.players,
-            transfers: ensureArr<Transfer>(data.transfers) ?? seedData.transfers,
-            activities: ensureArr<Activity>(data.activities) ?? [],
-          })
-        } catch {}
-      }
-    },
-
-    refreshTransfers: () => {
-      const raw = localStorage.getItem('mock-db')
-      if (raw) {
-        try {
-          const data = JSON.parse(raw)
-          set({ transfers: ensureArr<Transfer>(data.transfers) ?? seedData.transfers })
-        } catch {}
-      }
-    },
-
-    approveTransfer: (id: string) => {
-      const state = get()
-      const list = ensureArr(state.transfers).map(t => {
-        if (String(t.id) === String(id)) {
-          return { ...t, status: 'approved' as TransferStatus, reason: undefined }
-        }
-        return t
-      })
-      const act: Activity = {
-        id: 'A'+Date.now(),
-        type: 'transfer:approved',
-        refId: id,
-        message: `Transferencia ${id} aprobada`,
-        at: new Date().toISOString()
-      }
-      const activities = pushActivity(ensureArr(state.activities), act)
-      set({ transfers: list, activities })
-      localStorage.setItem('mock-db', JSON.stringify({ 
-        users: state.users, clubs: state.clubs, players: state.players,
-        transfers: list, activities
-      }))
-    },
-
-    rejectTransfer: (id: string, reason?: string) => {
-      const state = get()
-      const list = ensureArr(state.transfers).map(t => {
-        if (String(t.id) === String(id)) {
-          return { ...t, status: 'rejected' as TransferStatus, reason: reason || 'Sin motivo' }
-        }
-        return t
-      })
-      const act: Activity = {
-        id: 'A'+Date.now(),
-        type: 'transfer:rejected',
-        refId: id,
-        message: `Transferencia ${id} rechazada`,
-        at: new Date().toISOString(),
-        meta: { reason }
-      }
-      const activities = pushActivity(ensureArr(state.activities), act)
-      set({ transfers: list, activities })
-      localStorage.setItem('mock-db', JSON.stringify({ 
-        users: state.users, clubs: state.clubs, players: state.players,
-        transfers: list, activities
-      }))
-    },
-
-    addMockTransfers: (n = 5) => {
-      const state = get()
-      const list = ensureArr(state.transfers).slice()
-      for (let i = 0; i < n; i++) {
-        const p = state.players[Math.floor(Math.random()*state.players.length)]
-        const from = state.clubs[Math.floor(Math.random()*state.clubs.length)]
-        let to = state.clubs[Math.floor(Math.random()*state.clubs.length)]
-        if (to.id === from.id) {
-          to = state.clubs[(state.clubs.indexOf(to)+1) % state.clubs.length]
-        }
-        const amount = Math.floor(100_000 + Math.random()*2_000_000)
-        const id = 'T' + (Date.now() + i)
-        const createdAt = new Date().toISOString()
-        list.unshift({
-          id, playerId: p.id, playerName: p.name,
-          fromClubId: from.id, fromClubName: from.name,
-          toClubId: to.id, toClubName: to.name,
-          amount, status: 'pending', createdAt, date: createdAt
-        } as Transfer)
-        const act: Activity = {
-          id: 'A'+(Date.now()+i),
-          type: 'transfer:created',
-          refId: id,
-          message: `Nueva oferta ${id} (${p.name})`,
-          at: createdAt
-        }
-        const activities = pushActivity(ensureArr(get().activities), act)
-        set({ activities })
-      }
-      set({ transfers: list })
-      localStorage.setItem('mock-db', JSON.stringify({ 
-        users: state.users, clubs: state.clubs, players: state.players,
-        transfers: list, activities: get().activities
-      }))
-    },
-
-  }),
-  { name: 'global-store' }
-))
+export default useGlobalStore;

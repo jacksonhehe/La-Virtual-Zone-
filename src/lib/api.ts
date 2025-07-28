@@ -1,58 +1,32 @@
-// Lightweight fetch-based client to avoid axios dependency
-// Drop-in-ish replacement for simple use cases: api.get(url, { params }), api.post(url, body)
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+/**
+ * Lightweight fetch-based API client so we don't depend on axios.
+ */
+export const API_BASE = (import.meta as any).env?.VITE_API_URL || "/api";
 
-type Dict = Record<string, any>;
-
-type GetConfig = { params?: Dict };
-type MutateConfig = { headers?: Record<string, string> };
-
-const buildQS = (params?: Dict) => {
-  if (!params) return '';
-  const qp = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v === undefined || v === null) return;
-    qp.set(k, String(v));
+export async function apiGet<T = any>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    credentials: "include",
+    headers: {
+      "Accept": "application/json",
+    },
+    ...(init || {}),
+    method: "GET",
   });
-  const s = qp.toString();
-  return s ? `?${s}` : '';
-};
-
-async function request<T>(url: string, init: RequestInit & { params?: Dict } = {}): Promise<T> {
-  const { params, ...rest } = init;
-  const finalUrl = `${BASE_URL}${url}${buildQS(params)}`;
-
-  const headers = new Headers(rest.headers || {});
-  const isForm = rest.body instanceof FormData;
-  if (!isForm && rest.body && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json');
-  }
-
-  const res = await fetch(finalUrl, {
-    credentials: 'include',
-    ...rest,
-    headers,
-    body: isForm ? rest.body : (rest.body ? JSON.stringify(rest.body) : undefined),
-  });
-
-  if (!res.ok) {
-    let detail = '';
-    try { detail = await res.text(); } catch {}
-    throw new Error(`HTTP ${res.status} ${res.statusText}${detail ? ` - ${detail}` : ''}`);
-  }
-
-  const ct = res.headers.get('content-type') || '';
-  if (ct.includes('application/json')) return (await res.json()) as T;
-  // @ts-ignore
-  return (await res.text()) as T;
+  if (!res.ok) throw new Error(`GET ${path} -> ${res.status}`);
+  return res.json();
 }
 
-export const api = {
-  get: <T>(url: string, config?: GetConfig) => request<T>(url, { method: 'GET', params: config?.params }),
-  post: <T>(url: string, body?: any, config?: MutateConfig) => request<T>(url, { method: 'POST', body, headers: config?.headers }),
-  put: <T>(url: string, body?: any, config?: MutateConfig) => request<T>(url, { method: 'PUT', body, headers: config?.headers }),
-  patch: <T>(url: string, body?: any, config?: MutateConfig) => request<T>(url, { method: 'PATCH', body, headers: config?.headers }),
-  delete: <T>(url: string, config?: MutateConfig) => request<T>(url, { method: 'DELETE', headers: config?.headers }),
-};
-
-export default api;
+export async function apiPost<T = any>(path: string, body?: any, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    credentials: "include",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+    ...(init || {}),
+    method: "POST",
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) throw new Error(`POST ${path} -> ${res.status}`);
+  return res.json();
+}
