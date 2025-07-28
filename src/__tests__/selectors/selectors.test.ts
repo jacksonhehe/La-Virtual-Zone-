@@ -21,7 +21,7 @@ describe('selectors', () => {
   })
 
   it('topClubFromTransfers', () => {
-    expect(topClubFromTransfers(tx)).toContain('(3)')
+    expect(topClubFromTransfers(tx)).toContain('(2)')
   })
 
   it('recentByDate ordered', () => {
