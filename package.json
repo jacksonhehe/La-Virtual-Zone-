@@ -22,7 +22,6 @@
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@sentry/react": "^7.92.0",
-    "axios": "^1.11.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.19.1",
     "html2canvas": "^1.4.1",

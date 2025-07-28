@@ -1,13 +1,13 @@
 import  React, { useState, useEffect } from 'react';
 import { MessageSquare, CheckCircle, EyeOff, Trash, AlertTriangle, User, Clock } from 'lucide-react';
 import type { Comment } from '../types';
-import { useCommentStore } from '../../store/commentStore';
+import { useGlobalStore, subscribe as subscribeGlobal } from '../../store/globalStore';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import toast from 'react-hot-toast';
 
 const CommentsAdminPanel = () => {
-  const { comments, approveComment, hideComment, deleteComment } = useCommentStore();
+  const { comments, approveComment, hideComment, deleteComment } = useGlobalStore();
   const [filter, setFilter] = useState('pending');
   const [search, setSearch] = useState('');
   const [deleteModal, setDeleteModal] = useState<string | null>(null);
@@ -16,7 +16,7 @@ const CommentsAdminPanel = () => {
   );
 
   useEffect(() => {
-    const unsub = useCommentStore.subscribe(
+    const unsub = subscribeGlobal(
       state => state.comments.filter(c => c.status === 'pending').length,
       setPendingCount
     );

@@ -1,22 +1,30 @@
-import React from 'react';
+import  { LucideIcon } from 'lucide-react';
 
-type Props = {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+interface Props {
   title: string;
-  value: React.ReactNode;
-  gradient?: string;
-};
+  value: string | number;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
+  icon: LucideIcon;
+  gradient: string;
+}
 
-const StatsCard: React.FC<Props> = ({ icon: Icon, title, value, gradient = 'from-slate-600 to-slate-800' }) => {
+const StatsCard = ({ title, value, change, changeType = 'neutral', icon: Icon, gradient }: Props) => {
+  const changeColor = changeType === 'positive' ? 'text-emerald-400' : 
+                     changeType === 'negative' ? 'text-red-400' : 'text-gray-400';
+
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-800/40 p-4">
+    <div className="kpi-card group">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs text-gray-400">{title}</div>
-          <div className="text-lg font-semibold text-white">{value}</div>
+          <p className="text-gray-400 text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold gradient-text">{value}</p>
+          {change && (
+            <p className={`text-xs mt-1 ${changeColor}`}>{change}</p>
+          )}
         </div>
-        <div className={`p-2 rounded-lg bg-gradient-to-br ${gradient}`}>
-          <Icon width={20} height={20} />
+        <div className={`p-3 ${gradient} rounded-2xl shadow-lg group-hover:scale-110 transition-transform`}>
+          <Icon className="text-white" size={28} />
         </div>
       </div>
     </div>
@@ -24,3 +32,4 @@ const StatsCard: React.FC<Props> = ({ icon: Icon, title, value, gradient = 'from
 };
 
 export default StatsCard;
+ 
