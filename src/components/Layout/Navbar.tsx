@@ -45,6 +45,11 @@ const Navbar = () => {
   };
   
   const userLevel = user ? calculateLevel(user.xp) : 0;
+  const avatarSrc =
+    user?.avatar ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      user?.username || ''
+    )}&background=111827&color=fff&size=128`;
   
   return (
     <nav className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
@@ -113,7 +118,7 @@ const Navbar = () => {
                     className="flex items-center text-sm rounded-full focus:outline-none"
                   >
                     <img
-                      src={user?.avatar}
+                      src={avatarSrc}
                       alt={user?.username}
                       className="h-8 w-8 rounded-full"
                       loading="lazy"
