@@ -38,6 +38,7 @@ import RequestClubModal from '../components/common/RequestClubModal';
 import { xpForNextLevel } from '../utils/helpers';
 import PageHeader from '../components/common/PageHeader';
 import ProgressRing from '../components/common/ProgressRing';
+import SmartAvatar from '../components/common/SmartAvatar';
 
 const UserPanel = () => {
   const { user, isAuthenticated, logout, updateUser } = useAuthStore();
