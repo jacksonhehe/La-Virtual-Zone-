@@ -62,11 +62,11 @@ function DataTable<T>({ data, columns, keyExtractor, pageSize = 10, onSelectionC
   const visibleRows = sortedData.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-full text-sm text-gray-300">
-        <thead>
-          <tr className="bg-gray-800/60">
-            <th className="p-3 w-10">
+    <div className="w-full overflow-x-auto card-elevated shadow-consistent p-2">
+      <table className="min-w-full text-sm text-gray-300" role="table">
+        <thead role="rowgroup">
+          <tr className="bg-gray-800/60" role="row">
+            <th className="p-3 w-10" role="columnheader">
               <input
                 type="checkbox"
                 checked={visibleRows.length>0 && visibleRows.every(r=>selected.has(keyExtractor(r)))}
@@ -77,6 +77,7 @@ function DataTable<T>({ data, columns, keyExtractor, pageSize = 10, onSelectionC
               <th
                 key={col.id}
                 className={`p-3 text-left font-semibold cursor-pointer ${col.width??''}`}
+                role="columnheader"
                 onClick={() => col.sortable && setSort(prev => {
                   if (!prev || prev.id!==col.id) return { id: col.id, dir: 'asc' };
                   return { id: col.id, dir: prev.dir==='asc'? 'desc':'asc' };
@@ -90,13 +91,13 @@ function DataTable<T>({ data, columns, keyExtractor, pageSize = 10, onSelectionC
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody role="rowgroup">
           {loading ? (
             Array.from({ length: pageSize }).map((_, i) => (
-              <tr key={i} className="border-b border-gray-700">
-                <td className="p-3"><Skeleton width={20} height={20} /></td>
+              <tr key={i} className="border-b border-gray-700" role="row">
+                <td className="p-3" role="cell"><Skeleton width={20} height={20} /></td>
                 {columns.map(col => (
-                  <td key={col.id} className="p-3"><Skeleton height={16} /></td>
+                  <td key={col.id} className="p-3" role="cell"><Skeleton height={16} /></td>
                 ))}
               </tr>
             ))
@@ -104,12 +105,12 @@ function DataTable<T>({ data, columns, keyExtractor, pageSize = 10, onSelectionC
           visibleRows.map(row => {
             const id = keyExtractor(row);
             return (
-              <tr key={id} className="border-b border-gray-700 hover:bg-gray-700/30">
-                <td className="p-3">
+              <tr key={id} className="border-b border-gray-700 hover:bg-gray-700/30" role="row">
+                <td className="p-3" role="cell">
                   <input type="checkbox" checked={selected.has(id)} onChange={()=>toggleSelect(id)} />
                 </td>
                 {columns.map(col => (
-                  <td key={col.id} className="p-3 whitespace-nowrap">
+                  <td key={col.id} className="p-3 whitespace-nowrap" role="cell">
                     {col.accessor(row)}
                   </td>
                 ))}
@@ -118,14 +119,14 @@ function DataTable<T>({ data, columns, keyExtractor, pageSize = 10, onSelectionC
           })
           )}
           {!loading && visibleRows.length===0 && (
-            <tr><td colSpan={columns.length+1} className="p-4 text-center text-gray-500">Sin resultados</td></tr>
+            <tr role="row"><td role="cell" colSpan={columns.length+1} className="p-4 text-center text-gray-500">Sin resultados</td></tr>
           )}
         </tbody>
       </table>
 
       {/* pagination */}
       { !loading && totalPages>1 && (
-        <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
+        <div className="flex justify-between items-center mt-4 text-xs text-gray-400" role="navigation" aria-label="Paginación">
           <span>Página {page} / {totalPages}</span>
           <div className="flex gap-2">
             <button className="btn-outline" disabled={page===1} onClick={()=>setPage(p=>p-1)}>Anterior</button>
