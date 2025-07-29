@@ -117,12 +117,7 @@ const Navbar = () => {
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center text-sm rounded-full focus:outline-none"
                   >
-                    <img
-                      src={avatarSrc}
-                      alt={user?.username}
-                      className="h-8 w-8 rounded-full object-cover"
-                      loading="lazy"
-                    />
+                    <SmartAvatar src={user?.avatar} name={user?.username} size={32} className="w-8 h-8 ring-1 ring-violet-500/30" />
                     <div className="hidden md:flex md:flex-col md:ml-2 md:items-start">
                       <span className="text-white text-sm">{user?.username}</span>
                       <span className="text-xs text-primary-light">Nivel {userLevel}</span>

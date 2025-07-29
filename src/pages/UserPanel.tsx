@@ -206,11 +206,7 @@ const UserPanel = () => {
               <div className="relative mx-auto w-24 h-24 rounded-full overflow-visible mb-6 bg-gradient-to-br from-primary to-secondary p-1 ring-4 ring-primary/20 shadow-lg shadow-primary/30">
                 <div className="w-full h-full rounded-full overflow-hidden">
                   {user.avatar ? (
-                    <img 
-                      src={user.avatar} 
-                      alt={user.username} 
-                      className="w-full h-full object-cover rounded-full"
-                    />
+                    <SmartAvatar src={user.avatar} name={user.username} size={96} className="w-24 h-24 ring-1 ring-violet-500/30" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full">
                       <User size={40} className="text-primary" />
