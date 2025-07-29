@@ -1,5 +1,4 @@
-import { Search } from 'lucide-react';
-import { useEffect } from 'react';
+import  { Search } from 'lucide-react';
 
 interface Props {
   search: string;
@@ -7,25 +6,9 @@ interface Props {
   filters?: { label: string; value: string; options: { label: string; value: string }[] }[];
   onFilterChange?: (filterValue: string, value: string) => void;
   placeholder?: string;
-  storageKey?: string;
 }
 
-
-const SearchFilter = ({ search, onSearchChange, filters, onFilterChange, placeholder = "Buscar...", storageKey }: Props) => {
-  useEffect(() => {
-    if (!storageKey) return;
-    const stored = localStorage.getItem(storageKey);
-    if (stored !== null) {
-      onSearchChange(stored);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (storageKey) {
-      localStorage.setItem(storageKey, search);
-    }
-  }, [search, storageKey]);
-
+const SearchFilter = ({ search, onSearchChange, filters, onFilterChange, placeholder = "Buscar..." }: Props) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <div className="relative flex-1">

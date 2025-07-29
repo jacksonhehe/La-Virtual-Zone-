@@ -1,18 +1,17 @@
 import  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target, Sun, Moon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Users, Globe, User, ShoppingBag, TrendingUp, Activity, AlertCircle, CheckCircle, Clock, Star, Trophy, Target, Sun, Moon } from 'lucide-react'; 
+import { useEffect, useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGlobalStore } from '../../store/globalStore';
-import { useTheme } from '../../contexts/ThemeContext';
 
 const Dashboard = () => {
   const { users, clubs, players, transfers, activities } = useGlobalStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const { theme, toggleTheme } = useTheme();
+  const [isDark, setIsDark] = useState(true);
   const [activitiesCount, setActivitiesCount] = useState(5);
 
   const usersChartRef = useRef<HTMLDivElement>(null);
@@ -26,6 +25,28 @@ const Dashboard = () => {
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? 'light' : 'dark';
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', newTheme);
+    setIsDark(!isDark);
+  };
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme') ?? 'dark';
+    if (storedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setIsDark(false);
+    }
+  }, []);
 
   // Distribución de posiciones de jugadores para PieChart
   const positionCounts: Record<string, number> = {};
@@ -54,7 +75,7 @@ const Dashboard = () => {
   const recentActivities = activities.slice(-activitiesCount);
 
    return (
-    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20' : 'bg-gradient-to-br from-gray-100 via-white to-gray-200'}`}>
+    <div className={`min-h-screen p-6 ${isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20' : 'bg-gradient-to-br from-gray-100 via-white to-gray-200'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Hero Header */}
         <div className="relative overflow-hidden glass-card bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-8">
@@ -64,7 +85,7 @@ const Dashboard = () => {
             className="absolute top-4 right-4 bg-gray-700/50 hover:bg-gray-600 text-gray-300 hover:text-white p-2 rounded-full transition-colors"
             aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div> 
           <div className="relative flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6">

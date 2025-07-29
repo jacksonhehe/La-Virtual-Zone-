@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import  { useState } from 'react';
 import { Plus, Search, Filter, Edit, Trash, Users, Shield, Eye, MoreVertical } from 'lucide-react'; 
 import toast from 'react-hot-toast';
 import { useGlobalStore } from '../../store/globalStore';
@@ -16,22 +16,6 @@ const Usuarios = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-  // Persist search and role filter
-  useEffect(() => {
-    const storedSearch = localStorage.getItem('admin-users-search');
-    const storedRole = localStorage.getItem('admin-users-role');
-    if (storedSearch) setSearch(storedSearch);
-    if (storedRole) setRoleFilter(storedRole);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('admin-users-search', search);
-  }, [search]);
-
-  useEffect(() => {
-    localStorage.setItem('admin-users-role', roleFilter);
-  }, [roleFilter]);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.username.toLowerCase().includes(search.toLowerCase()) ||
@@ -121,8 +105,8 @@ const Usuarios = () => {
               </div>
             </div>
             
-            <button
-              className="btn-gradient-primary flex items-center space-x-2"
+            <button 
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
               onClick={() => setShowNew(true)}
             >
               <Plus size={20} />

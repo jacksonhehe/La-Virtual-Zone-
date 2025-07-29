@@ -14,7 +14,7 @@ const StatsCard = ({ title, value, change, changeType = 'neutral', icon: Icon, g
                      changeType === 'negative' ? 'text-red-400' : 'text-gray-400';
 
   return (
-    <div className="card-elevated hover-lift group shadow-consistent-xl">
+    <div className="kpi-card group">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-gray-400 text-sm font-medium">{title}</p>

@@ -3,8 +3,6 @@ import { Suspense, lazy } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import SidebarAdmin from './components/SidebarAdmin';
-import TopBar from './components/TopBar';
-import { ThemeProvider } from './contexts/ThemeContext';
 
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
 const Usuarios = lazy(() => import('./pages/admin/Usuarios'));
@@ -36,7 +34,6 @@ const AdminLayout = () => {
     <div className="min-h-screen admin-bg flex">
       <SidebarAdmin />
       <main className="flex-1 md:ml-0">
-        <TopBar />
         <Suspense fallback={
           <div className="p-6">
             <div className="animate-pulse space-y-4">
@@ -70,11 +67,10 @@ const AdminLayout = () => {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AdminLayout />
-      </AuthProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <AdminLayout />
+      
+    </AuthProvider>
   );
 }
 
