@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 import { calculateLevel } from '../../utils/helpers';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import useEscapeKey from '../../hooks/useEscapeKey';
+import SmartAvatar from '../common/SmartAvatar';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
