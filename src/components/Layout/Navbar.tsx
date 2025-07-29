@@ -120,7 +120,7 @@ const Navbar = () => {
                     <img
                       src={avatarSrc}
                       alt={user?.username}
-                      className="h-8 w-8 rounded-full"
+                      className="h-8 w-8 rounded-full object-cover"
                       loading="lazy"
                     />
                     <div className="hidden md:flex md:flex-col md:ml-2 md:items-start">
