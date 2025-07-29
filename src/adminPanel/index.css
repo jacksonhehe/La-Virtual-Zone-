@@ -64,7 +64,15 @@
   .glass-panel {
     @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
   }
-  
+
+  .glass-card {
+    @apply bg-gray-800/50 backdrop-blur-md border border-gray-700/50 rounded-2xl shadow-lg;
+  }
+
+  .sidebar-glass {
+    @apply bg-gradient-to-b from-gray-800/90 to-gray-900/90 backdrop-blur-xl border-r border-gray-700/50 shadow-xl;
+  }
+
   .floating-action {
     @apply fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-110 z-50;
   }
