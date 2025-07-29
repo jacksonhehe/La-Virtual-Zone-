@@ -116,8 +116,8 @@ const FeaturedTournaments = () => {
             </div>
             
             <div className="p-4 border-t border-gray-800">
-              <Link 
-                to={`/torneos/${tournament.id}`} 
+              <Link
+                to={`/torneos/${tournament.slug || tournament.id}`}
                 className="btn-secondary w-full text-center"
               >
                 Ver Detalles
