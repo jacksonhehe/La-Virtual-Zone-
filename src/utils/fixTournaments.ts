@@ -13,7 +13,7 @@ export const fixTournamentsSlug = (): void => {
 
     const fixedTournaments = tournaments.map(tournament => {
       let changed = false;
-      let fixed = { ...tournament };
+      const fixed = { ...tournament };
       // Si el torneo no tiene slug, lo generamos
       if (!tournament.slug) {
         fixed.slug = slugify(tournament.name);
