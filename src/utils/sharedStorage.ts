@@ -28,7 +28,9 @@ function getItem<T>(key: string, fallback: T): T {
   if (json) {
     try {
       return JSON.parse(json) as T;
-    } catch {}
+    } catch {
+      return fallback;
+    }
   }
   return fallback;
 }
