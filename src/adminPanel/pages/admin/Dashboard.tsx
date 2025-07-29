@@ -78,7 +78,7 @@ const Dashboard = () => {
     <div className={`min-h-screen p-6 ${isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20' : 'bg-gradient-to-br from-gray-100 via-white to-gray-200'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-purple-900/50 to-blue-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50">
+        <div className="relative overflow-hidden glass-card bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-8">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
