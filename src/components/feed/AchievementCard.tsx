@@ -1,6 +1,7 @@
 import { formatDate } from '@/utils/helpers';
 import type { FeedItem } from '@/types';
 import { Trophy } from 'lucide-react';
+import Image from '@/components/ui/Image';
 
 interface Props { item: Extract<FeedItem, { type: 'achievement' }>; }
 
@@ -11,7 +12,7 @@ const AchievementCard = ({ item }: Props) => (
     title={item.title}
   >
     {item.meta.emblem ? (
-      <img src={item.meta.emblem} alt="" className="w-10 h-10 rounded" loading="lazy" />
+      <Image src={item.meta.emblem} alt={item.title} width={40} height={40} className="w-10 h-10 rounded" loading="lazy" />
     ) : (
       <div className="w-10 h-10 bg-yellow-500/20 rounded flex items-center justify-center" aria-hidden="true">
         <Trophy size={20} className="text-yellow-400" />

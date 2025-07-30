@@ -3,6 +3,7 @@ import { ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, Clipboard } f
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, formatDate } from '../utils/helpers';
+import Image from '@/components/ui/Image';
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -68,7 +69,7 @@ const ClubFinances = () => {
         <div className="mb-8">
           <div className="flex items-center mb-6">
             <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-              <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
+              <Image src={club.logo} alt={club.name} width={48} height={48} className="w-full h-full object-cover" />
             </div>
             <div>
               <h2 className="text-2xl font-bold">{club.name}</h2>

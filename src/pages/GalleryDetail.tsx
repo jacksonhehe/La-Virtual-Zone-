@@ -4,6 +4,7 @@ import { Heart, Eye, Share2, Download } from 'lucide-react';
 import { useState } from 'react';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import SEO from '../components/SEO';
+import Image from '@/components/ui/Image';
 
 const GalleryDetail = () => {
   const { mediaId } = useParams();
@@ -52,11 +53,13 @@ const GalleryDetail = () => {
             className="w-full rounded-lg mb-4"
           />
         ) : (
-          <img
+          <Image
             src={withWidth(media.url, 800)}
             srcSet={srcSet(media.url)}
             sizes={defaultSizes}
             alt={media.title}
+            width={800}
+            height={450}
             className="w-full rounded-lg mb-4"
             loading="lazy"
           />

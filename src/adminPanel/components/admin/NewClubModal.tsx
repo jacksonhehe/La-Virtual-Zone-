@@ -1,4 +1,5 @@
 import  { useState, useRef, useEffect } from 'react';
+import Image from '@/components/ui/Image';
 import { Club } from '../../types';
 import { useGlobalStore } from '../../store/globalStore';
 import { slugify } from '../../utils/helpers';
@@ -95,7 +96,7 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
           {/* Previsualización del logo */}
           {logoPreview && (
             <div className="sm:col-span-2 w-24 h-24 mx-auto rounded-xl overflow-hidden bg-gray-700 flex items-center justify-center">
-              <img src={logoPreview} alt="Preview logo" className="w-full h-full object-cover" />
+              <Image src={logoPreview} alt="Preview logo" width={96} height={96} className="w-full h-full object-cover" />
             </div>
           )}
           <div>

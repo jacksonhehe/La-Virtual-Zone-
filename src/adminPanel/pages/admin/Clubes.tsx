@@ -1,4 +1,5 @@
 import  { useState } from 'react';
+import Image from '@/components/ui/Image';
 import { Plus, Search, Edit, Trash, Building, Trophy, Users, Eye, MoreVertical, Filter } from 'lucide-react'; 
 import toast from 'react-hot-toast';
 import { useGlobalStore } from '../../store/globalStore';
@@ -161,9 +162,11 @@ const Clubes = () => {
                     <div className="relative">
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
                         {club.logo ? (
-                          <img 
-                            src={club.logo} 
+                          <Image
+                            src={club.logo}
                             alt={club.name}
+                            width={64}
+                            height={64}
                             className="w-full h-full object-cover"
                           />
                         ) : (

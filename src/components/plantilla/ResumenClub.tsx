@@ -1,6 +1,7 @@
 import { formatCurrency } from '../../utils/helpers';
 import { Player, Club } from '../../types/shared';
 import ProgressBar from '../common/ProgressBar';
+import Image from '@/components/ui/Image';
 
 interface Props {
   club?: Club;
@@ -14,7 +15,7 @@ const ResumenClub = ({ club, players }: Props) => {
 
   return (
     <div className="card p-6 flex items-center">
-      <img src={club?.logo || ''} alt={club?.name || ''} className="w-16 h-16 mr-4" />
+      <Image src={club?.logo || ''} alt={club?.name || 'Escudo del club'} width={64} height={64} className="w-16 h-16 mr-4" />
       <div>
         <h2 className="text-xl font-bold mb-1">{club?.name}</h2>
         <p className="text-sm text-gray-400">

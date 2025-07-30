@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import Image from '@/components/ui/Image';
 
 export interface CalendarEvent {
   id: string;
@@ -34,14 +35,14 @@ const EventModal = ({ event, onClose }: Props) => (
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {event.homeLogo && (
-              <img src={event.homeLogo} alt={event.homeTeam} className="h-8 w-8 rounded-full" />
+              <Image src={event.homeLogo} alt={event.homeTeam} width={32} height={32} className="h-8 w-8 rounded-full" />
             )}
             <span>{event.homeTeam}</span>
           </div>
           <span className="text-sm text-gray-400">vs</span>
           <div className="flex items-center gap-2">
             {event.awayLogo && (
-              <img src={event.awayLogo} alt={event.awayTeam} className="h-8 w-8 rounded-full" />
+              <Image src={event.awayLogo} alt={event.awayTeam} width={32} height={32} className="h-8 w-8 rounded-full" />
             )}
             <span>{event.awayTeam}</span>
           </div>

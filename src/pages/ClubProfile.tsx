@@ -13,6 +13,7 @@ import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import { useDataStore } from '../store/dataStore';
 import { formatDate, formatCurrency, getMatchResult } from '../utils/helpers';
+import Image from '@/components/ui/Image';
 
 const ClubProfile = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -118,9 +119,11 @@ const ClubProfile = () => {
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="w-full md:w-1/3">
             <div className="card p-6 text-center">
-              <img 
-                src={club.logo} 
+              <Image
+                src={club.logo}
                 alt={club.name}
+                width={128}
+                height={128}
                 className="w-32 h-32 mx-auto mb-4"
               />
               <h1 className="text-2xl font-bold mb-1">{club.name}</h1>
@@ -289,9 +292,11 @@ const ClubProfile = () => {
                               return (
                                 <div key={match.id} className="flex items-center p-3 bg-gray-800 rounded-lg">
                                   <div className="w-12 h-12 flex items-center justify-center mr-3">
-                                    <img 
-                                      src={opponentClub?.logo} 
-                                      alt={opponentClub?.name}
+                                    <Image
+                                      src={opponentClub?.logo}
+                                      alt={opponentClub?.name || 'Escudo del club'}
+                                      width={40}
+                                      height={40}
                                       className="w-10 h-10 object-contain"
                                     />
                                   </div>
@@ -361,9 +366,11 @@ const ClubProfile = () => {
                             >
                               <div className="flex items-center">
                                 <div className="w-10 h-10 flex items-center justify-center mr-3">
-                                  <img 
-                                    src={opponentClub?.logo} 
-                                    alt={opponentClub?.name}
+                                  <Image
+                                    src={opponentClub?.logo}
+                                    alt={opponentClub?.name || 'Escudo del club'}
+                                    width={32}
+                                    height={32}
                                     className="w-8 h-8 object-contain"
                                   />
                                 </div>
@@ -442,9 +449,11 @@ const ClubProfile = () => {
                               <tr key={player.id} className="hover:bg-gray-800">
                                 <td className="p-3">
                                   <div className="flex items-center">
-                                    <img 
-                                      src={player.image} 
+                                    <Image
+                                      src={player.image}
                                       alt={player.name}
+                                      width={32}
+                                      height={32}
                                       className="w-8 h-8 rounded-full object-cover mr-2"
                                     />
                                     <span className="font-medium">{player.name}</span>

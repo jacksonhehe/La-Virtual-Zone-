@@ -6,6 +6,7 @@ import { processTransfer } from '../../utils/transferService';
 import { TransferOffer } from '../../types';
 import { formatCurrency, formatDate, getStatusBadge } from '../../utils/helpers';
 import Card from '../common/Card';
+import Image from '@/components/ui/Image';
 import RenegotiateModal from './RenegotiateModal';
 import ConfirmModal from '../common/ConfirmModal';
 import toast from 'react-hot-toast';
@@ -219,9 +220,11 @@ const OffersPanel = ({
           <div className="p-4 cursor-pointer" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-3">
-                <img
+                <Image
                   src={getClubLogo(offer.toClub)}
                   alt={offer.toClub}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 object-contain"
                   loading="lazy"
                 />
@@ -285,9 +288,11 @@ const OffersPanel = ({
                 <div>
                   <p className="text-xs text-gray-400 mb-1">Club vendedor</p>
                   <div className="flex items-center space-x-2">
-                    <img
+                    <Image
                       src={getClubLogo(offer.fromClub)}
                       alt={offer.fromClub}
+                      width={24}
+                      height={24}
                       className="w-6 h-6 object-contain"
                       loading="lazy"
                     />
@@ -297,9 +302,11 @@ const OffersPanel = ({
                 <div>
                   <p className="text-xs text-gray-400 mb-1">Club comprador</p>
                   <div className="flex items-center space-x-2">
-                    <img
+                    <Image
                       src={getClubLogo(offer.toClub)}
                       alt={offer.toClub}
+                      width={24}
+                      height={24}
                       className="w-6 h-6 object-contain"
                       loading="lazy"
                     />
