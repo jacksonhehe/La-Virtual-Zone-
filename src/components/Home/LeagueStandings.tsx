@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import slugify from '../../utils/slugify';
+import Image from '@/components/ui/Image';
 
 const LeagueStandings = () => {
   const { standings, clubs } = useDataStore();
@@ -58,9 +59,11 @@ const LeagueStandings = () => {
                       to={`/liga-master/club/${club ? slugify(club.name) : ''}`}
                       className="flex items-center"
                     >
-                      <img 
+                      <Image 
                         src={club?.logo}
                         alt={club?.name}
+                        width={24}
+                        height={24}
                         className="w-6 h-6 mr-2"
                       />
                       <span className="font-medium">{club?.name}</span>

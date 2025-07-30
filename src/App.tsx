@@ -52,9 +52,19 @@ function App() {
   const { theme } = useThemeStore();
 
   useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const mode = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
-    document.documentElement.classList.toggle('dark', mode === 'dark');
+    const applyTheme = () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const mode = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+      document.documentElement.classList.toggle('dark', mode === 'dark');
+    };
+    applyTheme();
+    // Si el modo es 'system', escuchar cambios en el sistema
+    if (theme === 'system') {
+      const mql = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = () => applyTheme();
+      mql.addEventListener('change', handler);
+      return () => mql.removeEventListener('change', handler);
+    }
   }, [theme]);
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import { Search, AlertCircle, ShoppingCart, X } from 'lucide-react';
 import { useStoreSlice } from '../store/storeSlice';
@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { formatCurrency } from '../utils/helpers';
 import { getRarityClasses } from '../utils/rarity';
 import { StoreItem } from '../types';
+import Image from '@/components/ui/Image';
 
 const Store = () => {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -137,10 +138,13 @@ const Store = () => {
           {filteredItems.map(product => (
             <div key={product.id} className="card overflow-hidden group">
               <div className="aspect-square bg-dark-lighter overflow-hidden relative">
-                <img 
+                <Image 
                   src={product.image} 
                   alt={product.name} 
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  style={{ aspectRatio: "1/1" }}
                 />
                 <div className="absolute top-3 left-3">
                   <span className={`
@@ -290,7 +294,14 @@ const Store = () => {
             <div className="absolute inset-0 bg-black/70" onClick={() => setPreviewItem(null)}></div>
             <div className="relative bg-gray-900 rounded-lg p-6 w-full max-w-md">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-white" onClick={() => setPreviewItem(null)}><X /></button>
-              <img src={previewItem.image} alt={previewItem.name} className="w-full rounded-lg mb-4" />
+              <Image 
+                src={previewItem.image} 
+                alt={previewItem.name} 
+                width={400}
+                height={300}
+                className="w-full rounded-lg mb-4"
+                style={{ aspectRatio: "4/3" }}
+              />
               <h3 className="text-xl font-bold mb-2">{previewItem.name}</h3>
               <p className="text-gray-400 mb-4">{previewItem.description}</p>
               <button className="btn-secondary" onClick={() => {

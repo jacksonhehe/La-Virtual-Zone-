@@ -40,6 +40,7 @@ import { xpForNextLevel } from '../utils/helpers';
 import PageHeader from '../components/common/PageHeader';
 import ProgressRing from '../components/common/ProgressRing';
 import SmartAvatar from '../components/common/SmartAvatar';
+import ToggleThemeButton from '../components/ui/ToggleThemeButton';
 
 const UserPanel = () => {
   const { user, isAuthenticated, logout, updateUser } = useAuthStore();
@@ -54,20 +55,6 @@ const UserPanel = () => {
     bio: user?.bio || '',
     avatar: user?.avatar || ''
   });
-
-  /* ================= Preferencias de Usuario ================= */
-  const [language, setLanguage] = usePersistentState<'es' | 'en'>('vz_language', 'es');
-  const [notificationsEnabled, setNotificationsEnabled] = usePersistentState<boolean>('vz_notifications', true);
-  const [theme, setTheme] = usePersistentState<'dark' | 'light'>('vz_theme', 'dark');
-
-  useEffect(() => {
-    const html = document.documentElement;
-    if (theme === 'dark') {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-  }, [theme]);
 
   /* ================= Cambio de contraseña ================= */
   const [currentPassword, setCurrentPassword] = useState('');
@@ -207,43 +194,57 @@ const UserPanel = () => {
             <div className="card-elevated p-8 text-center mb-6 shadow-consistent-xl">
               <div className="relative mx-auto w-24 h-24 rounded-full overflow-visible mb-6 bg-gradient-to-br from-primary to-secondary p-1 ring-4 ring-primary/20 shadow-lg shadow-primary/30">
                 <div className="w-full h-full rounded-full overflow-hidden">
-                  {user.avatar ? (
-                    <SmartAvatar src={user.avatar} name={user.username} size={96} className="w-24 h-24 ring-1 ring-violet-500/30" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full">
-                      <User size={40} className="text-primary" />
-                    </div>
-                  )}
-                  {true && (
-                    <>
-                      <button
-                        className="absolute bottom-1 right-1 z-10 bg-primary p-1.5 rounded-full text-white hover:bg-primary/80 w-7 h-7 flex items-center justify-center transform hover:scale-110 transition-transform"
-                        onClick={() => document.getElementById('avatarUpload')?.click()}
-                        title="Cambiar foto"
-                      >
-                        <Camera size={20} />
-                      </button>
-                      <input
-                        id="avatarUpload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e)=>{
-                          const file=e.target.files?.[0];
-                          if(!file) return;
-                          const reader=new FileReader();
-                          reader.onload=()=>{
-                            useAuthStore.getState().updateUser({avatar: reader.result as string});
-                            toast.success('Avatar actualizado');
-                          };
-                          if (file.size>2*1024*1024){toast.error('La imagen supera 2 MB');return;}
-                          reader.readAsDataURL(file);
-                        }}
-                      />
-                    </>
-                  )}
+                  <SmartAvatar 
+                    src={user.avatar} 
+                    name={user.username} 
+                    size={96} 
+                    className="w-24 h-24 ring-1 ring-violet-500/30" 
+                  />
+                  
+                  <button
+                    className="absolute bottom-1 right-1 z-10 bg-primary p-1.5 rounded-full text-white hover:bg-primary/80 w-7 h-7 flex items-center justify-center transform hover:scale-110 transition-transform"
+                    onClick={() => document.getElementById('avatarUpload')?.click()}
+                    title="Cambiar foto"
+                  >
+                    <Camera size={20} />
+                  </button>
+                  <input
+                    id="avatarUpload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e)=>{
+                      const file=e.target.files?.[0];
+                      if(!file) return;
+                      
+                      // Validar tamaño
+                      if (file.size>2*1024*1024){
+                        toast.error('La imagen supera 2 MB');
+                        return;
+                      }
+                      
+                      const reader=new FileReader();
+                      reader.onload=()=>{
+                        const base64Data = reader.result as string;
+                        
+                        // Usar el hook updateUser en lugar de getState()
+                        updateUser({avatar: base64Data});
+                        
+                        toast.success('Avatar actualizado');
+                        
+                        // Limpiar el input
+                        e.target.value = '';
+                      };
+                      
+                      reader.onerror=()=>{
+                        toast.error('Error al leer la imagen');
+                        console.error('FileReader error:', reader.error);
+                      };
+                      
+                      reader.readAsDataURL(file);
+                    }}
+                  />
                 </div>
-
               </div>
               
               <h2 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -845,8 +846,8 @@ const UserPanel = () => {
         </label>
         <select
           className="input w-full bg-dark cursor-pointer"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value as 'es' | 'en')}
+          value={user.language || 'es'}
+          onChange={(e) => updateUser({ language: e.target.value as 'es' | 'en' })}
         >
           <option value="es">Español</option>
           <option value="en">English</option>
@@ -857,22 +858,17 @@ const UserPanel = () => {
       <div className="flex items-center justify-between p-3 bg-dark/50 rounded-lg mb-4">
         <span className="text-gray-300 flex items-center"><Bell size={18} className="mr-2"/> Notificaciones en sitio</span>
         <button
-          onClick={() => setNotificationsEnabled(prev => !prev)}
-          className={`w-12 h-6 rounded-full flex items-center p-1 transition-smooth ${notificationsEnabled ? 'bg-green-500' : 'bg-gray-600'}`}
+          onClick={() => updateUser({ notificationsEnabled: !user.notificationsEnabled })}
+          className={`w-12 h-6 rounded-full flex items-center p-1 transition-smooth ${user.notificationsEnabled ? 'bg-green-500' : 'bg-gray-600'}`}
         >
-          <span className={`w-4 h-4 rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : ''}`}></span>
+          <span className={`w-4 h-4 rounded-full bg-white transition-transform ${user.notificationsEnabled ? 'translate-x-6' : ''}`}></span>
         </button>
       </div>
 
       {/* Tema */}
       <div className="flex items-center justify-between p-3 bg-dark/50 rounded-lg">
-        <span className="text-gray-300 flex items-center">{theme === 'dark' ? <Moon size={18} className="mr-2"/> : <Sun size={18} className="mr-2"/>}Tema {theme === 'dark' ? 'Oscuro' : 'Claro'}</span>
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className={`w-12 h-6 rounded-full flex items-center p-1 transition-smooth ${theme === 'dark' ? 'bg-purple-600' : 'bg-yellow-400'}`}
-        >
-          <span className={`w-4 h-4 rounded-full bg-white transition-transform ${theme === 'dark' ? 'translate-x-6' : ''}`}></span>
-        </button>
+        <span className="text-gray-300 flex items-center">{user.theme === 'dark' ? <Moon size={18} className="mr-2"/> : <Sun size={18} className="mr-2"/>}Tema {user.theme === 'dark' ? 'Oscuro' : 'Claro'}</span>
+        <ToggleThemeButton />
       </div>
     </div>
   </div>

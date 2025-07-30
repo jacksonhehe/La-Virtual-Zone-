@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Clock, MapPin, Trophy, Calendar as CalendarIcon } from 'lucide-react';
 import Image from '@/components/ui/Image';
 import { useDataStore } from '../../store/dataStore';
+import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 const months = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -93,6 +94,7 @@ export default function CalendarioTab() {
 
   const countdown = getTimeUntilNextMatch();
   const days = getDaysInMonth(currentDate);
+  const shouldReduceMotion = useReducedMotionPreference();
 
   return (
     <div className="space-y-8">

@@ -7,6 +7,7 @@ import { useGlobalStore } from '../store/globalStore';
 import { useStoreSlice } from '../../store/storeSlice';
 import { useAuth } from '../contexts/AuthContext';
 import { useSidebarStore } from '../store/sidebarStore';
+import useReducedMotionPreference from '../../hooks/useReducedMotionPreference';
 
 const SidebarAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +16,7 @@ const SidebarAdmin = () => {
   const { products } = useStoreSlice();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const pendingTransfers = transfers.filter(t => t.status === 'pending').length;
 
@@ -72,9 +74,10 @@ const SidebarAdmin = () => {
 
       {/* Sidebar */}
       <motion.aside
-        initial={{ width: collapsed ? 80 : 288 }}
+        initial={shouldReduceMotion ? false : { width: collapsed ? 80 : 288 }}
         animate={{ width: collapsed ? 80 : 288 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, ease: 'easeInOut' }}
+        // Si shouldReduceMotion es true, animación instantánea
         className={`fixed md:static top-0 left-0 h-full sidebar-glass z-50 transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
         aria-label="Menú lateral"
       >

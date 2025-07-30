@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowLeft, Check, AlertCircle, Shield, Lock } from 'lucide-react';
+import useReducedMotionPreference from '../hooks/useReducedMotionPreference';
 
 export default function RecuperarContrasena() {
   const [email, setEmail] = useState('');
@@ -31,20 +32,23 @@ export default function RecuperarContrasena() {
     }, 2000);
   };
 
+  const shouldReduceMotion = useReducedMotionPreference();
+
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20 flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.03%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
         
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={shouldReduceMotion ? { duration: 0 } : undefined}
           className="relative max-w-md w-full bg-gray-800/60 backdrop-blur-xl border border-gray-700/40 rounded-3xl p-8 text-center shadow-2xl"
         >
           <motion.div
-            initial={{ scale: 0 }}
+            initial={shouldReduceMotion ? false : { scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.2 }}
             className="w-20 h-20 bg-gradient-to-br from-purple-500 via-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-purple-500/20"
           >
             <Check size={36} className="text-white" />
@@ -85,15 +89,16 @@ export default function RecuperarContrasena() {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.03%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
       
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={shouldReduceMotion ? { duration: 0 } : undefined}
         className="relative max-w-md w-full"
       >
         <div className="text-center mb-10">
           <motion.div
-            initial={{ scale: 0 }}
+            initial={shouldReduceMotion ? false : { scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.2 }}
             className="w-20 h-20 bg-gradient-to-br from-purple-500 via-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-purple-500/20"
           >
             <Lock size={36} className="text-white" />
@@ -109,9 +114,9 @@ export default function RecuperarContrasena() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.3 }}
           className="bg-gray-800/60 backdrop-blur-xl border border-gray-700/40 rounded-3xl p-8 shadow-2xl"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -134,8 +139,9 @@ export default function RecuperarContrasena() {
 
             {error && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
+                transition={shouldReduceMotion ? { duration: 0 } : undefined}
                 className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center space-x-3"
               >
                 <AlertCircle size={18} className="text-red-400" />
@@ -174,9 +180,9 @@ export default function RecuperarContrasena() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.5 }}
           className="mt-8 bg-gray-800/40 border border-gray-700/20 rounded-3xl p-6"
         >
           <div className="flex items-start space-x-4">

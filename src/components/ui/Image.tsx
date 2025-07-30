@@ -7,9 +7,10 @@ export interface ImageProps {
   height?: number;
   className?: string;
   decoding?: 'sync' | 'async' | 'auto';
-  fetchPriority?: 'high' | 'low' | 'auto';
   loading?: 'eager' | 'lazy';
   style?: React.CSSProperties;
+  onError?: () => void;
+  onLoad?: () => void;
 }
 
 export default function Image({
@@ -19,9 +20,10 @@ export default function Image({
   height,
   className,
   decoding = 'async',
-  fetchPriority = 'auto',
   loading = 'lazy',
-  style
+  style,
+  onError,
+  onLoad
 }: ImageProps) {
   return (
     <img
@@ -30,10 +32,11 @@ export default function Image({
       {...(width ? { width } : {})}
       {...(height ? { height } : {})}
       decoding={decoding}
-      fetchpriority={fetchPriority}
       loading={loading}
       className={className}
       style={style}
+      onError={onError}
+      onLoad={onLoad}
     />
   );
 }

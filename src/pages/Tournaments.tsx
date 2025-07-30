@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { Trophy, Calendar, Users, ChevronRight, Filter } from 'lucide-react';
@@ -5,6 +6,7 @@ import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import { useDataStore } from '../store/dataStore';
 import usePersistentState from '../hooks/usePersistentState';
 import SEO from '../components/SEO';
+import Image from '@/components/ui/Image';
 
 const Tournaments = () => {
   const [filter, setFilter] = usePersistentState<'all' | 'active' | 'upcoming' | 'finished'>('tournaments_filter', 'all');
@@ -85,15 +87,14 @@ const Tournaments = () => {
               <div key={tournament.id} className="card overflow-hidden group">
                 <div className="h-48 overflow-hidden relative">
                   {tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? (
-                    <img
+                    <Image
                       src={tournament.logo}
                       alt={tournament.name}
+                      width={400}
+                      height={192}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                      }}
+                      style={{ aspectRatio: "16/9" }}
                     />
                   ) : null}
                   <div className={`absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center ${tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? 'hidden' : ''}`}>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate, formatTime } from '../../utils/helpers';
+import Image from '@/components/ui/Image';
 
 const UpcomingMatches = () => {
   const { tournaments, clubs } = useDataStore();
@@ -61,9 +62,11 @@ const UpcomingMatches = () => {
               
               <div className="flex items-center justify-between my-3">
                 <div className="flex items-center space-x-3">
-                  <img 
+                  <Image 
                     src={homeClub?.logo} 
                     alt={homeClub?.name}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 object-contain"
                   />
                   <span className="font-medium">{homeClub?.name}</span>
@@ -71,9 +74,11 @@ const UpcomingMatches = () => {
                 <span className="text-gray-400 mx-4">vs</span>
                 <div className="flex items-center space-x-3">
                   <span className="font-medium">{awayClub?.name}</span>
-                  <img 
+                  <Image 
                     src={awayClub?.logo} 
                     alt={awayClub?.name}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 object-contain"
                   />
                 </div>

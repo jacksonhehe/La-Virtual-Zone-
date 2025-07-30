@@ -4,6 +4,7 @@ import { RotateCcw, Save, Settings } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
 import Image from '@/components/ui/Image';
+import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 const formations = [
   { name: '4-4-2', positions: [
@@ -33,6 +34,7 @@ export default function TacticasTab() {
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [draggedPlayer, setDraggedPlayer] = useState<number | null>(null);
   const pitchRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const clubPlayers = players.filter(p => p.clubId === club?.id);
   const startingEleven = clubPlayers.slice(0, 11);

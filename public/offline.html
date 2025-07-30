@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sin conexión - La Virtual Zone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        p {
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .status {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-text {
+            color: #8b5cf6;
+            font-weight: 500;
+        }
+        
+        .retry-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="logo">VZ</div>
+        <h1>Sin conexión</h1>
+        <p>No tienes conexión a internet en este momento. Algunas funciones de La Virtual Zone requieren conexión para funcionar correctamente.</p>
+        
+        <div class="status">
+            <div class="status-text">Estado: Sin conexión</div>
+        </div>
+        
+        <button class="retry-btn" onclick="window.location.reload()">
+            Reintentar conexión
+        </button>
+    </div>
+    
+    <script>
+        // Verificar conexión cada 5 segundos
+        setInterval(() => {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        }, 5000);
+        
+        // Escuchar cambios de conectividad
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html> 

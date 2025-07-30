@@ -8,8 +8,8 @@ export default function ToggleThemeButton() {
 
   const toggle = () => {
     const next = current === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.classList.toggle('dark', next === 'dark');
+    setTheme(next); // Solo actualiza el store global
+    // La clase 'dark' se gestiona centralizadamente en App.tsx
   };
 
   return (

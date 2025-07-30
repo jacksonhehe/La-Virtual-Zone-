@@ -4,12 +4,15 @@ import { Clock, CheckCircle, Trophy, Calendar, MapPin, Filter } from 'lucide-rea
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
 import Image from '@/components/ui/Image';
+import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 export default function FixtureTab() {
   const { user } = useAuthStore();
   const { fixtures, clubs, tournaments, club: userClub } = useDataStore();
   const [selectedTournament, setSelectedTournament] = useState('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'played' | 'upcoming'>('all');
+
+  const shouldReduceMotion = useReducedMotionPreference();
 
    const filteredFixtures = useMemo(() => {
     return (fixtures || [])

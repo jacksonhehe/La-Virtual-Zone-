@@ -11,6 +11,7 @@ import {
   Filter,
   Clock
 } from 'lucide-react';
+import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 interface FeedItem {
   id: string;
@@ -91,6 +92,7 @@ const priorityConfig = {
 export default function FeedTab() {
   const [filter, setFilter] = useState<'all' | FeedItem['type']>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'priority'>('newest');
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const filteredAndSortedFeed = useMemo(() => {
     let filtered = filter === 'all' ? mockFeedData : mockFeedData.filter(item => item.type === filter);
@@ -121,8 +123,9 @@ export default function FeedTab() {
     <div className="space-y-6">
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={shouldReduceMotion ? { duration: 0 } : undefined}
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
         <div>
@@ -166,12 +169,12 @@ export default function FeedTab() {
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, x: -20 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ delay: index * 0.05 }}
+                exit={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
+                transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.05 }}
                 className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700 ${priorityConfig[item.priority]} border-l-4 rounded-lg p-4 hover:bg-gray-800/70 transition-all duration-200`}
-                whileHover={{ scale: 1.01 }}
+                whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
               >
                 <div className="flex items-start gap-4">
                   <div className={`${config.bg} ${config.color} p-2 rounded-lg flex-shrink-0`}>
@@ -193,8 +196,9 @@ export default function FeedTab() {
                     
                     {item.priority === 'high' && (
                       <motion.div
-                        initial={{ scale: 0 }}
+                        initial={shouldReduceMotion ? false : { scale: 0 }}
                         animate={{ scale: 1 }}
+                        transition={shouldReduceMotion ? { duration: 0 } : undefined}
                         className="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full"
                       >
                         <AlertCircle size={10} />
