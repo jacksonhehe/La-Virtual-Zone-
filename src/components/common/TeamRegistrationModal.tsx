@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { X, Trophy, Users } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import useEscapeKey from '../../hooks/useEscapeKey';
 import { useDataStore } from '../../store/dataStore';
@@ -25,18 +26,43 @@ const TeamRegistrationModal: React.FC<Props> = ({ tournament, isOpen, onClose })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedTournaments = tournaments.map(t =>
-      t.id === tournament.id
-        ? {
-            ...t,
-            participants: [...(t.participants || []), teamName],
-            currentTeams: (t.currentTeams || 0) + 1,
-          }
-        : t
-    );
-    updateTournaments(updatedTournaments);
-    setSent(true);
-    setTimeout(onClose, 2000);
+    
+    // Validar que el equipo no esté ya registrado
+    if (tournament.participants?.includes(teamName)) {
+      toast.error('Este equipo ya está registrado en el torneo.');
+      return;
+    }
+    
+    // Validar límite de equipos
+    if (tournament.maxTeams && (tournament.participants?.length || 0) >= tournament.maxTeams) {
+      toast.error('El torneo ya ha alcanzado el límite máximo de equipos.');
+      return;
+    }
+    
+    try {
+      const updatedTournaments = tournaments.map(t =>
+        t.id === tournament.id
+          ? {
+              ...t,
+              participants: [...(t.participants || []), teamName],
+              currentTeams: (t.currentTeams || 0) + 1,
+            }
+          : t
+      );
+      updateTournaments(updatedTournaments);
+      toast.success(`¡${teamName} registrado exitosamente en ${tournament.name}!`);
+      setSent(true);
+      setTimeout(() => {
+        onClose();
+        setSent(false);
+        setTeamName('');
+        setContactName('');
+        setContactEmail('');
+      }, 2000);
+    } catch (error) {
+      console.error('Error al registrar equipo:', error);
+      toast.error('Error al registrar el equipo. Inténtalo de nuevo.');
+    }
   };
 
   return (
@@ -63,9 +89,10 @@ const TeamRegistrationModal: React.FC<Props> = ({ tournament, isOpen, onClose })
               <Trophy size={32} className="text-dark" />
             </div>
             <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              ¡Equipo inscrito!
+              ¡Equipo inscrito exitosamente!
             </h3>
-            <p className="text-gray-300">Nos pondremos en contacto contigo para confirmar los detalles.</p>
+            <p className="text-gray-300 mb-4">Tu equipo "{teamName}" ha sido registrado en "{tournament.name}".</p>
+            <p className="text-gray-400 text-sm">Recibirás una confirmación por email en breve.</p>
           </div>
         ) : (
           <div>
@@ -76,7 +103,35 @@ const TeamRegistrationModal: React.FC<Props> = ({ tournament, isOpen, onClose })
               <h3 id="team-reg-title" className="text-2xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Inscripción de Equipo
               </h3>
-              <p className="text-gray-400">Registra tu equipo en "{tournament.name}"</p>
+              <p className="text-gray-400 mb-4">Registra tu equipo en "{tournament.name}"</p>
+              <div className="bg-dark/50 rounded-lg p-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Formato:</span>
+                    <div className="text-white font-medium">
+                      {tournament.type === 'league' ? 'Liga' : tournament.type === 'cup' ? 'Copa' : 'Amistoso'}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Equipos:</span>
+                    <div className="text-white font-medium">
+                      {(tournament.participants?.length || 0)}/{tournament.maxTeams || '∞'}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Inicio:</span>
+                    <div className="text-white font-medium">
+                      {new Date(tournament.startDate).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Fin:</span>
+                    <div className="text-white font-medium">
+                      {new Date(tournament.endDate).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -111,7 +166,13 @@ const TeamRegistrationModal: React.FC<Props> = ({ tournament, isOpen, onClose })
                   required
                 />
               </div>
-              <button type="submit" className="btn-primary w-full py-3 font-medium">Enviar Solicitud</button>
+              <button 
+                type="submit" 
+                disabled={!teamName.trim() || !contactName.trim() || !contactEmail.trim()}
+                className="btn-primary w-full py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Enviar Solicitud
+              </button>
             </form>
           </div>
         )}

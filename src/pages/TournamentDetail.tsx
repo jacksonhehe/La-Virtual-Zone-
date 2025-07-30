@@ -315,7 +315,10 @@ const TournamentDetail = () => {
                         <p className="text-gray-300 mb-6 text-lg">
                           ¡Las inscripciones para este torneo están abiertas! Regístrate antes del {formatDate(tournament.startDate)} para participar.
                         </p>
-                        <button className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-lg font-semibold hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <button 
+                          onClick={() => setShowRegModal(true)}
+                          className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-lg font-semibold hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 shadow-lg hover:shadow-xl"
+                        >
                           Solicitar participación
                         </button>
                       </div>

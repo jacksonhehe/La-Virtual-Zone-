@@ -52,19 +52,28 @@ const FeaturedTournaments = () => {
               {/* Tournament content */}
               <div className="relative p-6 flex flex-col h-full justify-between">
                 <div className="flex justify-between">
-                  <div 
-                    className="h-12 w-12 rounded flex items-center justify-center"
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      backdropFilter: 'blur(4px)'
+                                <div 
+                className="h-12 w-12 rounded flex items-center justify-center"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.5)',
+                  backdropFilter: 'blur(4px)'
+                }}
+              >
+                {tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? (
+                  <img 
+                    src={tournament.logo} 
+                    alt={tournament.name}
+                    className="h-8 w-8 object-cover rounded"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
                     }}
-                  >
-                    <img 
-                      src={tournament.logo} 
-                      alt={tournament.name}
-                      className="h-8 w-8"
-                    />
-                  </div>
+                  />
+                ) : null}
+                <div className={`h-8 w-8 flex items-center justify-center ${tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? 'hidden' : ''}`}>
+                  <Trophy size={20} className="text-primary/60" />
+                </div>
+              </div>
                   {getStatusBadge(tournament.status)}
                 </div>
                 

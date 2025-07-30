@@ -12,7 +12,8 @@ import {
   Layers,
   Download,
 } from 'lucide-react';
-import { Tournament } from '../../../types';
+import { Tournament } from '../../types';
+import { slugify } from '../../../utils/slugify';
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
 import NewTournamentModal from './NewTournamentModal';
@@ -238,20 +239,46 @@ const TournamentsAdminPanel = () => {
         <NewTournamentModal
           onClose={() => setShowNewModal(false)}
           onSave={(data) => {
-            const newTournament: Tournament = {
-              id: Date.now().toString(),
-              currentTeams: 0,
-              ...data
-            } as Tournament;
-            addTournament(newTournament);
-            toast.success('Torneo creado');
-            setShowNewModal(false);
+            try {
+              const newTournament: Tournament = {
+                id: Date.now().toString(),
+                name: data.name || 'Nuevo Torneo',
+                type: data.type || 'league',
+                logo: data.logo || 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true',
+                startDate: data.startDate || new Date().toISOString().split('T')[0],
+                endDate: data.endDate || new Date().toISOString().split('T')[0],
+                status: data.status || 'upcoming',
+                teams: data.teams || [],
+                rounds: data.rounds || 1,
+                matches: data.matches || [],
+                description: data.description || '',
+                currentTeams: 0,
+                maxTeams: data.maxTeams || 20,
+                prizePool: data.prizePool || 0,
+                location: data.location || '',
+                slug: data.slug || slugify(data.name || 'nuevo-torneo'),
+                categories: data.categories || [],
+                phases: data.phases || [],
+                sponsors: data.sponsors || [],
+                attachments: data.attachments || [],
+                customUrl: data.customUrl || '',
+                standings: [],
+                topScorersList: []
+              };
+              addTournament(newTournament);
+              toast.success('Torneo creado exitosamente');
+              setShowNewModal(false);
+            } catch (error) {
+              console.error('Error creating tournament:', error);
+              toast.error('Error al crear el torneo');
+            }
           }}
         />
       )}
 
       {editingTournament && (
         <NewTournamentModal
+          tournament={editingTournament}
           onClose={() => setEditingTournament(null)}
           onSave={(data) => {
             updateTournaments(tournaments.map(t =>

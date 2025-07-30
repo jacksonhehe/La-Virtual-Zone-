@@ -216,11 +216,11 @@ const UserPanel = () => {
                   {true && (
                     <>
                       <button
-                        className="absolute bottom-1 right-1 z-10 bg-primary p-1 rounded-full text-white hover:bg-primary/80 w-6 h-6 flex items-center justify-center transform hover:scale-110 transition-transform"
+                        className="absolute bottom-1 right-1 z-10 bg-primary p-1.5 rounded-full text-white hover:bg-primary/80 w-7 h-7 flex items-center justify-center transform hover:scale-110 transition-transform"
                         onClick={() => document.getElementById('avatarUpload')?.click()}
                         title="Cambiar foto"
                       >
-                        <Camera size={14} />
+                        <Camera size={20} />
                       </button>
                       <input
                         id="avatarUpload"
@@ -242,11 +242,7 @@ const UserPanel = () => {
                     </>
                   )}
                 </div>
-                <div className="absolute -bottom-3 -right-3 bg-dark rounded-full p-1 border-2 border-dark-lighter">
-                  <div className={`w-12 h-12 flex items-center justify-center bg-gradient-to-r from-primary to-secondary text-dark text-sm font-extrabold rounded-full ${levelPulse ? 'ring-2 ring-primary/80 animate-pulse' : ''}`}>
-                    {user.level || 1}
-                  </div>
-                </div>
+
               </div>
               
               <h2 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">

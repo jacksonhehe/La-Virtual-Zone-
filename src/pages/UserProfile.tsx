@@ -81,11 +81,11 @@ const UserProfile = () => {
                 {current?.username === user.username && (
                   <>
                     <button
-                      className="absolute bottom-1 right-1 z-10 bg-primary p-1 rounded-full text-white hover:bg-primary/80 shadow w-6 h-6 flex items-center justify-center transform hover:scale-110 transition-transform"
+                      className="absolute bottom-1 right-1 z-10 bg-primary p-0.5 rounded-full text-white hover:bg-primary/80 shadow w-5 h-5 flex items-center justify-center transform hover:scale-110 transition-transform"
                       onClick={() => document.getElementById('avatarInput')?.click()}
                       title="Cambiar foto"
                     >
-                      <Camera size={16} />
+                      <Camera size={12} />
                     </button>
                     <input
                       type="file"

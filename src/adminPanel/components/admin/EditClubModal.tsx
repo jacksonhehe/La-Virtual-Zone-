@@ -5,6 +5,7 @@ import  { useState, useRef, useEffect } from 'react';
 import { Club } from '../../../types/shared';
 import { useGlobalStore } from '../../store/globalStore';
 import { slugify } from '../../utils/helpers';
+import LogoUploadField from './LogoUploadField';
 
 interface Props {
   club: Club;
@@ -120,6 +121,16 @@ const EditClubModal = ({ club, onClose, onSave }: Props) => {
               onChange={e => setFormData({ ...formData, foundedYear: Number(e.target.value) })}
             />
           </div>
+          
+          <LogoUploadField
+            value={formData.logo}
+            onChange={(value) => setFormData({ ...formData, logo: value })}
+            label="Logo del Club"
+            placeholder="URL del logo o subir archivo"
+            showPreview={true}
+            maxSize={3}
+          />
+          
           <div>
             <input
               className="input w-full"

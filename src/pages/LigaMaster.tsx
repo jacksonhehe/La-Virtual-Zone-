@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import DtDashboard from './DtDashboard';
 import { useAuthStore } from '../store/authStore';
+
 import { 
   Trophy, 
   Users, 
@@ -70,12 +71,7 @@ const LigaMaster = () => {
       <PageHeader
         title="Liga Master"
         subtitle="El modo de juego principal de La Virtual Zone. Gestiona tu club, compite por el título y construye tu legado."
-        image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&auto=format&fit=crop&fm=webp&ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
-        breadcrumb={(
-          <nav className="text-xs md:text-sm mb-4" aria-label="breadcrumb">
-            /Inicio › Liga Master
-          </nav>
-        )}
+        image="/master-league-pes.jpg"
       />
       
       <div className="container mx-auto px-4 py-8">

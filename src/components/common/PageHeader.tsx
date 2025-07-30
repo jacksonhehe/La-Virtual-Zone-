@@ -12,16 +12,16 @@ const PageHeader = ({ title, subtitle, image, breadcrumb, children }: PageHeader
   return (
     <div className="relative bg-gray-900 py-16 md:py-24 overflow-hidden">
       {image && (
-        <img
-          src={withWidth(image, 800)}
-          srcSet={srcSet(image)}
-          sizes={defaultSizes}
-          alt="Estadio iluminado estilo eSports"
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover"
+        <div 
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
         />
       )}
-      <div className="absolute inset-0 bg-gray-900/80" />
+      <div className="absolute inset-0 bg-gray-900/60" />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-30" />
 
       <div className="relative container mx-auto px-4">

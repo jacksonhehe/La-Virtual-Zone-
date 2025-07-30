@@ -76,14 +76,24 @@ const Tournaments = () => {
             {filteredTournaments.map(tournament => (
               <div key={tournament.id} className="card overflow-hidden group">
                 <div className="h-48 overflow-hidden relative">
-                  <img
-                    src={withWidth(tournament.logo, 480)}
-                    srcSet={srcSet(tournament.logo)}
-                    sizes={defaultSizes}
-                    alt={tournament.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
+                  {tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? (
+                    <img
+                      src={tournament.logo}
+                      alt={tournament.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                  ) : null}
+                  <div className={`absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center ${tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? 'hidden' : ''}`}>
+                    <div className="text-center">
+                      <Trophy size={48} className="text-primary/60 mx-auto mb-2" />
+                      <div className="text-primary/60 font-semibold text-lg">{tournament.name}</div>
+                    </div>
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
                   
                   <div className="absolute top-3 left-3">

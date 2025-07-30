@@ -6,6 +6,7 @@ import { Building } from 'lucide-react';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Button';
 import { toast } from 'react-hot-toast';
+import LogoUploadField from './LogoUploadField';
 
 interface Props {
   onClose: () => void;
@@ -118,14 +119,15 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
             />
           </div>
 
-          {/* Logo URL */}
+          {/* Logo Upload Field */}
           <div className="sm:col-span-2">
-            <label className="text-sm text-gray-300 mb-1 inline-block">Logo (URL opcional)</label>
-            <input
-              className="input w-full"
-              placeholder="https://...png"
+            <LogoUploadField
               value={formData.logo}
-              onChange={e => setFormData({ ...formData, logo: e.target.value })}
+              onChange={(value) => setFormData({ ...formData, logo: value })}
+              label="Logo del Club"
+              placeholder="URL del logo o subir archivo"
+              showPreview={true}
+              maxSize={3}
             />
           </div>
           <div>
