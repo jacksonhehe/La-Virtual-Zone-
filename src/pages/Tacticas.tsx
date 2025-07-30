@@ -3,7 +3,7 @@ import FormationSelector from '../components/tacticas/FormationSelector';
 import TeamInstructions from '../components/tacticas/TeamInstructions';
 import SetPiecesManager from '../components/tacticas/SetPiecesManager';
 import CanvasSkeleton from '../components/CanvasSkeleton';
-import Spinner from '../components/Spinner';
+import Spinner from '../components/ui/Spinner';
 import usePersistentState from '../hooks/usePersistentState';
 import { useDataStore } from '../store/dataStore';
 import type { TacticsState } from '../components/tacticas/PitchCanvas';

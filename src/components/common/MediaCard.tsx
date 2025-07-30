@@ -1,8 +1,8 @@
 import React from 'react';
 import { MediaItem } from '@/types';
-import LazyLoad from 'react-lazy-load';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import { PlayCircle, Heart, Eye } from 'lucide-react';
+import Image from '../ui/Image';
 
 interface MediaCardProps {
   media: MediaItem;
@@ -24,17 +24,17 @@ const MediaCard: React.FC<MediaCardProps> = ({ media, onClick }) => {
       <span className="absolute top-2 left-2 z-10 badge bg-primary/20 text-primary capitalize">
         {media.category}
       </span>
-      <LazyLoad offset={100}>
-        {isVideo ? (
+      {isVideo ? (
           <div className="relative w-full aspect-video bg-gray-700">
             {/* Poster/miniatura */}
-            <img
+            <Image
               src={withWidth(media.thumbnailUrl, 640)}
               srcSet={srcSet(media.thumbnailUrl)}
               sizes={defaultSizes}
               alt={media.title}
+              width={640}
+              height={360}
               className="w-full h-full object-cover"
-              loading="lazy"
             />
             {/* Icono play */}
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -42,16 +42,16 @@ const MediaCard: React.FC<MediaCardProps> = ({ media, onClick }) => {
             </div>
           </div>
         ) : (
-          <img
+          <Image
             src={withWidth(media.thumbnailUrl || media.url, 640)}
             srcSet={srcSet(media.thumbnailUrl || media.url)}
             sizes={defaultSizes}
             alt={media.title}
+            width={640}
+            height={360}
             className="w-full h-auto object-cover rounded-lg bg-gray-700"
-            loading="lazy"
           />
         )}
-      </LazyLoad>
 
       {/* Pie de foto */}
       <div className="p-3 bg-gray-800 border-t border-gray-700">
