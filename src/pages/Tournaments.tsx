@@ -28,6 +28,14 @@ const Tournaments = () => {
         title="Torneos | La Virtual Zone"
         description="Participa y sigue los torneos de PES 2021 en La Virtual Zone."
         canonical="https://lavirtualzone.com/torneos"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://lavirtualzone.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Torneos', item: 'https://lavirtualzone.com/torneos' }
+          ]
+        }}
       />
       <div>
       <PageHeader

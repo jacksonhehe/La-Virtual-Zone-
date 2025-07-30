@@ -17,7 +17,20 @@ const Home = () => {
     <>
       <SEO
         title="La Virtual Zone - Plataforma de Torneos PES 2021"
-        description="La Virtual Zone es la plataforma líder para torneos y ligas de PES 2021. Gestiona tu club y compite."/>
+        description="La Virtual Zone es la plataforma líder para torneos y ligas de PES 2021. Gestiona tu club y compite."
+        canonical="https://lavirtualzone.com/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'La Virtual Zone',
+          url: 'https://lavirtualzone.com',
+          sameAs: [
+            'https://twitter.com/lavirtualzone',
+            'https://instagram.com/lavirtualzone',
+            'https://facebook.com/lavirtualzone'
+          ]
+        }}
+      />
       <div>
         <HeroSection />
       

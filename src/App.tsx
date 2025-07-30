@@ -1,11 +1,13 @@
 
 import { Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import Spinner from "./components/Spinner";
+import Spinner from "./components/ui/Spinner";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
+import { useThemeStore } from "./store/themeStore";
 
 const LigaMaster = lazy(() => import("./pages/LigaMaster"));
 const Plantilla = lazy(() => import("./pages/Plantilla"));
@@ -47,6 +49,14 @@ const ClubSquad = lazy(() => import("./pages/ClubSquad"));
 const Admin = lazy(() => import("./pages/Admin"));
 
 function App() {
+  const { theme } = useThemeStore();
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const mode = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+    document.documentElement.classList.toggle('dark', mode === 'dark');
+  }, [theme]);
+
   return (
     <div className="min-h-screen bg-[#18181f] text-white">
       <Toaster position="top-right" />
@@ -66,7 +76,9 @@ function App() {
             <Route path="usuarios/:username" element={<PublicProfile />} />
             <Route path="usuario" element={<UserPanel />} />
             <Route path="dt-dashboard" element={<DtDashboard />} />
-            <Route path="admin/*" element={<Admin />} />
+            <Route element={<ProtectedRoute allow={["ADMIN"]} />}> 
+              <Route path="admin/*" element={<Admin />} />
+            </Route>
 
             <Route path="torneos">
               <Route index element={<Tournaments />} />

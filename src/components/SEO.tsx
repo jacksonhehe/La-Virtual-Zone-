@@ -6,6 +6,7 @@ interface SEOProps {
   canonical?: string;
   image?: string;
   type?: string;
+  jsonLd?: Record<string, unknown>;
   children?: React.ReactNode;
 }
 
@@ -18,6 +19,7 @@ export default function SEO({
   canonical,
   image = DEFAULT_IMAGE,
   type = 'website',
+  jsonLd,
   children
 }: SEOProps) {
   return (
@@ -33,6 +35,9 @@ export default function SEO({
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={image} />
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      )}
       {children}
     </Helmet>
   );

@@ -1,11 +1,14 @@
-import  { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
+import Image from '../ui/Image';
 import { Search, Filter, Star, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
 
 export default function PlantillaTab() {
   const { club, players } = useDataStore();
+  const reduce = useReducedMotionPreference();
   const [search, setSearch] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('all');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -28,8 +31,8 @@ export default function PlantillaTab() {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+      <motion.div
+        initial={reduce ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row gap-4 items-start sm:items-center"
       >
@@ -48,8 +51,8 @@ export default function PlantillaTab() {
           {positions.map(pos => (
             <motion.button
               key={pos}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={reduce ? undefined : { scale: 1.05 }}
+              whileTap={reduce ? undefined : { scale: 0.95 }}
               onClick={() => setSelectedPosition(pos)}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${
                 selectedPosition === pos
@@ -64,18 +67,18 @@ export default function PlantillaTab() {
       </motion.div>
 
       {/* Players Grid */}
-      <motion.div 
+      <motion.div
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
         {filteredPlayers.map((player, index) => (
           <motion.div
             key={player.id}
-            initial={{ opacity: 0, y: 30 }}
+            initial={reduce ? false : { opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
+            transition={{ delay: reduce ? 0 : index * 0.05 }}
             layout
-            whileHover={{ y: -8, scale: 1.02 }}
+            whileHover={reduce ? undefined : { y: -8, scale: 1.02 }}
             onClick={() => handlePlayerClick(player)}
             className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 hover:border-primary/50 transition-all duration-300"
           >
@@ -83,11 +86,12 @@ export default function PlantillaTab() {
             
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-4">
-                <img
+                <Image
                   src={player.image}
                   alt={player.name}
+                  width={64}
+                  height={64}
                   className="w-16 h-16 rounded-xl object-cover ring-2 ring-white/20 group-hover:ring-primary/50 transition-all"
-                  loading="lazy"
                 />
                 <div className="text-right">
                   <div className="bg-primary/20 text-primary px-2 py-1 rounded-lg text-sm font-bold">
@@ -149,23 +153,25 @@ export default function PlantillaTab() {
       {/* Player Modal */}
       {selectedPlayer && (
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedPlayer(null)}
         >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={reduce ? false : { scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            exit={{ scale: reduce ? 1 : 0.9, opacity: 0 }}
             className="bg-gray-900 border border-white/20 rounded-2xl p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center mb-6">
-              <img
+              <Image
                 src={selectedPlayer.image}
                 alt={selectedPlayer.name}
+                width={96}
+                height={96}
                 className="w-24 h-24 rounded-xl mx-auto mb-4 ring-2 ring-primary/50"
               />
               <h3 className="text-2xl font-bold text-white">{selectedPlayer.name}</h3>
@@ -195,7 +201,7 @@ export default function PlantillaTab() {
 
       {filteredPlayers.length === 0 && (
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center py-12"
         >
