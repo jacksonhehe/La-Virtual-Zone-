@@ -3,6 +3,7 @@ import { useDataStore } from '../store/dataStore';
 import { Heart, Eye, Share2, Download } from 'lucide-react';
 import { useState } from 'react';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
+import SEO from '../components/SEO';
 
 const GalleryDetail = () => {
   const { mediaId } = useParams();
