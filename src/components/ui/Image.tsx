@@ -30,7 +30,7 @@ export default function Image({
       width={width}
       height={height}
       decoding={decoding}
-      fetchPriority={fetchPriority}
+      fetchpriority={fetchPriority}
       loading={loading}
       className={className}
       style={style}
