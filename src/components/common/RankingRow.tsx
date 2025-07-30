@@ -1,4 +1,5 @@
 import { DtRanking } from '../../types';
+import Image from '@/components/ui/Image';
 
 interface RankingRowProps {
   rank: number;
@@ -10,7 +11,7 @@ const RankingRow = ({ rank, data }: RankingRowProps) => (
     <td>{rank}</td>
     <td>{data.username}</td>
     <td className="flex items-center justify-center gap-1">
-      <img src={data.clubLogo} alt={data.clubName} className="h-4 w-4" />
+      <Image src={data.clubLogo} alt={data.clubName} width={16} height={16} className="h-4 w-4" />
     </td>
     <td className="text-right">{data.elo}</td>
   </tr>

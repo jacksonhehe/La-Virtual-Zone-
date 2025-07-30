@@ -5,9 +5,9 @@ import {
   Calendar, 
   Users, 
   MapPin, 
-  DollarSign, 
-  FileText, 
-  Image, 
+  DollarSign,
+  FileText,
+  Image as ImageIcon,
   Settings,
   Play,
   Clock,
@@ -17,6 +17,7 @@ import {
 import { Tournament } from '../../types';
 import { slugify } from '../../../utils/slugify';
 import LogoUploadField from './LogoUploadField';
+import Image from '@/components/ui/Image';
 
 interface Props {
   onClose: () => void;
@@ -240,12 +241,14 @@ const NewTournamentModal = ({ onClose, onSave, tournament }: Props) => {
             <div className="flex justify-center mb-3">
               <div className="relative">
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-700 flex items-center justify-center border-2 border-gray-600">
-                  <img 
-                    src={formData.logo} 
-                    alt="Logo del torneo" 
+                  <Image
+                    src={formData.logo}
+                    alt="Logo del torneo"
+                    width={80}
+                    height={80}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = defaultLogo;
+                      (e.currentTarget as HTMLImageElement).src = defaultLogo;
                     }}
                   />
                 </div>

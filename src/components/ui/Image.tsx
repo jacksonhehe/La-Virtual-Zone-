@@ -3,8 +3,8 @@ import React from 'react';
 export interface ImageProps {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   className?: string;
   decoding?: 'sync' | 'async' | 'auto';
   fetchPriority?: 'high' | 'low' | 'auto';
@@ -27,8 +27,8 @@ export default function Image({
     <img
       src={src}
       alt={alt}
-      width={width}
-      height={height}
+      {...(width ? { width } : {})}
+      {...(height ? { height } : {})}
       decoding={decoding}
       fetchpriority={fetchPriority}
       loading={loading}

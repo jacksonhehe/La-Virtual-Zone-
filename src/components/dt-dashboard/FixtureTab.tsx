@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, CheckCircle, Trophy, Calendar, MapPin, Filter } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
+import Image from '@/components/ui/Image';
 
 export default function FixtureTab() {
   const { user } = useAuthStore();
@@ -154,9 +155,11 @@ export default function FixtureTab() {
                 <div className="flex items-center justify-between">
                   {/* Home Team */}
                   <div className="flex items-center gap-4 flex-1">
-                    <img 
-                      src={homeClub?.logo} 
-                      alt={homeClub?.name}
+                    <Image
+                      src={homeClub?.logo}
+                      alt={homeClub?.name || 'Escudo del club'}
+                      width={48}
+                      height={48}
                       className="w-12 h-12 object-contain rounded-lg"
                     />
                     <div>
@@ -192,9 +195,11 @@ export default function FixtureTab() {
                       <h3 className="font-bold text-lg">{match.awayTeam}</h3>
                       <p className="text-sm text-gray-400">{awayClub?.stadium}</p>
                     </div>
-                    <img 
-                      src={awayClub?.logo} 
-                      alt={awayClub?.name}
+                    <Image
+                      src={awayClub?.logo}
+                      alt={awayClub?.name || 'Escudo del club'}
+                      width={48}
+                      height={48}
                       className="w-12 h-12 object-contain rounded-lg"
                     />
                   </div>

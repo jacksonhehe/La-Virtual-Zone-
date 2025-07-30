@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import Image from '@/components/ui/Image';
 
 type Props = {
   src?: string | null;
@@ -73,13 +74,13 @@ const SmartAvatar: React.FC<Props> = ({
   }
 
   return (
-    <img
+    <Image
       src={currentSrc}
       alt={label}
       width={size}
       height={size}
       onError={handleError}
-      className={`${rounded ? "rounded-full" : "rounded"} object-cover ${className || ""}`}
+      className={`${rounded ? 'rounded-full' : 'rounded'} object-cover ${className || ''}`}
       style={{ width: size, height: size }}
     />
   );

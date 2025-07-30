@@ -1,6 +1,7 @@
 import  { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Clock, MapPin, Trophy, Calendar as CalendarIcon } from 'lucide-react';
+import Image from '@/components/ui/Image';
 import { useDataStore } from '../../store/dataStore';
 
 const months = [
@@ -115,9 +116,11 @@ export default function CalendarioTab() {
               <div>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="text-center">
-                    <img 
-                      src={club?.logo} 
-                      alt={club?.name}
+                    <Image
+                      src={club?.logo}
+                      alt={club?.name || 'Escudo del club'}
+                      width={48}
+                      height={48}
                       className="w-12 h-12 rounded-xl mx-auto mb-2"
                     />
                     <p className="text-sm text-white/70">{club?.name}</p>

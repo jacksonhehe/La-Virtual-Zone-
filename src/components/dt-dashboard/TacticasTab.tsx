@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { RotateCcw, Save, Settings } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
+import Image from '@/components/ui/Image';
 
 const formations = [
   { name: '4-4-2', positions: [
@@ -140,9 +141,11 @@ export default function TacticasTab() {
                 dragElastic={0.1}
               >
                 <div className="relative">
-                  <img
+                  <Image
                     src={player.image}
                     alt={player.name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
                   />
                   <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
@@ -172,9 +175,11 @@ export default function TacticasTab() {
                     : 'bg-white/5 hover:bg-white/10'
                 }`}
               >
-                <img
+                <Image
                   src={player.image}
                   alt={player.name}
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full"
                 />
                 <div className="flex-1 min-w-0">

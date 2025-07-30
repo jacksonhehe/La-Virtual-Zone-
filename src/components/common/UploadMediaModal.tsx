@@ -5,6 +5,7 @@ import { MediaItem } from '@/types';
 import { notifySuccess, notifyError } from '../../utils/toast';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import useEscapeKey from '../../hooks/useEscapeKey';
+import Image from '@/components/ui/Image';
 
 interface UploadMediaModalProps {
   isOpen: boolean;
@@ -96,7 +97,7 @@ const UploadMediaModal: React.FC<UploadMediaModalProps> = ({
           >
             {preview ? (
               // Previsualización
-              <img src={preview} alt="preview" className="h-full object-contain rounded" />
+              <Image src={preview} alt="preview" height={160} className="h-full object-contain rounded" style={{ width: '100%' }} />
             ) : (
               <span className="text-gray-400 text-sm text-center px-4">
                 Arrastra tu archivo aquí o <span className="text-primary underline">haz clic para seleccionar</span>

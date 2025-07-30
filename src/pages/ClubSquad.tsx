@@ -4,6 +4,7 @@ import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
 import { formatCurrency, getOverallColor } from '../utils/helpers';
 import { useState } from 'react';
+import Image from '@/components/ui/Image';
 
 const ClubSquad = () => {
   const { clubName, clubId } = useParams<{ clubName?: string; clubId?: string }>();
@@ -90,7 +91,7 @@ const ClubSquad = () => {
         <div className="mb-8">
           <div className="flex items-center mb-4">
             <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-              <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
+              <Image src={club.logo} alt={club.name} width={48} height={48} className="w-full h-full object-cover" />
             </div>
             <div>
               <h2 className="text-2xl font-bold">{club.name}</h2>
