@@ -16,7 +16,6 @@ import {
   Zap
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
-import Image from '@/components/ui/Image';
 import StatsCard from '../components/common/StatsCard';
 import ClubListItem from '../components/common/ClubListItem';
 import { useDataStore } from '../store/dataStore';
@@ -262,11 +261,9 @@ const LigaMaster = () => {
                               to={`/liga-master/club/${club?.slug ?? ''}`}
                               className="flex items-center"
                             >
-                              <Image
+                              <img 
                                 src={club?.logo}
-                                alt={club?.name || 'Escudo del club'}
-                                width={24}
-                                height={24}
+                                alt={club?.name}
                                 className="w-6 h-6 mr-2"
                               />
                               <span className="font-medium">{club?.name}</span>
@@ -317,11 +314,9 @@ const LigaMaster = () => {
                         
                         <div className="flex items-center justify-between">
                           <div className="flex flex-col items-center w-2/5">
-                            <Image
+                            <img
                               src={homeClub?.logo}
-                              alt={homeClub?.name || 'Escudo del club'}
-                              width={64}
-                              height={64}
+                              alt={homeClub?.name}
                               className="w-16 h-16 object-contain mb-1"
                             />
                             <span className="font-medium text-center">{homeClub?.name}</span>
@@ -330,11 +325,9 @@ const LigaMaster = () => {
                             <span className="text-2xl font-bold neon-text-blue">VS</span>
                           </div>
                           <div className="flex flex-col items-center w-2/5">
-                            <Image
+                            <img
                               src={awayClub?.logo}
-                              alt={awayClub?.name || 'Escudo del club'}
-                              width={64}
-                              height={64}
+                              alt={awayClub?.name}
                               className="w-16 h-16 object-contain mb-1"
                             />
                             <span className="font-medium text-center">{awayClub?.name}</span>
@@ -424,21 +417,17 @@ const LigaMaster = () => {
                             {index + 1}
                           </span>
                         </div>
-                        <Image
-                          src={player.image}
+                        <img 
+                          src={player.image} 
                           alt={player.name}
-                          width={40}
-                          height={40}
                           className="w-10 h-10 rounded-full object-cover mr-3"
                         />
                         <div>
                           <p className="font-medium">{player.name}</p>
                           <div className="flex items-center text-xs text-gray-400">
-                            <Image
-                              src={club?.logo}
-                              alt={club?.name || 'Escudo del club'}
-                              width={16}
-                              height={16}
+                            <img 
+                              src={club?.logo} 
+                              alt={club?.name}
                               className="w-4 h-4 mr-1"
                             />
                             <span>{club?.name}</span>

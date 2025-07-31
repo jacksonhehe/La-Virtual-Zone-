@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useCommentStore } from '../../store/commentStore';
 import { useAuthStore } from '../../store/authStore';
-import Image from '@/components/ui/Image';
 
 interface Props {
   postId: string;
@@ -35,11 +34,9 @@ const Comments = ({ postId }: Props) => {
         {postComments.map(c => (
           <div className="flex" key={c.id}>
             <div className="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
-              <Image
+              <img
                 src={`https://ui-avatars.com/api/?name=${c.author}&background=111827&color=fff&size=128`}
                 alt={c.author}
-                width={40}
-                height={40}
                 className="w-full h-full object-cover"
               />
             </div>

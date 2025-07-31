@@ -6,7 +6,6 @@ import Card from '../components/common/Card';
 import { useDataStore } from '../store/dataStore';
 import { formatDate } from '../utils/helpers';
 import usePersistentState from '../hooks/usePersistentState';
-import Image from '@/components/ui/Image';
 
 const Fixtures = () => {
   const [selectedRound, setSelectedRound] = usePersistentState<number | null>('fixtures_round', null);
@@ -150,11 +149,9 @@ const Fixtures = () => {
                 <div className="p-5">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col items-center w-2/5 sm:w-1/3">
-                      <Image
+                      <img
                         src={homeClub?.logo}
-                        alt={homeClub?.name || 'Escudo del club'}
-                        width={80}
-                        height={80}
+                        alt={homeClub?.name}
                         className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
                       />
                       <span className="font-medium text-center">{homeClub?.name}</span>
@@ -188,11 +185,9 @@ const Fixtures = () => {
                     </div>
                     
                     <div className="flex flex-col items-center w-2/5 sm:w-1/3">
-                      <Image
+                      <img
                         src={awayClub?.logo}
-                        alt={awayClub?.name || 'Escudo del club'}
-                        width={80}
-                        height={80}
+                        alt={awayClub?.name}
                         className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
                       />
                       <span className="font-medium text-center">{awayClub?.name}</span>
@@ -217,11 +212,9 @@ const Fixtures = () => {
                                   {scorer.minute}'
                                 </div>
                                 <div className="flex items-center">
-                                  <Image
-                                    src={club?.logo}
-                                    alt={club?.name || 'Escudo del club'}
-                                    width={20}
-                                    height={20}
+                                  <img 
+                                    src={club?.logo} 
+                                    alt={club?.name}
                                     className="w-5 h-5 mr-2"
                                   />
                                   <span>{scorer.playerName}</span>

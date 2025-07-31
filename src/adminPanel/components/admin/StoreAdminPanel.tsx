@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Image from '@/components/ui/Image';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useStoreSlice, PurchaseTx } from '../../../store/storeSlice';
@@ -139,13 +138,7 @@ const StoreAdminPanel = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map(p=> (
             <div key={p.id} className="relative group rounded-xl overflow-hidden border border-gray-700/40 bg-gray-900/40">
-              <Image
-                src={p.image}
-                alt={p.name}
-                height={160}
-                className={`w-full h-40 object-cover ${rarityRing(p.rarity)}`}
-                style={{ width: '100%' }}
-              />
+              <img src={p.image} alt={p.name} className={`w-full h-40 object-cover ${rarityRing(p.rarity)}`} />
               <div className="p-4 space-y-1">
                 <h3 className="text-white font-semibold flex items-center justify-between">
                   {p.name}

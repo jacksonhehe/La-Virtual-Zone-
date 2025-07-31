@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
-import Image from '@/components/ui/Image';
 
 const Rankings = () => {
   const [activeTab, setActiveTab] = useState('clubs');
@@ -140,15 +139,11 @@ const Rankings = () => {
                             to={`/liga-master/club/${club?.slug ?? ''}`}
                             className="flex items-center"
                           >
-                            {club?.logo && (
-                              <Image 
-                                src={club.logo}
-                                alt={club.name || 'Club'}
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 mr-2"
-                              />
-                            )}
+                            <img 
+                              src={club?.logo}
+                              alt={club?.name}
+                              className="w-6 h-6 mr-2"
+                            />
                             <span className="font-medium">{club?.name}</span>
                           </Link>
                         </td>
@@ -207,29 +202,21 @@ const Rankings = () => {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center">
-                            {player.image && (
-                              <Image 
-                                src={player.image}
-                                alt={player.name}
-                                width={32}
-                                height={32}
-                                className="w-8 h-8 rounded-full mr-2 object-cover"
-                              />
-                            )}
+                            <img 
+                              src={player.image}
+                              alt={player.name}
+                              className="w-8 h-8 rounded-full mr-2 object-cover"
+                            />
                             <span className="font-medium">{player.name}</span>
                           </div>
                         </td>
                         <td className="p-4">
                           <div className="flex items-center">
-                            {club?.logo && (
-                              <Image 
-                                src={club.logo}
-                                alt={club.name || 'Club'}
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 mr-2"
-                              />
-                            )}
+                            <img 
+                              src={club?.logo}
+                              alt={club?.name}
+                              className="w-6 h-6 mr-2"
+                            />
                             <span>{club?.name}</span>
                           </div>
                         </td>
@@ -292,29 +279,21 @@ const Rankings = () => {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center">
-                            {player.image && (
-                              <Image 
-                                src={player.image}
-                                alt={player.name}
-                                width={32}
-                                height={32}
-                                className="w-8 h-8 rounded-full mr-2 object-cover"
-                              />
-                            )}
+                            <img 
+                              src={player.image}
+                              alt={player.name}
+                              className="w-8 h-8 rounded-full mr-2 object-cover"
+                            />
                             <span className="font-medium">{player.name}</span>
                           </div>
                         </td>
                         <td className="p-4">
                           <div className="flex items-center">
-                            {club?.logo && (
-                              <Image 
-                                src={club.logo}
-                                alt={club.name || 'Club'}
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 mr-2"
-                              />
-                            )}
+                            <img 
+                              src={club?.logo}
+                              alt={club?.name}
+                              className="w-6 h-6 mr-2"
+                            />
                             <span>{club?.name}</span>
                           </div>
                         </td>
@@ -381,15 +360,11 @@ const Rankings = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center">
-                          {manager.clubLogo && (
-                            <Image 
-                              src={manager.clubLogo}
-                              alt={manager.club}
-                              width={24}
-                              height={24}
-                              className="w-6 h-6 mr-2"
-                            />
-                          )}
+                          <img 
+                            src={manager.clubLogo}
+                            alt={manager.club}
+                            className="w-6 h-6 mr-2"
+                          />
                           <span>{manager.club}</span>
                         </div>
                       </td>

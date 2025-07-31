@@ -4,7 +4,6 @@ import    { Users, Target, DollarSign, Calendar as CalendarIcon, ShoppingBag, Li
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
 import toast, { Toaster } from 'react-hot-toast';
-import useReducedMotionPreference from '../hooks/useReducedMotionPreference';
 
 const   PlantillaTab = lazy(() => import('../components/dt-dashboard/PlantillaTab'));
 const TacticasTab = lazy(() => import('../components/dt-dashboard/TacticasTab'));
@@ -44,7 +43,6 @@ export default function DtDashboard() {
   }, [tournaments, club]);
   const [activeTab, setActiveTab] = useState<Tab>('plantilla');
   const tabsRef = useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotionPreference();
 
   // Notify about new offers for this club
   const prevOffersRef = useRef(new Set<string>());
@@ -99,7 +97,7 @@ export default function DtDashboard() {
       
       {/* Header */}
       <motion.div 
-        initial={shouldReduceMotion ? false : { opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden border-b border-white/10 bg-black/20 backdrop-blur-xl"
       >
@@ -107,14 +105,14 @@ export default function DtDashboard() {
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center gap-6">
             <motion.img
-              whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
+              whileHover={{ scale: 1.05 }}
               src={club.logo}
               alt={club.name}
               className="w-16 h-16 rounded-2xl shadow-2xl ring-2 ring-white/20"
             />
             <div>
               <motion.h1 
-                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="text-3xl font-bold text-white"
               >
@@ -123,9 +121,9 @@ export default function DtDashboard() {
               <p className="text-white/70">DT: {user.username}</p>
               {nextMatch && (
                 <motion.div 
-                  initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.3 }}
+                  transition={{ delay: 0.3 }}
                   className="flex items-center gap-2 mt-2 text-sm text-primary"
                 >
                   <Play size={14} />
@@ -148,17 +146,17 @@ export default function DtDashboard() {
               return (
                 <motion.button
                   key={tab.id}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.1 }}
+                  transition={{ delay: index * 0.1 }}
                   onClick={() => handleTabChange(tab.id)}
                   className={`relative flex items-center gap-3 px-6 py-4 font-medium transition-all duration-300 whitespace-nowrap ${
                     isActive
                       ? 'text-primary border-b-2 border-primary bg-primary/10'
                       : 'text-white/70 hover:text-white hover:bg-white/5'
                   }`}
-                  whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
-                  whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <Icon size={18} />
                   {tab.label}
@@ -166,7 +164,7 @@ export default function DtDashboard() {
                     <motion.div
                       layoutId="activeTab"
                       className="absolute inset-0 bg-primary/10 rounded-lg"
-                      transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', bounce: 0.2, duration: 0.6 }}
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
                 </motion.button>
@@ -181,10 +179,10 @@ export default function DtDashboard() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, ease: 'easeInOut' }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="min-h-[600px]"
           >
             <Suspense fallback={

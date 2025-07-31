@@ -6,7 +6,6 @@ import { Activity, User, Clock, AlertCircle, Eye, Calendar } from 'lucide-react'
 // Store imports removed as not used currently
 import SearchFilter from './SearchFilter';
 import StatsCard from './StatsCard';
-import useReducedMotionPreference from '../../hooks/useReducedMotionPreference';
 
 const ActivityAdminPanel = () => {
   const [filter, setFilter] = useState('all');
@@ -120,8 +119,6 @@ const ActivityAdminPanel = () => {
     URL.revokeObjectURL(url);
   };
 
-  const shouldReduceMotion = useReducedMotionPreference();
-
   return (
     <>
       <div className="space-y-6">
@@ -222,7 +219,7 @@ const ActivityAdminPanel = () => {
           </div>
 
           <div className="space-y-3" role="list">
-            <AnimatePresence mode={shouldReduceMotion ? "wait" : "popLayout"}>
+            <AnimatePresence>
             {limitedActivities.length > 0 ? (
               limitedActivities.map((activity) => {
                 const ActivityIcon = getActivityIcon(activity.type);

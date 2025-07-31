@@ -1,5 +1,4 @@
 import  React, { useState } from 'react';
-import Image from '@/components/ui/Image';
 import { Edit, Plus, Trash, Search, Calendar, User, Eye, EyeOff, FileText, Star } from 'lucide-react';
 import StatsCard from './StatsCard';
 import { useGlobalStore } from '../../store/globalStore';
@@ -263,11 +262,9 @@ const NewsAdminPanel = () => {
                 {/* Article Image */}
                 {article.image && (
                   <div className="lg:w-64 h-48 lg:h-auto overflow-hidden">
-                    <Image
+                    <img
                       src={article.image}
                       alt={article.title}
-                      width={256}
-                      height={192}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

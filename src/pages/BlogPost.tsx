@@ -4,7 +4,6 @@ import { useDataStore } from '../store/dataStore';
 import Comments from '../components/comments/Comments';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import SEO from '../components/SEO';
-import Image from '@/components/ui/Image';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -54,13 +53,11 @@ const BlogPost = () => {
       <div>
         <div className="relative h-80 overflow-hidden">
         <div className="absolute inset-0">
-          <Image
+          <img
             src={withWidth(post.image, 800)}
             srcSet={srcSet(post.image)}
             sizes={defaultSizes}
             alt={post.title}
-            width={800}
-            height={320}
             className="w-full h-full object-cover"
             loading="lazy"
           />
@@ -84,11 +81,9 @@ const BlogPost = () => {
           
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-              <Image
+              <img
                 src={`https://ui-avatars.com/api/?name=${post.author}&background=111827&color=fff&size=128`}
                 alt={post.author}
-                width={32}
-                height={32}
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
@@ -149,11 +144,9 @@ const BlogPost = () => {
               
               <div className="flex items-center mb-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-                  <Image
+                  <img
                     src={`https://ui-avatars.com/api/?name=${post.author}&background=111827&color=fff&size=128`}
                     alt={post.author}
-                    width={64}
-                    height={64}
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
@@ -189,13 +182,11 @@ const BlogPost = () => {
                       className="flex items-start group"
                     >
                       <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 mr-3">
-                        <Image
+                        <img
                           src={withWidth(relatedPost.image, 160)}
                           srcSet={srcSet(relatedPost.image)}
                           sizes="80px"
                           alt={relatedPost.title}
-                          width={80}
-                          height={80}
                           className="w-full h-full object-cover"
                           loading="lazy"
                         />

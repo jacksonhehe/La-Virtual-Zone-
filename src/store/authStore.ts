@@ -68,9 +68,7 @@ export const useAuthStore = create<AuthState>((set) => {
     
     updateUser: (userData) => {
       set((state) => {
-        if (!state.user) {
-          return state;
-        }
+        if (!state.user) return state;
         const updatedUser: User = { ...state.user, ...userData } as User;
         persistUser(updatedUser);
         return { user: updatedUser };

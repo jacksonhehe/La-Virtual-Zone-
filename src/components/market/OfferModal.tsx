@@ -6,7 +6,6 @@ import { Player } from '../../types/shared';
 import { makeOffer, getMinOfferAmount, getMaxOfferAmount } from '../../utils/transferService';
 import { formatCurrency } from '../../utils/helpers';
 import toast from 'react-hot-toast';
-import Image from '@/components/ui/Image';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import useEscapeKey from '../../hooks/useEscapeKey';
 
@@ -139,11 +138,9 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
             )}
             
             <div className="flex items-center space-x-4 mb-6">
-              <Image
+              <img
                 src={player.image}
                 alt={player.name}
-                width={64}
-                height={64}
                 className="w-16 h-16 rounded-full object-cover"
                 loading="lazy"
               />

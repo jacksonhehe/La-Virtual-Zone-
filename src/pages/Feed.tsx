@@ -14,7 +14,6 @@ import CardSkeleton from '../components/common/CardSkeleton';
 import SEO from '../components/SEO';
 import { VZ_FEED_PREFS_KEY } from '../utils/storageKeys';
 import type { FeedItem } from '../types';
-import useReducedMotionPreference from '../hooks/useReducedMotionPreference';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -32,7 +31,6 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const loader = useRef<HTMLDivElement | null>(null);
   const liveRef = useRef<HTMLDivElement | null>(null);
-  const shouldReduceMotion = useReducedMotionPreference();
 
   // Reset visible when preferences change
   useEffect(() => {
@@ -180,11 +178,10 @@ const Feed = () => {
             {visibleItems.map(item => (
               <motion.li
                 key={item.id}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={shouldReduceMotion ? false : { opacity: 0 }}
-                transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }}
-                // Si shouldReduceMotion es true, las animaciones se eliminan por accesibilidad
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 role="listitem"
               >
                 {item.type === 'news' && <NewsCard item={item} />}

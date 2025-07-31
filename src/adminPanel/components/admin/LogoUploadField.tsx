@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Image as ImageIcon, Upload, X, Camera } from 'lucide-react';
-import Image from '@/components/ui/Image';
+import { Image, Upload, X, Camera } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface LogoUploadFieldProps {
@@ -120,7 +119,7 @@ const LogoUploadField: React.FC<LogoUploadFieldProps> = ({
   return (
     <div className={`space-y-3 ${className}`}>
       <label className="block text-sm font-medium text-gray-300 mb-2">
-        <ImageIcon size={16} className="inline mr-2" />
+        <Image size={16} className="inline mr-2" />
         {label}
       </label>
 
@@ -166,11 +165,9 @@ const LogoUploadField: React.FC<LogoUploadFieldProps> = ({
           ) : previewUrl ? (
             <div className="flex flex-col items-center space-y-2">
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-700 flex items-center justify-center border border-gray-600">
-                <Image
-                  src={previewUrl}
-                  alt="Logo preview"
-                  width={64}
-                  height={64}
+                <img 
+                  src={previewUrl} 
+                  alt="Logo preview" 
                   className="w-full h-full object-cover"
                   onError={() => setPreviewUrl(null)}
                 />
@@ -210,11 +207,9 @@ const LogoUploadField: React.FC<LogoUploadFieldProps> = ({
       {showPreview && previewUrl && (
         <div className="relative">
           <div className="w-24 h-24 mx-auto rounded-xl overflow-hidden bg-gray-700 flex items-center justify-center border border-gray-600">
-            <Image
-              src={previewUrl}
-              alt="Logo preview"
-              width={96}
-              height={96}
+            <img 
+              src={previewUrl} 
+              alt="Logo preview" 
               className="w-full h-full object-cover"
               onError={() => setPreviewUrl(null)}
             />

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { fetchUsers, UserQuery } from '../utils/userService';
 import { User } from '../types/shared';
-import Image from '@/components/ui/Image';
 
 const PAGE_SIZE = 10;
 
@@ -72,11 +71,9 @@ const Users = () => {
                 : users.map(u => (
                     <tr key={u.id} className="border-b border-zinc-800">
                       <td className="px-4 py-2">
-                        <Image
+                        <img
                           src={u.avatar}
                           alt={u.username}
-                          width={32}
-                          height={32}
                           className="w-8 h-8 rounded-full"
                         />
                       </td>

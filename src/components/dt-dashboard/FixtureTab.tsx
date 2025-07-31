@@ -3,16 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, CheckCircle, Trophy, Calendar, MapPin, Filter } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
-import Image from '@/components/ui/Image';
-import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 export default function FixtureTab() {
   const { user } = useAuthStore();
   const { fixtures, clubs, tournaments, club: userClub } = useDataStore();
   const [selectedTournament, setSelectedTournament] = useState('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'played' | 'upcoming'>('all');
-
-  const shouldReduceMotion = useReducedMotionPreference();
 
    const filteredFixtures = useMemo(() => {
     return (fixtures || [])
@@ -158,11 +154,9 @@ export default function FixtureTab() {
                 <div className="flex items-center justify-between">
                   {/* Home Team */}
                   <div className="flex items-center gap-4 flex-1">
-                    <Image
-                      src={homeClub?.logo}
-                      alt={homeClub?.name || 'Escudo del club'}
-                      width={48}
-                      height={48}
+                    <img 
+                      src={homeClub?.logo} 
+                      alt={homeClub?.name}
                       className="w-12 h-12 object-contain rounded-lg"
                     />
                     <div>
@@ -198,11 +192,9 @@ export default function FixtureTab() {
                       <h3 className="font-bold text-lg">{match.awayTeam}</h3>
                       <p className="text-sm text-gray-400">{awayClub?.stadium}</p>
                     </div>
-                    <Image
-                      src={awayClub?.logo}
-                      alt={awayClub?.name || 'Escudo del club'}
-                      width={48}
-                      height={48}
+                    <img 
+                      src={awayClub?.logo} 
+                      alt={awayClub?.name}
                       className="w-12 h-12 object-contain rounded-lg"
                     />
                   </div>

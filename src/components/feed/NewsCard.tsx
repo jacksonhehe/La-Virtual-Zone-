@@ -1,6 +1,5 @@
 import { formatDate } from '@/utils/helpers';
 import type { FeedItem } from '@/types';
-import Image from '@/components/ui/Image';
 
 interface Props { item: Extract<FeedItem, { type: 'news' }>; }
 
@@ -11,11 +10,9 @@ const NewsCard = ({ item }: Props) => (
     title={item.title}
   >
     {item.meta.image && (
-      <Image
+      <img
         src={item.meta.image}
-        alt={item.title}
-        width={80}
-        height={80}
+        alt=""
         className="w-20 h-20 object-cover rounded"
         loading="lazy"
       />

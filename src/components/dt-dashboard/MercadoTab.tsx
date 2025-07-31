@@ -6,9 +6,7 @@ import { useAuthStore } from '../../store/authStore';
 import { Player } from '../../types/shared';
 import toast from 'react-hot-toast';
 import OffersPanel from '../market/OffersPanel';
-import Image from '@/components/ui/Image';
 import OfferModal from '../market/OfferModal';
-import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 export default function MercadoTab() {
   const { user } = useAuthStore();
@@ -89,8 +87,6 @@ export default function MercadoTab() {
 
   const formatCurrency = (amount: number) => 
     new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
-
-  const shouldReduceMotion = useReducedMotionPreference();
 
   return (
     <div className="space-y-6">
@@ -191,12 +187,10 @@ export default function MercadoTab() {
                 className="bg-black/20 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 group hover:border-primary/30 transition-all duration-300"
               >
                 <div className="relative">
-                  <Image
-                    src={player.image}
+                  <img 
+                    src={player.image} 
                     alt={player.name}
-                    height={192}
                     className="w-full h-48 object-cover"
-                    style={{ width: '100%' }}
                   />
                   <div className="absolute top-3 left-3 bg-black/70 px-2 py-1 rounded-lg text-xs font-medium">
                     {player.position}

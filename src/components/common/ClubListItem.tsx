@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Club } from '../../types/shared';
-import Image from '@/components/ui/Image';
 
 interface ClubListItemProps {
   club: Club;
@@ -13,11 +12,9 @@ const ClubListItem = ({ club, to, className = '' }: ClubListItemProps) => {
     <div
       className={`flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors ${className}`.trim()}
     >
-      <Image
+      <img
         src={club.logo}
         alt={club.name}
-        width={48}
-        height={48}
         className="w-12 h-12 object-contain mr-4"
         loading="lazy"
       />

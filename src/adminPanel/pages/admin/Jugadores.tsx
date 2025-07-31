@@ -1,5 +1,4 @@
 import  { useState } from 'react';
-import Image from '@/components/ui/Image';
 import { Plus, Search, Edit, Trash, Filter, User, Trophy, Star, Eye, MoreVertical, Users } from 'lucide-react'; 
 import toast from 'react-hot-toast';
 import { useGlobalStore } from '../../store/globalStore';
@@ -193,11 +192,9 @@ const Jugadores = () => {
                     <div className="relative">
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800">
                         {player.image ? (
-                          <Image
-                            src={player.image}
+                          <img 
+                            src={player.image} 
                             alt={player.name}
-                            width={64}
-                            height={64}
                             className="w-full h-full object-cover"
                           />
                         ) : (

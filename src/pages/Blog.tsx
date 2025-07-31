@@ -5,7 +5,6 @@ import { Calendar, Search, ChevronRight, FileText } from 'lucide-react';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import { useDataStore } from '../store/dataStore';
 import SEO from '../components/SEO';
-import Image from '@/components/ui/Image';
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -67,13 +66,11 @@ const Blog = () => {
                   <div key={post.id} className="bg-dark-light rounded-lg overflow-hidden border border-gray-800 group">
                     <div className="flex flex-col md:flex-row">
                       <div className="md:w-1/3 aspect-video md:aspect-square overflow-hidden">
-                        <Image
+                        <img
                           src={withWidth(post.image, 480)}
                           srcSet={srcSet(post.image)}
                           sizes={defaultSizes}
                           alt={post.title}
-                          width={480}
-                          height={270}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           loading="lazy"
                         />
@@ -98,11 +95,9 @@ const Blog = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
                             <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                              <Image
+                              <img
                                 src={`https://ui-avatars.com/api/?name=${post.author}&background=111827&color=fff&size=128`}
                                 alt={post.author}
-                                width={32}
-                                height={32}
                                 className="w-full h-full object-cover"
                                 loading="lazy"
                               />
@@ -169,13 +164,11 @@ const Blog = () => {
                     className="flex items-start group"
                   >
                     <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 mr-3">
-                      <Image
+                      <img
                         src={withWidth(post.image, 160)}
                         srcSet={srcSet(post.image)}
                         sizes="80px"
                         alt={post.title}
-                        width={80}
-                        height={80}
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />

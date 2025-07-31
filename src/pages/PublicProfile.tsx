@@ -4,7 +4,6 @@ import PageHeader from '../components/common/PageHeader';
 import { getUserByUsername } from '../utils/userService';
 import { User } from '../types/shared';
 import { slugify } from '../utils/helpers';
-import Image from '@/components/ui/Image';
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -32,7 +31,7 @@ const PublicProfile = () => {
       <PageHeader title={user.username} subtitle="Perfil público" />
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center space-x-6 mb-8">
-          <Image src={user.avatar} alt={user.username} width={96} height={96} className="w-24 h-24 rounded-full" />
+          <img src={user.avatar} alt={user.username} className="w-24 h-24 rounded-full" />
           <div>
             <p className="text-gray-300 mb-2">{user.bio}</p>
             <p className="text-sm">Nivel {user.level} &bull; XP {user.xp}</p>

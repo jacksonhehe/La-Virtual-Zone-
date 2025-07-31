@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { Star, Shield, Award, Mail, Calendar, Users, ChevronRight, Trophy, Camera } from 'lucide-react';
-import Image from '@/components/ui/Image';
 import toast from 'react-hot-toast';
 import PageHeader from '../components/common/PageHeader';
 import { useDataStore } from '../store/dataStore';
@@ -73,11 +72,9 @@ const UserProfile = () => {
             <div className="card p-6 text-center mb-6">
               <div className="w-24 h-24 mx-auto mb-4 relative group overflow-visible">
                 <div className="w-full h-full rounded-full overflow-hidden">
-                  <Image
-                    src={user.avatar}
-                    alt={user.username}
-                    width={96}
-                    height={96}
+                  <img 
+                    src={user.avatar} 
+                    alt={user.username} 
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
@@ -198,7 +195,7 @@ const UserProfile = () => {
                 
                 <div className="flex items-center mb-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden mr-3">
-                    <Image src={club.logo} alt={club.name} width={64} height={64} className="w-full h-full object-cover" />
+                    <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold">{club.name}</h4>
@@ -399,11 +396,9 @@ const UserProfile = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center">
                           <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                            <Image
-                              src="https://ui-avatars.com/api/?name=PM&background=10b981&color=fff&size=128"
+                            <img 
+                              src="https://ui-avatars.com/api/?name=PM&background=10b981&color=fff&size=128" 
                               alt="pixelmanager"
-                              width={32}
-                              height={32}
                               className="w-full h-full object-cover"
                             />
                           </div>
@@ -420,11 +415,9 @@ const UserProfile = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center">
                           <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                            <Image
-                              src="https://ui-avatars.com/api/?name=NM&background=c026d3&color=fff&size=128"
+                            <img 
+                              src="https://ui-avatars.com/api/?name=NM&background=c026d3&color=fff&size=128" 
                               alt="neonmanager"
-                              width={32}
-                              height={32}
                               className="w-full h-full object-cover"
                             />
                           </div>

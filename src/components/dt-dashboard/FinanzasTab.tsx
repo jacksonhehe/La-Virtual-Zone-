@@ -2,7 +2,6 @@ import  { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, TrendingDown, Target, Users, Trophy } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, BarChart, Bar } from 'recharts';
 import { useDataStore } from '../../store/dataStore';
-import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 
 const formatCurrency= (amount: number) => `€${amount.toLocaleString()}`;
 
@@ -63,8 +62,6 @@ export default function FinanzasTab() {
       color: 'from-purple-500 to-violet-600'
     }
   ];
-
-  const shouldReduceMotion = useReducedMotionPreference();
 
   return (
     <div className="space-y-8">

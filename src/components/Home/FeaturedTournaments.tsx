@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Trophy, Calendar, Users, Award } from 'lucide-react';
+import { Trophy, Calendar, Award, Users } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { formatDate } from '../../utils/helpers';
 import Card from '../common/Card';
-import Image from '@/components/ui/Image';
 
 const FeaturedTournaments = () => {
   const { tournaments } = useDataStore();
@@ -61,11 +60,9 @@ const FeaturedTournaments = () => {
                 }}
               >
                 {tournament.logo && tournament.logo !== 'https://ui-avatars.com/api/?name=Torneo&background=111827&color=fff&size=128&bold=true' ? (
-                  <Image 
+                  <img 
                     src={tournament.logo} 
                     alt={tournament.name}
-                    width={32}
-                    height={32}
                     className="h-8 w-8 object-cover rounded"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';

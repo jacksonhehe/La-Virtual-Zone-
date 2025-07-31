@@ -3,7 +3,6 @@ import { useDataStore } from '../store/dataStore';
 import { Link } from 'react-router-dom';
 import { Award, ChevronLeft, Star, Shield, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
-import Image from '@/components/ui/Image';
 
 const HallOfFame = () => {
   const [activeSection, setActiveSection] = useState('clubs');
@@ -236,11 +235,9 @@ const HallOfFame = () => {
                 {legendaryClubs.map(club => (
                   <div key={club.id} className="card overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 text-center">
-                      <Image
-                        src={club.logo}
+                      <img 
+                        src={club.logo} 
                         alt={club.name}
-                        width={96}
-                        height={96}
                         className="w-24 h-24 mx-auto mb-4"
                       />
                       <h3 className="text-xl font-bold">{club.name}</h3>
@@ -297,11 +294,9 @@ const HallOfFame = () => {
                 {legendaryPlayers.map(player => (
                   <div key={player.id} className="card overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 flex items-center">
-                      <Image
-                        src={player.image}
+                      <img 
+                        src={player.image} 
                         alt={player.name}
-                        width={64}
-                        height={64}
                         className="w-16 h-16 rounded-full mr-4"
                       />
                       <div>
@@ -364,11 +359,9 @@ const HallOfFame = () => {
                 {legendaryManagers.map(manager => (
                   <div key={manager.id} className="card overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 text-center">
-                      <Image
-                        src={manager.avatar}
+                      <img 
+                        src={manager.avatar} 
                         alt={manager.name}
-                        width={96}
-                        height={96}
                         className="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-primary"
                       />
                       <h3 className="text-xl font-bold">{manager.name}</h3>
@@ -417,11 +410,9 @@ const HallOfFame = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {legendaryMoments.map(moment => (
                   <div key={moment.id} className="card overflow-hidden">
-                    <Image
-                      src={moment.image}
+                    <img 
+                      src={moment.image} 
                       alt={moment.title}
-                      width={600}
-                      height={192}
                       className="w-full h-48 object-cover"
                     />
                     <div className="p-6">

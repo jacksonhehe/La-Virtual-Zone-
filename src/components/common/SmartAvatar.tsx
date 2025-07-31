@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import Image from "@/components/ui/Image";
+import React, { useMemo, useState } from "react";
 
 type Props = {
   src?: string | null;
@@ -10,6 +9,15 @@ type Props = {
   alt?: string;
 };
 
+/**
+ * SmartAvatar
+ * 1) Tries the given src
+ * 2) Falls back to ui-avatars (based on `name`)
+ * 3) Falls back to /default-avatar.png (put a file in public/ if you want a custom default)
+ * 4) If even that fails, shows initials on a colored circle
+ */
+const LOCAL_DEFAULT = "/default-avatar.png";
+
 const SmartAvatar: React.FC<Props> = ({
   src,
   name,
@@ -18,7 +26,28 @@ const SmartAvatar: React.FC<Props> = ({
   rounded = true,
   alt,
 }) => {
-  // Generar iniciales
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+
+  const uiAvatarUrl = useMemo(() => {
+    const n = (name ?? "").trim() || "User";
+    const encoded = encodeURIComponent(n);
+    return `https://ui-avatars.com/api/?name=${encoded}&bold=true&size=${Math.max(size, 64)}`;
+  }, [name, size]);
+
+  const currentSrc = useMemo(() => {
+    if (step === 0) return src || "";
+    if (step === 1) return uiAvatarUrl;
+    return LOCAL_DEFAULT;
+  }, [step, src, uiAvatarUrl]);
+
+  const label = alt ?? (name ? `${name}'s avatar` : "avatar");
+  const radius = rounded ? "50%" : undefined;
+
+  const handleError = () => {
+    setStep((prev) => (prev < 2 ? ((prev + 1) as 0 | 1 | 2) : prev));
+  };
+
+  // When images fail entirely, render initials in a circle
   const initials = useMemo(() => {
     const n = (name ?? "").trim();
     if (!n) return "U";
@@ -29,14 +58,11 @@ const SmartAvatar: React.FC<Props> = ({
   }, [name]);
 
   const wrapperStyle: React.CSSProperties = { width: size, height: size };
-  const radius = rounded ? "50%" : undefined;
-  const label = alt ?? (name ? `${name}'s avatar` : "avatar");
 
-  // Si no hay src, mostrar iniciales
-  if (!src) {
+  if (!currentSrc) {
     return (
       <div
-        className={`flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-500 text-white ${className || ""}`}
+        className={`flex items-center justify-center bg-gray-700 text-white ${className || ""}`}
         style={{ ...wrapperStyle, borderRadius: radius }}
         aria-label={label}
         title={label}
@@ -46,21 +72,16 @@ const SmartAvatar: React.FC<Props> = ({
     );
   }
 
-  // Si hay src, mostrar la imagen
   return (
-    <div
-      className={`${className || ""}`}
-      style={{ ...wrapperStyle, borderRadius: radius, overflow: 'hidden', position: 'relative' }}
-    >
-      <Image
-        src={src}
-        alt={label}
-        width={size}
-        height={size}
-        className={`w-full h-full object-cover ${rounded ? 'rounded-full' : 'rounded'}`}
-        style={{ display: 'block', width: '100%', height: '100%' }}
-      />
-    </div>
+    <img
+      src={currentSrc}
+      alt={label}
+      width={size}
+      height={size}
+      onError={handleError}
+      className={`${rounded ? "rounded-full" : "rounded"} object-cover ${className || ""}`}
+      style={{ width: size, height: size }}
+    />
   );
 };
 

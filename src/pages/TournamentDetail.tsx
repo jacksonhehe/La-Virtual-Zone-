@@ -29,7 +29,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import CardSkeleton from '../components/common/CardSkeleton';
 import SEO from '../components/SEO';
-import { default as ImageComponent } from '@/components/ui/Image';
 
 const FullCalendar = lazy(() => import('@fullcalendar/react'));
 
@@ -334,11 +333,9 @@ const TournamentDetail = () => {
                         <h3 className="text-3xl font-bold mb-4 text-white">Campeón del torneo</h3>
                         <div className="flex items-center justify-center mb-6">
                           <div className="w-24 h-24 rounded-full overflow-hidden mr-6 border-4 border-yellow-500/30">
-                            <ImageComponent 
+                            <img 
                               src={`https://ui-avatars.com/api/?name=${tournament.winner.split(' ').map(word => word[0]).join('')}&background=c026d3&color=fff&size=128&bold=true`} 
                               alt={tournament.winner} 
-                              width={96}
-                              height={96}
                               className="w-full h-full object-cover"
                             />
                           </div>

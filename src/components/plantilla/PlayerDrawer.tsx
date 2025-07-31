@@ -3,7 +3,6 @@ import { useEffect, useRef } from 'react';
 import { Player } from '../../types/shared';
 import { formatCurrency, formatDate } from '../../utils/helpers';
 import useFocusTrap from '../../hooks/useFocusTrap';
-import Image from '@/components/ui/Image';
 
 interface Props {
   player: Player;
@@ -41,7 +40,7 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
           <X size={20} />
         </button>
         <div className="flex items-center mb-4">
-          <Image src={player.image} alt={player.name} width={64} height={64} className="w-16 h-16 mr-4 rounded-full" />
+          <img src={player.image} alt={player.name} className="w-16 h-16 mr-4 rounded-full" />
           <div>
             <h3 className="text-xl font-bold">{player.name}</h3>
             <p className="text-sm text-gray-400">{player.position} • {player.age} años</p>
