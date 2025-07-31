@@ -4,6 +4,7 @@ import { useDataStore } from '../store/dataStore';
 import Comments from '../components/comments/Comments';
 import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
 import SEO from '../components/SEO';
+import { SafeBlogContent } from '../components/common/SafeHtmlContent';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -108,7 +109,7 @@ const BlogPost = () => {
             
             <div className="bg-dark-light rounded-lg border border-gray-800 p-6 md:p-8 mb-8">
               <div className="prose prose-invert max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                <SafeBlogContent content={post.content} />
               </div>
               
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-800">
