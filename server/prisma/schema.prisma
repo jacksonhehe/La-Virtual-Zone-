@@ -13,24 +13,33 @@ model User {
   username      String         @unique
   password      String
   role          Role           @default(USER)
-  clubs         Club[]
-  players       Player[]
+  clubs         Club[]         @relation("UserClubs")       // Un usuario puede tener varios clubes
+  players       Player[]       @relation("UserPlayers")     // Un usuario puede tener varios jugadores
   refreshTokens RefreshToken[]
 }
 
 model Club {
   id        Int      @id @default(autoincrement())
   name      String
-  manager   User?    @relation(fields: [managerId], references: [id])
+  manager   User?    @relation("UserClubs", fields: [managerId], references: [id])
   managerId Int?
-  players   Player[]
+  players   Player[] @relation("ClubPlayers")  // Relación con jugadores
+  // Relaciones para los partidos (Match)
+  homeMatches Match[] @relation("home")         // Club como local
+  awayMatches Match[] @relation("away")         // Club como visitante
+  // Relaciones para las transferencias
+  fromTransfers Transfer[] @relation("from")    // Club que transfiere
+  toTransfers   Transfer[] @relation("to")      // Club que recibe
 }
 
 model Player {
   id     Int   @id @default(autoincrement())
   name   String
-  club   Club? @relation(fields: [clubId], references: [id])
+  club   Club? @relation("ClubPlayers", fields: [clubId], references: [id])
   clubId Int?
+  user   User? @relation("UserPlayers", fields: [userId], references: [id])
+  userId Int?
+  transfers Transfer[] // Relación con transferencias
 }
 
 model Match {
