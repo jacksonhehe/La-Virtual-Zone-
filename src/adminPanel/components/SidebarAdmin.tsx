@@ -75,7 +75,7 @@ const SidebarAdmin = () => {
         initial={{ width: collapsed ? 80 : 288 }}
         animate={{ width: collapsed ? 80 : 288 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className={`fixed md:static top-0 left-0 h-full sidebar-glass z-50 transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+        className={`fixed md:static top-0 left-0 h-full sidebar-glass z-40 transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
         aria-label="Menú lateral"
       >
         <div className="p-6 border-b border-gray-700/50 flex items-center justify-between">

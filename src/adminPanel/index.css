@@ -73,6 +73,16 @@
     @apply bg-gradient-to-b from-gray-800/90 to-gray-900/90 backdrop-blur-xl border-r border-gray-700/50 shadow-xl;
   }
 
+  /* Asegurar que el contenido principal esté por encima del sidebar */
+  .admin-main-content {
+    @apply relative z-50;
+  }
+
+  /* Asegurar que los headers de las páginas estén por encima del sidebar */
+  .admin-page-header {
+    @apply relative z-50;
+  }
+
   .floating-action {
     @apply fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-110 z-50;
   }

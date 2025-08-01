@@ -75,7 +75,7 @@ const Usuarios = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 admin-page-header">
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import DtDashboard from './DtDashboard';
 import { useAuthStore } from '../store/authStore';
+import UpcomingMatches from '../components/common/UpcomingMatches';
+import ClubsSection from '../components/common/ClubsSection';
 
 import { 
   Trophy, 
@@ -283,83 +285,10 @@ const LigaMaster = () => {
             </div>
             
             {/* Upcoming matches */}
-            <div className="card">
-              <div className="p-6 border-b border-gray-800">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-bold">Próximos Partidos</h2>
-                  <Link 
-                    to="/liga-master/fixture" 
-                    className="text-primary hover:text-primary-light flex items-center text-sm"
-                  >
-                    <span>Ver fixture</span>
-                    <ChevronRight size={16} />
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="divide-y divide-gray-800">
-                {upcomingMatches.length > 0 ? (
-                  upcomingMatches.map((match) => {
-                    const homeClub = clubs.find(c => c.name === match.homeTeam);
-                    const awayClub = clubs.find(c => c.name === match.awayTeam);
-
-                    return (
-                      <div
-                        key={match.id}
-                        className="p-4 bg-gradient-to-br from-dark to-gray-800 border border-gray-700 rounded-lg"
-                      >
-                        <div className="text-sm text-gray-400 text-center mb-3">
-                          {formatDate(match.date)} • Jornada {match.round}
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex flex-col items-center w-2/5">
-                            <img
-                              src={homeClub?.logo}
-                              alt={homeClub?.name}
-                              className="w-16 h-16 object-contain mb-1"
-                            />
-                            <span className="font-medium text-center">{homeClub?.name}</span>
-                          </div>
-                          <div className="flex-shrink-0 flex-1 text-center">
-                            <span className="text-2xl font-bold neon-text-blue">VS</span>
-                          </div>
-                          <div className="flex flex-col items-center w-2/5">
-                            <img
-                              src={awayClub?.logo}
-                              alt={awayClub?.name}
-                              className="w-16 h-16 object-contain mb-1"
-                            />
-                            <span className="font-medium text-center">{awayClub?.name}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="p-6 text-center">
-                    <p className="text-gray-400">No hay partidos programados próximamente.</p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <UpcomingMatches matches={upcomingMatches} clubs={clubs} />
             
-            {/* Club listing with manager */}
-            <div className="card">
-              <div className="p-6 border-b border-gray-800">
-                <h2 className="text-xl font-bold">Clubes Participantes</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                {clubs.map(club => (
-                  <ClubListItem
-                    key={club.id}
-                    club={club}
-                    to={`/liga-master/club/${club.slug}`}
-                  />
-                ))}
-              </div>
-            </div>
+                         {/* Club listing with manager */}
+             <ClubsSection clubs={clubs} />
           </div>
           
           {/* Right column */}

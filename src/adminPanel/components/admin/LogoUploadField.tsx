@@ -135,6 +135,9 @@ const LogoUploadField: React.FC<LogoUploadFieldProps> = ({
         <p className="text-xs text-gray-500">
           URL de la imagen o sube un archivo (máx. {maxSize}MB)
         </p>
+        <p className="text-xs text-blue-400">
+          📏 Dimensiones recomendadas: {label.toLowerCase().includes('logo') ? '512x512 píxeles' : '400x600 píxeles'}
+        </p>
       </div>
 
       {/* File Upload Area */}
@@ -197,6 +200,9 @@ const LogoUploadField: React.FC<LogoUploadFieldProps> = ({
               </div>
               <div className="text-xs text-gray-500">
                 JPG, PNG, WebP, GIF (máx. {maxSize}MB)
+              </div>
+              <div className="text-xs text-blue-400">
+                📏 {label.toLowerCase().includes('logo') ? '512x512 píxeles' : '400x600 píxeles'}
               </div>
             </button>
           )}

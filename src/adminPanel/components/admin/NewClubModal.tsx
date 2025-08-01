@@ -160,6 +160,7 @@ const NewClubModal = ({ onClose, onSave }: Props) => {
                 maxSize={3}
               />
               <p className="text-gray-400 text-xs">Si no subes un logo, se generará automáticamente con las iniciales del club</p>
+              <p className="text-blue-400 text-xs">💡 Para mejores resultados, usa un logo cuadrado (512x512 píxeles) con fondo transparente</p>
             </div>
           </div>
 

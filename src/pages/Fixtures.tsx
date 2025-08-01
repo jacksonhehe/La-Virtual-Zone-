@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronLeft, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronUp, Calendar, Clock, MapPin, Users, Trophy, CalendarDays } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import Card from '../components/common/Card';
+import TournamentStats from '../components/common/TournamentStats';
+import MatchCard from '../components/common/MatchCard';
 import { useDataStore } from '../store/dataStore';
 import { formatDate } from '../utils/helpers';
 import usePersistentState from '../hooks/usePersistentState';
@@ -10,6 +12,7 @@ import usePersistentState from '../hooks/usePersistentState';
 const Fixtures = () => {
   const [selectedRound, setSelectedRound] = usePersistentState<number | null>('fixtures_round', null);
   const [expandedMatches, setExpandedMatches] = useState<Record<string, boolean>>({});
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   const { tournaments, clubs } = useDataStore();
   
@@ -61,9 +64,25 @@ const Fixtures = () => {
   const getClub = (name: string) => {
     return clubs.find(c => c.name === name);
   };
+
+  // Get match statistics
+  const getMatchStats = (match: any) => {
+    const homeClub = getClub(match.homeTeam);
+    const awayClub = getClub(match.awayTeam);
+    
+    return {
+      homeClub,
+      awayClub,
+      isFinished: match.status === 'finished',
+      isLive: match.status === 'live',
+      isScheduled: match.status === 'scheduled'
+    };
+  };
+
+
   
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <PageHeader 
         title="Fixture y Resultados" 
         subtitle="Calendario de partidos y resultados de la Liga Master."
@@ -71,175 +90,102 @@ const Fixtures = () => {
       />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumb */}
         <div className="mb-6">
           <Link 
             to="/liga-master"
-            className="inline-flex items-center text-primary hover:text-primary-light"
+            className="inline-flex items-center text-primary hover:text-primary-light transition-colors duration-200 group"
           >
-            <ChevronLeft size={16} className="mr-1" />
+            <ChevronLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
             <span>Volver a Liga Master</span>
           </Link>
         </div>
         
-        {/* Tournament info */}
-        <div className="card p-6 mb-6">
-          <h2 className="text-xl font-bold">{ligaMaster.name}</h2>
-          <div className="flex flex-wrap gap-4 mt-2">
-            <div className="text-gray-400">
-              <span className="text-white font-medium">{ligaMaster.teams.length}</span> equipos
+        {/* Tournament info card */}
+        <div className="card p-8 mb-8 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+            <div className="flex items-center">
+              <Trophy className="w-8 h-8 text-yellow-400 mr-3" />
+              <h2 className="text-2xl font-bold gradient-text-primary">{ligaMaster.name}</h2>
             </div>
-            <div className="text-gray-400">
-              <span className="text-white font-medium">{ligaMaster.rounds}</span> jornadas
-            </div>
-            <div className="text-gray-400">
-              <span className="text-white font-medium">{ligaMaster.matches.length}</span> partidos
-            </div>
-            <div className="text-gray-400">
-              <span className="text-white font-medium">{formatDate(ligaMaster.startDate)}</span> - <span className="text-white font-medium">{formatDate(ligaMaster.endDate)}</span>
+            <div className="mt-4 lg:mt-0">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setViewMode('grid')}
+                                     className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                     viewMode === 'grid' 
+                       ? 'bg-primary text-white shadow-lg' 
+                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                   }`}
+                >
+                  Vista Cuadrícula
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                                     className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                     viewMode === 'list' 
+                       ? 'bg-primary text-white shadow-lg' 
+                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                   }`}
+                >
+                  Vista Lista
+                </button>
+              </div>
             </div>
           </div>
+          
+          {/* Tournament Statistics */}
+          <TournamentStats tournament={ligaMaster} />
         </div>
         
         {/* Round selector */}
-        <div className="mb-6 overflow-x-auto">
-          <div className="flex space-x-2 min-w-max">
-            {rounds.map(round => (
-              <button 
-                key={round}
-                onClick={() => setSelectedRound(round)}
-                className={`px-4 py-2 rounded-md whitespace-nowrap ${selectedRound === round ? 'bg-primary text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'}`}
-              >
-                Jornada {round}
-              </button>
-            ))}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-4 text-white">Seleccionar Jornada</h3>
+          <div className="overflow-x-auto">
+            <div className="flex space-x-3 min-w-max pb-2">
+              {rounds.map(round => (
+                <button 
+                  key={round}
+                  onClick={() => setSelectedRound(round)}
+                                     className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 ${
+                     selectedRound === round 
+                       ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg' 
+                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+                   }`}
+                >
+                  Jornada {round}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         
-        {/* Matches */}
-        <div className="space-y-4">
+                {/* Matches */}
+        <div className={`space-y-6 ${viewMode === 'grid' ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : ''}`}>
           {roundMatches.map(match => {
-            const homeClub = getClub(match.homeTeam);
-            const awayClub = getClub(match.awayTeam);
+            const { homeClub, awayClub } = getMatchStats(match);
             const isExpanded = expandedMatches[match.id] || false;
             
             return (
-              <Card
+              <MatchCard
                 key={match.id}
-                className="overflow-hidden bg-gradient-to-br from-dark to-gray-800 border border-gray-700"
-              >
-                <div className="p-4 border-b border-gray-800">
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-400">
-                      {formatDate(match.date)} • Jornada {match.round}
-                    </div>
-                    <div className="text-sm">
-                      {match.status === 'scheduled' && (
-                        <span className="badge bg-blue-500/20 text-blue-400">Programado</span>
-                      )}
-                      {match.status === 'live' && (
-                        <span className="badge bg-green-500/20 text-green-400">En vivo</span>
-                      )}
-                      {match.status === 'finished' && (
-                        <span className="badge bg-gray-500/20 text-gray-400">Finalizado</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col items-center w-2/5 sm:w-1/3">
-                      <img
-                        src={homeClub?.logo}
-                        alt={homeClub?.name}
-                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
-                      />
-                      <span className="font-medium text-center">{homeClub?.name}</span>
-                    </div>
-
-                    <div className="flex flex-col items-center flex-1 text-center">
-                      {match.status === 'finished' ? (
-                        <div className="text-3xl sm:text-4xl font-bold mb-1 neon-text-blue">
-                          {match.homeScore} - {match.awayScore}
-                        </div>
-                      ) : (
-                        <div className="text-2xl sm:text-3xl font-bold mb-1 neon-text-blue">VS</div>
-                      )}
-                      
-                      <button
-                        onClick={() => toggleMatchDetails(match.id)}
-                        className="text-primary text-sm flex items-center"
-                      >
-                        {isExpanded ? (
-                          <>
-                            <span>Menos detalles</span>
-                            <ChevronUp size={16} className="ml-1" />
-                          </>
-                        ) : (
-                          <>
-                            <span>Más detalles</span>
-                            <ChevronDown size={16} className="ml-1" />
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    
-                    <div className="flex flex-col items-center w-2/5 sm:w-1/3">
-                      <img
-                        src={awayClub?.logo}
-                        alt={awayClub?.name}
-                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
-                      />
-                      <span className="font-medium text-center">{awayClub?.name}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                {isExpanded && (
-                  <div className="p-4 pt-0">
-                    <div className="border-t border-gray-800 my-4" />
-                    
-                    {match.status === 'finished' && match.scorers && match.scorers.length > 0 ? (
-                      <div>
-                        <h3 className="font-bold mb-3">Goleadores</h3>
-                        <ul className="space-y-2">
-                          {match.scorers.map((scorer, index) => {
-                            const club = clubs.find(c => c.id === scorer.clubId);
-                            
-                            return (
-                              <li key={index} className="flex items-center">
-                                <div className="w-12 text-center text-gray-400">
-                                  {scorer.minute}'
-                                </div>
-                                <div className="flex items-center">
-                                  <img 
-                                    src={club?.logo} 
-                                    alt={club?.name}
-                                    className="w-5 h-5 mr-2"
-                                  />
-                                  <span>{scorer.playerName}</span>
-                                </div>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    ) : (
-                      <div className="text-center py-4 text-gray-400">
-                        {match.status === 'finished' 
-                          ? 'No hay información detallada disponible para este partido.' 
-                          : 'El partido aún no se ha disputado.'}
-                      </div>
-                    )}
-                  </div>
-                )}
-                </Card>
-              );
+                match={match}
+                homeClub={homeClub}
+                awayClub={awayClub}
+                onToggleDetails={toggleMatchDetails}
+                isExpanded={isExpanded}
+                viewMode={viewMode}
+              />
+            );
           })}
           
           {roundMatches.length === 0 && (
-            <div className="card p-6 text-center">
-              <p className="text-gray-400">No hay partidos disponibles para esta jornada.</p>
+            <div className="card p-12 text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-gray-800 rounded-full flex items-center justify-center">
+                <Calendar className="w-10 h-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">No hay partidos disponibles</h3>
+              <p className="text-gray-400">No hay partidos programados para esta jornada.</p>
             </div>
           )}
         </div>

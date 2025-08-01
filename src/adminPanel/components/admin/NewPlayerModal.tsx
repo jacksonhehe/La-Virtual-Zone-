@@ -92,6 +92,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
               maxSize={3}
             />
             <p className="text-gray-400 text-sm mt-2">Si no subes una foto, se generará automáticamente con las iniciales del jugador</p>
+            <p className="text-blue-400 text-xs mt-1">💡 Para mejores resultados, usa una foto vertical (400x600 píxeles) con el jugador centrado</p>
           </div>
 
           {/* Información Personal */}

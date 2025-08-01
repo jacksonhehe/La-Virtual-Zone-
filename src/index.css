@@ -318,3 +318,131 @@ html {
 /* Improve contrast for dark theme */
 .dark .text-gray-500 { color: #9ca3af; }
 
+/* Animaciones para la página de Fixtures */
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slide-in-from-top 0.3s ease-out;
+}
+
+.slide-in-from-top-2 {
+  animation: slide-in-from-top 0.2s ease-out;
+}
+
+/* Efectos de hover mejorados para las tarjetas de partidos */
+.match-card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
+}
+
+/* Indicador de partido en vivo */
+.live-indicator {
+  @apply absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse;
+}
+
+/* Gradientes mejorados para las tarjetas */
+.card-gradient-primary {
+  background: linear-gradient(135deg, rgba(127, 57, 251, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+}
+
+.card-gradient-secondary {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(127, 57, 251, 0.1) 100%);
+}
+
+/* Efectos para la sección de próximos partidos */
+.match-status-badge {
+  @apply px-3 py-1 rounded-full text-xs font-medium transition-all duration-200;
+}
+
+.match-status-hoy {
+  @apply bg-green-500/10 text-green-400 border border-green-500/20;
+}
+
+.match-status-manana {
+  @apply bg-blue-500/10 text-blue-400 border border-blue-500/20;
+}
+
+.match-status-semana {
+  @apply bg-yellow-500/10 text-yellow-400 border border-yellow-500/20;
+}
+
+.match-status-proximo {
+  @apply bg-gray-500/10 text-gray-400 border border-gray-500/20;
+}
+
+/* Efectos de hover para equipos */
+.team-hover-effect {
+  @apply transition-all duration-300 hover:scale-110;
+}
+
+.team-name-hover {
+  @apply transition-colors duration-200 hover:text-primary;
+}
+
+/* Efecto de brillo para VS */
+.vs-glow-effect {
+  position: relative;
+}
+
+.vs-glow-effect::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(127, 57, 251, 0.2), transparent);
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.vs-glow-effect:hover::after {
+  opacity: 1;
+}
+
+/* Efectos para la sección de clubes participantes */
+.club-card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
+}
+
+.club-logo-hover {
+  @apply transition-transform duration-300 hover:scale-110;
+}
+
+.club-status-badge {
+  @apply px-2 py-1 rounded-full text-xs font-medium transition-all duration-200;
+}
+
+.club-status-champion {
+  @apply bg-yellow-500/10 text-yellow-400 border border-yellow-500/20;
+}
+
+.club-status-rising {
+  @apply bg-green-500/10 text-green-400 border border-green-500/20;
+}
+
+.club-status-legendary {
+  @apply bg-purple-500/10 text-purple-400 border border-purple-500/20;
+}
+
+.club-status-active {
+  @apply bg-blue-500/10 text-blue-400 border border-blue-500/20;
+}
+
+/* Efecto de overlay para las tarjetas de clubes */
+.club-overlay-effect {
+  @apply absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 pointer-events-none;
+  background: linear-gradient(135deg, rgba(127, 57, 251, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+.club-overlay-effect:hover {
+  @apply opacity-100;
+}
+

@@ -33,7 +33,7 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen admin-bg flex">
       <SidebarAdmin />
-      <main className="flex-1 md:ml-0">
+      <main className="flex-1 md:ml-0 admin-main-content">
         <Suspense fallback={
           <div className="p-6">
             <div className="animate-pulse space-y-4">
