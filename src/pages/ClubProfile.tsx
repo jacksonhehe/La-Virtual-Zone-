@@ -121,7 +121,7 @@ const ClubProfile = () => {
               <img 
                 src={club.logo} 
                 alt={club.name}
-                className="w-32 h-32 mx-auto mb-4"
+                className="w-32 h-32 mx-auto mb-4 object-contain"
               />
               <h1 className="text-2xl font-bold mb-1">{club.name}</h1>
               <p className="text-gray-400 mb-4">
@@ -292,7 +292,7 @@ const ClubProfile = () => {
                                     <img 
                                       src={opponentClub?.logo} 
                                       alt={opponentClub?.name}
-                                      className="w-10 h-10 object-contain"
+                                      className="w-10 h-10 object-contain rounded"
                                     />
                                   </div>
                                   <div>
@@ -364,7 +364,7 @@ const ClubProfile = () => {
                                   <img 
                                     src={opponentClub?.logo} 
                                     alt={opponentClub?.name}
-                                    className="w-8 h-8 object-contain"
+                                    className="w-8 h-8 object-contain rounded"
                                   />
                                 </div>
                                 <div>

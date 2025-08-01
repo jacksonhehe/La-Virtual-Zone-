@@ -69,18 +69,20 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
         assists: 0,
         appearances: 0
       });
-      toast.success('Jugador creado');
+      toast.success('¡Jugador creado exitosamente!');
     }
   };
 
   return (
-    <Modal open={true} onClose={onClose} className="max-w-2xl" initialFocusRef={modalRef}>
+    <Modal open={true} onClose={onClose} className="max-w-3xl" initialFocusRef={modalRef}>
       <div ref={modalRef} className="max-h-[85vh] overflow-y-auto">
-        <h3 className="text-xl font-semibold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Nuevo Jugador</h3>
+        <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Crear Nuevo Jugador</h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Foto del Jugador */}
           <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
-            <h4 className="text-lg font-semibold mb-4 text-white">Foto del Jugador</h4>
+            <h4 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+              📸 Foto del Jugador
+            </h4>
             <LogoUploadField
               value={formData.image}
               onChange={(value) => setFormData({ ...formData, image: value })}
@@ -89,60 +91,95 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
               showPreview={true}
               maxSize={3}
             />
+            <p className="text-gray-400 text-sm mt-2">Si no subes una foto, se generará automáticamente con las iniciales del jugador</p>
           </div>
 
           {/* Información Personal */}
           <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
-            <h4 className="text-lg font-semibold mb-4 text-white">Información Personal</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+            <h4 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+              👤 Información Personal
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Nombre del Jugador *
+                </label>
                 <input
                   className={`input w-full ${errors.name ? 'border-red-500' : ''}`}
-                  placeholder="Nombre del jugador"
+                  placeholder="Ejemplo: Lionel Messi"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
               </div>
-              <div>
-                <input
-                  type="number"
-                  className={`input w-full ${errors.age ? 'border-red-500' : ''}`}
-                  placeholder="Edad"
-                  value={formData.age}
-                  onChange={e => setFormData({ ...formData, age: Number(e.target.value) })}
-                />
-                {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Edad *
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="15"
+                    max="50"
+                    className={`input w-full pr-8 ${errors.age ? 'border-red-500' : ''}`}
+                    placeholder="Ejemplo: 25"
+                    value={formData.age}
+                    onChange={e => setFormData({ ...formData, age: Number(e.target.value) })}
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">años</span>
+                </div>
+                {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
               </div>
-              <div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Nacionalidad *
+                </label>
                 <input
                   className={`input w-full ${errors.nationality ? 'border-red-500' : ''}`}
-                  placeholder="Nacionalidad"
+                  placeholder="Ejemplo: Argentina"
                   value={formData.nationality}
                   onChange={e => setFormData({ ...formData, nationality: e.target.value })}
                 />
-                {errors.nationality && <p className="text-red-500 text-sm mt-1">{errors.nationality}</p>}
+                {errors.nationality && <p className="text-red-500 text-sm">{errors.nationality}</p>}
               </div>
-              <div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Número de Dorsal
+                </label>
                 <input
                   type="number"
+                  min="1"
+                  max="99"
                   className="input w-full"
-                  placeholder="Dorsal"
+                  placeholder="Ejemplo: 10"
                   value={formData.dorsal}
                   onChange={e => setFormData({ ...formData, dorsal: Number(e.target.value) })}
                 />
               </div>
-                        <select
-                className="input w-full"
-                value={formData.position}
-                onChange={(e) => setFormData({...formData, position: e.target.value})}
-              >
-                <option value="POR">Portero</option>
-                <option value="DEF">Defensor</option>
-                <option value="MED">Mediocampista</option>
-                <option value="DEL">Delantero</option>
-              </select>
-              <div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Posición
+                </label>
+                <select
+                  className="input w-full"
+                  value={formData.position}
+                  onChange={(e) => setFormData({...formData, position: e.target.value})}
+                >
+                  <option value="POR">Portero</option>
+                  <option value="DEF">Defensor</option>
+                  <option value="MED">Mediocampista</option>
+                  <option value="DEL">Delantero</option>
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Club *
+                </label>
                 <select
                   className={`input w-full ${errors.clubId ? 'border-red-500' : ''}`}
                   value={formData.clubId}
@@ -153,70 +190,113 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <option key={club.id} value={club.id}>{club.name}</option>
                   ))}
                 </select>
-                {errors.clubId && <p className="text-red-500 text-sm mt-1">{errors.clubId}</p>}
+                {errors.clubId && <p className="text-red-500 text-sm">{errors.clubId}</p>}
               </div>
             </div>
           </div>
 
           {/* Información Deportiva */}
           <div className="bg-gradient-to-br from-dark to-dark-light rounded-xl p-6 border border-gray-700/50">
-            <h4 className="text-lg font-semibold mb-4 text-white">Información Deportiva</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+            <h4 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+              ⚽ Información Deportiva
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Overall (40-99) *
+                </label>
                 <input
                   type="number"
                   min="40"
                   max="99"
                   className={`input w-full ${errors.overall ? 'border-red-500' : ''}`}
-                  placeholder="Overall (40-99)"
+                  placeholder="Ejemplo: 85"
                   value={formData.overall}
                   onChange={(e) => setFormData({...formData, overall: Number(e.target.value)})}
                 />
-                {errors.overall && <p className="text-red-500 text-sm mt-1">{errors.overall}</p>}
+                {errors.overall && <p className="text-red-500 text-sm">{errors.overall}</p>}
+                <p className="text-gray-400 text-xs">Valoración general del jugador</p>
               </div>
-              <div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Potencial
+                </label>
                 <input
                   type="number"
+                  min="40"
+                  max="99"
                   className="input w-full"
-                  placeholder="Potencial"
+                  placeholder="Ejemplo: 90"
                   value={formData.potential}
                   onChange={e => setFormData({ ...formData, potential: Number(e.target.value) })}
                 />
+                <p className="text-gray-400 text-xs">Valoración máxima que puede alcanzar</p>
               </div>
-              <div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Valor de Mercado *
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    className={`input w-full pl-8 ${errors.price ? 'border-red-500' : ''}`}
+                    placeholder="Ejemplo: 50000000"
+                    value={formData.price}
+                    onChange={(e) => setFormData({...formData, price: Number(e.target.value)})}
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">$</span>
+                </div>
+                {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
+                <p className="text-gray-400 text-xs">Precio de transferencia en el mercado</p>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Contrato hasta (Año)
+                </label>
                 <input
                   type="number"
-                  className={`input w-full ${errors.price ? 'border-red-500' : ''}`}
-                  placeholder="Precio"
-                  value={formData.price}
-                  onChange={(e) => setFormData({...formData, price: Number(e.target.value)})}
-                />
-                {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
-              </div>
-              <div>
-                <input
+                  min="2024"
+                  max="2030"
                   className="input w-full"
-                  placeholder="Contrato hasta"
+                  placeholder="Ejemplo: 2026"
                   value={formData.contractExpires}
                   onChange={e => setFormData({ ...formData, contractExpires: e.target.value })}
                 />
+                <p className="text-gray-400 text-xs">Año en que finaliza el contrato</p>
               </div>
-              <div>
-                <input
-                  type="number"
-                  className="input w-full"
-                  placeholder="Salario"
-                  value={formData.salary}
-                  onChange={e => setFormData({ ...formData, salary: Number(e.target.value) })}
-                />
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Salario Mensual
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    className="input w-full pl-8"
+                    placeholder="Ejemplo: 500000"
+                    value={formData.salary}
+                    onChange={e => setFormData({ ...formData, salary: Number(e.target.value) })}
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">$</span>
+                </div>
+                <p className="text-gray-400 text-xs">Salario mensual del jugador</p>
               </div>
             </div>
           </div>
 
           {/* Botones de Acción */}
-          <div className="flex space-x-3 justify-end pt-4 border-t border-gray-700/50">
-            <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
-            <Button type="submit">Crear Jugador</Button>
+          <div className="flex space-x-4 justify-end pt-6 border-t border-gray-700/50">
+            <Button variant="outline" type="button" onClick={onClose} className="px-6 py-3">
+              Cancelar
+            </Button>
+            <Button type="submit" className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold">
+              ✨ Crear Jugador
+            </Button>
           </div>
         </form>
       </div>

@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuditInterceptor } from '../common/interceptors/audit.interceptor';
+import { SanitizationService } from '../common/services/sanitization.service'; // <--- AGREGA ESTA LÍNEA
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AuditInterceptor } from '../common/interceptors/audit.interceptor';
   providers: [
     AuthService, 
     JwtStrategy,
+    SanitizationService, // <- YA ESTÁ AQUÍ
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditInterceptor,

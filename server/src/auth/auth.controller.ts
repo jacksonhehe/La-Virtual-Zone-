@@ -29,14 +29,22 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
-    // Sanitizar datos de entrada
-    const sanitizedDto = this.sanitizationService.sanitizeObject(registerDto);
-    const sanitizedEmail = this.sanitizationService.sanitizeEmail(sanitizedDto.email);
-    
-    return this.authService.register({
-      ...sanitizedDto,
-      email: sanitizedEmail,
-    });
+    try {
+      // Sanitizar datos de entrada
+      const sanitizedDto = this.sanitizationService.sanitizeObject(registerDto);
+      const sanitizedEmail = this.sanitizationService.sanitizeEmail(sanitizedDto.email);
+      
+      return this.authService.register({
+        ...sanitizedDto,
+        email: sanitizedEmail,
+      });
+    } catch (error: any) {
+      // Si el error es de validación de email, devolver un mensaje más claro
+      if (error.message === 'Formato de email inválido') {
+        throw new Error('El formato del email no es válido');
+      }
+      throw error;
+    }
   }
 
   @Post('refresh')

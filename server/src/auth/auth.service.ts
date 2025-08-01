@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { RegisterDto } from './dto/register.dto';
+import { Role } from '../common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,11 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
+    // Validar longitud del email antes de procesar
+    if (registerDto.email.length > 255) {
+      throw new BadRequestException('El email no puede exceder 255 caracteres');
+    }
+
     // Verificar si el email ya existe
     const existingUser = await this.prisma.user.findUnique({
       where: { email: registerDto.email }
@@ -56,7 +62,7 @@ export class AuthService {
         email: registerDto.email,
         username: registerDto.username,
         password: hashedPassword,
-        role: registerDto.role || 'USER',
+        role: registerDto.role || Role.USER,
       },
       select: {
         id: true,

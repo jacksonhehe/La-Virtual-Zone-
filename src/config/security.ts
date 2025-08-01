@@ -59,7 +59,7 @@ export const SECURITY_CONFIG = {
   CORS: {
     // Orígenes permitidos
     ALLOWED_ORIGINS: [
-      'http://localhost:3000',
+      import.meta.env.VITE_API_URL || 'http://localhost:3000',
       'http://localhost:5173',
       'https://lavirtualzone.com',
       'https://www.lavirtualzone.com',
