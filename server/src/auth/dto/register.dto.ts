@@ -1,9 +1,10 @@
-import { IsEmail, IsString, MinLength, MaxLength, Matches, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength, Matches, IsOptional, IsEnum } from 'class-validator';
+import { Role } from '../../common/enums/role.enum';
 
 export class RegisterDto {
   @IsEmail({}, { message: 'El email debe tener un formato válido' })
   @MaxLength(255, { message: 'El email no puede exceder 255 caracteres' })
-  email: string;
+  email!: string;
 
   @IsString({ message: 'El nombre de usuario debe ser una cadena de texto' })
   @MinLength(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
@@ -11,7 +12,7 @@ export class RegisterDto {
   @Matches(/^[a-zA-Z0-9_-]+$/, { 
     message: 'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos' 
   })
-  username: string;
+  username!: string;
 
   @IsString({ message: 'La contraseña debe ser una cadena de texto' })
   @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
@@ -19,9 +20,9 @@ export class RegisterDto {
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
     message: 'La contraseña debe contener al menos una letra minúscula, una mayúscula y un número'
   })
-  password: string;
+  password!: string;
 
   @IsOptional()
-  @IsString({ message: 'El rol debe ser una cadena de texto' })
-  role?: string;
+  @IsEnum(Role, { message: 'El rol debe ser ADMIN, CLUB o USER' })
+  role?: Role;
 } 

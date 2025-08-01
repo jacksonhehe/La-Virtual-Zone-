@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import * as Sentry from '@sentry/node';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
   // Inicializar Sentry
@@ -63,7 +64,7 @@ async function bootstrap() {
   );
 
   // Configuración de rate limiting global
-  app.use((req, res, next) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     // Implementación básica de rate limiting
     const clientIp = req.ip || req.connection.remoteAddress;
     const now = Date.now();

@@ -35,7 +35,7 @@ export class SanitizationService {
   sanitizeObject<T>(obj: T): T {
     if (!obj || typeof obj !== 'object') return obj;
 
-    const sanitized = { ...obj };
+    const sanitized: Record<string, any> = { ...obj };
     
     for (const [key, value] of Object.entries(sanitized)) {
       if (typeof value === 'string') {
@@ -45,7 +45,7 @@ export class SanitizationService {
       }
     }
 
-    return sanitized;
+    return sanitized as T;
   }
 
   /**
