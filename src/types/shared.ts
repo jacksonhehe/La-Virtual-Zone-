@@ -59,6 +59,35 @@ export interface PlayerAttributes {
 export interface PlayerContract {
   expires: string;
   salary: number;
+  years: number;
+}
+
+export interface PlayerDetailedStats {
+  offensive: number;
+  ballControl: number;
+  dribbling: number;
+  lowPass: number;
+  loftedPass: number;
+  finishing: number;
+  placeKicking: number;
+  volleys: number;
+  curl: number;
+  speed: number;
+  acceleration: number;
+  kickingPower: number;
+  stamina: number;
+  jumping: number;
+  physicalContact: number;
+  balance: number;
+  defensive: number;
+  ballWinning: number;
+  aggression: number;
+  // Estadísticas de portero
+  goalkeeperReach: number;
+  goalkeeperReflexes: number;
+  goalkeeperClearing: number;
+  goalkeeperThrowing: number;
+  goalkeeperHandling: number;
 }
 
 export interface Player {
@@ -85,4 +114,17 @@ export interface Player {
   appearances: number;
   marketValue?: number;
   price?: number;
+  
+  // Campos adicionales PES 2021
+  height?: number;
+  weight?: number;
+  dominantFoot?: 'left' | 'right';
+  secondaryPositions?: string[];
+  specialSkills?: string[];
+  playingStyle?: string;
+  celebrations?: string[];
+  consistency?: number;
+  injuryResistance?: number;
+  morale?: number;
+  detailedStats?: PlayerDetailedStats;
 }
