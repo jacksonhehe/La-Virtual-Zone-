@@ -339,12 +339,12 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
   };
 
   return (
-    <Modal open={true} onClose={onClose} className="max-w-[98vw] w-[98vw]" initialFocusRef={modalRef}>
+    <Modal open={true} onClose={onClose} className="max-w-[98vw] w-[98vw] max-h-[98vh]" initialFocusRef={modalRef}>
       <div ref={modalRef} className="max-h-[98vh] overflow-y-auto p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
               Actualizar Jugador
             </h3>
             <p className="text-gray-400 text-sm">PES 2021 - Formulario Completo</p>
@@ -352,7 +352,7 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex space-x-2 mb-8 bg-gray-800/50 rounded-xl p-2 border border-gray-700/50">
+        <div className="flex space-x-2 mb-6 bg-gray-800/50 rounded-xl p-2 border border-gray-700/50">
           {[
             { id: 'basic', label: 'Datos Básicos', icon: User, color: 'from-blue-500 to-blue-600' },
             { id: 'skills', label: 'Habilidades', icon: Target, color: 'from-green-500 to-green-600' },
@@ -363,118 +363,118 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-3 px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeTab === tab.id
                   ? `bg-gradient-to-r ${tab.color} text-white shadow-lg transform scale-105`
                   : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
               }`}
             >
-              <tab.icon size={18} />
+              <tab.icon size={16} />
               {tab.label}
             </button>
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           
           {/* Datos Básicos */}
           {activeTab === 'basic' && (
-            <div className="space-y-8">
-              {/* Foto del Jugador */}
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-blue-500/20 rounded-xl">
-                    <Camera size={24} className="text-blue-400" />
+            <div className="space-y-6">
+          {/* Foto del Jugador */}
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Camera size={20} className="text-blue-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Foto del Jugador</h4>
+                    <h4 className="text-lg font-bold text-white">Foto del Jugador</h4>
                     <p className="text-gray-400 text-sm">Sube una imagen o usa las iniciales</p>
                   </div>
                 </div>
-                <LogoUploadField
-                  value={formData.image}
-                  onChange={(value) => setFormData({ ...formData, image: value })}
-                  label="Foto del Jugador"
-                  placeholder="URL de la foto o subir archivo"
-                  showPreview={true}
-                  maxSize={3}
-                />
-                <p className="text-gray-400 text-sm mt-3">
+            <LogoUploadField
+              value={formData.image}
+              onChange={(value) => setFormData({ ...formData, image: value })}
+              label="Foto del Jugador"
+              placeholder="URL de la foto o subir archivo"
+              showPreview={true}
+              maxSize={3}
+            />
+                <p className="text-gray-400 text-sm mt-2">
                   💡 Si no subes una foto, se mantendrá la imagen actual del jugador
                 </p>
-              </div>
+          </div>
 
-              {/* Información Personal */}
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-green-500/20 rounded-xl">
-                    <User size={24} className="text-green-400" />
+          {/* Información Personal */}
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <User size={20} className="text-green-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Información Personal</h4>
+                    <h4 className="text-lg font-bold text-white">Información Personal</h4>
                     <p className="text-gray-400 text-sm">Datos básicos del jugador</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                  <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                  <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-200">
                       Nombre Completo *
-                    </label>
-                    <input
-                      className={`w-full px-4 py-3 bg-gray-800 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+                </label>
+                <input
+                      className={`w-full px-3 py-2 bg-gray-800 border-2 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
                         errors.name ? 'border-red-500' : 'border-gray-600 hover:border-gray-500'
                       }`}
                       placeholder="Ejemplo: Lionel Messi"
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    />
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                />
                     {errors.name && <p className="text-red-400 text-sm font-medium">{errors.name}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
-                      Edad *
-                    </label>
-                    <input
-                      type="number"
-                      min="15"
-                      max="50"
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Edad *
+                </label>
+                  <input
+                    type="number"
+                    min="15"
+                    max="50"
                       className={`input w-full ${errors.age ? 'border-red-500' : ''}`}
-                      placeholder="Ejemplo: 25"
-                      value={formData.age}
-                      onChange={e => setFormData({ ...formData, age: Number(e.target.value) })}
-                    />
-                    {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
-                      Nacionalidad *
-                    </label>
-                    <input
-                      className={`input w-full ${errors.nationality ? 'border-red-500' : ''}`}
+                    placeholder="Ejemplo: 25"
+                    value={formData.age}
+                    onChange={e => setFormData({ ...formData, age: Number(e.target.value) })}
+                  />
+                {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Nacionalidad *
+                </label>
+                <input
+                  className={`input w-full ${errors.nationality ? 'border-red-500' : ''}`}
                       placeholder="Ejemplo: Argentina"
-                      value={formData.nationality}
-                      onChange={e => setFormData({ ...formData, nationality: e.target.value })}
-                    />
-                    {errors.nationality && <p className="text-red-500 text-sm">{errors.nationality}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
-                      Club *
-                    </label>
-                    <select
-                      className={`input w-full ${errors.clubId ? 'border-red-500' : ''}`}
-                      value={formData.clubId}
-                      onChange={(e) => setFormData({...formData, clubId: e.target.value})}
-                    >
-                      <option value="">Seleccionar club</option>
-                      {clubs.map((club) => (
-                        <option key={club.id} value={club.id}>{club.name}</option>
-                      ))}
-                    </select>
-                    {errors.clubId && <p className="text-red-500 text-sm">{errors.clubId}</p>}
+                  value={formData.nationality}
+                  onChange={e => setFormData({ ...formData, nationality: e.target.value })}
+                />
+                {errors.nationality && <p className="text-red-500 text-sm">{errors.nationality}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Club *
+                </label>
+                <select
+                  className={`input w-full ${errors.clubId ? 'border-red-500' : ''}`}
+                  value={formData.clubId}
+                  onChange={(e) => setFormData({...formData, clubId: e.target.value})}
+                >
+                  <option value="">Seleccionar club</option>
+                  {clubs.map((club) => (
+                    <option key={club.id} value={club.id}>{club.name}</option>
+                  ))}
+                </select>
+                {errors.clubId && <p className="text-red-500 text-sm">{errors.clubId}</p>}
                   </div>
                   
                   <div className="space-y-2">
@@ -556,17 +556,17 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
               </div>
 
               {/* Posiciones Secundarias */}
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-purple-500/20 rounded-xl">
-                    <Target size={24} className="text-purple-400" />
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <Target size={20} className="text-purple-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Posiciones Secundarias</h4>
+                    <h4 className="text-lg font-bold text-white">Posiciones Secundarias</h4>
                     <p className="text-gray-400 text-sm">Posiciones adicionales que puede jugar</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3">
                   {secondaryPositions.filter(pos => pos.value !== formData.position).map(pos => (
                     <label key={pos.value} className="flex items-center space-x-2 cursor-pointer">
                       <input
@@ -597,14 +597,14 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
 
           {/* Estadísticas de Habilidad */}
           {activeTab === 'skills' && (
-            <div className="space-y-8">
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-green-500/20 rounded-xl">
-                    <Target size={24} className="text-green-400" />
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <Target size={20} className="text-green-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Estadísticas de Habilidad</h4>
+                    <h4 className="text-lg font-bold text-white">Estadísticas de Habilidad</h4>
                     <p className="text-gray-400 text-sm">
                       {!isGoalkeeper ? 'Habilidades de campo (40-99)' : 'Habilidades de portero (40-99)'}
                     </p>
@@ -612,7 +612,7 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                 </div>
                 
                 {!isGoalkeeper ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
                     {[
                       { key: 'offensive', label: 'Ofensiva', icon: '⚽' },
                       { key: 'ballControl', label: 'Control de Balón', icon: '🎯' },
@@ -634,11 +634,11 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                       { key: 'ballWinning', label: 'Interceptación', icon: '🎯' },
                       { key: 'aggression', label: 'Agresividad', icon: '⚔️' },
                     ].map((stat) => (
-                      <div key={stat.key} className="space-y-3">
+                      <div key={stat.key} className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-200">
                           {stat.icon} {stat.label}
                         </label>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <input
                             type="range"
                             min="40"
@@ -653,7 +653,7 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                               [stat.key]: Number(e.target.value)
                             } as any)}
                           />
-                          <span className="text-lg font-bold text-white min-w-[3rem] text-center bg-gray-800 px-3 py-1 rounded-lg">
+                          <span className="text-sm font-bold text-white min-w-[2.5rem] text-center bg-gray-800 px-2 py-1 rounded-lg">
                             {formData[stat.key as keyof PlayerFormData] as number}
                           </span>
                         </div>
@@ -661,7 +661,7 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                     ))}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
                     {[
                       { key: 'goalkeeperReach', label: 'Habilidad', icon: '🤲' },
                       { key: 'goalkeeperReflexes', label: 'Reflejos', icon: '⚡' },
@@ -699,18 +699,18 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
 
           {/* Características Físicas */}
           {activeTab === 'physical' && (
-            <div className="space-y-8">
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-orange-500/20 rounded-xl">
-                    <Activity size={24} className="text-orange-400" />
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-orange-500/20 rounded-lg">
+                    <Activity size={20} className="text-orange-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Características Físicas y Salud</h4>
+                    <h4 className="text-lg font-bold text-white">Características Físicas y Salud</h4>
                     <p className="text-gray-400 text-sm">Condición física y resistencia (40-99)</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
                   {[
                    { key: 'consistency', label: 'Consistencia Física', icon: '🏃‍♂️' },
                    { key: 'injuryResistance', label: 'Resistencia a Lesiones', icon: '🛡️' },
@@ -745,21 +745,21 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
 
           {/* Rasgos Especiales */}
           {activeTab === 'special' && (
-            <div className="space-y-8">
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-purple-500/20 rounded-xl">
-                    <Star size={24} className="text-purple-400" />
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <Star size={20} className="text-purple-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Rasgos y Habilidades Especiales</h4>
+                    <h4 className="text-lg font-bold text-white">Rasgos y Habilidades Especiales</h4>
                     <p className="text-gray-400 text-sm">Estilo de juego y habilidades únicas</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-6">
+            </div>
+          </div>
+
+                <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Estilo de Juego
                     </label>
                     <select
@@ -774,10 +774,10 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Habilidades Especiales
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3 max-h-48 overflow-y-auto">
                       {specialSkills.map(skill => (
                         <label key={skill} className="flex items-center space-x-2 cursor-pointer">
                           <input
@@ -805,10 +805,10 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Celebraciones
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3">
                       {celebrations.map(celebration => (
                         <label key={celebration} className="flex items-center space-x-2 cursor-pointer">
                           <input
@@ -841,56 +841,56 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
 
           {/* Información de Contrato */}
           {activeTab === 'contract' && (
-            <div className="space-y-8">
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border border-gray-700/50 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-yellow-500/20 rounded-xl">
-                    <DollarSign size={24} className="text-yellow-400" />
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-yellow-500/20 rounded-lg">
+                    <DollarSign size={20} className="text-yellow-400" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Información de Contrato y Valor</h4>
+                    <h4 className="text-lg font-bold text-white">Información de Contrato y Valor</h4>
                     <p className="text-gray-400 text-sm">Datos económicos y contractuales</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
                       Overall (40-99) *
-                    </label>
-                    <input
-                      type="number"
-                      min="40"
-                      max="99"
-                      className={`input w-full ${errors.overall ? 'border-red-500' : ''}`}
-                      placeholder="Ejemplo: 85"
-                      value={formData.overall}
-                      onChange={(e) => setFormData({...formData, overall: Number(e.target.value)})}
-                    />
-                    {errors.overall && <p className="text-red-500 text-sm">{errors.overall}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
+                </label>
+                <input
+                  type="number"
+                  min="40"
+                  max="99"
+                  className={`input w-full ${errors.overall ? 'border-red-500' : ''}`}
+                  placeholder="Ejemplo: 85"
+                  value={formData.overall}
+                  onChange={(e) => setFormData({...formData, overall: Number(e.target.value)})}
+                />
+                {errors.overall && <p className="text-red-500 text-sm">{errors.overall}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
                       Potencial (40-99)
-                    </label>
-                    <input
-                      type="number"
-                      min="40"
-                      max="99"
+                </label>
+                <input
+                  type="number"
+                  min="40"
+                  max="99"
                       className={`input w-full ${errors.potential ? 'border-red-500' : ''}`}
-                      placeholder="Ejemplo: 90"
-                      value={formData.potential}
-                      onChange={e => setFormData({ ...formData, potential: Number(e.target.value) })}
-                    />
+                  placeholder="Ejemplo: 90"
+                  value={formData.potential}
+                  onChange={e => setFormData({ ...formData, potential: Number(e.target.value) })}
+                />
                     {errors.potential && <p className="text-red-500 text-sm">{errors.potential}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
                       Años de Contrato
-                    </label>
-                    <input
-                      type="number"
+                </label>
+                  <input
+                    type="number"
                       min="1"
                       max="10"
                       className="input w-full"
@@ -898,13 +898,13 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                       value={formData.contractYears}
                       onChange={e => setFormData({ ...formData, contractYears: Number(e.target.value) })}
                     />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
                       Salario Mensual ($)
-                    </label>
-                    <input
+                </label>
+                <input
                       type="number"
                       min="0"
                       className={`input w-full ${errors.salary ? 'border-red-500' : ''}`}
@@ -913,20 +913,20 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                       onChange={e => setFormData({ ...formData, salary: Number(e.target.value) })}
                     />
                     {errors.salary && <p className="text-red-500 text-sm">{errors.salary}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-300">
                       Valor de Mercado ($)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
+                </label>
+                  <input
+                    type="number"
+                    min="0"
                       className={`input w-full ${errors.marketValue ? 'border-red-500' : ''}`}
-                      placeholder="Ejemplo: 1000000"
+                    placeholder="Ejemplo: 1000000"
                       value={formData.marketValue}
                       onChange={e => setFormData({ ...formData, marketValue: Number(e.target.value) })}
-                    />
+                  />
                     {errors.marketValue && <p className="text-red-500 text-sm">{errors.marketValue}</p>}
                   </div>
                 </div>
@@ -935,18 +935,18 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
           )}
 
           {/* Botones de Acción */}
-          <div className="flex space-x-4 justify-end pt-8 border-t border-gray-700/50">
+          <div className="flex space-x-4 justify-end pt-6 border-t border-gray-700/50">
             <Button 
               variant="outline" 
               type="button" 
               onClick={onClose} 
-              className="px-8 py-4 text-gray-300 border-gray-600 hover:bg-gray-800 hover:text-white font-medium rounded-xl transition-all duration-200"
+              className="px-6 py-3 text-gray-300 border-gray-600 hover:bg-gray-800 hover:text-white font-medium rounded-xl transition-all duration-200"
             >
               ❌ Cancelar
             </Button>
             <Button 
               type="submit" 
-              className="px-10 py-4 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="px-8 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
             >
               ✨ Actualizar Jugador
             </Button>

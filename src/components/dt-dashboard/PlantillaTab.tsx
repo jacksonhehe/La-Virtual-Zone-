@@ -25,7 +25,9 @@ import {
   Activity,
   Heart,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  X,
+  User
 } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { Player } from '../../types/shared';
@@ -46,6 +48,7 @@ export default function PlantillaTab() {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showContracts, setShowContracts] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
 
   const positions = [
     { id: 'all', label: 'Todos', icon: Users },
@@ -107,7 +110,11 @@ export default function PlantillaTab() {
       ? Math.round(filteredPlayers.reduce((sum, p) => sum + p.overall, 0) / totalPlayers)
       : 0;
     const totalSalary = filteredPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
-    const contractsExpiring = filteredPlayers.filter(p => (p.contract?.years || 0) <= 1).length;
+    const contractsExpiring = filteredPlayers.filter(p => {
+      const contractYear = new Date(p.contract?.expires || '').getFullYear();
+      const currentYear = new Date().getFullYear();
+      return (contractYear - currentYear) <= 1;
+    }).length;
     
     const positionCounts = {
       GK: filteredPlayers.filter(p => p.position === 'GK').length,
@@ -387,39 +394,34 @@ export default function PlantillaTab() {
               {viewMode === 'grid' ? (
                 // Grid View
                 <>
-                  <div className="flex items-start justify-between mb-4">
-                    <Image
-                      src={player.image}
-                      alt={player.name}
-                      width={64}
-                      height={64}
-                      className="w-16 h-16 rounded-xl object-cover ring-2 ring-white/20 group-hover:ring-primary/50 transition-all"
-                    />
-                    <div className="text-right">
-                      <div className="bg-primary/20 text-primary px-2 py-1 rounded-lg text-sm font-bold">
-                        {player.position}
-                      </div>
-                      <div className="flex items-center gap-1 mt-2">
-                        <Star size={14} className="text-yellow-500" />
-                        <span className="text-sm text-white/70">{player.overall}</span>
-                      </div>
-                    </div>
+              <div className="flex items-start justify-between mb-4">
+                <Image
+                  src={player.image}
+                  alt={player.name}
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-xl object-cover ring-2 ring-white/20 group-hover:ring-primary/50 transition-all"
+                />
+                <div className="text-right">
+                  <div className="bg-primary/20 text-primary px-2 py-1 rounded-lg text-sm font-bold">
+                    {player.position}
                   </div>
+                  <div className="flex items-center gap-1 mt-2">
+                    <Star size={14} className="text-yellow-500" />
+                    <span className="text-sm text-white/70">{player.overall}</span>
+                  </div>
+                </div>
+              </div>
 
-                  <h3 className="font-bold text-white mb-2 group-hover:text-primary transition-colors">
-                    {player.name}
-                  </h3>
-                  
-                  <div className="space-y-2">
-                                         <div className="flex items-center justify-between text-sm">
-                       <span className="text-white/60">Edad</span>
-                       <span className="text-white">{player.age}</span>
-                     </div>
-                     
-                     <div className="flex items-center justify-between text-sm">
-                       <span className="text-white/60">Dorsal</span>
-                       <span className="text-white">#{player.dorsal || 1}</span>
-                     </div>
+              <h3 className="font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                {player.name}
+              </h3>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Edad</span>
+                  <span className="text-white">{player.age}</span>
+                </div>
                     
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-white/60">Altura</span>
@@ -430,14 +432,14 @@ export default function PlantillaTab() {
                       <span className="text-white/60">Peso</span>
                       <span className="text-white">{player.weight || 70}kg</span>
                     </div>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/60 flex items-center gap-1">
-                        <DollarSign size={12} />
-                        Salario
-                      </span>
-                      <span className="text-white">{player.contract?.salary.toLocaleString()}€</span>
-                    </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60 flex items-center gap-1">
+                    <DollarSign size={12} />
+                    Salario
+                  </span>
+                  <span className="text-white">{player.contract?.salary.toLocaleString()}€</span>
+                </div>
                   </div>
 
                   {/* Posiciones Secundarias */}
@@ -472,26 +474,30 @@ export default function PlantillaTab() {
                         {player.specialSkills.length > 2 && (
                           <span className="bg-gray-500/20 text-gray-400 px-2 py-1 rounded text-xs">
                             +{player.specialSkills.length - 2}
-                          </span>
+                  </span>
                         )}
-                      </div>
-                    </div>
+                </div>
+              </div>
                   )}
 
-                  {/* Status Indicators */}
+              {/* Status Indicators */}
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {player.morale > 80 && (
+                                    {(player.morale || 0) > 80 && (
                       <div className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">
                         Alta moral
                       </div>
                     )}
-                    {player.potential - player.overall > 10 && (
-                      <div className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs flex items-center gap-1">
-                        <TrendingUp size={10} />
-                        Promesa
-                      </div>
-                    )}
-                    {(player.contract?.years || 0) <= 1 && (
+                {player.potential - player.overall > 10 && (
+                  <div className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs flex items-center gap-1">
+                    <TrendingUp size={10} />
+                    Promesa
+                  </div>
+                )}
+                    {(() => {
+                      const contractYear = new Date(player.contract?.expires || '').getFullYear();
+                      const currentYear = new Date().getFullYear();
+                      return (contractYear - currentYear) <= 1;
+                    })() && (
                       <div className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded text-xs flex items-center gap-1">
                         <Calendar size={10} />
                         Por vencer
@@ -541,17 +547,16 @@ export default function PlantillaTab() {
                         </div>
                       </div>
                     </div>
-                                         <div className="flex items-center gap-4 text-sm text-white/60">
-                       <span>#{player.dorsal || 1}</span>
-                       <span>{player.age} años</span>
-                       <span>{player.height || 175}cm</span>
-                       <span>{player.contract?.salary.toLocaleString()}€</span>
-                       {player.playingStyle && <span className="text-indigo-400">{player.playingStyle}</span>}
-                     </div>
+                    <div className="flex items-center gap-4 text-sm text-white/60">
+                      <span>{player.age} años</span>
+                      <span>{player.height || 175}cm</span>
+                      <span>{player.contract?.salary.toLocaleString()}€</span>
+                      {player.playingStyle && <span className="text-indigo-400">{player.playingStyle}</span>}
+                    </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <Eye size={16} className="text-white/40 group-hover:text-primary transition-colors" />
-                  </div>
+              </div>
                 </>
               )}
             </div>
@@ -572,402 +577,414 @@ export default function PlantillaTab() {
             initial={reduce ? false : { scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: reduce ? 1 : 0.9, opacity: 0 }}
-                         className="bg-gray-900 border border-white/20 rounded-2xl p-8 max-w-6xl w-[95vw] max-h-[95vh] overflow-y-auto"
+            className="bg-gray-900 border border-white/20 rounded-2xl max-w-6xl w-[95vw] max-h-[95vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-                         <div className="flex items-start gap-8 mb-8">
-               <Image
-                 src={selectedPlayer.image}
-                 alt={selectedPlayer.name}
-                 width={140}
-                 height={140}
-                 className="w-35 h-35 rounded-xl ring-2 ring-primary/50"
-               />
-               <div className="flex-1">
-                 <h3 className="text-4xl font-bold text-white mb-3">{selectedPlayer.name}</h3>
-                 <p className="text-primary text-xl mb-6">{selectedPlayer.position} • {selectedPlayer.age} años</p>
-                 
-                 <div className="grid grid-cols-4 gap-6">
-                   <div className="text-center">
-                     <div className="text-4xl font-bold text-primary">{selectedPlayer.overall}</div>
-                     <div className="text-sm text-white/60">Overall</div>
-                   </div>
-                   <div className="text-center">
-                     <div className="text-4xl font-bold text-yellow-500">{selectedPlayer.potential}</div>
-                     <div className="text-sm text-white/60">Potencial</div>
-                   </div>
-                   <div className="text-center">
-                     <div className="text-4xl font-bold text-green-500">{selectedPlayer.morale}</div>
-                     <div className="text-sm text-white/60">Moral</div>
-                   </div>
-                   <div className="text-center">
-                     <div className="text-4xl font-bold text-blue-500">{selectedPlayer.value?.toLocaleString() || '0'}€</div>
-                     <div className="text-sm text-white/60">Valor</div>
-                   </div>
-                 </div>
-               </div>
-             </div>
+            {/* Header */}
+            <div className="sticky top-0 bg-gray-800/80 backdrop-blur-sm border-b border-gray-700/50 p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={selectedPlayer.image}
+                    alt={selectedPlayer.name}
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 rounded-full border-4 border-gray-700"
+                  />
+                  <div>
+                    <h2 className="text-3xl font-bold text-white">{selectedPlayer.name}</h2>
+                    <p className="text-lg text-gray-300">{selectedPlayer.position} • {selectedPlayer.age} años</p>
+                    <p className="text-sm text-gray-400">{selectedPlayer.nationality}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedPlayer(null)}
+                  className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
 
-                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-               <div className="space-y-4">
-                 <h4 className="text-xl font-bold text-white">Información Personal</h4>
-                 <div className="space-y-4">
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Nacionalidad</span>
-                     <span className="text-white font-medium">{selectedPlayer.nationality}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Dorsal</span>
-                     <span className="text-white font-medium">#{selectedPlayer.dorsal || 1}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Altura</span>
-                     <span className="text-white font-medium">{selectedPlayer.height || 175}cm</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Peso</span>
-                     <span className="text-white font-medium">{selectedPlayer.weight || 70}kg</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Pie Dominante</span>
-                     <span className="text-white font-medium">{selectedPlayer.dominantFoot === 'left' ? 'Izquierdo' : 'Derecho'}</span>
-                   </div>
-                   {selectedPlayer.secondaryPositions && selectedPlayer.secondaryPositions.length > 0 && (
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Posiciones Secundarias</span>
-                       <span className="text-white font-medium">{selectedPlayer.secondaryPositions.join(', ')}</span>
-                     </div>
-                   )}
-                 </div>
-               </div>
+            {/* Navigation Tabs */}
+            <div className="flex space-x-1 p-4 bg-gray-800/50 border-b border-gray-700/50">
+              {[
+                { id: 'overview', label: 'Resumen', icon: User, color: 'from-blue-500 to-blue-600' },
+                { id: 'stats', label: 'Estadísticas', icon: Target, color: 'from-green-500 to-green-600' },
+                { id: 'physical', label: 'Físico', icon: Activity, color: 'from-orange-500 to-orange-600' },
+                { id: 'special', label: 'Especiales', icon: Star, color: 'from-purple-500 to-purple-600' },
+                { id: 'contract', label: 'Contrato', icon: DollarSign, color: 'from-yellow-500 to-yellow-600' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    activeTab === tab.id
+                      ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                  }`}
+                >
+                  <tab.icon size={16} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-               <div className="space-y-4">
-                 <h4 className="text-xl font-bold text-white">Información del Contrato</h4>
-                 <div className="space-y-4">
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Salario</span>
-                     <span className="text-white font-medium">{selectedPlayer.contract?.salary.toLocaleString()}€</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Valor de Mercado</span>
-                     <span className="text-white font-medium">{selectedPlayer.value?.toLocaleString()}€</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Años de Contrato</span>
-                     <span className="text-white font-medium">{selectedPlayer.contract?.years || 3} años</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Fecha de Expiración</span>
-                     <span className="text-white font-medium">{selectedPlayer.contract?.expires || 'No especificada'}</span>
-                   </div>
-                 </div>
-               </div>
+            <div className="p-6">
+              {/* Overview Tab */}
+              {activeTab === 'overview' && (
+                <div className="space-y-6">
+                  {/* Key Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl p-4 border border-purple-500/30">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400 mb-1">Overall</p>
+                        <p className="text-3xl font-bold text-purple-400">{selectedPlayer.overall}</p>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-xl p-4 border border-yellow-500/30">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400 mb-1">Potencial</p>
+                        <p className="text-3xl font-bold text-yellow-400">{selectedPlayer.potential}</p>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl p-4 border border-blue-500/30">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400 mb-1">Valor</p>
+                        <p className="text-xl font-bold text-blue-400">{selectedPlayer.value?.toLocaleString()}€</p>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-xl p-4 border border-green-500/30">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400 mb-1">Moral</p>
+                        <p className="text-3xl font-bold text-green-400">{selectedPlayer.morale || 70}</p>
+                      </div>
+                    </div>
+                  </div>
 
-               <div className="space-y-4">
-                 <h4 className="text-xl font-bold text-white">Características Físicas</h4>
-                 <div className="space-y-4">
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Consistencia</span>
-                     <span className="text-white font-medium">{selectedPlayer.consistency || 70}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Resistencia a Lesiones</span>
-                     <span className="text-white font-medium">{selectedPlayer.injuryResistance || 70}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-white/60">Moral</span>
-                     <span className="text-white font-medium">{selectedPlayer.morale || 70}</span>
-                   </div>
-                 </div>
-               </div>
-             </div>
+                  {/* Personal Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                          <User size={20} className="text-blue-400" />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">Información Personal</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Nacionalidad</span>
+                          <span className="text-white">{selectedPlayer.nationality}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Altura</span>
+                          <span className="text-white">{selectedPlayer.height || 175}cm</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Peso</span>
+                          <span className="text-white">{selectedPlayer.weight || 70}kg</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Pie Dominante</span>
+                          <span className="text-white">{selectedPlayer.dominantFoot === 'left' ? 'Izquierdo' : 'Derecho'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Número</span>
+                          <span className="text-white">{selectedPlayer.dorsal}</span>
+                        </div>
+                      </div>
+                    </div>
 
-                                      {/* Estadísticas Detalladas PES 2021 */}
-             {selectedPlayer.detailedStats && (
-               <div className="mb-8">
-                 <h4 className="text-xl font-bold text-white mb-6">Estadísticas Detalladas PES 2021</h4>
-                 
-                 {selectedPlayer.position === 'GK' ? (
-                   // Estadísticas de portero
-                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                     <div className="bg-white/5 rounded-xl p-4 text-center">
-                       <div className="text-sm text-white/60 mb-2">Habilidad</div>
-                       <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.goalkeeperReach}</div>
-                     </div>
-                     <div className="bg-white/5 rounded-xl p-4 text-center">
-                       <div className="text-sm text-white/60 mb-2">Reflejos</div>
-                       <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.goalkeeperReflexes}</div>
-                     </div>
-                     <div className="bg-white/5 rounded-xl p-4 text-center">
-                       <div className="text-sm text-white/60 mb-2">Despeje</div>
-                       <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.goalkeeperClearing}</div>
-                     </div>
-                     <div className="bg-white/5 rounded-xl p-4 text-center">
-                       <div className="text-sm text-white/60 mb-2">Atrapada</div>
-                       <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.goalkeeperThrowing}</div>
-                     </div>
-                     <div className="bg-white/5 rounded-xl p-4 text-center">
-                       <div className="text-sm text-white/60 mb-2">Juego de Pies</div>
-                       <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.goalkeeperHandling}</div>
-                     </div>
-                   </div>
-                 ) : (
-                   // Estadísticas de campo - TODAS las estadísticas PES 2021
-                   <div className="space-y-6">
-                     {/* Estadísticas Ofensivas */}
-                     <div>
-                       <h5 className="text-lg font-semibold text-white mb-4">Estadísticas Ofensivas</h5>
-                       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Ofensiva</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.offensive}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Finalización</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.finishing}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Pase Bajo</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.lowPass}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Pase Alto</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.loftedPass}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Tiro Libre</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.placeKicking}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Voleas</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.volleys}</div>
-                         </div>
-                       </div>
-                     </div>
+                    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-green-500/20 rounded-lg">
+                          <Target size={20} className="text-green-400" />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">Atributos Principales</h3>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(selectedPlayer.attributes).map(([key, value]) => (
+                          <div key={key} className="flex justify-between">
+                            <span className="text-gray-400 capitalize">{key}</span>
+                            <span className="text-white">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                     {/* Estadísticas Técnicas */}
-                     <div>
-                       <h5 className="text-lg font-semibold text-white mb-4">Estadísticas Técnicas</h5>
-                       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Control</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.ballControl}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Drible</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.dribbling}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Efecto</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.curl}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Equilibrio</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.balance}</div>
-                         </div>
-                       </div>
-                     </div>
+                    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-yellow-500/20 rounded-lg">
+                          <DollarSign size={20} className="text-yellow-400" />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">Información de Contrato</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Salario</span>
+                          <span className="text-white">{selectedPlayer.contract?.salary.toLocaleString()}€</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Valor de Mercado</span>
+                          <span className="text-white">{selectedPlayer.value?.toLocaleString()}€</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Contrato hasta</span>
+                          <span className="text-white">{selectedPlayer.contract?.expires}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Partidos</span>
+                          <span className="text-white">{selectedPlayer.appearances || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Goles</span>
+                          <span className="text-white">{selectedPlayer.goals || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Asistencias</span>
+                          <span className="text-white">{selectedPlayer.assists || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                     {/* Estadísticas Físicas */}
-                     <div>
-                       <h5 className="text-lg font-semibold text-white mb-4">Estadísticas Físicas</h5>
-                       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Velocidad</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.speed}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Aceleración</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.acceleration}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Fuerza</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.kickingPower}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Resistencia</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.stamina}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Salto</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.jumping}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Contacto Físico</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.physicalContact}</div>
-                         </div>
-                       </div>
-                     </div>
+                  {/* Secondary Positions */}
+                  {selectedPlayer.secondaryPositions && selectedPlayer.secondaryPositions.length > 0 && (
+                    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-purple-500/20 rounded-lg">
+                          <Target size={20} className="text-purple-400" />
+                        </div>
+                        <h3 className="text-lg font-bold text-white">Posiciones Secundarias</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedPlayer.secondaryPositions.map((pos, index) => (
+                          <span key={index} className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm">
+                            {pos}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
-                     {/* Estadísticas Defensivas */}
-                     <div>
-                       <h5 className="text-lg font-semibold text-white mb-4">Estadísticas Defensivas</h5>
-                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Defensa</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.defensive}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Recuperación</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.ballWinning}</div>
-                         </div>
-                         <div className="bg-white/5 rounded-xl p-4 text-center">
-                           <div className="text-sm text-white/60 mb-2">Agresividad</div>
-                           <div className="text-2xl font-bold text-white">{selectedPlayer.detailedStats.aggression}</div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                 )}
-               </div>
-             )}
+              {/* Stats Tab */}
+              {activeTab === 'stats' && (
+                <div className="space-y-6">
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-green-500/20 rounded-lg">
+                        <Target size={20} className="text-green-400" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white">Estadísticas Detalladas</h3>
+                    </div>
+                    
+                    {selectedPlayer.position !== 'GK' ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {selectedPlayer.detailedStats && Object.entries(selectedPlayer.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
+                          <div key={key} className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className="text-sm font-bold text-white">{value}</span>
+                            </div>
+                            <div className="w-full bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${(value / 99) * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {selectedPlayer.detailedStats && Object.entries(selectedPlayer.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
+                          <div key={key} className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-300 capitalize">{key.replace('goalkeeper', '').replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className="text-sm font-bold text-white">{value}</span>
+                            </div>
+                            <div className="w-full bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${(value / 99) * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
-             {/* Estadísticas de Rendimiento */}
-             <div className="mb-8">
-               <h4 className="text-xl font-bold text-white mb-6">Estadísticas de Rendimiento</h4>
-               <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                 <div className="space-y-4">
-                   <h5 className="text-lg font-semibold text-white">Rendimiento</h5>
-                   <div className="space-y-4">
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Forma</span>
-                       <span className="text-white font-medium">{selectedPlayer.form || 70}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Partidos Jugados</span>
-                       <span className="text-white font-medium">{selectedPlayer.appearances || 0}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Goles</span>
-                       <span className="text-white font-medium">{selectedPlayer.goals || 0}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Asistencias</span>
-                       <span className="text-white font-medium">{selectedPlayer.assists || 0}</span>
-                     </div>
-                   </div>
-                 </div>
+              {/* Physical Tab */}
+              {activeTab === 'physical' && (
+                <div className="space-y-6">
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-orange-500/20 rounded-lg">
+                        <Activity size={20} className="text-orange-400" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white">Características Físicas</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-300">Consistencia</span>
+                          <span className="text-sm font-bold text-white">{selectedPlayer.consistency || 70}</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((selectedPlayer.consistency || 70) / 99) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
 
-                 <div className="space-y-4">
-                   <h5 className="text-lg font-semibold text-white">Valor de Transferencia</h5>
-                   <div className="space-y-4">
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Valor Actual</span>
-                       <span className="text-white font-medium">{selectedPlayer.value?.toLocaleString()}€</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Valor de Transferencia</span>
-                       <span className="text-white font-medium">{selectedPlayer.transferValue?.toLocaleString()}€</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">En Lista de Transferencia</span>
-                       <span className="text-white font-medium">{selectedPlayer.transferListed ? 'Sí' : 'No'}</span>
-                     </div>
-                   </div>
-                 </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-300">Resistencia a Lesiones</span>
+                          <span className="text-sm font-bold text-white">{selectedPlayer.injuryResistance || 70}</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((selectedPlayer.injuryResistance || 70) / 99) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
 
-                 <div className="space-y-4">
-                   <h5 className="text-lg font-semibold text-white">Estadísticas Básicas</h5>
-                   <div className="space-y-4">
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Pac</span>
-                       <span className="text-white font-medium">{selectedPlayer.attributes?.pace || 70}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Sho</span>
-                       <span className="text-white font-medium">{selectedPlayer.attributes?.shooting || 70}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Pas</span>
-                       <span className="text-white font-medium">{selectedPlayer.attributes?.passing || 70}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Dri</span>
-                       <span className="text-white font-medium">{selectedPlayer.attributes?.dribbling || 70}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Def</span>
-                       <span className="text-white font-medium">{selectedPlayer.attributes?.defending || 70}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Phy</span>
-                       <span className="text-white font-medium">{selectedPlayer.attributes?.physical || 70}</span>
-                     </div>
-                   </div>
-                 </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-300">Moral</span>
+                          <span className="text-sm font-bold text-white">{selectedPlayer.morale || 70}</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((selectedPlayer.morale || 70) / 99) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                 <div className="space-y-4">
-                   <h5 className="text-lg font-semibold text-white">Información Adicional</h5>
-                   <div className="space-y-4">
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Partidos</span>
-                       <span className="text-white font-medium">{selectedPlayer.matches || 0}</span>
-                     </div>
-                     <div className="flex justify-between">
-                       <span className="text-white/60">Club</span>
-                       <span className="text-white font-medium">{selectedPlayer.club || 'Sin club'}</span>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
+              {/* Special Tab */}
+              {activeTab === 'special' && (
+                <div className="space-y-6">
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-purple-500/20 rounded-lg">
+                        <Star size={20} className="text-purple-400" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white">Rasgos Especiales</h3>
+                    </div>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="text-md font-semibold text-white mb-3">Estilo de Juego</h4>
+                        <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm">
+                          {selectedPlayer.playingStyle || 'Balanced'}
+                        </span>
+                      </div>
 
-             {/* Rasgos Especiales */}
-             <div className="mb-8">
-               <h4 className="text-xl font-bold text-white mb-6">Rasgos Especiales</h4>
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                 <div className="space-y-4">
-                   {selectedPlayer.playingStyle && (
-                     <div className="bg-white/5 rounded-xl p-4">
-                       <div className="text-sm text-white/60 mb-2">Estilo de Juego</div>
-                       <div className="text-lg font-medium text-white">{selectedPlayer.playingStyle}</div>
-                     </div>
-                   )}
-                   {selectedPlayer.specialSkills && selectedPlayer.specialSkills.length > 0 && (
-                     <div className="bg-white/5 rounded-xl p-4">
-                       <div className="text-sm text-white/60 mb-3">Habilidades Especiales</div>
-                       <div className="flex flex-wrap gap-2">
-                         {selectedPlayer.specialSkills.map(skill => (
-                           <span key={skill} className="bg-purple-500/20 text-purple-400 px-3 py-2 rounded-lg text-sm">
-                             {skill}
-                           </span>
-                         ))}
-                       </div>
-                     </div>
-                   )}
-                 </div>
-                 
-                 <div className="space-y-4">
-                   {selectedPlayer.celebrations && selectedPlayer.celebrations.length > 0 && (
-                     <div className="bg-white/5 rounded-xl p-4">
-                       <div className="text-sm text-white/60 mb-3">Celebraciones</div>
-                       <div className="flex flex-wrap gap-2">
-                         {selectedPlayer.celebrations.map(celebration => (
-                           <span key={celebration} className="bg-green-500/20 text-green-400 px-3 py-2 rounded-lg text-sm">
-                             {celebration}
-                           </span>
-                         ))}
-                       </div>
-                     </div>
-                   )}
-                 </div>
-               </div>
-             </div>
+                      {selectedPlayer.specialSkills && selectedPlayer.specialSkills.length > 0 && (
+                        <div>
+                          <h4 className="text-md font-semibold text-white mb-3">Habilidades Especiales</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {selectedPlayer.specialSkills.map((skill, index) => (
+                              <span key={index} className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm">
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
-                         <div className="flex gap-4 pt-4 border-t border-white/10">
-               <button className="flex-1 bg-primary hover:bg-primary/80 text-black font-medium py-4 rounded-xl transition-colors text-lg">
-                 Renovar Contrato
-               </button>
-               <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 rounded-xl transition-colors text-lg">
-                 Transferir
-               </button>
-               <button 
-                 onClick={() => setSelectedPlayer(null)}
-                 className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors text-lg"
-               >
-                 Cerrar
-               </button>
-             </div>
+                      {selectedPlayer.celebrations && selectedPlayer.celebrations.length > 0 && (
+                        <div>
+                          <h4 className="text-md font-semibold text-white mb-3">Celebraciones</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {selectedPlayer.celebrations.map((celebration, index) => (
+                              <span key={index} className="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-sm">
+                                {celebration}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Contract Tab */}
+              {activeTab === 'contract' && (
+                <div className="space-y-6">
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-yellow-500/20 rounded-lg">
+                        <DollarSign size={20} className="text-yellow-400" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white">Información de Contrato</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                          <span className="text-gray-300">Salario Mensual</span>
+                          <span className="text-white font-semibold">{selectedPlayer.contract?.salary.toLocaleString()}€</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                          <span className="text-gray-300">Valor de Mercado</span>
+                          <span className="text-white font-semibold">{selectedPlayer.value?.toLocaleString()}€</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                          <span className="text-gray-300">Contrato hasta</span>
+                          <span className="text-white font-semibold">{selectedPlayer.contract?.expires}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                          <span className="text-gray-300">Partidos Jugados</span>
+                          <span className="text-white font-semibold">{selectedPlayer.appearances || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                          <span className="text-gray-300">Goles Marcados</span>
+                          <span className="text-white font-semibold">{selectedPlayer.goals || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                          <span className="text-gray-300">Asistencias</span>
+                          <span className="text-white font-semibold">{selectedPlayer.assists || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-6 border-t border-gray-700/50">
+                <button className="flex-1 bg-primary hover:bg-primary/80 text-black font-medium py-4 rounded-xl transition-colors text-lg">
+                  Renovar Contrato
+                </button>
+                <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 rounded-xl transition-colors text-lg">
+                  Transferir
+                </button>
+                <button
+                  onClick={() => setSelectedPlayer(null)}
+                  className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors text-lg"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       )}

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { User } from '../types/shared';
 import { useActivityLogStore } from './activityLogStore';
+import { calculateLevel } from '../utils/helpers';
 import {
   login as authLogin,
   register as authRegister,
@@ -79,11 +80,16 @@ export const useAuthStore = create<AuthState>((set) => {
       set((state) => {
         if (!state.user) return state;
         
+        const newXP = (state.user.xp || 0) + amount;
+        const newLevel = calculateLevel(newXP);
+        
         const updatedUser = {
           ...state.user,
-          xp: (state.user.xp || 0) + amount
+          xp: newXP,
+          level: newLevel
         } as User;
         
+        persistUser(updatedUser);
         return { user: updatedUser };
       });
     }

@@ -59,7 +59,6 @@ export interface PlayerAttributes {
 export interface PlayerContract {
   expires: string;
   salary: number;
-  years: number;
 }
 
 export interface PlayerDetailedStats {

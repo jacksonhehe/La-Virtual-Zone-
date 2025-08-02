@@ -5,6 +5,7 @@ import {
   VZ_RESET_TOKENS_KEY
 } from './storageKeys';
 import { fixUserData } from './clearUserData';
+import { calculateLevel } from './helpers';
 
 // Simulated backend - using localStorage for persistence
 
@@ -282,7 +283,26 @@ export const saveUsers = (users: User[]): void => {
 // Get current logged in user
 export const getCurrentUser = (): User | null => {
   const userJson = localStorage.getItem(VZ_CURRENT_USER_KEY);
-  return userJson ? JSON.parse(userJson) : null;
+  if (!userJson) return null;
+  
+  const user = JSON.parse(userJson);
+  
+  // Ensure level is calculated correctly based on XP
+  if (user.xp !== undefined && user.xp !== null) {
+    const calculatedLevel = calculateLevel(user.xp);
+    if (user.level !== calculatedLevel) {
+      user.level = calculatedLevel;
+      // Update stored user with correct level
+      localStorage.setItem(VZ_CURRENT_USER_KEY, JSON.stringify(user));
+    }
+  } else if (user.level === undefined || user.level === null || isNaN(user.level)) {
+    // If XP is missing or invalid, set default level
+    user.level = 1;
+    user.xp = user.xp || 0;
+    localStorage.setItem(VZ_CURRENT_USER_KEY, JSON.stringify(user));
+  }
+  
+  return user;
 };
 
 // Save current user to localStorage
@@ -410,8 +430,17 @@ export const login = (username: string, password: string): User => {
     throw new Error('Contraseña incorrecta');
   }
   
-  // Update last login time
+  // Update last login time and ensure level is correct
   user.lastLogin = new Date().toISOString();
+  
+  // Ensure level is calculated correctly based on XP
+  if (user.xp !== undefined && user.xp !== null) {
+    user.level = calculateLevel(user.xp);
+  } else {
+    user.level = user.level || 1;
+    user.xp = user.xp || 0;
+  }
+  
   saveUsers(users.map(u => u.id === user.id ? user : u));
   
   // Save the current user

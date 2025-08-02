@@ -60,7 +60,7 @@ export default function MercadoTab() {
       .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
       .sort((a, b) => {
         switch (sortBy) {
-          case 'value': return b.marketValue - a.marketValue;
+          case 'value': return (b.marketValue || 0) - (a.marketValue || 0);
           case 'overall': return b.overall - a.overall;
           case 'age': return a.age - b.age;
           default: return 0;
@@ -206,7 +206,7 @@ export default function MercadoTab() {
                   
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-primary font-bold">
-                      {formatCurrency(player.marketValue)}
+                      {formatCurrency(player.marketValue || 0)}
                     </span>
                     <div className="flex items-center gap-1">
                       <Star size={14} className="text-yellow-500" />
