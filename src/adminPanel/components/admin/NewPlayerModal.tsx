@@ -422,8 +422,8 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
   const isGoalkeeper = formData.position === 'GK';
 
   return (
-    <Modal open={true} onClose={onClose} className="max-w-[98vw] w-[98vw] max-h-[98vh]" initialFocusRef={modalRef}>
-      <div ref={modalRef} className="max-h-[98vh] overflow-y-auto p-8">
+    <Modal open={true} onClose={onClose} className="!max-w-[95vw] w-[95vw] lg:!max-w-[1400px] max-h-[95vh]" initialFocusRef={modalRef}>
+      <div ref={modalRef} className="max-h-[95vh] overflow-y-auto p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -504,7 +504,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <p className="text-gray-400 text-sm">Datos básicos del jugador</p>
                   </div>
                 </div>
-                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                    <div className="space-y-2">
                      <label className="block text-sm font-semibold text-gray-200">
                        Nombre Completo *
@@ -655,7 +655,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <p className="text-gray-400 text-sm">Posiciones adicionales que puede jugar</p>
                   </div>
                 </div>
-                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3">
+                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                   {secondaryPositions.filter(pos => pos.value !== formData.position).map(pos => (
                     <label key={pos.value} className="flex items-center space-x-2 cursor-pointer">
                       <input
@@ -701,7 +701,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                 </div>
                 
                                  {!isGoalkeeper ? (
-                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                     {[
                       { key: 'offensive', label: 'Ofensiva', icon: '⚽' },
                       { key: 'ballControl', label: 'Control de Balón', icon: '🎯' },
@@ -750,7 +750,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     ))}
                   </div>
                                  ) : (
-                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                     {[
                       { key: 'goalkeeperReach', label: 'Habilidad', icon: '🤲' },
                       { key: 'goalkeeperReflexes', label: 'Reflejos', icon: '⚡' },
@@ -799,7 +799,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <p className="text-gray-400 text-sm">Condición física y resistencia (40-99)</p>
                   </div>
                 </div>
-                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                    {[
                     { key: 'consistency', label: 'Consistencia Física', icon: '🏃‍♂️' },
                     { key: 'injuryResistance', label: 'Resistencia a Lesiones', icon: '🛡️' },
@@ -866,7 +866,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Habilidades Especiales
                     </label>
-                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3 max-h-48 overflow-y-auto">
+                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 max-h-48 overflow-y-auto">
                       {specialSkills.map(skill => (
                         <label key={skill} className="flex items-center space-x-2 cursor-pointer">
                           <input
@@ -897,7 +897,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Celebraciones
                     </label>
-                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3">
+                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                       {celebrations.map(celebration => (
                         <label key={celebration} className="flex items-center space-x-2 cursor-pointer">
                           <input
@@ -941,7 +941,7 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     <p className="text-gray-400 text-sm">Datos económicos y contractuales</p>
                   </div>
                 </div>
-                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-300">
                   Overall (40-99) *

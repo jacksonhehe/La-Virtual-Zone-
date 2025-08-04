@@ -75,7 +75,7 @@
 
   /* Asegurar que el contenido principal esté por encima del sidebar */
   .admin-main-content {
-    @apply relative z-50;
+    @apply relative z-10;
   }
 
   /* Asegurar que los headers de las páginas estén por encima del sidebar */

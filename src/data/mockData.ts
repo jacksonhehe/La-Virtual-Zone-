@@ -295,6 +295,41 @@ export const clubs: Club[] = [
   }
 ];
 
+// Helper para generar número aleatorio entre 60-99
+function randStat() {
+  return 60 + Math.floor(Math.random() * 40); // 60-99
+}
+
+function createDetailedStats(position: string) {
+  const stats = {
+    offensive: randStat(),
+    ballControl: randStat(),
+    dribbling: randStat(),
+    lowPass: randStat(),
+    loftedPass: randStat(),
+    finishing: randStat(),
+    placeKicking: randStat(),
+    volleys: randStat(),
+    curl: randStat(),
+    speed: randStat(),
+    acceleration: randStat(),
+    kickingPower: randStat(),
+    stamina: randStat(),
+    jumping: randStat(),
+    physicalContact: randStat(),
+    balance: randStat(),
+    defensive: randStat(),
+    ballWinning: randStat(),
+    aggression: randStat(),
+    goalkeeperReach: randStat(),
+    goalkeeperReflexes: randStat(),
+    goalkeeperClearing: randStat(),
+    goalkeeperThrowing: randStat(),
+    goalkeeperHandling: randStat()
+  } as const;
+  return stats;
+}
+
 // Function to generate players for each club
 function generatePlayers(): Player[] {
   const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST'];
@@ -345,7 +380,8 @@ function generatePlayers(): Player[] {
         form: 1 + Math.floor(Math.random() * 5),
         goals: Math.floor(Math.random() * 10),
         assists: Math.floor(Math.random() * 8),
-        appearances: 10 + Math.floor(Math.random() * 10)
+        appearances: 10 + Math.floor(Math.random() * 10),
+        detailedStats: createDetailedStats(position)
       });
     }
   });
@@ -387,6 +423,32 @@ players.push({
     salary: 2000000
   },
   form: 5,
+  detailedStats: {
+    offensive: 92,
+    ballControl: 90,
+    dribbling: 91,
+    lowPass: 82,
+    loftedPass: 80,
+    finishing: 94,
+    placeKicking: 86,
+    volleys: 89,
+    curl: 85,
+    speed: 88,
+    acceleration: 90,
+    kickingPower: 92,
+    stamina: 85,
+    jumping: 88,
+    physicalContact: 80,
+    balance: 78,
+    defensive: 45,
+    ballWinning: 40,
+    aggression: 93,
+    goalkeeperReach: 0,
+    goalkeeperReflexes: 0,
+    goalkeeperClearing: 0,
+    goalkeeperThrowing: 0,
+    goalkeeperHandling: 0
+  },
   goals: 0,
   assists: 0,
   appearances: 0

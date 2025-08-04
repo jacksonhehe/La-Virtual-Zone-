@@ -780,9 +780,11 @@ export default function PlantillaTab() {
                       <h3 className="text-lg font-bold text-white">Estadísticas Detalladas</h3>
                     </div>
                     
-                    {selectedPlayer.position !== 'GK' ? (
+                    {!selectedPlayer.detailedStats ? (
+                      <p className="text-center text-gray-400">No hay datos disponibles.</p>
+                    ) : selectedPlayer.position !== 'GK' ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {selectedPlayer.detailedStats && Object.entries(selectedPlayer.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
+                        {Object.entries(selectedPlayer.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
@@ -799,7 +801,7 @@ export default function PlantillaTab() {
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {selectedPlayer.detailedStats && Object.entries(selectedPlayer.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
+                        {Object.entries(selectedPlayer.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-300 capitalize">{key.replace('goalkeeper', '').replace(/([A-Z])/g, ' $1').trim()}</span>

@@ -65,13 +65,13 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
                 <p className="text-sm text-gray-400">{player.nationality}</p>
               </div>
             </div>
-            <button
-              aria-label="Cerrar"
-              onClick={onClose}
+        <button
+          aria-label="Cerrar"
+          onClick={onClose}
               className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-colors"
-            >
+        >
               <X size={24} />
-            </button>
+        </button>
           </div>
         </div>
 
@@ -156,13 +156,13 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
                     <div className="flex justify-between">
                       <span className="text-gray-400">Pie Dominante</span>
                       <span className="text-white">{player.dominantFoot === 'left' ? 'Izquierdo' : 'Derecho'}</span>
-                    </div>
+          </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Número</span>
                       <span className="text-white">{player.dorsal}</span>
-                    </div>
-                  </div>
-                </div>
+          </div>
+          </div>
+        </div>
 
                 <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
                   <div className="flex items-center gap-3 mb-4">
@@ -173,8 +173,8 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
                   </div>
                   <div className="space-y-3">
                     {Object.entries(player.attributes).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="text-gray-400 capitalize">{key}</span>
+            <div key={key} className="flex justify-between">
+              <span className="text-gray-400 capitalize">{key}</span>
                         <span className="text-white">{value}</span>
                       </div>
                     ))}
@@ -249,40 +249,44 @@ const PlayerDrawer = ({ player, onClose }: Props) => {
                   <h3 className="text-lg font-bold text-white">Estadísticas Detalladas</h3>
                 </div>
                 
-                {!isGoalkeeper ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {player.detailedStats && Object.entries(player.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
-                      <div key={key} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                          <span className="text-sm font-bold text-white">{value}</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${(value / 99) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {!player.detailedStats ? (
+                  <p className="text-center text-gray-400">No hay datos disponibles.</p>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {player.detailedStats && Object.entries(player.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
-                      <div key={key} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300 capitalize">{key.replace('goalkeeper', '').replace(/([A-Z])/g, ' $1').trim()}</span>
-                          <span className="text-sm font-bold text-white">{value}</span>
+                  !isGoalkeeper ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {Object.entries(player.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
+                        <div key={key} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                            <span className="text-sm font-bold text-white">{value}</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div 
+                              className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${(value / 99) * 100}%` }}
+                            ></div>
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <div 
-                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${(value / 99) * 100}%` }}
-                          ></div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Object.entries(player.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
+                        <div key={key} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-300 capitalize">{key.replace('goalkeeper', '').replace(/([A-Z])/g, ' $1').trim()}</span>
+                            <span className="text-sm font-bold text-white">{value}</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div 
+                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${(value / 99) * 100}%` }}
+                            ></div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )
                 )}
               </div>
             </div>
