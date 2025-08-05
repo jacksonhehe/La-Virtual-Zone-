@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import * as Sentry from '@sentry/node';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { SentryInterceptor } from './common/interceptors/sentry.interceptor';
 import { Request, Response, NextFunction } from 'express';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -19,6 +20,10 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
+
+  // Manejadores de Sentry para request y errores
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.errorHandler());
 
   // Configuración de archivos estáticos
   app.useStaticAssets(join(__dirname, '..', 'public'), {
@@ -56,6 +61,8 @@ async function bootstrap() {
 
   // Filtro de excepciones global
   app.useGlobalFilters(new HttpExceptionFilter());
+  // Interceptor global para capturar traces en Sentry
+  app.useGlobalInterceptors(new SentryInterceptor());
 
   // Configuración de validación global
   app.useGlobalPipes(
