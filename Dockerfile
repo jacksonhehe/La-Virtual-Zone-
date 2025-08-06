@@ -28,6 +28,9 @@ COPY --from=builder /app/server/dist ./dist
 COPY --from=builder /app/server/node_modules ./node_modules
 COPY --from=builder /app/server/prisma ./prisma
 
+# ¡Generar Prisma Client para Linux!
+RUN npx prisma generate
+
 # Puerto expuesto (coincide con fly.toml)
 ENV PORT=3000
 EXPOSE 3000
