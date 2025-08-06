@@ -1,216 +1,121 @@
-import  { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RotateCcw, Save, Settings } from 'lucide-react';
-import { useDataStore } from '../../store/dataStore';
-import { Player } from '../../types/shared';
-
-const formations = [
-  { name: '4-4-2', positions: [
-    { x: 50, y: 85 }, // GK
-    { x: 15, y: 65 }, { x: 35, y: 70 }, { x: 65, y: 70 }, { x: 85, y: 65 }, // DEF
-    { x: 20, y: 40 }, { x: 40, y: 45 }, { x: 60, y: 45 }, { x: 80, y: 40 }, // MID
-    { x: 35, y: 20 }, { x: 65, y: 20 } // ATT
-  ]},
-  { name: '4-3-3', positions: [
-    { x: 50, y: 85 }, // GK
-    { x: 15, y: 65 }, { x: 35, y: 70 }, { x: 65, y: 70 }, { x: 85, y: 65 }, // DEF
-    { x: 30, y: 45 }, { x: 50, y: 50 }, { x: 70, y: 45 }, // MID
-    { x: 20, y: 20 }, { x: 50, y: 15 }, { x: 80, y: 20 } // ATT
-  ]},
-  { name: '3-5-2', positions: [
-    { x: 50, y: 85 }, // GK
-    { x: 25, y: 70 }, { x: 50, y: 75 }, { x: 75, y: 70 }, // DEF
-    { x: 15, y: 50 }, { x: 30, y: 45 }, { x: 50, y: 50 }, { x: 70, y: 45 }, { x: 85, y: 50 }, // MID
-    { x: 35, y: 20 }, { x: 65, y: 20 } // ATT
-  ]}
-];
+import { Construction, Settings, Code, Clock } from 'lucide-react';
 
 export default function TacticasTab() {
-  const { club, players } = useDataStore();
-  const [selectedFormation, setSelectedFormation] = useState(formations[0]);
-  const [playerPositions, setPlayerPositions] = useState(selectedFormation.positions);
-  const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
-  const [draggedPlayer, setDraggedPlayer] = useState<number | null>(null);
-  const pitchRef = useRef<HTMLDivElement>(null);
-
-  const clubPlayers = players.filter(p => p.clubId === club?.id);
-  const startingEleven = clubPlayers.slice(0, 11);
-
-  useEffect(() => {
-    setSelectedPlayers(startingEleven);
-    setPlayerPositions(selectedFormation.positions);
-  }, [selectedFormation]);
-
-  const handleFormationChange = (formation: typeof formations[0]) => {
-    setSelectedFormation(formation);
-    setPlayerPositions(formation.positions);
-  };
-
-  const handleMouseDown = (index: number) => {
-    setDraggedPlayer(index);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggedPlayer === null || !pitchRef.current) return;
-
-    const rect = pitchRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-    setPlayerPositions(prev => prev.map((pos, i) => 
-      i === draggedPlayer ? { x: Math.max(5, Math.min(95, x)), y: Math.max(5, Math.min(95, y)) } : pos
-    ));
-  };
-
-  const handleMouseUp = () => {
-    setDraggedPlayer(null);
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Formation Selector */}
+    <div className="min-h-[60vh] flex items-center justify-center">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-4"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, type: "spring" }}
+        className="text-center space-y-8 max-w-2xl mx-auto"
       >
-        <h2 className="text-xl font-bold text-white">Formación:</h2>
-        <div className="flex gap-2">
-          {formations.map(formation => (
-            <motion.button
-              key={formation.name}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleFormationChange(formation)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                selectedFormation.name === formation.name
-                  ? 'bg-primary text-black'
-                  : 'bg-white/5 text-white/70 hover:bg-white/10'
-              }`}
-            >
-              {formation.name}
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Pitch */}
+        {/* Icon Container */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="lg:col-span-3"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="relative"
         >
-          <div
-            ref={pitchRef}
-            className="relative bg-gradient-to-b from-green-600 to-green-700 rounded-2xl aspect-[3/4] border-4 border-white/20 overflow-hidden cursor-crosshair"
-            style={{
-              backgroundImage: `
-                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
-                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '10% 10%'
-            }}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+          <div className="relative w-32 h-32 mx-auto mb-8">
+            {/* Background glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-full blur-2xl animate-pulse" />
+            <div className="absolute inset-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full border border-white/10" />
+            
+            {/* Icons */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Construction size={48} className="text-primary animate-bounce" />
+            </div>
+            
+            {/* Floating icons */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0"
+            >
+              <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
+                <Settings size={16} className="text-white/60" />
+              </div>
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+                <Code size={16} className="text-white/60" />
+              </div>
+              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+                <Clock size={16} className="text-white/60" />
+              </div>
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <Settings size={16} className="text-white/60" />
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Content */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="space-y-6"
+        >
+          <div>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-4">
+              En Desarrollo
+            </h2>
+            <p className="text-xl text-white/80 leading-relaxed">
+              El sistema de tácticas está siendo desarrollado con las últimas tecnologías
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="space-y-4"
           >
-            {/* Field markings */}
-            <div className="absolute inset-4 border-2 border-white/30 rounded-lg">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-16 border-2 border-white/30 border-t-0" />
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-16 border-2 border-white/30 border-b-0" />
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/30" />
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 border-2 border-white/30 rounded-full" />
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-white/60">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <span>Formaciones personalizables</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+                <span>Drag & Drop de jugadores</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                <span>Análisis táctico avanzado</span>
+              </div>
             </div>
 
-            {/* Players */}
-            {selectedPlayers.slice(0, 11).map((player, index) => (
-              <motion.div
-                key={player.id}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing"
-                style={{
-                  left: `${playerPositions[index]?.x || 50}%`,
-                  top: `${playerPositions[index]?.y || 50}%`
-                }}
-                whileHover={{ scale: 1.1 }}
-                whileDrag={{ scale: 1.2, zIndex: 50 }}
-                onMouseDown={() => handleMouseDown(index)}
-                drag
-                dragConstraints={pitchRef}
-                dragElastic={0.1}
-              >
-                <div className="relative">
-                  <img
-                    src={player.image}
-                    alt={player.name}
-                    className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
-                  />
-                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                    {player.name.split(' ')[0]}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 border border-primary/20 rounded-2xl p-6 backdrop-blur-sm">
+              <p className="text-white/70 text-center">
+                Próximamente podrás crear y gestionar tácticas personalizadas, 
+                arrastrar jugadores en el campo virtual y analizar el rendimiento 
+                de tus estrategias en tiempo real.
+              </p>
+            </div>
+          </motion.div>
 
-        {/* Player List */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 h-fit"
-        >
-          <h3 className="text-lg font-bold text-white mb-4">Plantilla</h3>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {clubPlayers.map(player => (
+          {/* Progress indicator */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.8, duration: 0.6, type: "spring" }}
+            className="flex items-center justify-center gap-4"
+          >
+            <div className="flex items-center gap-2 text-sm text-white/50">
+              <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />
+              <span>Desarrollo en progreso</span>
+            </div>
+            <div className="w-24 h-1 bg-white/10 rounded-full overflow-hidden">
               <motion.div
-                key={player.id}
-                whileHover={{ scale: 1.02 }}
-                className={`flex items-center gap-3 p-3 rounded-lg transition-all cursor-pointer ${
-                  selectedPlayers.some(p => p.id === player.id)
-                    ? 'bg-primary/20 border border-primary/30'
-                    : 'bg-white/5 hover:bg-white/10'
-                }`}
-              >
-                <img
-                  src={player.image}
-                  alt={player.name}
-                  className="w-10 h-10 rounded-full"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-medium truncate">{player.name}</p>
-                  <p className="text-white/60 text-sm">{player.position} • {player.overall}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                initial={{ width: 0 }}
+                animate={{ width: "65%" }}
+                transition={{ delay: 1, duration: 2, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-primary to-purple-500 rounded-full"
+              />
+            </div>
+          </motion.div>
         </motion.div>
-      </div>
-
-      {/* Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex gap-4"
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 bg-primary hover:bg-primary/80 text-black font-medium px-6 py-3 rounded-xl transition-colors"
-        >
-          <Save size={18} />
-          Guardar Táctica
-        </motion.button>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setPlayerPositions(selectedFormation.positions)}
-          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 rounded-xl transition-colors"
-        >
-          <RotateCcw size={18} />
-          Resetear
-        </motion.button>
       </motion.div>
     </div>
   );

@@ -50,6 +50,15 @@ export default function PlantillaTab() {
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Helper function to map PES 2021 positions to simplified categories
+  const getPositionCategory = (position: string): string => {
+    if (position === 'GK') return 'GK';
+    if (['CB', 'LB', 'RB', 'LWB', 'RWB'].includes(position)) return 'DEF';
+    if (['DMF', 'CMF', 'AMF', 'LMF', 'RMF', 'CDM', 'CM', 'CAM', 'LM', 'RM'].includes(position)) return 'MID';
+    if (['LWF', 'RWF', 'SS', 'CF', 'ST', 'LW', 'RW'].includes(position)) return 'ATT';
+    return 'MID'; // Default fallback
+  };
+
   const positions = [
     { id: 'all', label: 'Todos', icon: Users },
     { id: 'GK', label: 'Porteros', icon: Shield },
@@ -61,7 +70,7 @@ export default function PlantillaTab() {
   const filteredPlayers = useMemo(() => {
     let filtered = players.filter(player => {
       const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
-      const matchesPosition = selectedPosition === 'all' || player.position === selectedPosition;
+      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.position) === selectedPosition;
       const matchesClub = player.clubId === club?.id;
       return matchesSearch && matchesPosition && matchesClub;
     });
@@ -102,6 +111,9 @@ export default function PlantillaTab() {
 
   // Squad statistics
   const squadStats = useMemo(() => {
+    // Get all club players for statistics (not filtered by search/position)
+    const allClubPlayers = players.filter(player => player.clubId === club?.id);
+    
     const totalPlayers = filteredPlayers.length;
     const avgAge = totalPlayers > 0 
       ? Math.round(filteredPlayers.reduce((sum, p) => sum + p.age, 0) / totalPlayers)
@@ -116,11 +128,12 @@ export default function PlantillaTab() {
       return (contractYear - currentYear) <= 1;
     }).length;
     
+    // Count positions from ALL club players, using position mapping
     const positionCounts = {
-      GK: filteredPlayers.filter(p => p.position === 'GK').length,
-      DEF: filteredPlayers.filter(p => p.position === 'DEF').length,
-      MID: filteredPlayers.filter(p => p.position === 'MID').length,
-      ATT: filteredPlayers.filter(p => p.position === 'ATT').length,
+      GK: allClubPlayers.filter(p => getPositionCategory(p.position) === 'GK').length,
+      DEF: allClubPlayers.filter(p => getPositionCategory(p.position) === 'DEF').length,
+      MID: allClubPlayers.filter(p => getPositionCategory(p.position) === 'MID').length,
+      ATT: allClubPlayers.filter(p => getPositionCategory(p.position) === 'ATT').length,
     };
 
     return {
@@ -131,7 +144,7 @@ export default function PlantillaTab() {
       contractsExpiring,
       positionCounts
     };
-  }, [filteredPlayers]);
+  }, [filteredPlayers, players, club?.id]);
 
   const handlePlayerClick = (player: Player) => {
     setSelectedPlayer(player);

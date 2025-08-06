@@ -1,350 +1,190 @@
-import { useState } from 'react';
-import PageHeader from '../components/common/PageHeader';
-import { Search, AlertCircle, ShoppingCart, X } from 'lucide-react';
-import { useStoreSlice } from '../store/storeSlice';
-import { useAuthStore } from '../store/authStore';
-import { useShopStore } from '../store/shopStore';
-import { useEconomySlice } from '../store/economySlice';
-import toast from 'react-hot-toast';
-import { formatCurrency } from '../utils/helpers';
-import { getRarityClasses } from '../utils/rarity';
-import { StoreItem } from '../types';
+import { motion } from 'framer-motion';
+import { Construction, ShoppingCart, Package, Gift, Star, Clock, Code } from 'lucide-react';
 
 const Store = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortKey, setSortKey] = useState<'price' | 'rarity'>('price');
-  const [showOwned, setShowOwned] = useState(false);
-  const [previewItem, setPreviewItem] = useState<StoreItem | null>(null);
-  const [showConfirm, setShowConfirm] = useState(false);
-
-  const { activeItems, purchases } = useStoreSlice();
-  const { cartIds, addToCart, removeFromCart, clearCart, checkout } = useShopStore();
-  const { user } = useAuthStore();
-  const { getBalance } = useEconomySlice();
-  const coins = getBalance(user?.id || 'anonymous');
-  const userLevel = user?.level ?? 1;
-  const ownedItemIds = purchases
-    .filter(p => p.status === 'success' && p.userId === (user?.id || 'anonymous'))
-    .map(p => p.productId);
-  
-  // Filter store items
-  let filteredItems = activeItems().filter(product => {
-    if (activeCategory !== 'all' && product.category !== activeCategory) {
-      return false;
-    }
-    
-    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase()) && !product.description.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    
-    return true;
-  });
-
-  if (showOwned) {
-    filteredItems = filteredItems.filter(i => !ownedItemIds.includes(i.id));
-  }
-
-  if (sortKey === 'price') {
-    filteredItems.sort((a, b) => a.price - b.price);
-  } else {
-    const order = { common: 0, rare: 1, epic: 2, legendary: 3 } as any;
-    filteredItems.sort((a, b) => (order[a.rarity ?? 'common'] - order[b.rarity ?? 'common']));
-  }
-  
   return (
-    <div>
-      <PageHeader 
-        title="Tienda Virtual" 
-        subtitle="Mejora tu experiencia con elementos cosméticos, personalizaciones y más."
-        image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"
-      />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between mb-8 gap-4">
-          <div className="flex items-center md:w-1/2 lg:w-1/3">
-            <div className="relative w-full">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={16} className="text-gray-500" />
-              </div>
-              <input
-                type="text"
-                placeholder="Buscar productos..."
-                className="input pl-10 w-full"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+    <div className="min-h-[80vh] flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, type: "spring" }}
+        className="text-center space-y-8 max-w-3xl mx-auto"
+      >
+        {/* Icon Container */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="relative"
+        >
+          <div className="relative w-40 h-40 mx-auto mb-8">
+            {/* Background glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-blue-500/30 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute inset-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full border border-white/10" />
+            
+            {/* Main icon */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <ShoppingCart size={64} className="text-green-400 animate-bounce" />
             </div>
+            
+            {/* Floating icons */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0"
+            >
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+                <Package size={20} className="text-white/60" />
+              </div>
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                <Gift size={20} className="text-white/60" />
+              </div>
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                <Star size={20} className="text-white/60" />
+              </div>
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                <Clock size={20} className="text-white/60" />
+              </div>
+            </motion.div>
           </div>
-          
-          <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0">
-            <button 
-              onClick={() => setActiveCategory('all')}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm ${activeCategory === 'all' ? 'bg-primary text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
-            >
-              Todos
-            </button>
-            <button 
-              onClick={() => setActiveCategory('club')}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm ${activeCategory === 'club' ? 'bg-primary text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
-            >
-              Club
-            </button>
-            <button 
-              onClick={() => setActiveCategory('user')}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm ${activeCategory === 'user' ? 'bg-primary text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
-            >
-              Usuario
-            </button>
-            <button 
-              onClick={() => setActiveCategory('achievement')}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm ${activeCategory === 'achievement' ? 'bg-primary text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
-            >
-              Logros
-            </button>
-            <button 
-              onClick={() => setActiveCategory('booster')}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm ${activeCategory === 'booster' ? 'bg-primary text-white' : 'bg-dark-light text-gray-300 hover:bg-dark-lighter'}`}
-            >
-              Potenciadores
-            </button>
+        </motion.div>
+
+        {/* Content */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-6">
+              Tienda Virtual
+            </h1>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-4">
+              En Desarrollo
+            </h2>
+            <p className="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
+              La tienda virtual está siendo desarrollada con las últimas tecnologías para ofrecerte la mejor experiencia de compra
+            </p>
           </div>
 
-          {/* Extras */}
-          <div className="flex items-center space-x-3">
-            <select value={sortKey} onChange={e => setSortKey(e.target.value as any)} className="input">
-              <option value="price">Precio</option>
-              <option value="rarity">Rareza</option>
-            </select>
-            <label className="flex items-center space-x-1 text-sm">
-              <input type="checkbox" checked={showOwned} onChange={e => setShowOwned(e.target.checked)} />
-              <span>Ocultar comprados</span>
-            </label>
-            {/* Cart icon */}
-            <button className="relative" onClick={() => setShowConfirm(true)}>
-              <ShoppingCart />
-              {cartIds.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-xs rounded-full px-1">{cartIds.length}</span>
-              )}
-            </button>
-          </div>
-        </div>
-        
-        {/* Saldo */}
-        <div className="mb-6 text-right font-bold text-primary">Saldo: {coins} Z-Coins</div>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="space-y-6"
+          >
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="flex items-center justify-center w-12 h-12 bg-green-500/20 rounded-xl mb-4 mx-auto">
+                  <Package size={24} className="text-green-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Productos Únicos</h3>
+                <p className="text-white/70 text-sm">
+                  Elementos cosméticos y personalizaciones exclusivas para tu club y perfil
+                </p>
+              </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredItems.map(product => (
-            <div key={product.id} className="card overflow-hidden group">
-              <div className="aspect-square bg-dark-lighter overflow-hidden relative">
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute top-3 left-3">
-                  <span className={`
-                    inline-block px-2 py-1 text-xs font-medium rounded-full
-                    ${product.category === 'club' ? 'bg-neon-green/20 text-neon-green' : ''}
-                    ${product.category === 'user' ? 'bg-neon-blue/20 text-neon-blue' : ''}
-                    ${product.category === 'achievement' ? 'bg-neon-purple/20 text-neon-purple' : ''}
-                    ${product.category === 'booster' ? 'bg-neon-red/20 text-neon-red' : ''}
-                  `}>
-                    {product.category === 'club' ? 'Club' :
-                     product.category === 'user' ? 'Usuario' :
-                     product.category === 'achievement' ? 'Logro' : 'Potenciador'}
-                  </span>
+              <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="flex items-center justify-center w-12 h-12 bg-blue-500/20 rounded-xl mb-4 mx-auto">
+                  <Gift size={24} className="text-blue-400" />
                 </div>
-                {/* rarity ring overlay using getRarityClasses */}
-                <div className={`absolute inset-0 rounded-lg pointer-events-none ${getRarityClasses(product.rarity)}`}></div>
-                <div className="absolute top-3 right-3">
-                  <span className="inline-block bg-dark-light px-2 py-1 text-xs font-medium rounded-full">
-                    Nivel {product.minLevel}+
-                  </span>
+                <h3 className="text-lg font-bold text-white mb-2">Sistema de Recompensas</h3>
+                <p className="text-white/70 text-sm">
+                  Desbloquea contenido especial por logros y participación en eventos
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="flex items-center justify-center w-12 h-12 bg-purple-500/20 rounded-xl mb-4 mx-auto">
+                  <Star size={24} className="text-purple-400" />
                 </div>
-              </div>
-              
-              <div className="p-4">
-                <h3 className="font-bold mb-2 group-hover:text-primary transition-colors">{product.name}</h3>
-                <p className="text-sm text-gray-400 mb-4">{product.description}</p>
-                
-                <div className="flex items-center justify-between">
-                  <div className="text-lg font-bold text-primary">
-                    {formatCurrency(product.price).replace('€', '')} <span className="text-sm text-gray-400">Z-Coins</span>
-                  </div>
-                  {ownedItemIds.includes(product.id) ? (
-                    <button
-                      className="btn-secondary text-sm py-1 px-3"
-                      onClick={() => setPreviewItem(product)}
-                    >
-                      Ver
-                    </button>
-                  ) : cartIds.includes(product.id) ? (
-                    <button
-                      className="btn-warning text-sm py-1 px-3"
-                      onClick={() => removeFromCart(product.id)}
-                    >
-                      Quitar
-                    </button>
-                  ) : (
-                    <button
-                      className="btn-primary text-sm py-1 px-3 disabled:opacity-50"
-                      disabled={userLevel < product.minLevel}
-                      onClick={() => addToCart(product)}
-                    >
-                      Añadir
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-          
-          {filteredItems.length === 0 && (
-            <div className="col-span-full py-12 text-center text-gray-400">
-              <AlertCircle size={48} className="mx-auto mb-4 text-gray-600" />
-              <h3 className="text-xl font-bold mb-2">No se encontraron productos</h3>
-              <p>No hay productos que coincidan con tu búsqueda. Prueba con otros términos o categorías.</p>
-            </div>
-          )}
-        </div>
-        
-        <div className="mt-12">
-          <div className="bg-dark-light border border-gray-800 rounded-lg p-6">
-            <div className="flex items-start mb-6">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4 flex-shrink-0">
-                <AlertCircle size={24} className="text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2">Información importante</h3>
-                <p className="text-gray-300">
-                  Todos los productos en la tienda virtual se adquieren con Z-Coins, la moneda virtual de La Virtual Zone.
-                  Los Z-Coins se obtienen participando en torneos, ganando partidos y siendo activo en la comunidad.
-                  Los productos son elementos cosméticos y no afectan el rendimiento competitivo.
+                <h3 className="text-lg font-bold text-white mb-2">Rareza y Colección</h3>
+                <p className="text-white/70 text-sm">
+                  Artículos de diferentes rarezas para completar tu colección
                 </p>
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-dark p-4 rounded-lg">
-                <h4 className="font-bold mb-2">Cómo obtener Z-Coins</h4>
-                <ul className="space-y-1 text-sm text-gray-300">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Ganar partidos: 50 Z-Coins
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Participar en torneos: 200 Z-Coins
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Subir de nivel: 100 Z-Coins
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="bg-dark p-4 rounded-lg">
-                <h4 className="font-bold mb-2">Niveles de acceso</h4>
-                <ul className="space-y-1 text-sm text-gray-300">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Nivel 1-5: Productos básicos
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Nivel 6-15: Productos intermedios
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Nivel 16+: Productos premium
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="bg-dark p-4 rounded-lg">
-                <h4 className="font-bold mb-2">Uso de productos</h4>
-                <ul className="space-y-1 text-sm text-gray-300">
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Productos de club: visual de tu equipo
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Productos de usuario: perfil personal
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Potenciadores: límite de 1 por temporada
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-        {/* Preview Modal */}
-        {previewItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70" onClick={() => setPreviewItem(null)}></div>
-            <div className="relative bg-gray-900 rounded-lg p-6 w-full max-w-md">
-              <button className="absolute top-3 right-3 text-gray-400 hover:text-white" onClick={() => setPreviewItem(null)}><X /></button>
-              <img src={previewItem.image} alt={previewItem.name} className="w-full rounded-lg mb-4" />
-              <h3 className="text-xl font-bold mb-2">{previewItem.name}</h3>
-              <p className="text-gray-400 mb-4">{previewItem.description}</p>
-              <button className="btn-secondary" onClick={() => {
-                if (ownedItemIds.includes(previewItem.id)) {
-                  removeFromCart(previewItem.id);
-                } else {
-                  addToCart(previewItem);
-                }
-                setPreviewItem(null);
-              }}>
-                {cartIds.includes(previewItem.id) ? 'Quitar del carrito' : 'Añadir al carrito'}
-              </button>
+            {/* Coming Soon Features */}
+            <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-2xl p-8 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-white mb-6 text-center">Próximamente</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-3 text-white/80">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span>Personalización de clubes y estadios</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/80">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                  <span>Avatares y frames de perfil</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/80">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+                  <span>Booster packs y potenciadores</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/80">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+                  <span>Sistema de monedas virtuales</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/80">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                  <span>Ediciones limitadas y eventos</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/80">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+                  <span>Marketplace entre usuarios</span>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* Cart Modal */}
-        {showConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70" onClick={() => setShowConfirm(false)}></div>
-            <div className="relative bg-gray-900 rounded-lg p-6 w-full max-w-sm">
-              <button className="absolute top-3 right-3 text-gray-400 hover:text-white" onClick={() => setShowConfirm(false)}><X /></button>
-              <h3 className="text-xl font-bold mb-4">Carrito</h3>
-              {cartIds.length === 0 ? (
-                <p className="text-gray-400">Carrito vacío.</p>
-              ) : (
-                <>
-                  <ul className="space-y-2 mb-4 max-h-60 overflow-y-auto">
-                    {cartIds.map(id => {
-                      const item = activeItems().find(i => i.id === id)!;
-                      return (
-                        <li key={id} className="flex justify-between items-center">
-                          <span>{item.name}</span>
-                          <span>{item.price}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <div className="font-bold mb-4">Total: {cartIds.reduce((sum, id) => sum + (activeItems().find(i => i.id === id)?.price || 0), 0)} Z-Coins</div>
-                  <div className="flex justify-end space-x-3">
-                    <button className="btn-secondary" onClick={() => { clearCart(); }}>Vaciar</button>
-                    <button className="btn-primary" onClick={() => {
-                      const items = cartIds.map(id => activeItems().find(i => i.id === id)!) ;
-                      const res = checkout(items, userLevel, user?.id || 'anon');
-                      if (res.success) toast.success(res.message);
-                      else toast.error(res.message);
-                      setShowConfirm(false);
-                    }}>Pagar</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+            {/* Progress indicator */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.6, type: "spring" }}
+              className="flex items-center justify-center gap-6"
+            >
+              <div className="flex items-center gap-3 text-sm text-white/50">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                <span>Desarrollo en progreso</span>
+              </div>
+              <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "75%" }}
+                  transition={{ delay: 1, duration: 2, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full"
+                />
+              </div>
+              <div className="text-sm text-white/50">75%</div>
+            </motion.div>
+
+            {/* Newsletter signup */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1, duration: 0.6 }}
+              className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-white/10 rounded-2xl p-6 backdrop-blur-sm"
+            >
+              <h3 className="text-lg font-bold text-white mb-3">¿Quieres ser notificado cuando esté lista?</h3>
+              <p className="text-white/60 text-sm mb-4">
+                Recibe notificaciones cuando la tienda esté disponible y obtén acceso anticipado
+              </p>
+              <div className="flex gap-3 max-w-md mx-auto">
+                <input
+                  type="email"
+                  placeholder="Tu email"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-medium px-6 py-2 rounded-lg transition-all">
+                  Notificarme
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
