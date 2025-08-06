@@ -127,7 +127,7 @@ export default function DtDashboard() {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   src={club.logo}
                   alt={club.name}
-                  className="relative w-20 h-20 rounded-3xl shadow-2xl ring-4 ring-white/20 ring-offset-4 ring-offset-gray-900/50 object-cover"
+                  className="relative w-20 h-20 rounded-3xl shadow-2xl ring-4 ring-white/20 ring-offset-4 ring-offset-gray-900/50 object-contain"
                 />
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-3xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>

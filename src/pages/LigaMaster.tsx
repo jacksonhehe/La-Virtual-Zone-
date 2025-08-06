@@ -266,7 +266,7 @@ const LigaMaster = () => {
                               <img 
                                 src={club?.logo}
                                 alt={club?.name}
-                                className="w-6 h-6 mr-2"
+                                className="w-6 h-6 mr-2 object-contain"
                               />
                               <span className="font-medium">{club?.name}</span>
                             </Link>

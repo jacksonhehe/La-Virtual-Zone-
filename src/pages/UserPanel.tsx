@@ -279,7 +279,7 @@ const UserPanel = () => {
                     <img 
                       src={userClub.logo} 
                       alt={userClub.name} 
-                      className="w-10 h-10 mr-3 rounded-full"
+                      className="w-10 h-10 mr-3 rounded-full object-contain"
                     />
                     <span className="font-medium text-sm">{userClub.name}</span>
                   </div>
@@ -641,7 +641,7 @@ const UserPanel = () => {
                 <div className="card-elevated p-8">
                   <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
                     <div className="flex items-center">
-                      <img src={userClub.logo} alt={userClub.name} className="w-16 h-16 mr-4 rounded-lg"/>
+                      <img src={userClub.logo} alt={userClub.name} className="w-16 h-16 mr-4 rounded-lg object-contain"/>
                       <div>
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                           {userClub.name}
@@ -686,7 +686,7 @@ const UserPanel = () => {
                     <h3 className="text-xl font-semibold mb-4">Próximo Partido</h3>
                     <div className="flex items-center justify-around text-center">
                       <div className="flex flex-col items-center w-1/3">
-                        <img src={userClub.logo} alt={userClub.name} className="w-20 h-20 mb-2"/>
+                        <img src={userClub.logo} alt={userClub.name} className="w-20 h-20 mb-2 object-contain"/>
                         <span className="font-bold text-lg">{userClub.name}</span>
                       </div>
                       <div className="w-1/3">
