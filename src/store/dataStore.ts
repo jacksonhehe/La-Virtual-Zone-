@@ -64,7 +64,7 @@ const initialClub: DtClub = {
   logo: baseClub.logo,
   formation: '4-3-3',
   budget: baseClub.budget,
-  players: initialPlayers.filter(p => p.clubId === baseClub.id)
+  players: initialPlayers.filter(p => p.id_equipo === baseClub.id || p.clubId === baseClub.id)
 };
 const initialFixtures = tournaments[0].matches
   .filter(m => m.homeTeam === initialClub.name || m.awayTeam === initialClub.name)
@@ -89,7 +89,7 @@ const initialPosts = storedPosts.length ? storedPosts : posts;
 if (!storedPosts.length) savePosts(initialPosts);
 
 const refreshClubPlayers = (players: Player[], clubId: string) =>
-  players.filter(p => p.clubId === clubId);
+  players.filter(p => p.id_equipo === clubId || p.clubId === clubId);
 
 interface DataState {
   clubs: Club[];

@@ -68,6 +68,45 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
 
   const getPositionLabel = (pos: string) => positions[pos as keyof typeof positions] || pos;
   
+  // Función para traducir estadísticas al español
+  const translateStat = (key: string): string => {
+    const translations: { [key: string]: string } = {
+      // Estadísticas ofensivas
+      offensive: 'Actitud Ofensiva',
+      ballControl: 'Control de Balón',
+      dribbling: 'Drible',
+      lowPass: 'Pase Raso',
+      loftedPass: 'Pase Bombeado',
+      finishing: 'Finalización',
+      placeKicking: 'Balón Parado',
+      volleys: 'Efecto',
+      curl: 'Cabeceador',
+      
+      // Estadísticas físicas
+      speed: 'Velocidad',
+      acceleration: 'Aceleración',
+      kickingPower: 'Potencia de Tiro',
+      stamina: 'Resistencia',
+      jumping: 'Salto',
+      physicalContact: 'Contacto Físico',
+      balance: 'Equilibrio',
+      
+      // Estadísticas defensivas
+      defensive: 'Actitud Defensiva',
+      ballWinning: 'Recuperación de Balón',
+      aggression: 'Agresividad',
+      
+      // Estadísticas de portero
+      goalkeeperReach: 'Actitud de Portero',
+      goalkeeperReflexes: 'Reflejos',
+      goalkeeperClearing: 'Despeje',
+      goalkeeperThrowing: 'Atajar',
+      goalkeeperHandling: 'Cobertura'
+    };
+    
+    return translations[key] || key.replace(/([A-Z])/g, ' $1').trim();
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -275,19 +314,24 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-bold text-lg text-white mb-1">{player.name}</h4>
+                        <h4 className="font-bold text-lg text-white mb-1">
+                          {player.nombre_jugador && player.apellido_jugador 
+                            ? `${player.nombre_jugador} ${player.apellido_jugador}`
+                            : player.name || 'Sin nombre'
+                          }
+                        </h4>
                         <div className="flex items-center space-x-3 text-sm text-gray-400 mb-2">
                           <span className="flex items-center">
                             <Target size={14} className="mr-1" />
-                            {getPositionLabel(player.position)}
+                            {getPositionLabel(player.posicion || player.position)}
                           </span>
                           <span className="flex items-center">
                             <Users size={14} className="mr-1" />
-                            {player.age} años
+                            {player.edad || player.age || 'N/A'} años
                           </span>
                           <span className="flex items-center">
                             <Star size={14} className="mr-1" />
-                            {player.overall} OVR
+                            {player.valoracion || player.overall || 'N/A'} OVR
                           </span>
                         </div>
                         <div className="flex items-center text-sm text-gray-400">
@@ -398,14 +442,14 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl p-4 border border-purple-500/30">
                   <div className="text-center">
-                    <p className="text-sm text-gray-400 mb-1">Overall</p>
-                    <p className="text-3xl font-bold text-purple-400">{player.overall}</p>
+                    <p className="text-sm text-gray-400 mb-1">Valoración</p>
+                    <p className="text-3xl font-bold text-purple-400">{player.valoracion || player.overall || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-xl p-4 border border-yellow-500/30">
                   <div className="text-center">
                     <p className="text-sm text-gray-400 mb-1">Potencial</p>
-                    <p className="text-3xl font-bold text-yellow-400">{player.potential}</p>
+                    <p className="text-3xl font-bold text-yellow-400">{player.potential || player.valoracion || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl p-4 border border-blue-500/30">
@@ -434,19 +478,21 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Nacionalidad</span>
-                      <span className="text-white">{player.nationality}</span>
+                      <span className="text-white">{player.nacionalidad || player.nationality || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Altura</span>
-                      <span className="text-white">{player.height || 175}cm</span>
+                      <span className="text-white">{player.altura || player.height || 175}cm</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Peso</span>
-                      <span className="text-white">{player.weight || 70}kg</span>
+                      <span className="text-white">{player.peso || player.weight || 70}kg</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Pie Dominante</span>
-                      <span className="text-white">{player.dominantFoot === 'left' ? 'Izquierdo' : 'Derecho'}</span>
+                      <span className="text-white">
+                        {(player.pierna || player.dominantFoot) === 'left' ? 'Izquierdo' : 'Derecho'}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Número</span>
@@ -545,7 +591,7 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                     {player.detailedStats && Object.entries(player.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
                       <div key={key} className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <span className="text-sm text-gray-300">{translateStat(key)}</span>
                           <span className="text-sm font-bold text-white">{value}</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
@@ -562,7 +608,7 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                     {player.detailedStats && Object.entries(player.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
                       <div key={key} className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300 capitalize">{key.replace('goalkeeper', '').replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <span className="text-sm text-gray-300">{translateStat(key)}</span>
                           <span className="text-sm font-bold text-white">{value}</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">

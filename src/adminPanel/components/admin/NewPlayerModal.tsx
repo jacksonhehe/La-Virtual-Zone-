@@ -30,124 +30,142 @@ interface Props {
 
 interface PlayerFormData {
   // Datos básicos
-  name: string;
-  age: number;
-  nationality: string;
-  clubId: string;
-  dorsal: number;
-  dominantFoot: 'left' | 'right';
-  height: number;
-  weight: number;
-  position: string;
-  secondaryPositions: string[];
-  image: string;
+  nombre_jugador: string;
+  apellido_jugador: string;
+  edad: number;
+  altura: number;
+  peso: number;
+  pierna: 'left' | 'right';
+  estilo_juego: string;
+  posicion: string;
+  valoracion: number;
+  precio_compra_libre: number;
+  nacionalidad: string;
+  id_equipo: string;
+  foto_jugador: string;
+  is_free: boolean;
   
-  // Estadísticas de habilidad
-  offensive: number;
-  ballControl: number;
-  dribbling: number;
-  lowPass: number;
-  loftedPass: number;
-  finishing: number;
-  placeKicking: number;
-  volleys: number;
-  curl: number;
-  speed: number;
-  acceleration: number;
-  kickingPower: number;
-  stamina: number;
-  jumping: number;
-  physicalContact: number;
-  balance: number;
-  defensive: number;
-  ballWinning: number;
-  aggression: number;
+  // Características ofensivas
+  actitud_ofensiva: number;
+  control_balon: number;
+  drible: number;
+  posesion_balon: number;
+  pase_raso: number;
+  pase_bombeado: number;
+  finalizacion: number;
+  cabeceador: number;
+  balon_parado: number;
+  efecto: number;
   
-  // Estadísticas de portero (si aplica)
-  goalkeeperReach: number;
-  goalkeeperReflexes: number;
-  goalkeeperClearing: number;
-  goalkeeperThrowing: number;
-  goalkeeperHandling: number;
+  // Características físicas
+  velocidad: number;
+  aceleracion: number;
+  potencia_tiro: number;
+  salto: number;
+  contacto_fisico: number;
+  equilibrio: number;
+  resistencia: number;
   
-  // Características físicas y salud
-  consistency: number;
-  injuryResistance: number;
-  morale: number;
+  // Características defensivas
+  actitud_defensiva: number;
+  recuperacion_balon: number;
+  agresividad: number;
   
-  // Rasgos especiales
+  // Características de portero
+  actitud_portero: number;
+  atajar_pt: number;
+  despejar_pt: number;
+  reflejos_pt: number;
+  cobertura_pt: number;
+  
+  // Características adicionales
+  uso_pie_malo: number;
+  precision_pie_malo: number;
+  estabilidad: number;
+  resistencia_lesiones: number;
+  
+  // Habilidades especiales
   specialSkills: string[];
-  playingStyle: string;
   celebrations: string[];
   
-  // Información de contrato
-  contractYears: number;
-  salary: number;
-  marketValue: number;
-  overall: number;
-  potential: number;
+  // Campos legacy para compatibilidad
+  name?: string;
+  age?: number;
+  position?: string;
+  nationality?: string;
+  dorsal?: number;
+  clubId?: string;
+  overall?: number;
+  potential?: number;
+  image?: string;
+  contract?: {
+    expires: string;
+    salary: number;
+  };
+  price?: number;
 }
 
 const NewPlayerModal = ({ onClose, onSave }: Props) => {
   const { clubs } = useGlobalStore();
   const [formData, setFormData] = useState<PlayerFormData>({
     // Datos básicos
-    name: '',
-    age: 18,
-    nationality: '',
-    clubId: '',
-    dorsal: 1,
-    dominantFoot: 'right',
-    height: 175,
-    weight: 70,
-    position: 'CF',
-    secondaryPositions: [],
-    image: '',
+    nombre_jugador: '',
+    apellido_jugador: '',
+    edad: 18,
+    altura: 175,
+    peso: 70,
+    pierna: 'right',
+    estilo_juego: 'Equilibrado',
+    posicion: 'CF',
+    valoracion: 75,
+    precio_compra_libre: 1000000,
+    nacionalidad: '',
+    id_equipo: '',
+    foto_jugador: '',
+    is_free: false,
     
-    // Estadísticas de habilidad
-    offensive: 70,
-    ballControl: 70,
-    dribbling: 70,
-    lowPass: 70,
-    loftedPass: 70,
-    finishing: 70,
-    placeKicking: 70,
-    volleys: 70,
-    curl: 70,
-    speed: 70,
-    acceleration: 70,
-    kickingPower: 70,
-    stamina: 70,
-    jumping: 70,
-    physicalContact: 70,
-    balance: 70,
-    defensive: 70,
-    ballWinning: 70,
-    aggression: 70,
-    
-    // Estadísticas de portero
-    goalkeeperReach: 70,
-    goalkeeperReflexes: 70,
-    goalkeeperClearing: 70,
-    goalkeeperThrowing: 70,
-    goalkeeperHandling: 70,
+    // Características ofensivas
+    actitud_ofensiva: 70,
+    control_balon: 70,
+    drible: 70,
+    posesion_balon: 70,
+    pase_raso: 70,
+    pase_bombeado: 70,
+    finalizacion: 70,
+    cabeceador: 70,
+    balon_parado: 70,
+    efecto: 70,
     
     // Características físicas
-    consistency: 70,
-    injuryResistance: 70,
-    morale: 70,
+    velocidad: 70,
+    aceleracion: 70,
+    potencia_tiro: 70,
+    salto: 70,
+    contacto_fisico: 70,
+    equilibrio: 70,
+    resistencia: 70,
     
-    // Rasgos especiales
+    // Características defensivas
+    actitud_defensiva: 70,
+    recuperacion_balon: 70,
+    agresividad: 70,
+    
+    // Características de portero
+    actitud_portero: 70,
+    atajar_pt: 70,
+    despejar_pt: 70,
+    reflejos_pt: 70,
+    cobertura_pt: 70,
+    
+    // Características adicionales
+    uso_pie_malo: 70,
+    precision_pie_malo: 70,
+    estabilidad: 70,
+    resistencia_lesiones: 70,
+    
+    // Habilidades especiales
     specialSkills: [],
-    playingStyle: 'Balanced',
     celebrations: [],
-    
-    // Información de contrato
-    contractYears: 3,
-    salary: 50000,
-    marketValue: 1000000,
-    overall: 75,
-    potential: 80,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -188,26 +206,26 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
   ];
 
   const specialSkills = [
-    'Acrobatic Clear', 'Acrobatic Finishing', 'Aerial Superiority', 'Chip Shot Control',
-    'Cut Behind & Turn', 'Double Touch', 'Elastic', 'Fighting Spirit', 'First-time Shot',
-    'GK High Punt', 'GK Long Throw', 'GK Penalty Saver', 'GK Punt', 'Heading',
-    'Heel Trick', 'Interception', 'Long Range Drive', 'Long Range Shooting',
-    'Long Throw', 'Low Lofted Pass', 'Man Marking', 'Marseille Turn',
-    'One-touch Pass', 'Outside Curler', 'Penalty Specialist', 'Pinpoint Crossing',
-    'Rabona', 'Rising Shots', 'Scotch Move', 'Sole Control', 'Sombrero',
-    'Speed Merchant', 'Super-sub', 'Through Passing', 'Track Back', 'Weighted Pass'
+    'Despeje Acrobático', 'Finalización Acrobática', 'Superioridad Aérea', 'Control de Tiro con Efecto',
+    'Corte y Giro', 'Doble Toque', 'Elástico', 'Espíritu de Lucha', 'Tiro de Primera',
+    'Despeje Alto de Portero', 'Saque Largo de Portero', 'Parada de Penalti', 'Despeje de Portero', 'Juego de Cabeza',
+    'Truco de Talón', 'Interceptación', 'Disparo de Largo Alcance', 'Tiro de Largo Alcance',
+    'Saque Largo', 'Pase Bajo Elevado', 'Marcaje Individual', 'Giro de Marsella',
+    'Pase de Un Toque', 'Centro Exterior', 'Especialista en Penaltis', 'Centro Preciso',
+    'Rabona', 'Disparos Elevados', 'Movimiento Escocés', 'Control de Suela', 'Sombrero',
+    'Mercader de Velocidad', 'Super-sub', 'Pase Entre Líneas', 'Regreso', 'Pase Ponderado'
   ];
 
   const playingStyles = [
-    'Balanced', 'Hole Player', 'Box-to-Box', 'Orchestrator', 'Anchor Man',
-    'The Destroyer', 'Extra Frontman', 'Offensive Fullback', 'Defensive Fullback',
-    'Cross Specialist', 'Prolific Winger', 'Classic No.10', 'Creative Playmaker',
-    'Dummy Runner', 'Goal Poacher', 'Fox in the Box', 'Target Man', 'Prolific Winger'
+    'Equilibrado', 'Jugador de Agujero', 'Box-to-Box', 'Orquestador', 'Hombre Ancla',
+    'El Destructor', 'Delantero Extra', 'Lateral Ofensivo', 'Lateral Defensivo',
+    'Especialista en Centros', 'Extremo Prolífico', 'Clásico No.10', 'Creador de Juego',
+    'Corredor Falso', 'Cazagoles', 'Zorro en el Área', 'Hombre Objetivo', 'Extremo Prolífico'
   ];
 
   const celebrations = [
-    'Calm', 'Excited', 'Respectful', 'Team Player', 'Individual',
-    'Dance', 'Gesture', 'Point', 'Run', 'Slide'
+    'Tranquilo', 'Emocionado', 'Respetuoso', 'Jugador de Equipo', 'Individual',
+    'Baile', 'Gesto', 'Señalar', 'Correr', 'Deslizar'
   ];
 
   useEffect(() => {
@@ -223,16 +241,15 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
     const newErrors: Record<string, string> = {};
     
     // Validaciones básicas
-    if (!formData.name.trim()) newErrors.name = 'Nombre requerido';
-    if (!formData.nationality.trim()) newErrors.nationality = 'Nacionalidad requerida';
-    if (formData.age < 15 || formData.age > 50) newErrors.age = 'Edad debe estar entre 15-50';
-    if (!formData.clubId) newErrors.clubId = 'Club requerido';
-    if (formData.height < 150 || formData.height > 220) newErrors.height = 'Altura debe estar entre 150-220cm';
-    if (formData.weight < 40 || formData.weight > 120) newErrors.weight = 'Peso debe estar entre 40-120kg';
-    if (formData.overall < 40 || formData.overall > 99) newErrors.overall = 'Overall debe estar entre 40-99';
-    if (formData.potential < 40 || formData.potential > 99) newErrors.potential = 'Potencial debe estar entre 40-99';
-    if (formData.salary < 0) newErrors.salary = 'Salario debe ser positivo';
-    if (formData.marketValue < 0) newErrors.marketValue = 'Valor de mercado debe ser positivo';
+    if (!formData.nombre_jugador.trim()) newErrors.nombre_jugador = 'Nombre requerido';
+    if (!formData.apellido_jugador.trim()) newErrors.apellido_jugador = 'Apellido requerido';
+    if (!formData.nacionalidad.trim()) newErrors.nacionalidad = 'Nacionalidad requerida';
+    if (formData.edad < 15 || formData.edad > 50) newErrors.edad = 'Edad debe estar entre 15-50';
+    if (!formData.id_equipo) newErrors.id_equipo = 'Club requerido';
+    if (formData.altura < 150 || formData.altura > 220) newErrors.altura = 'Altura debe estar entre 150-220cm';
+    if (formData.peso < 40 || formData.peso > 120) newErrors.peso = 'Peso debe estar entre 40-120kg';
+    if (formData.valoracion < 40 || formData.valoracion > 99) newErrors.valoracion = 'Valoración debe estar entre 40-99';
+    if (formData.precio_compra_libre < 0) newErrors.precio_compra_libre = 'Precio de compra libre debe ser positivo';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -241,100 +258,154 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      const image = formData.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=1e293b&color=fff&size=128`;
+      const image = formData.foto_jugador || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.nombre_jugador)}&background=1e293b&color=fff&size=128`;
       
       // Calcular overall basado en estadísticas
-      const isGoalkeeper = formData.position === 'GK';
+      const isGoalkeeper = formData.posicion === 'GK';
       let calculatedOverall = 75;
       
       if (isGoalkeeper) {
         calculatedOverall = Math.round((
-          formData.goalkeeperReach + 
-          formData.goalkeeperReflexes + 
-          formData.goalkeeperClearing + 
-          formData.goalkeeperThrowing + 
-          formData.goalkeeperHandling
+          formData.actitud_portero + 
+          formData.atajar_pt + 
+          formData.despejar_pt + 
+          formData.reflejos_pt + 
+          formData.cobertura_pt
         ) / 5);
       } else {
         calculatedOverall = Math.round((
-          formData.offensive + formData.ballControl + formData.dribbling + 
-          formData.lowPass + formData.loftedPass + formData.finishing + 
-          formData.placeKicking + formData.volleys + formData.curl + 
-          formData.speed + formData.acceleration + formData.kickingPower + 
-          formData.stamina + formData.jumping + formData.physicalContact + 
-          formData.balance + formData.defensive + formData.ballWinning + 
-          formData.aggression
-        ) / 19);
+          formData.actitud_ofensiva + formData.control_balon + formData.drible + 
+          formData.posesion_balon + formData.pase_raso + formData.pase_bombeado + formData.finalizacion + 
+          formData.cabeceador + formData.balon_parado + formData.efecto + 
+          formData.velocidad + formData.aceleracion + formData.potencia_tiro + 
+          formData.salto + formData.contacto_fisico + formData.equilibrio + 
+          formData.resistencia + formData.actitud_defensiva + formData.recuperacion_balon + 
+          formData.agresividad
+        ) / 20);
       }
 
       onSave({
-        name: formData.name,
-        age: formData.age,
-        nationality: formData.nationality,
-        clubId: formData.clubId,
+        // Nueva estructura de jugador
+        nombre_jugador: formData.nombre_jugador,
+        apellido_jugador: formData.apellido_jugador,
+        edad: formData.edad,
+        altura: formData.altura,
+        peso: formData.peso,
+        pierna: formData.pierna,
+        estilo_juego: formData.estilo_juego,
+        posicion: formData.posicion,
+        valoracion: formData.valoracion,
+        precio_compra_libre: formData.precio_compra_libre,
+        nacionalidad: formData.nacionalidad,
+        id_equipo: formData.id_equipo,
+        foto_jugador: image,
+        is_free: formData.is_free,
+        
+        // Características ofensivas
+        actitud_ofensiva: formData.actitud_ofensiva,
+        control_balon: formData.control_balon,
+        drible: formData.drible,
+        posesion_balon: formData.posesion_balon,
+        pase_raso: formData.pase_raso,
+        pase_bombeado: formData.pase_bombeado,
+        finalizacion: formData.finalizacion,
+        cabeceador: formData.cabeceador,
+        balon_parado: formData.balon_parado,
+        efecto: formData.efecto,
+        
+        // Características físicas
+        velocidad: formData.velocidad,
+        aceleracion: formData.aceleracion,
+        potencia_tiro: formData.potencia_tiro,
+        salto: formData.salto,
+        contacto_fisico: formData.contacto_fisico,
+        equilibrio: formData.equilibrio,
+        resistencia: formData.resistencia,
+        
+        // Características defensivas
+        actitud_defensiva: formData.actitud_defensiva,
+        recuperacion_balon: formData.recuperacion_balon,
+        agresividad: formData.agresividad,
+        
+        // Características de portero
+        actitud_portero: formData.actitud_portero,
+        atajar_pt: formData.atajar_pt,
+        despejar_pt: formData.despejar_pt,
+        reflejos_pt: formData.reflejos_pt,
+        cobertura_pt: formData.cobertura_pt,
+        
+        // Características adicionales
+        uso_pie_malo: formData.uso_pie_malo,
+        precision_pie_malo: formData.precision_pie_malo,
+        estabilidad: formData.estabilidad,
+        resistencia_lesiones: formData.resistencia_lesiones,
+        
+        // Campos legacy para compatibilidad
+        name: formData.nombre_jugador,
+        age: formData.edad,
+        nationality: formData.nacionalidad,
+        clubId: formData.id_equipo,
         dorsal: formData.dorsal,
-        position: formData.position,
-        overall: formData.overall,
-        potential: formData.potential,
+        position: formData.posicion,
+        overall: formData.valoracion,
+        potential: formData.valoracion,
         image,
         contract: { 
-          expires: (new Date().getFullYear() + formData.contractYears).toString(), 
-          salary: formData.salary 
+          expires: (new Date().getFullYear() + 3).toString(), 
+          salary: formData.precio_compra_libre 
         },
         attributes: {
-          pace: formData.speed,
-          shooting: formData.finishing,
-          passing: formData.lowPass,
-          dribbling: formData.dribbling,
-          defending: formData.defensive,
-          physical: formData.physicalContact
+          pace: formData.velocidad,
+          shooting: formData.potencia_tiro,
+          passing: formData.pase_raso,
+          dribbling: formData.drible,
+          defending: formData.actitud_defensiva,
+          physical: formData.contacto_fisico
         },
         transferListed: false,
         matches: 0,
-        transferValue: formData.marketValue,
-        value: formData.marketValue,
+        transferValue: formData.precio_compra_libre,
+        value: formData.precio_compra_libre,
         form: 1,
         goals: 0,
         assists: 0,
         appearances: 0,
-        // Campos adicionales
-        height: formData.height,
-        weight: formData.weight,
-        dominantFoot: formData.dominantFoot,
-        secondaryPositions: formData.secondaryPositions,
+        price: formData.precio_compra_libre,
+        height: formData.altura,
+        weight: formData.peso,
+        dominantFoot: formData.pierna,
+        secondaryPositions: [],
         specialSkills: formData.specialSkills,
-        playingStyle: formData.playingStyle,
+        playingStyle: formData.estilo_juego,
         celebrations: formData.celebrations,
-        consistency: formData.consistency,
-        injuryResistance: formData.injuryResistance,
-        morale: formData.morale,
-        // Estadísticas detalladas
+        consistency: formData.estabilidad,
+        injuryResistance: formData.resistencia_lesiones,
+        morale: 70,
         detailedStats: {
-          offensive: formData.offensive,
-          ballControl: formData.ballControl,
-          dribbling: formData.dribbling,
-          lowPass: formData.lowPass,
-          loftedPass: formData.loftedPass,
-          finishing: formData.finishing,
-          placeKicking: formData.placeKicking,
-          volleys: formData.volleys,
-          curl: formData.curl,
-          speed: formData.speed,
-          acceleration: formData.acceleration,
-          kickingPower: formData.kickingPower,
-          stamina: formData.stamina,
-          jumping: formData.jumping,
-          physicalContact: formData.physicalContact,
-          balance: formData.balance,
-          defensive: formData.defensive,
-          ballWinning: formData.ballWinning,
-          aggression: formData.aggression,
-          // Estadísticas de portero
-          goalkeeperReach: formData.goalkeeperReach,
-          goalkeeperReflexes: formData.goalkeeperReflexes,
-          goalkeeperClearing: formData.goalkeeperClearing,
-          goalkeeperThrowing: formData.goalkeeperThrowing,
-          goalkeeperHandling: formData.goalkeeperHandling,
+          offensive: formData.actitud_ofensiva,
+          ballControl: formData.control_balon,
+          dribbling: formData.drible,
+          lowPass: formData.pase_raso,
+          loftedPass: formData.pase_bombeado,
+          finishing: formData.finalizacion,
+          placeKicking: formData.balon_parado,
+          volleys: formData.efecto,
+          curl: formData.cabeceador,
+          speed: formData.velocidad,
+          acceleration: formData.aceleracion,
+          kickingPower: formData.potencia_tiro,
+          stamina: formData.resistencia,
+          jumping: formData.salto,
+          physicalContact: formData.contacto_fisico,
+          balance: formData.equilibrio,
+          defensive: formData.actitud_defensiva,
+          ballWinning: formData.recuperacion_balon,
+          aggression: formData.agresividad,
+          goalkeeperReach: formData.actitud_portero,
+          goalkeeperReflexes: formData.reflejos_pt,
+          goalkeeperClearing: formData.despejar_pt,
+          goalkeeperThrowing: formData.atajar_pt,
+          goalkeeperHandling: formData.cobertura_pt,
         }
       });
       toast.success('¡Jugador creado exitosamente!');
@@ -344,49 +415,139 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
   const autoFillData = () => {
     const samplePlayers = [
       {
-        name: 'Lionel Messi',
-        age: 36,
-        nationality: 'Argentina',
-        position: 'RWF',
-        overall: 94,
-        potential: 94,
-        height: 170,
-        weight: 72,
-        dominantFoot: 'left' as const,
-        salary: 500000,
-        marketValue: 50000000,
-        specialSkills: ['Dribbling', 'Finishing', 'Passing', 'Speed'],
-        playingStyle: 'Creative Playmaker'
+        nombre_jugador: 'Lionel',
+        apellido_jugador: 'Messi',
+        edad: 36,
+        altura: 170,
+        peso: 72,
+        pierna: 'left' as const,
+        estilo_juego: 'Creador de Juego',
+        posicion: 'RWF',
+        valoracion: 94,
+        precio_compra_libre: 500000,
+        nacionalidad: 'Argentina',
+        id_equipo: clubs[0]?.id || '',
+        foto_jugador: '',
+        is_free: false,
+        actitud_ofensiva: 90,
+        control_balon: 90,
+        drible: 90,
+        posesion_balon: 90,
+        pase_raso: 90,
+        pase_bombeado: 90,
+        finalizacion: 90,
+        cabeceador: 90,
+        balon_parado: 90,
+        efecto: 90,
+        velocidad: 90,
+        aceleracion: 90,
+        potencia_tiro: 90,
+        salto: 90,
+        contacto_fisico: 90,
+        equilibrio: 90,
+        resistencia: 90,
+        actitud_defensiva: 70,
+        recuperacion_balon: 70,
+        agresividad: 70,
+        actitud_portero: 90,
+        atajar_pt: 90,
+        despejar_pt: 90,
+        reflejos_pt: 90,
+        cobertura_pt: 90,
+        uso_pie_malo: 70,
+        precision_pie_malo: 70,
+        estabilidad: 70,
+        resistencia_lesiones: 70,
       },
       {
-        name: 'Cristiano Ronaldo',
-        age: 38,
-        nationality: 'Portugal',
-        position: 'CF',
-        overall: 91,
-        potential: 91,
-        height: 187,
-        weight: 85,
-        dominantFoot: 'right' as const,
-        salary: 450000,
-        marketValue: 40000000,
-        specialSkills: ['Finishing', 'Heading', 'Speed', 'Jumping'],
-        playingStyle: 'Goal Poacher'
+        nombre_jugador: 'Cristiano',
+        apellido_jugador: 'Ronaldo',
+        edad: 38,
+        altura: 187,
+        peso: 85,
+        pierna: 'right' as const,
+        estilo_juego: 'Cazagoles',
+        posicion: 'CF',
+        valoracion: 91,
+        precio_compra_libre: 450000,
+        nacionalidad: 'Portugal',
+        id_equipo: clubs[0]?.id || '',
+        foto_jugador: '',
+        is_free: false,
+        actitud_ofensiva: 80,
+        control_balon: 70,
+        drible: 70,
+        posesion_balon: 70,
+        pase_raso: 70,
+        pase_bombeado: 70,
+        finalizacion: 90,
+        cabeceador: 80,
+        balon_parado: 70,
+        efecto: 70,
+        velocidad: 70,
+        aceleracion: 70,
+        potencia_tiro: 90,
+        salto: 80,
+        contacto_fisico: 70,
+        equilibrio: 70,
+        resistencia: 70,
+        actitud_defensiva: 70,
+        recuperacion_balon: 70,
+        agresividad: 70,
+        actitud_portero: 70,
+        atajar_pt: 70,
+        despejar_pt: 70,
+        reflejos_pt: 70,
+        cobertura_pt: 70,
+        uso_pie_malo: 70,
+        precision_pie_malo: 70,
+        estabilidad: 70,
+        resistencia_lesiones: 70,
       },
       {
-        name: 'Kevin De Bruyne',
-        age: 32,
-        nationality: 'Belgium',
-        position: 'AMF',
-        overall: 89,
-        potential: 89,
-        height: 181,
-        weight: 76,
-        dominantFoot: 'right' as const,
-        salary: 350000,
-        marketValue: 35000000,
-        specialSkills: ['Passing', 'Vision', 'Long Range Shooting'],
-        playingStyle: 'Orchestrator'
+        nombre_jugador: 'Kevin',
+        apellido_jugador: 'De Bruyne',
+        edad: 32,
+        altura: 181,
+        peso: 76,
+        pierna: 'right' as const,
+        estilo_juego: 'Orquestador',
+        posicion: 'AMF',
+        valoracion: 89,
+        precio_compra_libre: 350000,
+        nacionalidad: 'Belgium',
+        id_equipo: clubs[0]?.id || '',
+        foto_jugador: '',
+        is_free: false,
+        actitud_ofensiva: 80,
+        control_balon: 80,
+        drible: 80,
+        posesion_balon: 80,
+        pase_raso: 80,
+        pase_bombeado: 80,
+        finalizacion: 80,
+        cabeceador: 70,
+        balon_parado: 70,
+        efecto: 70,
+        velocidad: 80,
+        aceleracion: 80,
+        potencia_tiro: 80,
+        salto: 70,
+        contacto_fisico: 70,
+        equilibrio: 70,
+        resistencia: 70,
+        actitud_defensiva: 70,
+        recuperacion_balon: 70,
+        agresividad: 70,
+        actitud_portero: 70,
+        atajar_pt: 70,
+        despejar_pt: 70,
+        reflejos_pt: 70,
+        cobertura_pt: 70,
+        uso_pie_malo: 70,
+        precision_pie_malo: 70,
+        estabilidad: 70,
+        resistencia_lesiones: 70,
       }
     ];
 
@@ -394,32 +555,93 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
     setFormData(prev => ({
       ...prev,
       ...randomPlayer,
-      clubId: clubs[0]?.id || '',
+      id_equipo: clubs[0]?.id || '',
       dorsal: Math.floor(Math.random() * 99) + 1,
-      offensive: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      ballControl: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      dribbling: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      lowPass: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      loftedPass: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      finishing: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      placeKicking: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      volleys: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      curl: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      speed: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      acceleration: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      kickingPower: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      stamina: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      jumping: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      physicalContact: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      balance: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      defensive: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      ballWinning: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
-      aggression: randomPlayer.overall + Math.floor(Math.random() * 10) - 5,
+             // Campos legacy para compatibilidad
+       name: randomPlayer.nombre_jugador,
+       age: randomPlayer.edad,
+       position: randomPlayer.posicion,
+       nationality: randomPlayer.nacionalidad,
+       overall: randomPlayer.valoracion,
+       potential: randomPlayer.valoracion,
+       image: randomPlayer.foto_jugador,
+       contract: {
+         expires: (new Date().getFullYear() + randomPlayer.edad).toString(),
+         salary: randomPlayer.precio_compra_libre
+       },
+       // Campos legacy para estadísticas detalladas
+       offensive: randomPlayer.actitud_ofensiva + Math.floor(Math.random() * 10) - 5,
+       ballControl: randomPlayer.control_balon + Math.floor(Math.random() * 10) - 5,
+       dribbling: randomPlayer.drible + Math.floor(Math.random() * 10) - 5,
+       lowPass: randomPlayer.pase_raso + Math.floor(Math.random() * 10) - 5,
+       loftedPass: randomPlayer.pase_bombeado + Math.floor(Math.random() * 10) - 5,
+       finishing: randomPlayer.finalizacion + Math.floor(Math.random() * 10) - 5,
+       placeKicking: randomPlayer.balon_parado + Math.floor(Math.random() * 10) - 5,
+       volleys: randomPlayer.efecto + Math.floor(Math.random() * 10) - 5,
+       curl: randomPlayer.cabeceador + Math.floor(Math.random() * 10) - 5,
+       speed: randomPlayer.velocidad + Math.floor(Math.random() * 10) - 5,
+       acceleration: randomPlayer.aceleracion + Math.floor(Math.random() * 10) - 5,
+       kickingPower: randomPlayer.potencia_tiro + Math.floor(Math.random() * 10) - 5,
+       stamina: randomPlayer.resistencia + Math.floor(Math.random() * 10) - 5,
+       jumping: randomPlayer.salto + Math.floor(Math.random() * 10) - 5,
+       physicalContact: randomPlayer.contacto_fisico + Math.floor(Math.random() * 10) - 5,
+       balance: randomPlayer.equilibrio + Math.floor(Math.random() * 10) - 5,
+       defensive: randomPlayer.actitud_defensiva + Math.floor(Math.random() * 10) - 5,
+       ballWinning: randomPlayer.recuperacion_balon + Math.floor(Math.random() * 10) - 5,
+       aggression: randomPlayer.agresividad + Math.floor(Math.random() * 10) - 5,
+       // Estadísticas de portero
+       goalkeeperReach: randomPlayer.actitud_portero + Math.floor(Math.random() * 10) - 5,
+       goalkeeperReflexes: randomPlayer.reflejos_pt + Math.floor(Math.random() * 10) - 5,
+       goalkeeperClearing: randomPlayer.despejar_pt + Math.floor(Math.random() * 10) - 5,
+       goalkeeperThrowing: randomPlayer.atajar_pt + Math.floor(Math.random() * 10) - 5,
+       goalkeeperHandling: randomPlayer.cobertura_pt + Math.floor(Math.random() * 10) - 5,
+       // Campos adicionales legacy
+       height: randomPlayer.altura,
+       weight: randomPlayer.peso,
+       dominantFoot: randomPlayer.pierna,
+       secondaryPositions: [],
+       specialSkills: [],
+       playingStyle: randomPlayer.estilo_juego,
+       celebrations: [],
+       consistency: 70,
+       injuryResistance: 70,
+       morale: 70,
+       contractYears: 3,
+       salary: randomPlayer.precio_compra_libre,
+       marketValue: randomPlayer.precio_compra_libre,
+      // Estadísticas detalladas
+      detailedStats: {
+        offensive: randomPlayer.actitud_ofensiva,
+        ballControl: randomPlayer.control_balon,
+        dribbling: randomPlayer.drible,
+        lowPass: randomPlayer.pase_raso,
+        loftedPass: randomPlayer.pase_bombeado,
+        finishing: randomPlayer.finalizacion,
+        placeKicking: randomPlayer.balon_parado,
+        volleys: randomPlayer.efecto,
+        curl: randomPlayer.cabeceador,
+        speed: randomPlayer.velocidad,
+        acceleration: randomPlayer.aceleracion,
+        kickingPower: randomPlayer.potencia_tiro,
+        stamina: randomPlayer.resistencia,
+        jumping: randomPlayer.salto,
+        physicalContact: randomPlayer.contacto_fisico,
+        balance: randomPlayer.equilibrio,
+        defensive: randomPlayer.actitud_defensiva,
+        ballWinning: randomPlayer.recuperacion_balon,
+        aggression: randomPlayer.agresividad,
+        // Estadísticas de portero
+        goalkeeperReach: randomPlayer.actitud_portero,
+        goalkeeperReflexes: randomPlayer.reflejos_pt,
+        goalkeeperClearing: randomPlayer.despejar_pt,
+        goalkeeperThrowing: randomPlayer.atajar_pt,
+        goalkeeperHandling: randomPlayer.cobertura_pt,
+      }
     }));
     toast.success('Datos de ejemplo cargados');
   };
 
-  const isGoalkeeper = formData.position === 'GK';
+  const isGoalkeeper = formData.posicion === 'GK';
 
   return (
     <Modal open={true} onClose={onClose} className="!max-w-[95vw] w-[95vw] lg:!max-w-[1400px] max-h-[95vh]" initialFocusRef={modalRef}>
@@ -481,8 +703,8 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                   </div>
                 </div>
             <LogoUploadField
-              value={formData.image}
-              onChange={(value) => setFormData({ ...formData, image: value })}
+              value={formData.foto_jugador}
+              onChange={(value) => setFormData({ ...formData, foto_jugador: value })}
               label="Foto del Jugador"
               placeholder="URL de la foto o subir archivo"
               showPreview={true}
@@ -505,19 +727,34 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                   </div>
                 </div>
                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                   <div className="space-y-2">
-                     <label className="block text-sm font-semibold text-gray-200">
-                       Nombre Completo *
-                </label>
-                <input
+                                     <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-200">
+                      Nombre *
+                    </label>
+                    <input
+                        className={`w-full px-3 py-2 bg-gray-800 border-2 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+                          errors.nombre_jugador ? 'border-red-500' : 'border-gray-600 hover:border-gray-500'
+                        }`}
+                    placeholder="Ejemplo: Lionel"
+                    value={formData.nombre_jugador}
+                    onChange={(e) => setFormData({...formData, nombre_jugador: e.target.value})}
+                  />
+                      {errors.nombre_jugador && <p className="text-red-400 text-sm font-medium">{errors.nombre_jugador}</p>}
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-200">
+                    Apellido *
+                  </label>
+                  <input
                       className={`w-full px-3 py-2 bg-gray-800 border-2 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
-                        errors.name ? 'border-red-500' : 'border-gray-600 hover:border-gray-500'
+                        errors.apellido_jugador ? 'border-red-500' : 'border-gray-600 hover:border-gray-500'
                       }`}
-                  placeholder="Ejemplo: Lionel Messi"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  placeholder="Ejemplo: Messi"
+                  value={formData.apellido_jugador}
+                  onChange={(e) => setFormData({...formData, apellido_jugador: e.target.value})}
                 />
-                    {errors.name && <p className="text-red-400 text-sm font-medium">{errors.name}</p>}
+                    {errors.apellido_jugador && <p className="text-red-400 text-sm font-medium">{errors.apellido_jugador}</p>}
               </div>
               
               <div className="space-y-2">
@@ -528,12 +765,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     type="number"
                     min="15"
                     max="50"
-                      className={`input w-full ${errors.age ? 'border-red-500' : ''}`}
+                      className={`input w-full ${errors.edad ? 'border-red-500' : ''}`}
                     placeholder="Ejemplo: 25"
-                    value={formData.age}
-                    onChange={e => setFormData({ ...formData, age: Number(e.target.value) })}
+                    value={formData.edad}
+                    onChange={e => setFormData({ ...formData, edad: Number(e.target.value) })}
                   />
-                {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
+                {errors.edad && <p className="text-red-500 text-sm">{errors.edad}</p>}
               </div>
               
               <div className="space-y-2">
@@ -541,12 +778,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                   Nacionalidad *
                 </label>
                 <input
-                  className={`input w-full ${errors.nationality ? 'border-red-500' : ''}`}
+                  className={`input w-full ${errors.nacionalidad ? 'border-red-500' : ''}`}
                   placeholder="Ejemplo: Argentina"
-                  value={formData.nationality}
-                  onChange={e => setFormData({ ...formData, nationality: e.target.value })}
+                  value={formData.nacionalidad}
+                  onChange={e => setFormData({ ...formData, nacionalidad: e.target.value })}
                 />
-                {errors.nationality && <p className="text-red-500 text-sm">{errors.nationality}</p>}
+                {errors.nacionalidad && <p className="text-red-500 text-sm">{errors.nacionalidad}</p>}
               </div>
               
               <div className="space-y-2">
@@ -554,16 +791,16 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                       Club *
                     </label>
                     <select
-                      className={`input w-full ${errors.clubId ? 'border-red-500' : ''}`}
-                      value={formData.clubId}
-                      onChange={(e) => setFormData({...formData, clubId: e.target.value})}
+                      className={`input w-full ${errors.id_equipo ? 'border-red-500' : ''}`}
+                      value={formData.id_equipo}
+                      onChange={(e) => setFormData({...formData, id_equipo: e.target.value})}
                     >
                       <option value="">Seleccionar club</option>
                       {clubs.map((club) => (
                         <option key={club.id} value={club.id}>{club.name}</option>
                       ))}
                     </select>
-                    {errors.clubId && <p className="text-red-500 text-sm">{errors.clubId}</p>}
+                    {errors.id_equipo && <p className="text-red-500 text-sm">{errors.id_equipo}</p>}
                   </div>
                   
                   <div className="space-y-2">
@@ -587,8 +824,8 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     </label>
                     <select
                       className="input w-full"
-                      value={formData.dominantFoot}
-                      onChange={(e) => setFormData({...formData, dominantFoot: e.target.value as 'left' | 'right'})}
+                      value={formData.pierna}
+                      onChange={(e) => setFormData({...formData, pierna: e.target.value as 'left' | 'right'})}
                     >
                       <option value="right">Derecho</option>
                       <option value="left">Izquierdo</option>
@@ -603,12 +840,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                       type="number"
                       min="150"
                       max="220"
-                      className={`input w-full ${errors.height ? 'border-red-500' : ''}`}
+                      className={`input w-full ${errors.altura ? 'border-red-500' : ''}`}
                       placeholder="Ejemplo: 170"
-                      value={formData.height}
-                      onChange={e => setFormData({ ...formData, height: Number(e.target.value) })}
+                      value={formData.altura}
+                      onChange={e => setFormData({ ...formData, altura: Number(e.target.value) })}
                     />
-                    {errors.height && <p className="text-red-500 text-sm">{errors.height}</p>}
+                    {errors.altura && <p className="text-red-500 text-sm">{errors.altura}</p>}
                   </div>
                   
                   <div className="space-y-2">
@@ -619,12 +856,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                       type="number"
                       min="40"
                       max="120"
-                      className={`input w-full ${errors.weight ? 'border-red-500' : ''}`}
+                      className={`input w-full ${errors.peso ? 'border-red-500' : ''}`}
                       placeholder="Ejemplo: 70"
-                      value={formData.weight}
-                      onChange={e => setFormData({ ...formData, weight: Number(e.target.value) })}
+                      value={formData.peso}
+                      onChange={e => setFormData({ ...formData, peso: Number(e.target.value) })}
                     />
-                    {errors.weight && <p className="text-red-500 text-sm">{errors.weight}</p>}
+                    {errors.peso && <p className="text-red-500 text-sm">{errors.peso}</p>}
                   </div>
                   
                   <div className="space-y-2">
@@ -633,8 +870,8 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                 </label>
                 <select
                   className="input w-full"
-                  value={formData.position}
-                  onChange={(e) => setFormData({...formData, position: e.target.value})}
+                  value={formData.posicion}
+                  onChange={(e) => setFormData({...formData, posicion: e.target.value})}
                 >
                       {positions.map(pos => (
                         <option key={pos.value} value={pos.value}>{pos.label}</option>
@@ -656,23 +893,13 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                   </div>
                 </div>
                                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
-                  {secondaryPositions.filter(pos => pos.value !== formData.position).map(pos => (
+                  {secondaryPositions.filter(pos => pos.value !== formData.posicion).map(pos => (
                     <label key={pos.value} className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={formData.secondaryPositions.includes(pos.value)}
+                        checked={false} // No se mapean directamente a la interfaz
                         onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({
-                              ...formData,
-                              secondaryPositions: [...formData.secondaryPositions, pos.value]
-                            });
-                          } else {
-                            setFormData({
-                              ...formData,
-                              secondaryPositions: formData.secondaryPositions.filter(p => p !== pos.value)
-                            });
-                          }
+                          // No se mapean directamente a la interfaz
                         }}
                         className="rounded border-gray-600 bg-gray-700 text-primary focus:ring-primary"
                       />
@@ -703,25 +930,26 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                                  {!isGoalkeeper ? (
                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                     {[
-                      { key: 'offensive', label: 'Ofensiva', icon: '⚽' },
-                      { key: 'ballControl', label: 'Control de Balón', icon: '🎯' },
-                      { key: 'dribbling', label: 'Drible', icon: '🏃' },
-                      { key: 'lowPass', label: 'Precisión Pase Bajo', icon: '📤' },
-                      { key: 'loftedPass', label: 'Precisión Pase Alto', icon: '📡' },
-                      { key: 'finishing', label: 'Potencia de Tiro', icon: '🎯' },
-                      { key: 'placeKicking', label: 'Precisión de Tiro', icon: '⚽' },
-                      { key: 'volleys', label: 'Cabeceo', icon: '👤' },
-                      { key: 'curl', label: 'Efecto', icon: '🌀' },
-                      { key: 'speed', label: 'Velocidad', icon: '💨' },
-                      { key: 'acceleration', label: 'Aceleración', icon: '🚀' },
-                      { key: 'kickingPower', label: 'Fuerza Física', icon: '💪' },
-                      { key: 'stamina', label: 'Resistencia', icon: '🏃‍♂️' },
-                      { key: 'jumping', label: 'Salto', icon: '🦘' },
-                      { key: 'physicalContact', label: 'Defensa', icon: '🛡️' },
-                      { key: 'balance', label: 'Recuperación', icon: '⚖️' },
-                      { key: 'defensive', label: 'Agresividad', icon: '🔥' },
-                      { key: 'ballWinning', label: 'Interceptación', icon: '🎯' },
-                      { key: 'aggression', label: 'Agresividad', icon: '⚔️' },
+                      { key: 'actitud_ofensiva', label: 'Actitud Ofensiva', icon: '⚽' },
+                      { key: 'control_balon', label: 'Control de Balón', icon: '🎯' },
+                      { key: 'drible', label: 'Drible', icon: '🏃' },
+                      { key: 'posesion_balon', label: 'Posesión de Balón', icon: '👤' },
+                      { key: 'pase_raso', label: 'Pase Rápido', icon: '📤' },
+                      { key: 'pase_bombeado', label: 'Pase Bombeado', icon: '📡' },
+                      { key: 'finalizacion', label: 'Finalización', icon: '🎯' },
+                      { key: 'cabeceador', label: 'Cabeceador', icon: '🤕' },
+                      { key: 'balon_parado', label: 'Balón Parado', icon: '👟' },
+                      { key: 'efecto', label: 'Efecto', icon: '🌀' },
+                      { key: 'velocidad', label: 'Velocidad', icon: '💨' },
+                      { key: 'aceleracion', label: 'Aceleración', icon: '🚀' },
+                      { key: 'potencia_tiro', label: 'Fuerza de Tiro', icon: '🎯' },
+                      { key: 'salto', label: 'Salto', icon: '🦘' },
+                      { key: 'contacto_fisico', label: 'Contacto Físico', icon: '🛡️' },
+                      { key: 'equilibrio', label: 'Equilibrio', icon: '⚖️' },
+                      { key: 'resistencia', label: 'Resistencia', icon: '🏃‍♂️' },
+                      { key: 'actitud_defensiva', label: 'Actitud Defensiva', icon: '🛡️' },
+                      { key: 'recuperacion_balon', label: 'Recuperación de Balón', icon: '🎯' },
+                      { key: 'agresividad', label: 'Agresividad', icon: '⚔️' },
                     ].map((stat) => (
                       <div key={stat.key} className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-200">
@@ -752,11 +980,11 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                                  ) : (
                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                     {[
-                      { key: 'goalkeeperReach', label: 'Habilidad', icon: '🤲' },
-                      { key: 'goalkeeperReflexes', label: 'Reflejos', icon: '⚡' },
-                      { key: 'goalkeeperClearing', label: 'Despeje', icon: '👊' },
-                      { key: 'goalkeeperThrowing', label: 'Atrapada', icon: '🤲' },
-                      { key: 'goalkeeperHandling', label: 'Juego de Pies', icon: '👟' },
+                      { key: 'actitud_portero', label: 'Actitud Portero', icon: '🤲' },
+                      { key: 'atajar_pt', label: 'Atajar', icon: '⚡' },
+                      { key: 'despejar_pt', label: 'Despejar', icon: '👊' },
+                      { key: 'reflejos_pt', label: 'Reflejos', icon: '👁️' },
+                      { key: 'cobertura_pt', label: 'Cobertura', icon: '🛡️' },
                     ].map((stat) => (
                       <div key={stat.key} className="space-y-2">
                         <label className="block text-sm font-medium text-gray-300">
@@ -853,8 +1081,8 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                     </label>
                     <select
                       className="input w-full"
-                      value={formData.playingStyle}
-                      onChange={(e) => setFormData({...formData, playingStyle: e.target.value})}
+                      value={formData.estilo_juego}
+                      onChange={(e) => setFormData({...formData, estilo_juego: e.target.value})}
                     >
                       {playingStyles.map(style => (
                         <option key={style} value={style}>{style}</option>
@@ -944,34 +1172,33 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-300">
-                  Overall (40-99) *
+                  Valoración (40-99) *
                 </label>
                 <input
                   type="number"
                   min="40"
                   max="99"
-                  className={`input w-full ${errors.overall ? 'border-red-500' : ''}`}
+                  className={`input w-full ${errors.valoracion ? 'border-red-500' : ''}`}
                   placeholder="Ejemplo: 85"
-                  value={formData.overall}
-                  onChange={(e) => setFormData({...formData, overall: Number(e.target.value)})}
+                  value={formData.valoracion}
+                  onChange={(e) => setFormData({...formData, valoracion: Number(e.target.value)})}
                 />
-                {errors.overall && <p className="text-red-500 text-sm">{errors.overall}</p>}
+                {errors.valoracion && <p className="text-red-500 text-sm">{errors.valoracion}</p>}
               </div>
               
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-300">
-                      Potencial (40-99)
+                      Precio de Compra Libre ($)
                 </label>
                 <input
                   type="number"
-                  min="40"
-                  max="99"
-                      className={`input w-full ${errors.potential ? 'border-red-500' : ''}`}
-                  placeholder="Ejemplo: 90"
-                  value={formData.potential}
-                  onChange={e => setFormData({ ...formData, potential: Number(e.target.value) })}
-                />
-                    {errors.potential && <p className="text-red-500 text-sm">{errors.potential}</p>}
+                      min="0"
+                      className={`input w-full ${errors.precio_compra_libre ? 'border-red-500' : ''}`}
+                      placeholder="Ejemplo: 50000"
+                      value={formData.precio_compra_libre}
+                      onChange={e => setFormData({ ...formData, precio_compra_libre: Number(e.target.value) })}
+                    />
+                    {errors.precio_compra_libre && <p className="text-red-500 text-sm">{errors.precio_compra_libre}</p>}
               </div>
               
               <div className="space-y-2">
@@ -984,8 +1211,8 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                       max="10"
                       className="input w-full"
                       placeholder="Ejemplo: 3"
-                      value={formData.contractYears}
-                      onChange={e => setFormData({ ...formData, contractYears: Number(e.target.value) })}
+                      value={formData.edad} // Mapea a edad para el año de expiración
+                      onChange={e => setFormData({ ...formData, edad: Number(e.target.value) })}
                     />
               </div>
               
@@ -996,12 +1223,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                 <input
                   type="number"
                       min="0"
-                      className={`input w-full ${errors.salary ? 'border-red-500' : ''}`}
+                      className={`input w-full ${errors.precio_compra_libre ? 'border-red-500' : ''}`}
                       placeholder="Ejemplo: 50000"
-                      value={formData.salary}
-                      onChange={e => setFormData({ ...formData, salary: Number(e.target.value) })}
+                      value={formData.precio_compra_libre}
+                      onChange={e => setFormData({ ...formData, precio_compra_libre: Number(e.target.value) })}
                     />
-                    {errors.salary && <p className="text-red-500 text-sm">{errors.salary}</p>}
+                    {errors.precio_compra_libre && <p className="text-red-500 text-sm">{errors.precio_compra_libre}</p>}
               </div>
               
               <div className="space-y-2">
@@ -1011,12 +1238,12 @@ const NewPlayerModal = ({ onClose, onSave }: Props) => {
                   <input
                     type="number"
                     min="0"
-                      className={`input w-full ${errors.marketValue ? 'border-red-500' : ''}`}
+                      className={`input w-full ${errors.precio_compra_libre ? 'border-red-500' : ''}`}
                       placeholder="Ejemplo: 1000000"
-                      value={formData.marketValue}
-                      onChange={e => setFormData({ ...formData, marketValue: Number(e.target.value) })}
+                      value={formData.precio_compra_libre}
+                      onChange={e => setFormData({ ...formData, precio_compra_libre: Number(e.target.value) })}
                     />
-                    {errors.marketValue && <p className="text-red-500 text-sm">{errors.marketValue}</p>}
+                    {errors.precio_compra_libre && <p className="text-red-500 text-sm">{errors.precio_compra_libre}</p>}
                   </div>
                 </div>
               </div>

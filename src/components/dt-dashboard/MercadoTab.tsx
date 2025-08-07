@@ -54,21 +54,28 @@ export default function MercadoTab() {
 
   const availablePlayers = useMemo(() => {
     return players
-      .filter(p => p.transferListed)
-      .filter(p => p.clubId !== club?.id)
-      .filter(p => positionFilter === 'all' || p.position === positionFilter)
-      .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+      .filter(p => (p.id_equipo || p.clubId) !== club?.id) // Excluir jugadores del club actual
+      .filter(p => positionFilter === 'all' || (p.posicion || p.position) === positionFilter)
+      .filter(p => {
+        const playerName = `${p.nombre_jugador || ''} ${p.apellido_jugador || ''}`.toLowerCase();
+        const legacyName = p.name?.toLowerCase() || '';
+        return playerName.includes(search.toLowerCase()) || legacyName.includes(search.toLowerCase());
+      })
       .sort((a, b) => {
         switch (sortBy) {
-          case 'value': return b.marketValue - a.marketValue;
-          case 'overall': return b.overall - a.overall;
-          case 'age': return a.age - b.age;
+          case 'value': 
+            return (b.precio_compra_libre || b.marketValue || 0) - (a.precio_compra_libre || a.marketValue || 0);
+          case 'overall': 
+            return (b.valoracion || b.overall || 0) - (a.valoracion || a.overall || 0);
+          case 'age': 
+            return (a.edad || a.age || 0) - (b.edad || b.age || 0);
           default: return 0;
         }
       });
   }, [players, club?.id, positionFilter, search, sortBy]);
 
   const getClubName = (clubId: string) => {
+    if (!clubId) return 'Desconocido';
     const found = clubs.find(c => c.id === clubId);
     return found ? found.name : 'Desconocido';
   };
@@ -76,10 +83,6 @@ export default function MercadoTab() {
   const handleMakeOffer = (player: Player) => {
     if (!marketStatus) {
       toast.error('El mercado está cerrado');
-      return;
-    }
-    if (!player.transferListed) {
-      toast.error('El jugador no está en la lista de transferibles');
       return;
     }
     setSelectedPlayer(player);
@@ -188,29 +191,35 @@ export default function MercadoTab() {
               >
                 <div className="relative">
                   <img 
-                    src={player.image} 
-                    alt={player.name}
+                    src={player.foto_jugador || player.image || ''} 
+                    alt={player.nombre_jugador && player.apellido_jugador ? `${player.nombre_jugador} ${player.apellido_jugador}` : player.name || 'Jugador'}
                     className="w-full h-48 object-cover"
                   />
                   <div className="absolute top-3 left-3 bg-black/70 px-2 py-1 rounded-lg text-xs font-medium">
-                    {player.position}
+                    {player.posicion || player.position || 'N/A'}
                   </div>
                   <div className="absolute top-3 right-3 bg-primary/90 px-2 py-1 rounded-lg text-xs font-bold text-black">
-                    {player.overall}
+                    {player.valoracion || player.overall || 'N/A'}
                   </div>
                 </div>
                 
                 <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1">{player.name}</h3>
-                  <p className="text-sm text-gray-400 mb-3">{getClubName(player.clubId)} • {player.age} años</p>
+                  <h3 className="font-bold text-lg mb-1">
+                    {player.nombre_jugador && player.apellido_jugador 
+                      ? `${player.nombre_jugador} ${player.apellido_jugador}` 
+                      : player.name || 'Sin nombre'}
+                  </h3>
+                  <p className="text-sm text-gray-400 mb-3">
+                    {getClubName(player.id_equipo || player.clubId || '')} • {player.edad || player.age || 'N/A'} años
+                  </p>
                   
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-primary font-bold">
-                      {formatCurrency(player.marketValue)}
+                      {formatCurrency(player.precio_compra_libre || player.marketValue || 0)}
                     </span>
                     <div className="flex items-center gap-1">
                       <Star size={14} className="text-yellow-500" />
-                      <span className="text-sm">{player.potential}</span>
+                      <span className="text-sm">{player.valoracion || player.overall || 'N/A'}</span>
                     </div>
                   </div>
                   

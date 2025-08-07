@@ -1,14 +1,17 @@
 import  { useState } from 'react';
-import { Plus, Search, Edit, Trash, Filter, User, Trophy, Star, Eye, MoreVertical, Users } from 'lucide-react'; 
+import { Plus, Search, Edit, Trash, Filter, User, Trophy, Star, Eye, MoreVertical, Users, RefreshCw } from 'lucide-react'; 
 import toast from 'react-hot-toast';
 import { useGlobalStore } from '../../store/globalStore';
+import { useDataStore } from '../../../store/dataStore';
 import NewPlayerModal from '../../components/admin/NewPlayerModal';
 import EditPlayerModal from '../../components/admin/EditPlayerModal';
 import ConfirmDeleteModal from '../../components/admin/ConfirmDeleteModal';
 import { Player } from '../../types/shared';
+import { resetPlayersData } from '../../../utils/playerService';
 
 const Jugadores = () => {
   const { players, clubs, addPlayer, updatePlayer, removePlayer, setLoading } = useGlobalStore();
+  const { addPlayer: addPlayerToDataStore, updatePlayerEntry } = useDataStore();
   const [showNew, setShowNew] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deletePlayer, setDeletePlayer] = useState<Player | null>(null);
@@ -17,9 +20,10 @@ const Jugadores = () => {
   const [clubFilter, setClubFilter] = useState('all'); 
 
    const filteredPlayers = players.filter(player => {
-    const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
-    const matchesPosition = positionFilter === 'all' || player.position === positionFilter;
-    const matchesClub = clubFilter === 'all' || player.clubId === clubFilter;
+    const fullName = `${player.nombre_jugador || ''} ${player.apellido_jugador || ''}`.toLowerCase();
+    const matchesSearch = fullName.includes(search.toLowerCase());
+    const matchesPosition = positionFilter === 'all' || player.posicion === positionFilter;
+    const matchesClub = clubFilter === 'all' || player.id_equipo === clubFilter;
     return matchesSearch && matchesPosition && matchesClub;
   });
 
@@ -34,41 +38,128 @@ const Jugadores = () => {
     
     const newPlayer: Player = {
       id: Date.now().toString(),
-      name: playerData.name || '',
-      age: playerData.age || 18,
-      nationality: playerData.nationality || '',
-      dorsal: playerData.dorsal || 1,
-      position: playerData.position || 'DEL',
-      clubId: playerData.clubId || '',
-      overall: playerData.overall || 75,
-      potential: playerData.potential || 80,
+      nombre_jugador: playerData.nombre_jugador || '',
+      apellido_jugador: playerData.apellido_jugador || '',
+      edad: playerData.edad || 18,
+      altura: playerData.altura || 175,
+      peso: playerData.peso || 70,
+      pierna: playerData.pierna || 'right',
+      estilo_juego: playerData.estilo_juego || 'Balanced',
+      posicion: playerData.posicion || 'CF',
+      valoracion: playerData.valoracion || 75,
+      precio_compra_libre: playerData.precio_compra_libre || 1000000,
+      nacionalidad: playerData.nacionalidad || '',
+      id_equipo: playerData.id_equipo || '',
+      foto_jugador: playerData.foto_jugador || '',
+      is_free: playerData.is_free || false,
+      
+      // Características ofensivas
+      actitud_ofensiva: playerData.actitud_ofensiva ?? 70,
+      control_balon: playerData.control_balon ?? 70,
+      drible: playerData.drible ?? 70,
+      posesion_balon: playerData.posesion_balon ?? 70,
+      pase_raso: playerData.pase_raso ?? 70,
+      pase_bombeado: playerData.pase_bombeado ?? 70,
+      finalizacion: playerData.finalizacion ?? 70,
+      cabeceador: playerData.cabeceador ?? 70,
+      balon_parado: playerData.balon_parado ?? 70,
+      efecto: playerData.efecto ?? 70,
+      
+      // Características físicas
+      velocidad: playerData.velocidad ?? 70,
+      aceleracion: playerData.aceleracion ?? 70,
+      potencia_tiro: playerData.potencia_tiro ?? 70,
+      salto: playerData.salto ?? 70,
+      contacto_fisico: playerData.contacto_fisico ?? 70,
+      equilibrio: playerData.equilibrio ?? 70,
+      resistencia: playerData.resistencia ?? 70,
+      
+      // Características defensivas
+      actitud_defensiva: playerData.actitud_defensiva ?? 70,
+      recuperacion_balon: playerData.recuperacion_balon ?? 70,
+      agresividad: playerData.agresividad ?? 70,
+      
+      // Características de portero
+      actitud_portero: playerData.actitud_portero ?? 70,
+      atajar_pt: playerData.atajar_pt ?? 70,
+      despejar_pt: playerData.despejar_pt ?? 70,
+      reflejos_pt: playerData.reflejos_pt ?? 70,
+      cobertura_pt: playerData.cobertura_pt ?? 70,
+      
+      // Características adicionales
+      uso_pie_malo: playerData.uso_pie_malo ?? 70,
+      precision_pie_malo: playerData.precision_pie_malo ?? 70,
+      estabilidad: playerData.estabilidad ?? 70,
+      resistencia_lesiones: playerData.resistencia_lesiones ?? 70,
+      
+      // Campos legacy para compatibilidad
+      name: playerData.nombre_jugador || '',
+      age: playerData.edad ?? 18,
+      position: playerData.posicion || 'CF',
+      nationality: playerData.nacionalidad || '',
+      dorsal: playerData.dorsal ?? 1,
+      clubId: playerData.id_equipo || '',
+      overall: playerData.valoracion ?? 75,
+      potential: playerData.valoracion ?? 75,
       transferListed: false,
       matches: 0,
-      transferValue: playerData.price || 0,
-      value: playerData.price || 0,
-      image:
-        playerData.image ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(playerData.name || '')}&background=1e293b&color=fff&size=128`,
+      transferValue: playerData.precio_compra_libre ?? 1000000,
+      value: playerData.precio_compra_libre ?? 1000000,
+      image: playerData.foto_jugador || `https://ui-avatars.com/api/?name=${encodeURIComponent(playerData.nombre_jugador || '')}&background=1e293b&color=fff&size=128`,
       attributes: {
-        pace: 50,
-        shooting: 50,
-        passing: 50,
-        dribbling: 50,
-        defending: 50,
-        physical: 50
+        pace: playerData.velocidad ?? 70,
+        shooting: playerData.finalizacion ?? 70,
+        passing: playerData.pase_raso ?? 70,
+        dribbling: playerData.drible ?? 70,
+        defending: playerData.actitud_defensiva ?? 70,
+        physical: playerData.contacto_fisico ?? 70
       },
       contract: {
-        expires: playerData.contract?.expires || '',
-        salary: playerData.contract?.salary || 0
+        expires: (new Date().getFullYear() + 3).toString(),
+        salary: playerData.precio_compra_libre ?? 1000000
       },
       form: 1,
       goals: 0,
       assists: 0,
       appearances: 0,
-      price: playerData.price || 0
+      price: playerData.precio_compra_libre || 1000000,
+      detailedStats: {
+        offensive: playerData.actitud_ofensiva ?? 70,
+        ballControl: playerData.control_balon ?? 70,
+        dribbling: playerData.drible ?? 70,
+        lowPass: playerData.pase_raso ?? 70,
+        loftedPass: playerData.pase_bombeado ?? 70,
+        finishing: playerData.finalizacion ?? 70,
+        placeKicking: playerData.balon_parado ?? 70,
+        volleys: playerData.efecto ?? 70,
+        curl: playerData.cabeceador ?? 70,
+        speed: playerData.velocidad ?? 70,
+        acceleration: playerData.aceleracion ?? 70,
+        kickingPower: playerData.potencia_tiro ?? 70,
+        stamina: playerData.resistencia ?? 70,
+        jumping: playerData.salto ?? 70,
+        physicalContact: playerData.contacto_fisico ?? 70,
+        balance: playerData.equilibrio ?? 70,
+        defensive: playerData.actitud_defensiva ?? 70,
+        ballWinning: playerData.recuperacion_balon ?? 70,
+        aggression: playerData.agresividad ?? 70,
+        goalkeeperReach: playerData.actitud_portero ?? 70,
+        goalkeeperReflexes: playerData.reflejos_pt ?? 70,
+        goalkeeperClearing: playerData.despejar_pt ?? 70,
+        goalkeeperThrowing: playerData.atajar_pt ?? 70,
+        goalkeeperHandling: playerData.cobertura_pt ?? 70,
+      },
+      specialSkills: playerData.specialSkills || [],
+      celebrations: playerData.celebrations || [],
+      playingStyle: playerData.estilo_juego || 'Equilibrado',
+      consistency: playerData.estabilidad ?? 70,
+      injuryResistance: playerData.resistencia_lesiones ?? 70,
+      morale: 70
     };
     
     addPlayer(newPlayer);
+    // Sincronizar con dataStore para el Dashboard del DT
+    addPlayerToDataStore(newPlayer);
     setShowNew(false);
     setLoading(false);
     toast.success('Jugador creado exitosamente');
@@ -79,6 +170,8 @@ const Jugadores = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     updatePlayer(playerData);
+    // Sincronizar con dataStore para el Dashboard del DT
+    updatePlayerEntry(playerData);
     setEditPlayer(null);
     setLoading(false);
     toast.success('Jugador actualizado exitosamente');
@@ -91,9 +184,18 @@ const Jugadores = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     removePlayer(deletePlayer.id);
+    // Sincronizar con dataStore para el Dashboard del DT
+    const { removePlayer: removePlayerFromDataStore } = useDataStore.getState();
+    removePlayerFromDataStore(deletePlayer.id);
     setDeletePlayer(null);
     setLoading(false);
     toast.success('Jugador eliminado exitosamente');
+  };
+
+  const handleResetPlayersData = () => {
+    if (confirm('¿Estás seguro de que quieres regenerar todos los datos de jugadores? Esto eliminará todos los jugadores existentes.')) {
+      resetPlayersData();
+    }
   };
 
    return (
@@ -137,6 +239,15 @@ const Jugadores = () => {
               <Plus size={20} />
               <span>Nuevo Jugador</span>
             </button>
+            
+            <button
+              onClick={handleResetPlayersData}
+              className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+              title="Regenerar datos de jugadores"
+            >
+              <RefreshCw size={20} />
+              <span>Regenerar Datos</span>
+            </button>
           </div>
         </div>  
 
@@ -160,10 +271,19 @@ const Jugadores = () => {
               onChange={(e) => setPositionFilter(e.target.value)}
             >
               <option value="all">Todas las posiciones</option>
-              <option value="POR">Portero</option>
-              <option value="DEF">Defensor</option>
-              <option value="MED">Mediocampista</option>
-              <option value="DEL">Delantero</option>
+              <option value="GK">Portero</option>
+              <option value="CB">Central</option>
+              <option value="LB">Lateral Izquierdo</option>
+              <option value="RB">Lateral Derecho</option>
+              <option value="DMF">Mediocentro Defensivo</option>
+              <option value="CMF">Mediocentro</option>
+              <option value="AMF">Mediocentro Ofensivo</option>
+              <option value="LMF">Medio Izquierdo</option>
+              <option value="RMF">Medio Derecho</option>
+              <option value="LWF">Extremo Izquierdo</option>
+              <option value="RWF">Extremo Derecho</option>
+              <option value="SS">Segundo Delantero</option>
+              <option value="CF">Delantero Centro</option>
             </select>
             
             <select
@@ -204,25 +324,25 @@ const Jugadores = () => {
                         )}
                       </div>
                       <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg px-2 py-1 text-xs font-bold text-white">
-                        {player.overall}
+                        {player.valoracion || 'N/A'}
                       </div>
                     </div>
                     
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-xl font-bold text-white">{player.name}</h3>
+                        <h3 className="text-xl font-bold text-white">{player.nombre_jugador || 'Sin nombre'} {player.apellido_jugador || ''}</h3>
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          player.position === 'POR' 
+                          player.posicion === 'GK' 
                             ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-                            : player.position === 'DEF'
+                            : player.posicion?.includes('DEF')
                             ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                            : player.position === 'MED'
+                            : player.posicion?.includes('MF')
                             ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                             : 'bg-red-500/20 text-red-300 border border-red-500/30'
                         }`}>
-                          {player.position}
+                          {player.posicion || 'N/A'}
                         </span>
-                        {player.overall >= 85 && (
+                        {(player.valoracion || 0) >= 85 && (
                           <Star size={16} className="text-yellow-400" />
                         )}
                       </div>
@@ -230,55 +350,58 @@ const Jugadores = () => {
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                         <div className="flex items-center space-x-2">
                           <span className="text-gray-400">Club:</span>
-                          <span className="text-white font-medium">{getClubName(player.clubId)}</span>
+                          <span className="text-white font-medium">{getClubName(player.id_equipo)}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
                           <span className="text-gray-400">Edad:</span>
-                          <span className="text-white font-medium">{player.age} años</span>
+                          <span className="text-white font-medium">{player.edad || 'N/A'} años</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
                           <span className="text-gray-400">Nacionalidad:</span>
-                          <span className="text-white font-medium">{player.nationality}</span>
+                          <span className="text-white font-medium">{player.nacionalidad || 'N/A'}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
-                          <span className="text-gray-400">Dorsal:</span>
-                          <span className="text-white font-bold">#{player.dorsal}</span>
+                          <span className="text-gray-400">Altura:</span>
+                          <span className="text-white font-medium">{player.altura || 'N/A'}cm</span>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-400">Peso:</span>
+                          <span className="text-white font-medium">{player.peso || 'N/A'}kg</span>
                         </div>
                       </div>
                       
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-gray-400 text-sm">Valor:</span>
-                            <span className="text-green-400 font-bold">
-                              ${(player.price || 0).toLocaleString()}
-                            </span>
+                                              <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-400 text-sm">Valor:</span>
+                              <span className="text-green-400 font-bold">
+                                ${(player.precio_compra_libre || 0).toLocaleString()}
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-400 text-sm">Valoración:</span>
+                              <span className="text-blue-400 font-medium">{player.valoracion || 'N/A'}</span>
+                            </div>
                           </div>
                           
-                          {player.potential && (
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-400 text-sm">Potencial:</span>
-                              <span className="text-blue-400 font-medium">{player.potential}</span>
-                            </div>
-                          )}
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-3 h-3 rounded-full ${
+                              (player.valoracion || 0) >= 85 ? 'bg-green-400' :
+                              (player.valoracion || 0) >= 75 ? 'bg-yellow-400' :
+                              'bg-gray-400'
+                            }`}></div>
+                            <span className="text-xs text-gray-400">
+                              {(player.valoracion || 0) >= 85 ? 'Elite' :
+                               (player.valoracion || 0) >= 75 ? 'Profesional' :
+                               'Promesa'}
+                            </span>
+                          </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-3 h-3 rounded-full ${
-                            player.overall >= 85 ? 'bg-green-400' :
-                            player.overall >= 75 ? 'bg-yellow-400' :
-                            'bg-gray-400'
-                          }`}></div>
-                          <span className="text-xs text-gray-400">
-                            {player.overall >= 85 ? 'Elite' :
-                             player.overall >= 75 ? 'Profesional' :
-                             'Promesa'}
-                          </span>
-                        </div>
-                      </div>
                     </div>
                   </div>
                   

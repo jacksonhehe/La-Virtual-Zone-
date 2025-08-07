@@ -50,8 +50,48 @@ export default function PlantillaTab() {
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Función para traducir estadísticas al español
+  const translateStat = (key: string): string => {
+    const translations: { [key: string]: string } = {
+      // Estadísticas ofensivas
+      offensive: 'Actitud Ofensiva',
+      ballControl: 'Control de Balón',
+      dribbling: 'Drible',
+      lowPass: 'Pase Raso',
+      loftedPass: 'Pase Bombeado',
+      finishing: 'Finalización',
+      placeKicking: 'Balón Parado',
+      volleys: 'Efecto',
+      curl: 'Cabeceador',
+      
+      // Estadísticas físicas
+      speed: 'Velocidad',
+      acceleration: 'Aceleración',
+      kickingPower: 'Potencia de Tiro',
+      stamina: 'Resistencia',
+      jumping: 'Salto',
+      physicalContact: 'Contacto Físico',
+      balance: 'Equilibrio',
+      
+      // Estadísticas defensivas
+      defensive: 'Actitud Defensiva',
+      ballWinning: 'Recuperación de Balón',
+      aggression: 'Agresividad',
+      
+      // Estadísticas de portero
+      goalkeeperReach: 'Actitud de Portero',
+      goalkeeperReflexes: 'Reflejos',
+      goalkeeperClearing: 'Despeje',
+      goalkeeperThrowing: 'Atajar',
+      goalkeeperHandling: 'Cobertura'
+    };
+    
+    return translations[key] || key.replace(/([A-Z])/g, ' $1').trim();
+  };
+
   // Helper function to map PES 2021 positions to simplified categories
-  const getPositionCategory = (position: string): string => {
+  const getPositionCategory = (position: string | undefined): string => {
+    if (!position) return 'MID';
     if (position === 'GK') return 'GK';
     if (['CB', 'LB', 'RB', 'LWB', 'RWB'].includes(position)) return 'DEF';
     if (['DMF', 'CMF', 'AMF', 'LMF', 'RMF', 'CDM', 'CM', 'CAM', 'LM', 'RM'].includes(position)) return 'MID';
@@ -69,27 +109,28 @@ export default function PlantillaTab() {
 
   const filteredPlayers = useMemo(() => {
     let filtered = players.filter(player => {
-      const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
-      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.position) === selectedPosition;
-      const matchesClub = player.clubId === club?.id;
+      const fullName = `${player.nombre_jugador || ''} ${player.apellido_jugador || ''}`.toLowerCase();
+      const matchesSearch = fullName.includes(search.toLowerCase());
+      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.posicion || player.position) === selectedPosition;
+      const matchesClub = player.id_equipo === club?.id || player.clubId === club?.id;
       return matchesSearch && matchesPosition && matchesClub;
     });
 
     // Sort players
     filtered.sort((a, b) => {
-      let aVal, bVal;
+      let aVal: any, bVal: any;
       switch (sortBy) {
         case 'overall':
-          aVal = a.overall;
-          bVal = b.overall;
+          aVal = a.valoracion || a.overall || 0;
+          bVal = b.valoracion || b.overall || 0;
           break;
         case 'name':
-          aVal = a.name;
-          bVal = b.name;
+          aVal = `${a.nombre_jugador || ''} ${a.apellido_jugador || ''}`.trim() || a.name || '';
+          bVal = `${b.nombre_jugador || ''} ${b.apellido_jugador || ''}`.trim() || b.name || '';
           break;
         case 'age':
-          aVal = a.age;
-          bVal = b.age;
+          aVal = a.edad || a.age || 0;
+          bVal = b.edad || b.age || 0;
           break;
         case 'salary':
           aVal = a.contract?.salary || 0;
@@ -116,10 +157,10 @@ export default function PlantillaTab() {
     
     const totalPlayers = filteredPlayers.length;
     const avgAge = totalPlayers > 0 
-      ? Math.round(filteredPlayers.reduce((sum, p) => sum + p.age, 0) / totalPlayers)
+      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.edad || p.age || 0), 0) / totalPlayers)
       : 0;
     const avgOverall = totalPlayers > 0
-      ? Math.round(filteredPlayers.reduce((sum, p) => sum + p.overall, 0) / totalPlayers)
+      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.valoracion || p.overall || 0), 0) / totalPlayers)
       : 0;
     const totalSalary = filteredPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
     const contractsExpiring = filteredPlayers.filter(p => {
@@ -417,29 +458,32 @@ export default function PlantillaTab() {
                 />
                 <div className="text-right">
                   <div className="bg-primary/20 text-primary px-2 py-1 rounded-lg text-sm font-bold">
-                    {player.position}
+                    {player.posicion || player.position || 'N/A'}
                   </div>
                   <div className="flex items-center gap-1 mt-2">
                     <Star size={14} className="text-yellow-500" />
-                    <span className="text-sm text-white/70">{player.overall}</span>
+                    <span className="text-sm text-white/70">{player.valoracion || player.overall || 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
               <h3 className="font-bold text-white mb-2 group-hover:text-primary transition-colors">
-                {player.name}
+                {player.nombre_jugador && player.apellido_jugador 
+                  ? `${player.nombre_jugador} ${player.apellido_jugador}`
+                  : player.name || 'Sin nombre'
+                }
               </h3>
               
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
+                                <div className="flex items-center justify-between text-sm">
                   <span className="text-white/60">Edad</span>
-                  <span className="text-white">{player.age}</span>
+                  <span className="text-white">{player.edad || player.age || 'N/A'}</span>
                 </div>
                     
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/60">Altura</span>
-                      <span className="text-white">{player.height || 175}cm</span>
-                    </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Altura</span>
+                  <span className="text-white">{player.altura || player.height || 175}cm</span>
+                </div>
                     
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-white/60">Peso</span>
@@ -605,9 +649,16 @@ export default function PlantillaTab() {
                     className="w-20 h-20 rounded-full border-4 border-gray-700"
                   />
                   <div>
-                    <h2 className="text-3xl font-bold text-white">{selectedPlayer.name}</h2>
-                    <p className="text-lg text-gray-300">{selectedPlayer.position} • {selectedPlayer.age} años</p>
-                    <p className="text-sm text-gray-400">{selectedPlayer.nationality}</p>
+                    <h2 className="text-3xl font-bold text-white">
+                      {selectedPlayer.nombre_jugador && selectedPlayer.apellido_jugador 
+                        ? `${selectedPlayer.nombre_jugador} ${selectedPlayer.apellido_jugador}`
+                        : selectedPlayer.name || 'Sin nombre'
+                      }
+                    </h2>
+                    <p className="text-lg text-gray-300">
+                      {selectedPlayer.posicion || selectedPlayer.position || 'N/A'} • {selectedPlayer.edad || selectedPlayer.age || 'N/A'} años
+                    </p>
+                    <p className="text-sm text-gray-400">{selectedPlayer.nacionalidad || selectedPlayer.nationality || 'N/A'}</p>
                   </div>
                 </div>
                 <button
@@ -651,14 +702,14 @@ export default function PlantillaTab() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl p-4 border border-purple-500/30">
                       <div className="text-center">
-                        <p className="text-sm text-gray-400 mb-1">Overall</p>
-                        <p className="text-3xl font-bold text-purple-400">{selectedPlayer.overall}</p>
+                        <p className="text-sm text-gray-400 mb-1">Valoración</p>
+                        <p className="text-3xl font-bold text-purple-400">{selectedPlayer.valoracion || selectedPlayer.overall || 'N/A'}</p>
                       </div>
                     </div>
                     <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-xl p-4 border border-yellow-500/30">
                       <div className="text-center">
                         <p className="text-sm text-gray-400 mb-1">Potencial</p>
-                        <p className="text-3xl font-bold text-yellow-400">{selectedPlayer.potential}</p>
+                        <p className="text-3xl font-bold text-yellow-400">{selectedPlayer.potential || selectedPlayer.valoracion || 'N/A'}</p>
                       </div>
                     </div>
                     <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl p-4 border border-blue-500/30">
@@ -687,15 +738,15 @@ export default function PlantillaTab() {
                       <div className="space-y-3">
                         <div className="flex justify-between">
                           <span className="text-gray-400">Nacionalidad</span>
-                          <span className="text-white">{selectedPlayer.nationality}</span>
+                          <span className="text-white">{selectedPlayer.nacionalidad || selectedPlayer.nationality || 'N/A'}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Altura</span>
-                          <span className="text-white">{selectedPlayer.height || 175}cm</span>
+                          <span className="text-white">{selectedPlayer.altura || selectedPlayer.height || 175}cm</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Peso</span>
-                          <span className="text-white">{selectedPlayer.weight || 70}kg</span>
+                          <span className="text-white">{selectedPlayer.peso || selectedPlayer.weight || 70}kg</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Pie Dominante</span>
@@ -800,7 +851,7 @@ export default function PlantillaTab() {
                         {Object.entries(selectedPlayer.detailedStats).filter(([key]) => !key.startsWith('goalkeeper')).map(([key, value]) => (
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className="text-sm text-gray-300">{translateStat(key)}</span>
                               <span className="text-sm font-bold text-white">{value}</span>
                             </div>
                             <div className="w-full bg-gray-700 rounded-full h-2">
@@ -817,7 +868,7 @@ export default function PlantillaTab() {
                         {Object.entries(selectedPlayer.detailedStats).filter(([key]) => key.startsWith('goalkeeper')).map(([key, value]) => (
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-300 capitalize">{key.replace('goalkeeper', '').replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className="text-sm text-gray-300">{translateStat(key)}</span>
                               <span className="text-sm font-bold text-white">{value}</span>
                             </div>
                             <div className="w-full bg-gray-700 rounded-full h-2">
@@ -904,7 +955,7 @@ export default function PlantillaTab() {
                       <div>
                         <h4 className="text-md font-semibold text-white mb-3">Estilo de Juego</h4>
                         <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm">
-                          {selectedPlayer.playingStyle || 'Balanced'}
+                          {selectedPlayer.estilo_juego || selectedPlayer.playingStyle || 'Equilibrado'}
                         </span>
                       </div>
 
