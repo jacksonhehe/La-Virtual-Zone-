@@ -6,6 +6,14 @@ function randStat() {
   return 60 + Math.floor(Math.random() * 40); // 60-99
 }
 
+function randHeight() {
+  return 160 + Math.floor(Math.random() * 30); // 160-189 cm
+}
+
+function randWeight() {
+  return 60 + Math.floor(Math.random() * 30); // 60-89 kg
+}
+
 function generateDetailedStats(position: string): any {
   return {
     offensive: randStat(),
@@ -55,8 +63,8 @@ function migratePlayerToNewStructure(player: any): Player {
     nombre_jugador,
     apellido_jugador,
     edad: player.age || 25,
-    altura: player.height || 175,
-    peso: player.weight || 70,
+    altura: player.height || randHeight(),
+    peso: player.weight || randWeight(),
     pierna: player.dominantFoot || 'right',
           estilo_juego: player.playingStyle || 'Equilibrado',
     posicion: player.position || 'CF',

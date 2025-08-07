@@ -41,8 +41,8 @@ const Jugadores = () => {
       nombre_jugador: playerData.nombre_jugador || '',
       apellido_jugador: playerData.apellido_jugador || '',
       edad: playerData.edad || 18,
-      altura: playerData.altura || 175,
-      peso: playerData.peso || 70,
+      altura: playerData.altura || (160 + Math.floor(Math.random() * 30)),
+      peso: playerData.peso || (60 + Math.floor(Math.random() * 30)),
       pierna: playerData.pierna || 'right',
       estilo_juego: playerData.estilo_juego || 'Balanced',
       posicion: playerData.posicion || 'CF',
@@ -198,6 +198,24 @@ const Jugadores = () => {
     }
   };
 
+  const handleRegeneratePhysicalData = () => {
+    if (confirm('¿Estás seguro de regenerar los datos físicos (altura y peso) de todos los jugadores?')) {
+      const updatedPlayers = players.map(player => ({
+        ...player,
+        altura: 160 + Math.floor(Math.random() * 30), // 160-189 cm
+        peso: 60 + Math.floor(Math.random() * 30) // 60-89 kg
+      }));
+      
+      // Actualizar en ambos stores
+      updatedPlayers.forEach(player => {
+        updatePlayer(player);
+        updatePlayerEntry(player);
+      });
+      
+      toast.success('Datos físicos regenerados correctamente');
+    }
+  };
+
    return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -247,6 +265,15 @@ const Jugadores = () => {
             >
               <RefreshCw size={20} />
               <span>Regenerar Datos</span>
+            </button>
+            
+            <button
+              onClick={handleRegeneratePhysicalData}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+              title="Regenerar solo altura y peso"
+            >
+              <RefreshCw size={20} />
+              <span>Regenerar Físicos</span>
             </button>
           </div>
         </div>  
