@@ -1,38 +1,56 @@
-# --------------------
-# Etapa de build
-# --------------------
+#############################
+# Etapa 1: Build
+#############################
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copiar dependencias del backend
+# Instalar deps del frontend
+COPY package*.json ./
+RUN npm ci
+
+# Instalar deps del backend (incluye dev deps para compilar Nest)
 COPY server/package*.json ./server/
-WORKDIR /app/server
-RUN npm ci --omit=dev
+RUN cd server && npm ci
 
-# Copiar código fuente del backend
-COPY server .
+# Copiar código
+COPY . .
 
-# Construir la aplicación
+# Variables de build para Vite (Supabase)
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+ENV VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+ENV VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+
+# Build frontend
 RUN npm run build
 
-# --------------------
-# Etapa de producción
-# --------------------
+# Copiar artefactos del frontend al backend/public
+RUN mkdir -p server/public && cp -r dist/* server/public/
+
+# Build backend
+RUN cd server && npm run build && npx prisma generate
+
+#############################
+# Etapa 2: Producción
+#############################
 FROM node:20-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copiar archivos compilados y dependencias
+# Copiar servidor compilado y assets
 COPY --from=builder /app/server/dist ./dist
-COPY --from=builder /app/server/node_modules ./node_modules
+COPY --from=builder /app/server/public ./public
 COPY --from=builder /app/server/prisma ./prisma
+COPY --from=builder /app/server/package*.json ./
+COPY --from=builder /app/server/node_modules ./node_modules
 
-# ¡Generar Prisma Client para Linux!
-RUN npx prisma generate
+# Prune dev deps por si quedaron
+RUN npm prune --omit=dev && npx prisma generate
 
-# Puerto expuesto (coincide con fly.toml)
+# Exponer puerto
 ENV PORT=3000
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+# Ejecutar migraciones y arrancar
+CMD sh -c "npx prisma migrate deploy && node dist/main.js"

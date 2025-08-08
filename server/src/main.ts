@@ -25,10 +25,8 @@ async function bootstrap() {
   app.use(Sentry.Handlers.requestHandler());
   app.use(Sentry.Handlers.errorHandler());
 
-  // Configuración de archivos estáticos
-  app.useStaticAssets(join(__dirname, '..', 'public'), {
-    prefix: '/public/',
-  });
+  // Configuración de archivos estáticos (sirve el SPA en la raíz)
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
   // Configuración de seguridad con Helmet
   app.use(helmet({
@@ -38,7 +36,8 @@ async function bootstrap() {
         styleSrc: ["'self'", "'unsafe-inline'"],
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'"],
+        // Permitir llamadas al propio dominio y a Supabase/Sentry si se usan en el cliente
+        connectSrc: ["'self'", 'https://*.supabase.co', 'https://*.ingest.sentry.io'],
         fontSrc: ["'self'"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
@@ -115,6 +114,19 @@ async function bootstrap() {
 
   // Configuración del puerto
   const port = configService.get('PORT', 3000);
+
+  // Fallback para SPA: devolver index.html en rutas no-API
+  const clientDir = join(__dirname, '..', 'public');
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const accept = req.headers['accept'] ?? '';
+    const path = req.path || req.url;
+    const isAsset = path.includes('.') || path.startsWith('/assets') || path.startsWith('/sw.js') || path.startsWith('/workbox');
+    const isApi = path.startsWith('/auth') || path.startsWith('/players') || path.startsWith('/clubs') || path.startsWith('/market') || path.startsWith('/health');
+    if (req.method === 'GET' && !isAsset && !isApi && typeof accept === 'string' && accept.includes('text/html')) {
+      return res.sendFile(join(clientDir, 'index.html'));
+    }
+    next();
+  });
   await app.listen(port);
   
   console.log(`🚀 Servidor ejecutándose en el puerto ${port}`);

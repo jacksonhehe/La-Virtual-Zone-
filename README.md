@@ -1,20 +1,74 @@
-# SmartAvatar patch
+# La Virtual Zone – Despliegue en un solo dominio (Fly.io)
 
-**Qué arregla**
-Corrige el error `SmartAvatar is not defined` en `Navbar.tsx` añadiendo el componente y el import correspondiente.
+Guía rápida para publicar el backend (NestJS + Prisma + Postgres) sirviendo el frontend (Vite/React) desde el mismo dominio en Fly.io.
 
-**Archivos incluidos**
-- `src/components/common/SmartAvatar.tsx`
+## Requisitos
+- Fly CLI instalado y autenticado.
+- Cuenta en Fly.io.
+- Una base de datos Postgres (puedes crearla en Fly).
 
-**Qué debes hacer**
-1) Copia `src/components/common/SmartAvatar.tsx` dentro de tu proyecto.
-2) Abre `src/components/Layout/Navbar.tsx` y agrega este import en el tope del archivo:
+## Variables necesarias
+Backend (secrets en Fly):
+- `DATABASE_URL` (cadena Postgres)
+- `JWT_SECRET` (cadena larga y aleatoria)
+- `NODE_ENV=production`
 
-```ts
-import SmartAvatar from "../common/SmartAvatar";
+Frontend (PWA / Supabase):
+- `VITE_SUPABASE_URL` (opcional si usas Supabase)
+- `VITE_SUPABASE_ANON_KEY` (opcional si usas Supabase)
+
+## Pasos de despliegue
+1. Crear y adjuntar Postgres en Fly (opcional si ya tienes uno):
+```
+fly postgres create
+fly postgres attach -a la-virtual-zone
 ```
 
-(La ruta es desde `Layout/Navbar.tsx` hacia `components/common/SmartAvatar.tsx`. Si tu estructura difiere, ajusta la ruta.)
+2. Configurar secrets del backend:
+```
+fly secrets set \
+  DATABASE_URL="postgresql://user:pass@host:5432/db" \
+  JWT_SECRET="<tu_llave_segura>" \
+  NODE_ENV="production"
+```
 
-3) Asegúrate de tener una imagen por defecto en `public/default-avatar.png` (opcional). Si no existe, el componente mostrará iniciales en un círculo.
-4) Guarda los cambios y reinicia `vite` si no se refresca solo.
+3. (Opcional) variables de Supabase para el build del frontend:
+```
+fly deploy --build-arg VITE_SUPABASE_URL="https://xxx.supabase.co" \
+           --build-arg VITE_SUPABASE_ANON_KEY="<anon_key>"
+```
+Si no usas Supabase en producción, omite los build args.
+
+4. Desplegar:
+```
+fly deploy
+```
+El contenedor: 
+- compila frontend y backend, 
+- copia `dist/` del frontend a `server/public`,
+- genera Prisma Client,
+- en arranque ejecuta `prisma migrate deploy` y luego `node dist/main.js`.
+
+## Rutas y SPA
+- `GET /health` responde OK.
+- Cualquier ruta del SPA sin extensión devuelve `index.html`.
+
+## Notas de seguridad
+- Helmet CSP permite conexiones a Supabase y Sentry; ajusta si no usas esos servicios.
+- Cookies de refresh usan mismo dominio (no se requiere `SameSite=None`).
+
+## Desarrollo local
+Backend:
+```
+cd server
+npm i
+cp env.example .env
+npx prisma migrate dev
+npm run start:dev
+```
+
+Frontend:
+```
+npm i
+npm run dev
+```

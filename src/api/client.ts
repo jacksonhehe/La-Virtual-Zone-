@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Un dominio: por defecto usa mismo origen donde se sirve el SPA/backend
+const sameOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+const API = import.meta.env.VITE_API_URL || sameOrigin || 'http://localhost:3000';
 
 export default axios.create({
   baseURL: API,
@@ -24,12 +26,10 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expirado o no válido
       console.warn('Sesión expirada o no válida');
-      // Aquí podrías redirigir al login o refrescar el token
     }
     return Promise.reject(error);
   }
 );
 
-export { API }; 
+export { API };
