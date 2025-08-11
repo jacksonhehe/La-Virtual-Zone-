@@ -185,13 +185,24 @@ export const useDataStore = create<DataState>((set) => ({
   
   updatePlayers: (newPlayers) => {
     savePlayers(newPlayers);
-    set(state => ({
-      players: newPlayers,
-      club: {
-        ...state.club,
-        players: refreshClubPlayers(newPlayers, state.club.id)
+    set(state => {
+      // Obtener el usuario autenticado actual
+      const currentUser = useAuthStore.getState().user;
+      let updatedClub = state.club;
+      
+      // Si hay un usuario autenticado con club, actualizar su plantilla
+      if (currentUser?.clubId) {
+        updatedClub = {
+          ...state.club,
+          players: refreshClubPlayers(newPlayers, currentUser.clubId)
+        };
       }
-    }));
+      
+      return {
+        players: newPlayers,
+        club: updatedClub
+      };
+    });
   },
   
   updateTournaments: (newTournaments) => {
@@ -272,12 +283,22 @@ export const useDataStore = create<DataState>((set) => ({
     set((state) => {
       const players = [...state.players, player];
       savePlayers(players);
+      
+      // Obtener el usuario autenticado actual
+      const currentUser = useAuthStore.getState().user;
+      let updatedClub = state.club;
+      
+      // Si hay un usuario autenticado con club, actualizar su plantilla
+      if (currentUser?.clubId) {
+        updatedClub = {
+          ...state.club,
+          players: refreshClubPlayers(players, currentUser.clubId)
+        };
+      }
+      
       return {
         players,
-        club: {
-          ...state.club,
-          players: refreshClubPlayers(players, state.club.id)
-        }
+        club: updatedClub
       };
     }),
 
@@ -336,12 +357,22 @@ export const useDataStore = create<DataState>((set) => ({
     set((state) => {
       const players = state.players.map(p => (p.id === player.id ? player : p));
       savePlayers(players);
+      
+      // Obtener el usuario autenticado actual
+      const currentUser = useAuthStore.getState().user;
+      let updatedClub = state.club;
+      
+      // Si hay un usuario autenticado con club, actualizar su plantilla
+      if (currentUser?.clubId) {
+        updatedClub = {
+          ...state.club,
+          players: refreshClubPlayers(players, currentUser.clubId)
+        };
+      }
+      
       return {
         players,
-        club: {
-          ...state.club,
-          players: refreshClubPlayers(players, state.club.id)
-        }
+        club: updatedClub
       };
     }),
 
@@ -349,12 +380,22 @@ export const useDataStore = create<DataState>((set) => ({
     set((state) => {
       const players = state.players.filter(p => p.id !== id);
       savePlayers(players);
+      
+      // Obtener el usuario autenticado actual
+      const currentUser = useAuthStore.getState().user;
+      let updatedClub = state.club;
+      
+      // Si hay un usuario autenticado con club, actualizar su plantilla
+      if (currentUser?.clubId) {
+        updatedClub = {
+          ...state.club,
+          players: refreshClubPlayers(players, currentUser.clubId)
+        };
+      }
+      
       return {
         players,
-        club: {
-          ...state.club,
-          players: refreshClubPlayers(players, state.club.id)
-        }
+        club: updatedClub
       };
     }),
 

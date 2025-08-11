@@ -34,7 +34,7 @@ const OffersPanel = ({
   const { user } = useAuthStore();
   const { offers, clubs, players } = useDataStore();
   
-  // Offers sent by the current user/club
+  // Offers sent by the current user/club (where my club is buying)
   const storeSentOffers = user ?
     user.role === 'admin' ?
       offers :
@@ -46,7 +46,7 @@ const OffersPanel = ({
       offers.filter(o => o.userId === user.id) :
     [];
 
-  // Offers received by the current club (only for DT or admin)
+  // Offers received by the current club (only for DT or admin) (where my club is selling)
   const storeReceivedOffers = user
     ? user.role === 'admin'
       ? offers
@@ -54,14 +54,13 @@ const OffersPanel = ({
         ? offers.filter(o => {
             const userClub = clubs.find(c => c.name === user.club);
             // Offers where my club is selling
-            return userClub && o.fromClub === userClub.name;
+            return userClub && o.toClub === userClub.name;
           })
         : []
     : [];
 
   const sentOffers = sentOffersProp ?? storeSentOffers;
   const receivedOffers = receivedOffersProp ?? storeReceivedOffers;
-  console.log('Received Offers:', receivedOffers);
 
   const filteredOffers = view === 'sent' ? sentOffers : receivedOffers;
   const OFFERS_PER_PAGE = 10;

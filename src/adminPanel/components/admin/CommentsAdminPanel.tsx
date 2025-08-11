@@ -7,10 +7,11 @@ import StatsCard from './StatsCard';
 import toast from 'react-hot-toast';
 
 const CommentsAdminPanel = () => {
-  const { comments, approveComment, hideComment, deleteComment } = useGlobalStore();
+  const { comments, approveComment, hideComment, deleteComment, newsItems, posts } = useGlobalStore();
   const [filter, setFilter] = useState('pending');
   const [search, setSearch] = useState('');
   const [deleteModal, setDeleteModal] = useState<string | null>(null);
+  const [selectedComment, setSelectedComment] = useState<string | null>(null);
   const [pendingCount, setPendingCount] = useState(
     comments.filter(c => c.status === 'pending').length
   );
@@ -25,15 +26,70 @@ const CommentsAdminPanel = () => {
 
   const filteredComments = comments.filter(comment => {
     const matchesFilter = filter === 'all' || comment.status === filter;
-    const matchesSearch = comment.content.toLowerCase().includes(search.toLowerCase()) ||
-                         comment.author.toLowerCase().includes(search.toLowerCase()) ||
-                         comment.postId.includes(search);
+    
+    let matchesSearch = false;
+    if (search.trim()) {
+      const searchTerm = search.toLowerCase();
+      const postInfo = getPostInfo(comment.postId);
+      
+      matchesSearch = comment.content.toLowerCase().includes(searchTerm) ||
+                     comment.author.toLowerCase().includes(searchTerm) ||
+                     comment.postId.includes(searchTerm) ||
+                     postInfo.title.toLowerCase().includes(searchTerm) ||
+                     postInfo.category.toLowerCase().includes(searchTerm);
+    } else {
+      matchesSearch = true;
+    }
+    
+    // Filtrar solo comentarios del blog si se especifica
+    if (filter === 'blog') {
+      const postInfo = getPostInfo(comment.postId);
+      return matchesFilter && matchesSearch && (postInfo.type === 'Post' || postInfo.type === 'Noticia');
+    }
+    
     return matchesFilter && matchesSearch;
   });
 
   const approvedCount = comments.filter(c => c.status === 'approved').length;
   const hiddenCount = comments.filter(c => c.status === 'hidden').length;
   const flaggedCount = comments.filter(c => (c.flags || 0) > 0).length;
+  const totalComments = comments.length;
+
+  // Función para obtener información de la noticia/post
+  const getPostInfo = (postId: string) => {
+    // Buscar primero en posts, luego en newsItems
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      return {
+        title: post.title,
+        type: 'Post',
+        category: post.category || 'Blog'
+      };
+    }
+    
+    const news = newsItems.find(n => n.id === postId);
+    if (news) {
+      return {
+        title: news.title,
+        type: 'Noticia',
+        category: news.category || 'Noticias'
+      };
+    }
+    
+    return {
+      title: `Post ID: ${postId}`,
+      type: 'Desconocido',
+      category: 'Sin categoría'
+    };
+  };
+
+  // Función para obtener comentarios del blog específicamente
+  const getBlogComments = () => {
+    return comments.filter(comment => {
+      const postInfo = getPostInfo(comment.postId);
+      return postInfo.type === 'Post' || postInfo.type === 'Noticia';
+    });
+  };
 
   const handleApprove = (id: string) => {
     approveComment(id);
@@ -74,19 +130,29 @@ const CommentsAdminPanel = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Gestión de Comentarios</h1>
-            <p className="text-gray-400">Modera y gestiona todos los comentarios del sistema</p>
+            <p className="text-gray-400">Modera y gestiona todos los comentarios del sistema, especialmente del Blog</p>
           </div>
-          {pendingCount > 0 && (
-            <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-3">
+          <div className="flex items-center space-x-4">
+            {pendingCount > 0 && (
+              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-3">
+                <div className="flex items-center space-x-2">
+                  <AlertTriangle size={20} className="text-yellow-400" />
+                  <span className="text-yellow-400 font-medium">{pendingCount} comentarios pendientes</span>
+                </div>
+              </div>
+            )}
+            <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-lg p-3">
               <div className="flex items-center space-x-2">
-                <AlertTriangle size={20} className="text-yellow-400" />
-                <span className="text-yellow-400 font-medium">{pendingCount} comentarios pendientes</span>
+                <MessageSquare size={20} className="text-blue-400" />
+                <span className="text-blue-400 font-medium">
+                  {getBlogComments().length} comentarios del Blog
+                </span>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <StatsCard
             title="Pendientes"
             value={pendingCount}
@@ -100,10 +166,16 @@ const CommentsAdminPanel = () => {
             gradient="from-green-500 to-emerald-600"
           />
           <StatsCard
-            title="Ocultos"
-            value={hiddenCount}
-            icon={EyeOff}
-            gradient="from-gray-500 to-slate-600"
+            title="Total Comentarios"
+            value={totalComments}
+            icon={MessageSquare}
+            gradient="from-blue-500 to-cyan-600"
+          />
+          <StatsCard
+            title="Comentarios Blog"
+            value={getBlogComments().length}
+            icon={MessageSquare}
+            gradient="from-purple-500 to-pink-600"
           />
           <StatsCard
             title="Reportados"
@@ -119,7 +191,7 @@ const CommentsAdminPanel = () => {
               <SearchFilter
                 search={search}
                 onSearchChange={setSearch}
-                placeholder="Buscar comentarios..."
+                placeholder="Buscar por contenido, autor o título de noticia..."
               />
             </div>
             <select
@@ -130,6 +202,7 @@ const CommentsAdminPanel = () => {
               <option value="pending">Pendientes</option>
               <option value="approved">Aprobados</option>
               <option value="hidden">Ocultos</option>
+              <option value="blog">Solo Blog</option>
               <option value="all">Todos</option>
             </select>
           </div>
@@ -159,11 +232,18 @@ const CommentsAdminPanel = () => {
                             )}
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
-                            Post ID: {comment.postId} • {new Date(comment.date).toLocaleString()}
+                            {getPostInfo(comment.postId).type}: {getPostInfo(comment.postId).title} • {new Date(comment.date).toLocaleString()}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setSelectedComment(selectedComment === comment.id ? null : comment.id)}
+                          className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="Ver detalles"
+                        >
+                          <MessageSquare size={18} />
+                        </button>
                         {comment.status === 'pending' && (
                           <>
                             <button
@@ -209,14 +289,76 @@ const CommentsAdminPanel = () => {
                         Última actividad: {new Date(comment.updatedAt || comment.date).toLocaleDateString()}
                       </div>
                     </div>
+
+                    {/* Sección expandible con detalles */}
+                    {selectedComment === comment.id && (
+                      <div className="border-t border-gray-700/50 pt-4 mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-300 mb-2">Información del Post</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Tipo:</span>
+                                <span className="text-white">{getPostInfo(comment.postId).type}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Categoría:</span>
+                                <span className="text-white">{getPostInfo(comment.postId).category}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Título:</span>
+                                <span className="text-white text-xs max-w-[200px] truncate">{getPostInfo(comment.postId).title}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Post ID:</span>
+                                <span className="text-white font-mono text-xs">{comment.postId}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-300 mb-2">Información del Usuario</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Usuario ID:</span>
+                                <span className="text-white font-mono text-xs">{comment.userId || comment.author}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Autor:</span>
+                                <span className="text-white">{comment.author}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Estado:</span>
+                                <span className="text-white capitalize">{comment.status}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Reportes:</span>
+                                <span className="text-white">{comment.flags || 0}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
             ) : (
               <div className="text-center py-12">
                 <MessageSquare size={48} className="text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-400 mb-2">No se encontraron comentarios</h3>
-                <p className="text-gray-500">Intenta ajustar los filtros de búsqueda</p>
+                <h3 className="text-lg font-medium text-gray-400 mb-2">
+                  {filter === 'blog' ? 'No se encontraron comentarios del Blog' : 'No se encontraron comentarios'}
+                </h3>
+                <p className="text-gray-500">
+                  {filter === 'blog' 
+                    ? 'No hay comentarios en las noticias del blog con los filtros aplicados'
+                    : 'Intenta ajustar los filtros de búsqueda'
+                  }
+                </p>
+                {filter === 'blog' && (
+                  <div className="mt-4 text-sm text-gray-400">
+                    <p>Los comentarios del Blog aparecen cuando los usuarios comentan en las noticias publicadas.</p>
+                  </div>
+                )}
               </div>
             )}
           </div>

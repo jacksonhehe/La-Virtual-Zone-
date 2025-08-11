@@ -26,49 +26,76 @@ export default function MercadoTab() {
   console.log('User object:', user);
   console.log('Clubs array:', clubs);
 
-  // Debugging logs
-  console.log('Todas las ofertas:', offers);
-  console.log('Club del usuario:', userClub?.name);
-  console.log(
-    'Ofertas filtradas:',
-    userClub ? offers.filter(o => o.toClub === userClub.name) : []
-  );
-
   const sentOffers = useMemo(() => {
     if (!user) return [];
     if (user.role === 'admin') return offers;
     if (user.role === 'dt') {
-      return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
+      return userClub ? offers.filter(o => o.fromClub === userClub.name) : [];
     }
     return offers.filter(o => o.userId === user.id);
   }, [offers, user, userClub]);
 
   const receivedOffers = useMemo(() => {
     if (!user || user.role !== 'dt') return [];
-    // Offers for players from my club
-    return userClub ? offers.filter(o => o.fromClub === userClub.name) : [];
+    // Offers for players from my club (where my club is selling)
+    return userClub ? offers.filter(o => o.toClub === userClub.name) : [];
   }, [offers, userClub, user]);
 
   console.log('MercadoTab receivedOffers:', receivedOffers);
 
 
+  // Función para mapear posiciones PES 2021 a categorías simplificadas
+  const getPositionCategory = (position: string | undefined): string => {
+    if (!position) return 'MID';
+    if (position === 'GK') return 'GK';
+    if (['CB', 'LB', 'RB', 'LWB', 'RWB'].includes(position)) return 'DEF';
+    if (['DMF', 'CMF', 'AMF', 'LMF', 'RMF', 'CDM', 'CM', 'CAM', 'LM', 'RM'].includes(position)) return 'MID';
+    if (['LWF', 'RWF', 'SS', 'CF', 'ST', 'LW', 'RW'].includes(position)) return 'ATT';
+    return 'MID'; // Default fallback
+  };
+
   const availablePlayers = useMemo(() => {
     return players
       .filter(p => (p.id_equipo || p.clubId) !== club?.id) // Excluir jugadores del club actual
-      .filter(p => positionFilter === 'all' || (p.posicion || p.position) === positionFilter)
+      .filter(p => positionFilter === 'all' || getPositionCategory(p.posicion || p.position) === positionFilter)
       .filter(p => {
-        const playerName = `${p.nombre_jugador || ''} ${p.apellido_jugador || ''}`.toLowerCase();
-        const legacyName = p.name?.toLowerCase() || '';
-        return playerName.includes(search.toLowerCase()) || legacyName.includes(search.toLowerCase());
+        if (!search.trim()) return true;
+        
+        const searchTerm = search.toLowerCase().trim();
+        
+        // Búsqueda por nombre completo (nuevo formato)
+        const fullName = `${p.nombre_jugador || ''} ${p.apellido_jugador || ''}`.toLowerCase().trim();
+        if (fullName.includes(searchTerm)) return true;
+        
+        // Búsqueda por nombre individual
+        if ((p.nombre_jugador || '').toLowerCase().includes(searchTerm)) return true;
+        if ((p.apellido_jugador || '').toLowerCase().includes(searchTerm)) return true;
+        
+        // Búsqueda por nombre legacy
+        if ((p.name || '').toLowerCase().includes(searchTerm)) return true;
+        
+        // Búsqueda por posición
+        if ((p.posicion || p.position || '').toLowerCase().includes(searchTerm)) return true;
+        
+        return false;
       })
       .sort((a, b) => {
         switch (sortBy) {
-          case 'value': 
-            return (b.precio_compra_libre || b.marketValue || 0) - (a.precio_compra_libre || a.marketValue || 0);
-          case 'overall': 
-            return (b.valoracion || b.overall || 0) - (a.valoracion || a.overall || 0);
-          case 'age': 
-            return (a.edad || a.age || 0) - (b.edad || b.age || 0);
+          case 'value': {
+            const aValue = a.precio_compra_libre || a.marketValue || a.price || a.transferValue || 0;
+            const bValue = b.precio_compra_libre || b.marketValue || b.price || b.transferValue || 0;
+            return bValue - aValue;
+          }
+          case 'overall': {
+            const aOverall = a.valoracion || a.overall || 0;
+            const bOverall = b.valoracion || b.overall || 0;
+            return bOverall - aOverall;
+          }
+          case 'age': {
+            const aAge = a.edad || a.age || 0;
+            const bAge = b.edad || b.age || 0;
+            return aAge - bAge;
+          }
           default: return 0;
         }
       });
@@ -133,6 +160,18 @@ export default function MercadoTab() {
               <option value="overall">Por media</option>
               <option value="age">Por edad</option>
             </select>
+            
+            {(search || positionFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setSearch('');
+                  setPositionFilter('all');
+                }}
+                className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 rounded-xl transition-all"
+              >
+                Limpiar Filtros
+              </button>
+            )}
           </div>
         </div>
 
@@ -147,7 +186,7 @@ export default function MercadoTab() {
                 : 'bg-white/5 text-white/70 hover:bg-white/10'
             }`}
           >
-            Jugadores Disponibles
+            Jugadores Disponibles ({availablePlayers.length})
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -178,9 +217,27 @@ export default function MercadoTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {availablePlayers.map((player, index) => (
+            {availablePlayers.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-lg mb-2">
+                  {search || positionFilter !== 'all' ? 'No se encontraron jugadores con los filtros aplicados' : 'No hay jugadores disponibles en el mercado'}
+                </div>
+                {(search || positionFilter !== 'all') && (
+                  <button
+                    onClick={() => {
+                      setSearch('');
+                      setPositionFilter('all');
+                    }}
+                    className="text-primary hover:text-primary-light transition-colors"
+                  >
+                    Limpiar filtros
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {availablePlayers.map((player, index) => (
               <motion.div
                 key={player.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -234,6 +291,8 @@ export default function MercadoTab() {
                 </div>
               </motion.div>
             ))}
+              </div>
+            )}
           </motion.div>
         ) : (
           <motion.div
