@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 import Image from '../ui/Image';
@@ -29,19 +29,26 @@ import {
   X,
   User
 } from 'lucide-react';
-import { useDataStore } from '../../store/dataStore';
-import { Player } from '../../types/shared';
+import { useAuth } from '../../contexts/AuthProvider';
+import { fetchPlayersByClub } from '../../services/players';
+import { fetchClubs } from '../../services/clubs';
+import type { PlayerFlat, Club } from '../../types/supabase';
 import ProgressRing from '../common/ProgressRing';
 import SquadDepthAnalysis from '../plantilla/SquadDepthAnalysis';
 import ContractManagement from '../plantilla/ContractManagement';
 import SquadQuickActions from '../plantilla/SquadQuickActions';
 
 export default function PlantillaTab() {
-  const { club, players } = useDataStore();
+  const { user } = useAuth();
+  const [club, setClub] = useState<Club | null>(null);
+  const [players, setPlayers] = useState<PlayerFlat[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const reduce = useReducedMotionPreference();
   const [search, setSearch] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('all');
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerFlat | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'overall' | 'name' | 'age' | 'salary'>('overall');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -49,6 +56,38 @@ export default function PlantillaTab() {
   const [showContracts, setShowContracts] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Fetch data from Supabase
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch club data for the current user
+        const clubsData = await fetchClubs();
+        if (clubsData.error) throw new Error(clubsData.error.message);
+        
+        const userClub = clubsData.data?.find(c => c.manager_id === user?.id);
+        if (!userClub) throw new Error('No tienes un club asignado');
+        
+        setClub(userClub);
+        
+        // Fetch players for the club
+        const playersData = await fetchPlayersByClub(userClub.id);
+        if (playersData.error) throw new Error(playersData.error.message);
+        
+        setPlayers(playersData.data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar datos');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   // Función para traducir estadísticas al español
   const translateStat = (key: string): string => {
@@ -109,10 +148,9 @@ export default function PlantillaTab() {
 
   const filteredPlayers = useMemo(() => {
     let filtered = players.filter(player => {
-      const fullName = `${player.nombre_jugador || ''} ${player.apellido_jugador || ''}`.toLowerCase();
-      const matchesSearch = fullName.includes(search.toLowerCase());
-      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.posicion || player.position) === selectedPosition;
-      const matchesClub = player.id_equipo === club?.id || player.clubId === club?.id;
+      const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
+      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.position) === selectedPosition;
+      const matchesClub = player.club_id === club?.id;
       return matchesSearch && matchesPosition && matchesClub;
     });
 
@@ -121,20 +159,20 @@ export default function PlantillaTab() {
       let aVal: any, bVal: any;
       switch (sortBy) {
         case 'overall':
-          aVal = a.valoracion || a.overall || 0;
-          bVal = b.valoracion || b.overall || 0;
+          aVal = a.overall || 0;
+          bVal = b.overall || 0;
           break;
         case 'name':
-          aVal = `${a.nombre_jugador || ''} ${a.apellido_jugador || ''}`.trim() || a.name || '';
-          bVal = `${b.nombre_jugador || ''} ${b.apellido_jugador || ''}`.trim() || b.name || '';
+          aVal = a.name || '';
+          bVal = b.name || '';
           break;
         case 'age':
-          aVal = a.edad || a.age || 0;
-          bVal = b.edad || b.age || 0;
+          aVal = a.age || 0;
+          bVal = b.age || 0;
           break;
         case 'salary':
-          aVal = a.contract?.salary || 0;
-          bVal = b.contract?.salary || 0;
+          aVal = a.salary || 0;
+          bVal = b.salary || 0;
           break;
         default:
           return 0;
@@ -153,18 +191,19 @@ export default function PlantillaTab() {
   // Squad statistics
   const squadStats = useMemo(() => {
     // Get all club players for statistics (not filtered by search/position)
-    const allClubPlayers = players.filter(player => player.clubId === club?.id);
+    const allClubPlayers = players.filter(player => player.club_id === club?.id);
     
     const totalPlayers = filteredPlayers.length;
     const avgAge = totalPlayers > 0 
-      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.edad || p.age || 0), 0) / totalPlayers)
+      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.age || 0), 0) / totalPlayers)
       : 0;
     const avgOverall = totalPlayers > 0
-      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.valoracion || p.overall || 0), 0) / totalPlayers)
+      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.overall || 0), 0) / totalPlayers)
       : 0;
-    const totalSalary = filteredPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
+    const totalSalary = filteredPlayers.reduce((sum, p) => sum + (p.salary || 0), 0);
     const contractsExpiring = filteredPlayers.filter(p => {
-      const contractYear = new Date(p.contract?.expires || '').getFullYear();
+      if (!p.contract_expires) return false;
+      const contractYear = new Date(p.contract_expires).getFullYear();
       const currentYear = new Date().getFullYear();
       return (contractYear - currentYear) <= 1;
     }).length;
@@ -187,7 +226,7 @@ export default function PlantillaTab() {
     };
   }, [filteredPlayers, players, club?.id]);
 
-  const handlePlayerClick = (player: Player) => {
+  const handlePlayerClick = (player: PlayerFlat) => {
     setSelectedPlayer(player);
   };
 

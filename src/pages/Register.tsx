@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, AlertCircle, Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
+import { useAuth } from '../contexts/AuthProvider';
 import SEO from '../components/SEO';
 
 const  Register = () => {
@@ -15,7 +15,7 @@ const  Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   
   const navigate = useNavigate();
-  const { register } = useAuthStore();
+  const { signUp } = useAuth();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +47,13 @@ const  Register = () => {
     setIsLoading(true);
     
     try {
-      await register(email, username, password);
+      const { error } = await signUp(email, password, username);
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      // Redirigir al usuario a su panel
       navigate('/usuario');
     } catch (err) {
       if (err instanceof Error) {
@@ -86,7 +92,7 @@ const  Register = () => {
               </div>
             )}
             
-                       <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Nombre de usuario
@@ -128,7 +134,7 @@ const  Register = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     className="w-full pl-10 pr-12 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 placeholder-gray-400"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Tu contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -151,7 +157,7 @@ const  Register = () => {
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     className="w-full pl-10 pr-12 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 placeholder-gray-400"
-                    placeholder="Repite tu contraseña"
+                    placeholder="Confirma tu contraseña"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
@@ -163,58 +169,35 @@ const  Register = () => {
                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-              </div> 
+              </div>
               
-                           <div className="pt-2">
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex justify-center items-center shadow-lg"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className="loader w-5 h-5 mr-2"></span>
-                  ) : (
-                    <User size={18} className="mr-2" />
-                  )}
-                  {isLoading ? 'Registrando...' : 'Crear Cuenta'}
-                </button>
-              </div> 
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Creando cuenta...
+                  </div>
+                ) : (
+                  'Crear Cuenta'
+                )}
+              </button>
             </form>
             
-                       <div className="mt-6 text-center">
-              <p className="text-gray-400 text-sm">
+            <div className="mt-6 text-center">
+              <p className="text-gray-400">
                 ¿Ya tienes una cuenta?{' '}
                 <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
-                  Inicia sesión
+                  Inicia sesión aquí
                 </Link>
               </p>
-            </div> 
-            
-                       <div className="mt-6 pt-6 border-t border-gray-700/50">
-              <p className="text-xs text-gray-500 text-center leading-relaxed">
-                Al registrarte, aceptas nuestros{' '}
-                <a
-                  href="/terminos"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-purple-400 hover:text-purple-300 transition-colors"
-                >
-                  Términos y Condiciones
-                </a>{' '}
-                y{' '}
-                <a
-                  href="/privacidad"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-purple-400 hover:text-purple-300 transition-colors"
-                >
-                  Política de Privacidad
-                </a>
-              </p>
-            </div> 
+            </div>
           </div>
         </div>
-      </div>
+        </div>
       </div>
     </>
   );

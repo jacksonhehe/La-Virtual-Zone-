@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import DtDashboard from './DtDashboard';
-import { useAuthStore } from '../store/authStore';
+import { useAuth } from '../contexts/AuthProvider';
+import { useProfile } from '../hooks/useProfile';
 import UpcomingMatches from '../components/common/UpcomingMatches';
 import ClubsSection from '../components/common/ClubsSection';
 
@@ -19,20 +21,66 @@ import {
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
-import ClubListItem from '../components/common/ClubListItem';
-import { useDataStore } from '../store/dataStore';
+import { fetchClubs } from '../services/clubs';
+import { fetchPlayers } from '../services/players';
+import { getTopTeams } from '../services/standings';
+import { getUpcomingMatches } from '../services/matches';
+import { fetchTournaments } from '../services/tournaments';
 import { formatDate, formatCurrency } from '../utils/helpers';
+import type { Club, PlayerFlat, Standing, MatchWithClubs, Tournament } from '../types/supabase';
 
 const LigaMaster = () => {
-  const { user } = useAuthStore();
-  const { clubs, tournaments, players, standings, marketStatus } = useDataStore();
+  const { user } = useAuth();
+  const { profile } = useProfile();
+  const [clubs, setClubs] = useState<Club[]>([]);
+  const [players, setPlayers] = useState<PlayerFlat[]>([]);
+  const [standings, setStandings] = useState<Standing[]>([]);
+  const [upcomingMatches, setUpcomingMatches] = useState<MatchWithClubs[]>([]);
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (user?.role === 'dt') {
-    if (user.clubId) {
-      const assignedClub = clubs.find(c => c.id === user.clubId);
-      if (assignedClub) {
-        return <DtDashboard />;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch all data in parallel
+        const [clubsData, playersData, standingsData, matchesData, tournamentsData] = await Promise.all([
+          fetchClubs(),
+          fetchPlayers(),
+          getTopTeams(1, 10), // Assuming tournament ID 1 for now
+          getUpcomingMatches(5),
+          fetchTournaments()
+        ]);
+
+        if (clubsData.error) throw new Error(clubsData.error.message);
+        if (playersData.error) throw new Error(playersData.error.message);
+        if (standingsData.error) throw new Error(standingsData.error.message);
+        if (matchesData.error) throw new Error(matchesData.error.message);
+        if (tournamentsData.error) throw new Error(tournamentsData.error.message);
+
+        setClubs(clubsData.data || []);
+        setPlayers(playersData.data || []);
+        setStandings(standingsData.data || []);
+        setUpcomingMatches(matchesData.data || []);
+        setTournaments(tournamentsData.data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar datos');
+      } finally {
+        setLoading(false);
       }
+    };
+
+    fetchData();
+  }, []);
+
+  // Check if user is a DT (club manager)
+  if (profile?.role === 'CLUB') {
+    // Find the club managed by this user
+    const managedClub = clubs.find(c => c.manager_id === user?.id);
+    if (managedClub) {
+      return <DtDashboard />;
     }
     return (
       <div className="p-8 text-center">
@@ -41,31 +89,40 @@ const LigaMaster = () => {
     );
   }
   
-  // Liga Master es un modo de juego, no un torneo específico
-  // Mostrar información general del modo Liga Master
-  
+  if (loading) {
+    return (
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+        <p className="mt-4 text-gray-400">Cargando Liga Master...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-400">Error: {error}</p>
+      </div>
+    );
+  }
+
   // Get active tournament for stats (if any)
-  const activeTournament = tournaments.find(t => t.status === 'active') || tournaments[0];
+  const activeTournament = tournaments.find(t => t.status === 'ACTIVE') || tournaments[0];
   
-  // Get upcoming matches from active tournament
-  const upcomingMatches = activeTournament 
-    ? activeTournament.matches
-      .filter(match => match.status === 'scheduled')
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(0, 3)
-    : [];
-  
-  // Get top scorers
+  // Get top scorers (for now, we'll use overall rating as a proxy since we don't have goals in the current schema)
   const topScorers = [...players]
-    .sort((a, b) => b.goals - a.goals)
+    .sort((a, b) => b.overall - a.overall)
     .slice(0, 5);
 
-  const totalMatches = activeTournament ? activeTournament.matches.length : 0;
-  const playedMatches = activeTournament
-    ? activeTournament.matches.filter(m => m.status === 'finished').length
-    : 0;
+  const totalMatches = upcomingMatches.length; // This is a simplified approach
+  const playedMatches = upcomingMatches.filter(m => m.status === 'finished').length;
   const seasonProgress = totalMatches > 0
     ? Math.round((playedMatches / totalMatches) * 100)
+    : 0;
+
+  // Calculate average budget
+  const averageBudget = clubs.length > 0 
+    ? clubs.reduce((sum, club) => sum + club.budget, 0) / clubs.length 
     : 0;
   
   return (
@@ -145,17 +202,17 @@ const LigaMaster = () => {
           />
           <StatsCard 
             title="Estado del Mercado" 
-            value={marketStatus ? "Abierto" : "Cerrado"}
-            icon={<TrendingUp size={24} className={marketStatus ? "text-green-400" : "text-red-400"} />}
+            value="Abierto" // TODO: Implementar estado real del mercado
+            icon={<TrendingUp size={24} className="text-green-400" />}
           />
           <StatsCard 
             title="Presupuesto Medio" 
-            value={formatCurrency(clubs.reduce((sum, club) => sum + club.budget, 0) / clubs.length)}
+            value={formatCurrency(averageBudget)}
             icon={<Briefcase size={24} className="text-primary" />}
           />
           <StatsCard
             title="Partidos Disputados"
-            value={activeTournament ? activeTournament.matches.filter(m => m.status === 'finished').length : 0}
+            value={playedMatches}
             icon={<Calendar size={24} className="text-primary" />}
             trend="up"
             trendValue="+3 última semana"
@@ -240,45 +297,44 @@ const LigaMaster = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-800">
-                    {standings.slice(0, 5).map((team, index) => {
-                      const club = clubs.find(c => c.id === team.clubId);
-                      
-                      return (
-                        <tr key={team.clubId} className="hover:bg-gray-800/50">
-                          <td className="p-4 text-center">
-                            <span
-                              aria-label={`Posición ${index + 1}`}
-                              className={`
-                              inline-block w-6 h-6 rounded-full font-medium text-sm flex items-center justify-center
-                              ${index === 0 ? 'bg-yellow-500/20 text-yellow-400' :
-                                index === 1 ? 'bg-gray-400/20 text-gray-300' :
-                                index === 2 ? 'bg-amber-600/20 text-amber-500' : 'text-gray-400'}
-                            `}
-                            >
-                              {index + 1}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <Link
-                              to={`/liga-master/club/${club?.slug ?? ''}`}
-                              className="flex items-center"
-                            >
-                              <img 
-                                src={club?.logo}
-                                alt={club?.name}
-                                className="w-6 h-6 mr-2 object-contain"
-                              />
-                              <span className="font-medium">{club?.name}</span>
-                            </Link>
-                          </td>
-                          <td className="p-4 text-center text-gray-400">{team.played}</td>
-                          <td className="p-4 text-center text-gray-400">{team.won}</td>
-                          <td className="p-4 text-center text-gray-400">{team.drawn}</td>
-                          <td className="p-4 text-center text-gray-400">{team.lost}</td>
-                          <td className="p-4 text-center font-bold">{team.points}</td>
-                        </tr>
-                      );
-                    })}
+                    {standings.slice(0, 5).map((team, index) => (
+                      <tr key={team.club_id} className="hover:bg-gray-800/50">
+                        <td className="p-4 text-center">
+                          <span
+                            aria-label={`Posición ${index + 1}`}
+                            className={`
+                            inline-block w-6 h-6 rounded-full font-medium text-sm flex items-center justify-center
+                            ${index === 0 ? 'bg-yellow-500/20 text-yellow-400' :
+                              index === 1 ? 'bg-gray-400/20 text-gray-300' :
+                              index === 2 ? 'bg-amber-600/20 text-amber-500' : 'text-gray-400'}
+                          `}
+                          >
+                            {index + 1}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <Link
+                            to={`/liga-master/club/${team.club_name?.toLowerCase().replace(/\s+/g, '-')}`}
+                            className="flex items-center"
+                          >
+                            <img 
+                              src={team.club_logo || '/default-club-logo.png'}
+                              alt={team.club_name}
+                              className="w-6 h-6 mr-2 object-contain"
+                              onError={(e) => {
+                                e.currentTarget.src = '/default-club-logo.png';
+                              }}
+                            />
+                            <span className="font-medium">{team.club_name}</span>
+                          </Link>
+                        </td>
+                        <td className="p-4 text-center text-gray-400">{team.gp}</td>
+                        <td className="p-4 text-center text-gray-400">{team.w}</td>
+                        <td className="p-4 text-center text-gray-400">{team.d}</td>
+                        <td className="p-4 text-center text-gray-400">{team.l}</td>
+                        <td className="p-4 text-center font-bold">{team.pts}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -287,8 +343,8 @@ const LigaMaster = () => {
             {/* Upcoming matches */}
             <UpcomingMatches matches={upcomingMatches} clubs={clubs} />
             
-                         {/* Club listing with manager */}
-             <ClubsSection clubs={clubs} />
+            {/* Club listing with manager */}
+            <ClubsSection clubs={clubs} />
           </div>
           
           {/* Right column */}
@@ -331,12 +387,12 @@ const LigaMaster = () => {
             {/* Top Scorers */}
             <div className="card">
               <div className="p-6 border-b border-gray-800">
-                <h2 className="text-xl font-bold">Máximos Goleadores</h2>
+                <h2 className="text-xl font-bold">Mejores Jugadores</h2>
               </div>
               
               <div className="divide-y divide-gray-800">
                 {topScorers.map((player, index) => {
-                  const club = clubs.find(c => c.id === player.clubId);
+                  const club = clubs.find(c => c.id === player.club_id);
                   
                   return (
                     <div key={player.id} className="p-4 flex items-center justify-between">
@@ -347,24 +403,30 @@ const LigaMaster = () => {
                           </span>
                         </div>
                         <img 
-                          src={player.image} 
+                          src={player.image || '/default-player-avatar.png'} 
                           alt={player.name}
                           className="w-10 h-10 rounded-full object-cover mr-3"
+                          onError={(e) => {
+                            e.currentTarget.src = '/default-player-avatar.png';
+                          }}
                         />
                         <div>
                           <p className="font-medium">{player.name}</p>
                           <div className="flex items-center text-xs text-gray-400">
                             <img 
-                              src={club?.logo} 
+                              src={club?.logo || '/default-club-logo.png'} 
                               alt={club?.name}
                               className="w-4 h-4 mr-1"
+                              onError={(e) => {
+                                e.currentTarget.src = '/default-club-logo.png';
+                              }}
                             />
-                            <span>{club?.name}</span>
+                            <span>{club?.name || 'Sin club'}</span>
                           </div>
                         </div>
                       </div>
                       <div className="font-bold text-lg">
-                        {player.goals}
+                        {player.overall}
                       </div>
                     </div>
                   );
@@ -378,9 +440,7 @@ const LigaMaster = () => {
               <div className="space-y-4">
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Estado del mercado</p>
-                  <p className="font-medium text-green-400">
-                    {marketStatus ? 'Abierto' : 'Cerrado'}
-                  </p>
+                  <p className="font-medium text-green-400">Abierto</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Clubes activos</p>
@@ -397,8 +457,8 @@ const LigaMaster = () => {
                       <p className="font-medium">{activeTournament.name}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400 text-sm mb-1">Jornadas totales</p>
-                      <p className="font-medium">{activeTournament.rounds}</p>
+                      <p className="text-gray-400 text-sm mb-1">Temporada</p>
+                      <p className="font-medium">{activeTournament.season}</p>
                     </div>
                   </>
                 )}

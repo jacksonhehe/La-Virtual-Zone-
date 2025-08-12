@@ -1,6 +1,6 @@
 import { Player } from '../types/shared';
 import { VZ_PLAYERS_KEY } from './storageKeys';
-import { players as defaultPlayers } from '../data/mockData';
+// import { players as defaultPlayers } from '../data/mockData'; // Eliminado por migración a Supabase
 
 function randStat() {
   return 60 + Math.floor(Math.random() * 40); // 60-99
@@ -151,7 +151,7 @@ function migratePlayerToNewStructure(player: any): Player {
 }
 
 export const getPlayers = (): Player[] => {
-  const json = localStorage.getItem(VZ_PLAYERS_KEY);
+  const json = null; // LocalStorage deshabilitado en migración
   let list: Player[];
   if (json) {
     try {
@@ -177,7 +177,7 @@ export const getPlayers = (): Player[] => {
 };
 
 export const savePlayers = (data: Player[]): void => {
-  localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(data));
+  // LocalStorage deshabilitado en migración
 };
 
 // Función para limpiar y regenerar datos de jugadores

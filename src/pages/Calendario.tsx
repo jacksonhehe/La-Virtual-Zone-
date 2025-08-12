@@ -5,7 +5,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import DtMenuTabs from '../components/DtMenuTabs';
 import EventModal, { CalendarEvent } from '../components/calendar/EventModal';
 import CardSkeleton from '../components/common/CardSkeleton';
-import fixtures from '../data/fixtures.json';
+// TODO: fixtures.json eliminado en migración. Conectar a Supabase fixtures via services.
+// import fixtures from '../data/fixtures.json';
 import { VZ_CALENDAR_PREFS_KEY } from '../utils/storageKeys';
 
 const FullCalendar = lazy(() => import('@fullcalendar/react'));

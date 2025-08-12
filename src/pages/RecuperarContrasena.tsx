@@ -1,6 +1,8 @@
 import  { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowLeft, Check, AlertCircle, Shield, Lock } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { Link } from 'react-router-dom';
 
 export default function RecuperarContrasena() {
   const [email, setEmail] = useState('');
@@ -25,10 +27,21 @@ export default function RecuperarContrasena() {
 
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        throw error;
+      }
+
       setIsSubmitted(true);
-    }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al enviar el email de recuperación');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -69,12 +82,12 @@ export default function RecuperarContrasena() {
             </p>
           </div>
 
-          <button
-            onClick={() => window.location.href = '/login'}
-            className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-purple-700 hover:from-purple-700 hover:via-blue-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25"
+          <Link
+            to="/login"
+            className="block w-full bg-gradient-to-r from-purple-600 via-blue-600 to-purple-700 hover:from-purple-700 hover:via-blue-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25"
           >
             Volver al Login
-          </button>
+          </Link>
         </motion.div>
       </div>
     );
@@ -99,12 +112,12 @@ export default function RecuperarContrasena() {
             <Lock size={36} className="text-white" />
           </motion.div>
           
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-300 bg-clip-text text-transparent mb-3">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-300 bg-clip-text text-transparent mb-4">
             Recuperar Contraseña
           </h1>
           
-          <p className="text-gray-400 leading-relaxed">
-            Ingresa tu email y te enviaremos las instrucciones para restablecer tu contraseña
+          <p className="text-gray-300 text-lg leading-relaxed">
+            Ingresa tu correo electrónico y te enviaremos las instrucciones para restablecer tu contraseña.
           </p>
         </div>
 
@@ -114,82 +127,59 @@ export default function RecuperarContrasena() {
           transition={{ delay: 0.3 }}
           className="bg-gray-800/60 backdrop-blur-xl border border-gray-700/40 rounded-3xl p-8 shadow-2xl"
         >
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-2xl flex items-center space-x-3"
+            >
+              <AlertCircle size={20} className="text-red-400 flex-shrink-0" />
+              <p className="text-red-300 text-sm">{error}</p>
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-3">
-                Dirección de Email
+              <label className="block text-sm font-medium text-gray-300 mb-3">
+                Correo Electrónico
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Mail size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-gray-700/50 border border-gray-600/50 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-700/50 border border-gray-600 rounded-2xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 placeholder-gray-400 text-white"
                   placeholder="tu@email.com"
                   disabled={isLoading}
                 />
               </div>
             </div>
 
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center space-x-3"
-              >
-                <AlertCircle size={18} className="text-red-400" />
-                <span className="text-red-300 text-sm font-medium">{error}</span>
-              </motion.div>
-            )}
-
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-purple-700 hover:from-purple-700 hover:via-blue-700 hover:to-purple-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center space-x-3 hover:shadow-lg hover:shadow-purple-500/25"
+              className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-purple-700 hover:from-purple-700 hover:via-blue-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
             >
               {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Enviando...</span>
-                </>
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                  Enviando...
+                </div>
               ) : (
-                <>
-                  <Mail size={20} />
-                  <span>Enviar Instrucciones</span>
-                </>
+                'Enviar Instrucciones'
               )}
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-gray-700/30">
-            <button
-              onClick={() => window.location.href = '/login'}
-              className="w-full flex items-center justify-center space-x-2 text-gray-400 hover:text-purple-300 transition-all duration-300 py-2"
+          <div className="mt-8 pt-6 border-t border-gray-700/40">
+            <Link
+              to="/login"
+              className="inline-flex items-center text-gray-400 hover:text-white transition-colors group"
             >
-              <ArrowLeft size={18} />
-              <span className="font-medium">Volver al Login</span>
-            </button>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 bg-gray-800/40 border border-gray-700/20 rounded-3xl p-6"
-        >
-          <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center">
-              <Shield size={24} className="text-purple-400" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-white font-semibold text-base mb-2">Información de Seguridad</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Solo enviaremos el enlace si el email está registrado en nuestro sistema. 
-                El enlace será válido por 24 horas por motivos de seguridad.
-              </p>
-            </div>
+              <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+              Volver al Login
+            </Link>
           </div>
         </motion.div>
       </motion.div>

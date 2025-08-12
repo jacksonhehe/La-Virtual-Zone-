@@ -41,8 +41,8 @@ export interface User {
   role: string;
 }
 
-// Configuración de la API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Configuración de la API (LEGACY) - Migrado a Supabase: deshabilitado
+const API_BASE_URL = '';
 
 // Clase para manejo seguro de autenticación
 class SecureAuthService {
@@ -95,7 +95,7 @@ class SecureAuthService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${API_BASE_URL}/api${endpoint}`;
+    const url = `/api-disabled${endpoint}`;
     
     const config: RequestInit = {
       ...options,

@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useDataStore } from '../store/dataStore';
 import type { FeedItem } from '../types';
-import fixtures from '../data/fixtures.json';
+// TODO: fixtures.json eliminado en migración. Sustituir por servicio Supabase si se requiere.
+// import fixtures from '../data/fixtures.json';
 import { buildFeed, CalendarEvent } from '../modules/feed/adapters';
 
 const useFeedItems = (): FeedItem[] => {
