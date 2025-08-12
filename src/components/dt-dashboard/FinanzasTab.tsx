@@ -8,9 +8,30 @@ const formatCurrency= (amount: number) => `€${amount.toLocaleString()}`;
 export default function FinanzasTab() {
   const { club, players } = useDataStore();
 
-  const clubPlayers = players.filter(p => p.clubId === club?.id);
+  const clubPlayers = club?.id ? players.filter(p => p.clubId === club.id) : [];
   const totalSalaries = clubPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
-  const avgPlayerValue = clubPlayers.reduce((sum, p) => sum + p.marketValue, 0) / clubPlayers.length || 0;
+  const totalSquadValue = clubPlayers.reduce((sum, p) => {
+    const playerValue = p.precio_compra_libre || p.marketValue || p.value || p.transferValue || 0;
+    return sum + playerValue;
+  }, 0);
+  const avgPlayerValue = clubPlayers.length > 0 ? totalSquadValue / clubPlayers.length : 0;
+
+  // Debug logging
+  console.log('FinanzasTab Debug:', {
+    clubId: club?.id,
+    totalPlayers: players.length,
+    clubPlayers: clubPlayers.length,
+    totalSquadValue,
+    avgPlayerValue,
+    samplePlayer: clubPlayers[0] ? {
+      id: clubPlayers[0].id,
+      nombre: clubPlayers[0].nombre_jugador,
+      precio_compra_libre: clubPlayers[0].precio_compra_libre,
+      marketValue: clubPlayers[0].marketValue,
+      value: clubPlayers[0].value,
+      transferValue: clubPlayers[0].transferValue
+    } : null
+  });
 
   const monthlyData = [
     { month: 'Ene', income: 2500000, expenses: 1800000 },
@@ -47,7 +68,8 @@ export default function FinanzasTab() {
     },
     {
       title: 'Valor Plantilla',
-      value: formatCurrency(avgPlayerValue * clubPlayers.length),
+      value: formatCurrency(totalSquadValue),
+      subtitle: `${clubPlayers.length} jugadores • Promedio: ${formatCurrency(avgPlayerValue)}`,
       trend: 'up',
       trendValue: '+8%',
       icon: Users,
@@ -62,6 +84,17 @@ export default function FinanzasTab() {
       color: 'from-purple-500 to-violet-600'
     }
   ];
+
+  // Si no hay club seleccionado, mostrar mensaje
+  if (!club?.id) {
+    return (
+      <div className="text-center py-12">
+        <Users size={48} className="text-gray-600 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-400 mb-2">No hay club seleccionado</h3>
+        <p className="text-gray-500">Selecciona un club para ver las finanzas</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -97,6 +130,9 @@ export default function FinanzasTab() {
                 </div>
                 <h3 className="text-sm font-medium opacity-90">{kpi.title}</h3>
                 <p className="text-2xl font-bold mt-1">{kpi.value}</p>
+                {kpi.subtitle && (
+                  <p className="text-xs opacity-75 mt-1">{kpi.subtitle}</p>
+                )}
               </div>
             </motion.div>
           );
@@ -177,6 +213,35 @@ export default function FinanzasTab() {
           </div>
         </motion.div>
       </div>
+
+      {/* Squad Value Breakdown */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6"
+      >
+        <h3 className="text-xl font-bold text-white mb-6">Valor de Plantilla por Posición</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {['POR', 'DEF', 'MED', 'DEL'].map((position) => {
+            const positionPlayers = clubPlayers.filter(p => p.posicion === position);
+            const positionValue = positionPlayers.reduce((sum, p) => {
+              const playerValue = p.precio_compra_libre || p.marketValue || p.value || p.transferValue || 0;
+              return sum + playerValue;
+            }, 0);
+            const avgPositionValue = positionPlayers.length > 0 ? positionValue / positionPlayers.length : 0;
+            
+            return (
+              <div key={position} className="bg-white/5 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-primary">{formatCurrency(positionValue)}</div>
+                <div className="text-sm text-white/60 mb-1">{position}</div>
+                <div className="text-xs text-white/40">
+                  {positionPlayers.length} jugadores • Promedio: {formatCurrency(avgPositionValue)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
 
       {/* Budget Allocation */}
       <motion.div

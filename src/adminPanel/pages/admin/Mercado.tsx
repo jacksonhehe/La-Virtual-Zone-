@@ -8,7 +8,7 @@ import StatsCard from '../../components/admin/StatsCard';
 
 const Mercado = () => {
   const { transfers, approveTransfer, rejectTransfer } = useGlobalStore();
-  const { offers, players, clubs, marketStatus } = useDataStore();
+  const { offers, players, clubs, marketStatus, updateMarketStatus } = useDataStore();
   const [activeTab, setActiveTab] = useState<'offers' | 'transfers' | 'overview'>('overview');
   const [filter, setFilter] = useState('all');
   const [rejectModal, setRejectModal] = useState<string | null>(null);
@@ -16,6 +16,7 @@ const Mercado = () => {
   const [search, setSearch] = useState('');
   const [selectedTransfer, setSelectedTransfer] = useState<string | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
+  const [confirmMarketModal, setConfirmMarketModal] = useState<boolean>(false);
 
   // Estadísticas del mercado
   const marketStats = useMemo(() => {
@@ -96,6 +97,17 @@ const Mercado = () => {
     toast.success('Transferencia rechazada');
   };
 
+  const handleToggleMarket = () => {
+    setConfirmMarketModal(true);
+  };
+
+  const confirmToggleMarket = () => {
+    const newStatus = !marketStatus;
+    updateMarketStatus(newStatus);
+    setConfirmMarketModal(false);
+    toast.success(`Mercado ${newStatus ? 'abierto' : 'cerrado'} exitosamente`);
+  };
+
   return (
     <div className="p-6">
       <div className="space-y-6">
@@ -113,6 +125,26 @@ const Mercado = () => {
                 </span>
               </div>
             </div>
+            <button
+              onClick={handleToggleMarket}
+              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${
+                marketStatus
+                  ? 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white'
+                  : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white'
+              }`}
+            >
+              {marketStatus ? (
+                <>
+                  <X size={16} />
+                  <span>Cerrar Mercado</span>
+                </>
+              ) : (
+                <>
+                  <Check size={16} />
+                  <span>Abrir Mercado</span>
+                </>
+              )}
+            </button>
             {(marketStats.pendingOffers > 0 || marketStats.pendingTransfers > 0) && (
               <div className="bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 rounded-lg p-3">
                 <div className="flex items-center space-x-2">
@@ -562,6 +594,51 @@ const Mercado = () => {
           )}
         </div>
       </div>
+
+      {/* Modal de confirmación para abrir/cerrar mercado */}
+      {confirmMarketModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className={`p-2 rounded-lg ${
+                marketStatus 
+                  ? 'bg-red-500/20 text-red-400' 
+                  : 'bg-green-500/20 text-green-400'
+              }`}>
+                {marketStatus ? <X size={24} /> : <Check size={24} />}
+              </div>
+              <h3 className="text-lg font-semibold text-white">
+                {marketStatus ? 'Cerrar' : 'Abrir'} Mercado de Fichajes
+              </h3>
+            </div>
+            <p className="text-gray-400 mb-6">
+              ¿Estás seguro que deseas {marketStatus ? 'cerrar' : 'abrir'} el Mercado de Fichajes?
+              {marketStatus 
+                ? ' Esto impedirá que los usuarios realicen nuevas ofertas y transferencias.'
+                : ' Esto permitirá que los usuarios realicen ofertas y transferencias.'
+              }
+            </p>
+            <div className="flex space-x-3 justify-end">
+              <button 
+                onClick={() => setConfirmMarketModal(false)} 
+                className="px-4 py-2 rounded-lg font-medium bg-gray-600 hover:bg-gray-500 text-white transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmToggleMarket} 
+                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors ${
+                  marketStatus
+                    ? 'bg-red-500 hover:bg-red-600'
+                    : 'bg-green-500 hover:bg-green-600'
+                }`}
+              >
+                {marketStatus ? 'Cerrar' : 'Abrir'} Mercado
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {rejectModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
