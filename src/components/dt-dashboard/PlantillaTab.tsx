@@ -103,6 +103,29 @@ export default function PlantillaTab() {
   const colorForLesiones = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : 'text-cyan-400 bg-cyan-500/20';
   const colorForPieMalo = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : v === 3 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
 
+  // Coloreo por rangos 40-99 igual que en Panel Admin (Crear/Editar Jugador)
+  const getStatColorClass = (value: number) => {
+    if (value > 94 && value <= 99) return 'text-cyan-400'; // 95-99 Celeste
+    if (value > 84 && value <= 94) return 'text-green-400'; // 85-94 Verde claro
+    if (value > 74 && value < 85) return 'text-orange-400'; // 75-84 Naranja
+    if (value > 39 && value < 75) return 'text-red-400'; // 40-74 Rojo
+    return 'text-gray-300';
+  };
+
+  const getStatColorHex = (value: number) => {
+    if (value > 94 && value <= 99) return '#22d3ee'; // cyan-400
+    if (value > 84 && value <= 94) return '#34d399'; // green-400
+    if (value > 74 && value < 85) return '#fb923c'; // orange-400
+    if (value > 39 && value < 75) return '#f87171'; // red-400
+    return '#9ca3af'; // gray-400 fallback
+  };
+
+  const getSliderBackground = (value: number) => {
+    const pct = Math.max(0, Math.min(100, ((value - 40) * 100) / 59));
+    const c = getStatColorHex(value);
+    return `linear-gradient(to right, ${c} 0%, ${c} ${pct}%, #374151 ${pct}%, #374151 100%)`;
+  };
+
   // Helper function to map PES 2021 positions to simplified categories
   const getPositionCategory = (position: string | undefined): string => {
     if (!position) return 'MID';
@@ -866,14 +889,9 @@ export default function PlantillaTab() {
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-300">{translateStat(key)}</span>
-                              <span className="text-sm font-bold text-white">{value}</span>
+                              <span className={`text-sm font-bold ${getStatColorClass(value as number)}`}>{value as any}</span>
                             </div>
-                            <div className="w-full bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${(value / 99) * 100}%` }}
-                              ></div>
-                            </div>
+                            <div className="w-full rounded-full h-2" style={{ background: getSliderBackground(value as number) }}></div>
                           </div>
                         ))}
                       </div>
@@ -883,14 +901,9 @@ export default function PlantillaTab() {
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-300">{translateStat(key)}</span>
-                              <span className="text-sm font-bold text-white">{value}</span>
+                              <span className={`text-sm font-bold ${getStatColorClass(value as number)}`}>{value as any}</span>
                             </div>
-                            <div className="w-full bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${(value / 99) * 100}%` }}
-                              ></div>
-                            </div>
+                            <div className="w-full rounded-full h-2" style={{ background: getSliderBackground(value as number) }}></div>
                           </div>
                         ))}
                       </div>
