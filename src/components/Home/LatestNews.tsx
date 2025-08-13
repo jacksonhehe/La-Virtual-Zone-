@@ -1,69 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { getRecentNews } from '../../services/news';
-import { formatDate } from '../../utils/helpers';
-import type { NewsWithAuthor } from '../../types/supabase';
 
 const prefetchBlog = () => import('../../pages/Blog');
+import { useDataStore } from '../../store/dataStore';
+import { formatDate, formatNewsType, getNewsTypeColor } from '../../utils/helpers';
 
 const LatestNews = () => {
-  const [latestNews, setLatestNews] = useState<NewsWithAuthor[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchLatestNews = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await getRecentNews(4);
-        
-        if (error) {
-          setError(error.message);
-        } else if (data) {
-          setLatestNews(data);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar noticias');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLatestNews();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4">Últimas Noticias</h2>
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-          <div className="h-4 bg-gray-700 rounded w-2/3"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4">Últimas Noticias</h2>
-        <p className="text-red-400">Error: {error}</p>
-      </div>
-    );
-  }
-
-  if (latestNews.length === 0) {
-    return (
-      <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4">Últimas Noticias</h2>
-        <p className="text-gray-400">No hay noticias disponibles.</p>
-      </div>
-    );
-  }
-
+  const { newsItems } = useDataStore();
+  
+  // Get latest 4 news
+  const latestNews = newsItems.slice(0, 4);
+  
   return (
     <div className="card">
       <div className="p-6 border-b border-gray-800">
@@ -85,12 +32,15 @@ const LatestNews = () => {
           <Link key={news.id} to={`/blog/${news.id}`} className="block hover:bg-gray-800/50">
             <div className="p-4">
               <div className="flex items-start space-x-2 mb-2">
-                <span className="badge bg-blue-500/20 text-blue-400">
-                  Noticia
+                <span className={`badge ${getNewsTypeColor(news.type)}`}>
+                  {formatNewsType(news.type)}
                 </span>
                 <span className="text-gray-400 text-sm">
-                  {formatDate(news.created_at)}
+                  {formatDate(news.publishDate)}
                 </span>
+                {new Date(news.publishDate) > new Date() && (
+                  <span className="badge bg-yellow-500/20 text-yellow-400">Programado</span>
+                )}
               </div>
               
               <h3 className="font-medium mb-1">
@@ -100,12 +50,6 @@ const LatestNews = () => {
               <p className="text-gray-400 text-sm line-clamp-2">
                 {news.content}
               </p>
-              
-              {news.author && (
-                <div className="flex items-center mt-2 text-xs text-gray-500">
-                  <span>Por {news.author.username}</span>
-                </div>
-              )}
             </div>
           </Link>
         ))}

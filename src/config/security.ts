@@ -59,7 +59,7 @@ export const SECURITY_CONFIG = {
   CORS: {
     // Orígenes permitidos
     ALLOWED_ORIGINS: [
-      // Origen del backend legado eliminado. Mantener dominios conocidos.
+      import.meta.env.VITE_API_URL || 'http://localhost:3000',
       'http://localhost:5173',
       'https://lavirtualzone.com',
       'https://www.lavirtualzone.com',

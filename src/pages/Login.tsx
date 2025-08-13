@@ -1,23 +1,23 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../contexts/AuthProvider';
+import { useAuthStore } from '../store/authStore';
 import SEO from '../components/SEO';
 
 const  Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); 
   
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { login } = useAuthStore();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!username || !password) {
       setError('Por favor, completa todos los campos');
       return;
     }
@@ -26,13 +26,7 @@ const  Login = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await signIn(email, password);
-      
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      // Redirigir al usuario a su panel
+      await login(username, password);
       navigate('/usuario');
     } catch (err) {
       if (err instanceof Error) {
@@ -71,17 +65,17 @@ const  Login = () => {
               </div>
             )}
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+                       <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Correo electrónico
+                  Nombre de usuario
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 placeholder-gray-400"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Tu nombre de usuario"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               
@@ -110,35 +104,55 @@ const  Login = () => {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-              </div>
+              </div> 
               
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Iniciando sesión...
-                  </div>
-                ) : (
-                  'Iniciar Sesión'
-                )}
-              </button>
+                           <div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex justify-center items-center shadow-lg"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="loader w-5 h-5 mr-2"></span>
+                  ) : (
+                    <LogIn size={18} className="mr-2" />
+                  )}
+                  {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                </button>
+              </div> 
             </form>
             
-            <div className="mt-6 text-center">
-              <p className="text-gray-400">
+                       <div className="mt-6 text-center">
+              <p className="text-gray-400 text-sm">
                 ¿No tienes una cuenta?{' '}
                 <Link to="/registro" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                  Regístrate aquí
+                  Regístrate
                 </Link>
               </p>
-            </div>
+            </div> 
+            
+                       <div className="mt-8 pt-6 border-t border-gray-700/50">
+              <div className="text-xs text-gray-500 text-center space-y-2">
+                <p className="font-medium">Cuentas de prueba:</p>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-gray-700/30 p-2 rounded-lg">
+                    <p className="text-blue-400 font-medium">usuario</p>
+                    <p>password</p>
+                  </div>
+                  <div className="bg-gray-700/30 p-2 rounded-lg">
+                    <p className="text-purple-400 font-medium">entrenador</p>
+                    <p>password</p>
+                  </div>
+                  <div className="bg-gray-700/30 p-2 rounded-lg">
+                    <p className="text-red-400 font-medium">admin</p>
+                    <p>password</p>
+                  </div>
+                </div>
+              </div>
+            </div> 
           </div>
         </div>
-        </div>
+      </div>
       </div>
     </>
   );

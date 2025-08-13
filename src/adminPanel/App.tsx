@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import SidebarAdmin from './components/SidebarAdmin';
 
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
@@ -18,6 +19,17 @@ const Economy = lazy(() => import('./pages/admin/Economy'));
 const Calendario = lazy(() => import('./pages/admin/Calendario'));
 
 const AdminLayout = () => {
+  const { user, isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role !== 'admin') {
+    toast.error('Acceso denegado');
+    return <Navigate to="/403" replace />;
+  }
+
   return (
     <div className="min-h-screen admin-bg flex">
       <SidebarAdmin />
@@ -54,7 +66,12 @@ const AdminLayout = () => {
 };
 
 function App() {
-  return <AdminLayout />;
+  return (
+    <AuthProvider>
+      <AdminLayout />
+      
+    </AuthProvider>
+  );
 }
 
 export default App;

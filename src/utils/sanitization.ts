@@ -24,6 +24,7 @@ const PURIFY_CONFIG = {
   RETURN_DOM: false,
   RETURN_DOM_FRAGMENT: false,
   RETURN_DOM_IMPORT: false,
+  RETURN_TRUSTED_TYPE: false,
   SANITIZE_DOM: true,
   WHOLE_DOCUMENT: false,
   RETURN_TRUSTED_TYPE: false,

@@ -5,43 +5,48 @@ import { HelmetProvider } from 'react-helmet-async';
 import * as Sentry from '@sentry/react';
 import App from './App';
 import AppErrorBoundary from './components/AppErrorBoundary';
-import { AuthProvider } from './contexts/AuthProvider';
 import './index.css';
-// TODO: Migrar a Supabase - eliminar imports de datos locales
-// import seed from './data/seed.json';
-// import { players as mockPlayers } from './data/mockData';
-// import { VZ_CLUBS_KEY, VZ_PLAYERS_KEY, VZ_FIXTURES_KEY } from './utils/storageKeys';
+import seed from './data/seed.json';
+import { players as mockPlayers } from './data/mockData';
+import { getImportedPlayers } from './utils/importPlayers';
+import { VZ_CLUBS_KEY, VZ_PLAYERS_KEY, VZ_FIXTURES_KEY } from './utils/storageKeys';
 import './utils/fixTournaments';
 
-// TODO: Migrar a Supabase - eliminar carga de seed data
-// const SEED_VERSION_KEY = 'vz_seed_version';
-// const SEED_VERSION = '3';
+// Update this value when modifying seed.json to force re-seeding
+const SEED_VERSION_KEY = 'vz_seed_version';
+const SEED_VERSION = '4';
 
 Sentry.init({ dsn: import.meta.env.VITE_SENTRY_DSN });
 
-// TODO: Migrar a Supabase - eliminar carga de datos locales
-// if (typeof localStorage !== 'undefined') {
-//   const storedVersion = localStorage.getItem(SEED_VERSION_KEY);
-//   if (storedVersion !== SEED_VERSION) {
-//     try {
-//       localStorage.setItem(VZ_CLUBS_KEY, JSON.stringify(seed.clubs));
-//       localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(mockPlayers));
-//       localStorage.setItem(VZ_FIXTURES_KEY, JSON.stringify(seed.fixtures));
-//       localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
-//     } catch {
-//       // ignore write errors
-//     }
-//   }
-// }
+if (typeof localStorage !== 'undefined') {
+  const storedVersion = localStorage.getItem(SEED_VERSION_KEY);
+  if (storedVersion !== SEED_VERSION) {
+    try {
+      localStorage.setItem(VZ_CLUBS_KEY, JSON.stringify(seed.clubs));
+      // Fusionar mockPlayers con importados (si existen)
+      try {
+        const imported = getImportedPlayers();
+        const merged = Array.isArray(imported) && imported.length > 0
+          ? [...mockPlayers, ...imported]
+          : mockPlayers;
+        localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(merged));
+      } catch {
+        localStorage.setItem(VZ_PLAYERS_KEY, JSON.stringify(mockPlayers));
+      }
+      localStorage.setItem(VZ_FIXTURES_KEY, JSON.stringify(seed.fixtures));
+      localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
+    } catch {
+      // ignore write errors
+    }
+  }
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AppErrorBoundary>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <App />
         </AppErrorBoundary>
       </BrowserRouter>
     </HelmetProvider>

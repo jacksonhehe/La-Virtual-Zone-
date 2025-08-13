@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import useReducedMotionPreference from '@/hooks/useReducedMotionPreference';
 import Image from '../ui/Image';
@@ -29,26 +29,19 @@ import {
   X,
   User
 } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthProvider';
-import { fetchPlayersByClub } from '../../services/players';
-import { fetchClubs } from '../../services/clubs';
-import type { PlayerFlat, Club } from '../../types/supabase';
+import { useDataStore } from '../../store/dataStore';
+import { Player } from '../../types/shared';
 import ProgressRing from '../common/ProgressRing';
 import SquadDepthAnalysis from '../plantilla/SquadDepthAnalysis';
 import ContractManagement from '../plantilla/ContractManagement';
 import SquadQuickActions from '../plantilla/SquadQuickActions';
 
 export default function PlantillaTab() {
-  const { user } = useAuth();
-  const [club, setClub] = useState<Club | null>(null);
-  const [players, setPlayers] = useState<PlayerFlat[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
+  const { club, players } = useDataStore();
   const reduce = useReducedMotionPreference();
   const [search, setSearch] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('all');
-  const [selectedPlayer, setSelectedPlayer] = useState<PlayerFlat | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'overall' | 'name' | 'age' | 'salary'>('overall');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -57,76 +50,58 @@ export default function PlantillaTab() {
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Fetch data from Supabase
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        // Fetch club data for the current user
-        const clubsData = await fetchClubs();
-        if (clubsData.error) throw new Error(clubsData.error.message);
-        
-        const userClub = clubsData.data?.find(c => c.manager_id === user?.id);
-        if (!userClub) throw new Error('No tienes un club asignado');
-        
-        setClub(userClub);
-        
-        // Fetch players for the club
-        const playersData = await fetchPlayersByClub(userClub.id);
-        if (playersData.error) throw new Error(playersData.error.message);
-        
-        setPlayers(playersData.data || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar datos');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchData();
-    }
-  }, [user]);
-
   // Función para traducir estadísticas al español
   const translateStat = (key: string): string => {
     const translations: { [key: string]: string } = {
       // Estadísticas ofensivas
-      offensive: 'Actitud Ofensiva',
-      ballControl: 'Control de Balón',
+      offensive: 'Actitud ofensiva',
+      ballControl: 'Control de balón',
       dribbling: 'Drible',
-      lowPass: 'Pase Raso',
-      loftedPass: 'Pase Bombeado',
+      lowPass: 'Pase al ras',
+      loftedPass: 'Pase bombeado',
       finishing: 'Finalización',
-      placeKicking: 'Balón Parado',
+      placeKicking: 'Balón parado',
       volleys: 'Efecto',
       curl: 'Cabeceador',
       
       // Estadísticas físicas
       speed: 'Velocidad',
       acceleration: 'Aceleración',
-      kickingPower: 'Potencia de Tiro',
+      kickingPower: 'Potencia de tiro',
       stamina: 'Resistencia',
       jumping: 'Salto',
-      physicalContact: 'Contacto Físico',
+      physicalContact: 'Contacto físico',
       balance: 'Equilibrio',
       
       // Estadísticas defensivas
-      defensive: 'Actitud Defensiva',
-      ballWinning: 'Recuperación de Balón',
+      defensive: 'Actitud defensiva',
+      ballWinning: 'Recup. de balón',
       aggression: 'Agresividad',
       
       // Estadísticas de portero
-      goalkeeperReach: 'Actitud de Portero',
-      goalkeeperReflexes: 'Reflejos',
-      goalkeeperClearing: 'Despeje',
-      goalkeeperThrowing: 'Atajar',
-      goalkeeperHandling: 'Cobertura'
+      goalkeeperReach: 'Actitud de portero',
+      goalkeeperReflexes: 'Reflejos (PT)',
+      goalkeeperClearing: 'Despejar (PT)',
+      goalkeeperThrowing: 'Atajar (PT)',
+      goalkeeperHandling: 'Cobertura (PT)'
     };
     
     return translations[key] || key.replace(/([A-Z])/g, ' $1').trim();
   };
+
+  // Helpers para escalas pequeñas y colores
+  const normalizeToScale = (raw: number | undefined, maxScale: number, fallback: number): number => {
+    if (!raw && raw !== 0) return fallback;
+    if (raw <= maxScale) return raw;
+    // Normaliza desde 40-99 a 1-maxScale
+    const clamped = Math.max(40, Math.min(99, raw));
+    const scaled = Math.round(((clamped - 40) / 59) * (maxScale - 1)) + 1;
+    return Math.max(1, Math.min(maxScale, scaled));
+  };
+
+  const colorForEstabilidad = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v <= 4 ? 'text-orange-400 bg-orange-500/20' : v <= 7 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
+  const colorForLesiones = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : 'text-cyan-400 bg-cyan-500/20';
+  const colorForPieMalo = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : v === 3 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
 
   // Helper function to map PES 2021 positions to simplified categories
   const getPositionCategory = (position: string | undefined): string => {
@@ -148,9 +123,10 @@ export default function PlantillaTab() {
 
   const filteredPlayers = useMemo(() => {
     let filtered = players.filter(player => {
-      const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
-      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.position) === selectedPosition;
-      const matchesClub = player.club_id === club?.id;
+      const fullName = `${player.nombre_jugador || ''} ${player.apellido_jugador || ''}`.toLowerCase();
+      const matchesSearch = fullName.includes(search.toLowerCase());
+      const matchesPosition = selectedPosition === 'all' || getPositionCategory(player.posicion || player.position) === selectedPosition;
+      const matchesClub = player.id_equipo === club?.id || player.clubId === club?.id;
       return matchesSearch && matchesPosition && matchesClub;
     });
 
@@ -159,20 +135,20 @@ export default function PlantillaTab() {
       let aVal: any, bVal: any;
       switch (sortBy) {
         case 'overall':
-          aVal = a.overall || 0;
-          bVal = b.overall || 0;
+          aVal = a.valoracion || a.overall || 0;
+          bVal = b.valoracion || b.overall || 0;
           break;
         case 'name':
-          aVal = a.name || '';
-          bVal = b.name || '';
+          aVal = `${a.nombre_jugador || ''} ${a.apellido_jugador || ''}`.trim() || a.name || '';
+          bVal = `${b.nombre_jugador || ''} ${b.apellido_jugador || ''}`.trim() || b.name || '';
           break;
         case 'age':
-          aVal = a.age || 0;
-          bVal = b.age || 0;
+          aVal = a.edad || a.age || 0;
+          bVal = b.edad || b.age || 0;
           break;
         case 'salary':
-          aVal = a.salary || 0;
-          bVal = b.salary || 0;
+          aVal = a.contract?.salary || 0;
+          bVal = b.contract?.salary || 0;
           break;
         default:
           return 0;
@@ -191,19 +167,18 @@ export default function PlantillaTab() {
   // Squad statistics
   const squadStats = useMemo(() => {
     // Get all club players for statistics (not filtered by search/position)
-    const allClubPlayers = players.filter(player => player.club_id === club?.id);
+    const allClubPlayers = players.filter(player => player.clubId === club?.id);
     
     const totalPlayers = filteredPlayers.length;
     const avgAge = totalPlayers > 0 
-      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.age || 0), 0) / totalPlayers)
+      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.edad || p.age || 0), 0) / totalPlayers)
       : 0;
     const avgOverall = totalPlayers > 0
-      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.overall || 0), 0) / totalPlayers)
+      ? Math.round(filteredPlayers.reduce((sum, p) => sum + (p.valoracion || p.overall || 0), 0) / totalPlayers)
       : 0;
-    const totalSalary = filteredPlayers.reduce((sum, p) => sum + (p.salary || 0), 0);
+    const totalSalary = filteredPlayers.reduce((sum, p) => sum + (p.contract?.salary || 0), 0);
     const contractsExpiring = filteredPlayers.filter(p => {
-      if (!p.contract_expires) return false;
-      const contractYear = new Date(p.contract_expires).getFullYear();
+      const contractYear = new Date(p.contract?.expires || '').getFullYear();
       const currentYear = new Date().getFullYear();
       return (contractYear - currentYear) <= 1;
     }).length;
@@ -226,7 +201,7 @@ export default function PlantillaTab() {
     };
   }, [filteredPlayers, players, club?.id]);
 
-  const handlePlayerClick = (player: PlayerFlat) => {
+  const handlePlayerClick = (player: Player) => {
     setSelectedPlayer(player);
   };
 
@@ -937,42 +912,87 @@ export default function PlantillaTab() {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300">Consistencia</span>
-                          <span className="text-sm font-bold text-white">{selectedPlayer.consistency || 70}</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <div 
-                            className="bg-orange-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${((selectedPlayer.consistency || 70) / 99) * 100}%` }}
-                          ></div>
-                        </div>
+                        {(() => {
+                          const est = normalizeToScale(selectedPlayer.consistency as any, 8, 4);
+                          const cls = colorForEstabilidad(est);
+                          return (
+                            <>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-300">Estabilidad (1-8)</span>
+                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{est}</span>
+                              </div>
+                              <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
+                                  style={{ width: `${(est / 8) * 100}%` }}
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300">Resistencia a Lesiones</span>
-                          <span className="text-sm font-bold text-white">{selectedPlayer.injuryResistance || 70}</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${((selectedPlayer.injuryResistance || 70) / 99) * 100}%` }}
-                          ></div>
-                        </div>
+                        {(() => {
+                          const inj = normalizeToScale(selectedPlayer.injuryResistance as any, 3, 2);
+                          const cls = colorForLesiones(inj);
+                          return (
+                            <>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-300">Resist. a lesiones (1-3)</span>
+                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{inj}</span>
+                              </div>
+                              <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
+                                  style={{ width: `${(inj / 3) * 100}%` }}
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-300">Moral</span>
-                          <span className="text-sm font-bold text-white">{selectedPlayer.morale || 70}</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <div 
-                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${((selectedPlayer.morale || 70) / 99) * 100}%` }}
-                          ></div>
-                        </div>
+                        {(() => {
+                          const uso = normalizeToScale((selectedPlayer as any).uso_pie_malo, 4, 3);
+                          const cls = colorForPieMalo(uso);
+                          return (
+                            <>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-300">Uso de pie malo (1-4)</span>
+                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{uso}</span>
+                              </div>
+                              <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
+                                  style={{ width: `${(uso / 4) * 100}%` }}
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+
+                      <div className="space-y-2">
+                        {(() => {
+                          const pre = normalizeToScale((selectedPlayer as any).precision_pie_malo, 4, 3);
+                          const cls = colorForPieMalo(pre);
+                          return (
+                            <>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-300">Precisión de pie malo (1-4)</span>
+                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{pre}</span>
+                              </div>
+                              <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
+                                  style={{ width: `${(pre / 4) * 100}%` }}
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>

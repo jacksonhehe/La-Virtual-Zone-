@@ -1,68 +1,14 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { getTopTeams } from '../../services/standings';
+import { useDataStore } from '../../store/dataStore';
 import slugify from '../../utils/slugify';
-import type { Standing } from '../../types/supabase';
 
 const LeagueStandings = () => {
-  const [topTeams, setTopTeams] = useState<Standing[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTopTeams = async () => {
-      try {
-        setLoading(true);
-        // Por ahora usamos el torneo 1 como ejemplo, en el futuro se puede hacer dinámico
-        const { data, error } = await getTopTeams(1, 5);
-        
-        if (error) {
-          setError(error.message);
-        } else if (data) {
-          setTopTeams(data);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar clasificación');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTopTeams();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4">Clasificación Liga Master</h2>
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
-          <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4">Clasificación Liga Master</h2>
-        <p className="text-red-400">Error: {error}</p>
-      </div>
-    );
-  }
-
-  if (topTeams.length === 0) {
-    return (
-      <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4">Clasificación Liga Master</h2>
-        <p className="text-gray-400">No hay datos de clasificación disponibles.</p>
-      </div>
-    );
-  }
-
+  const { standings, clubs } = useDataStore();
+  
+  // Get top 5 teams
+  const topTeams = standings.slice(0, 5);
+  
   return (
     <div className="card">
       <div className="p-6 border-b border-gray-800">
@@ -92,41 +38,42 @@ const LeagueStandings = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800">
-            {topTeams.map((team, index) => (
-              <tr key={team.club_id} className="hover:bg-gray-800/50">
-                <td className="p-4 text-center">
-                  <span className={`
-                    inline-block w-6 h-6 rounded-full font-medium text-sm flex items-center justify-center
-                    ${index === 0 ? 'bg-yellow-500/20 text-yellow-400' : 
-                      index === 1 ? 'bg-gray-400/20 text-gray-300' : 
-                      index === 2 ? 'bg-amber-600/20 text-amber-500' : 'text-gray-400'}
-                  `}>
-                    {index + 1}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <Link
-                    to={`/liga-master/club/${slugify(team.club_name)}`}
-                    className="flex items-center"
-                  >
-                    <img 
-                      src={team.club_logo || '/default-club-logo.png'}
-                      alt={team.club_name}
-                      className="w-6 h-6 mr-2"
-                      onError={(e) => {
-                        e.currentTarget.src = '/default-club-logo.png';
-                      }}
-                    />
-                    <span className="font-medium">{team.club_name}</span>
-                  </Link>
-                </td>
-                <td className="p-4 text-center text-gray-400">{team.gp}</td>
-                <td className="p-4 text-center text-gray-400">{team.w}</td>
-                <td className="p-4 text-center text-gray-400">{team.d}</td>
-                <td className="p-4 text-center text-gray-400">{team.l}</td>
-                <td className="p-4 text-center font-bold">{team.pts}</td>
-              </tr>
-            ))}
+            {topTeams.map((team, index) => {
+              const club = clubs.find(c => c.id === team.clubId);
+              
+              return (
+                <tr key={team.clubId} className="hover:bg-gray-800/50">
+                  <td className="p-4 text-center">
+                    <span className={`
+                      inline-block w-6 h-6 rounded-full font-medium text-sm flex items-center justify-center
+                      ${index === 0 ? 'bg-yellow-500/20 text-yellow-400' : 
+                        index === 1 ? 'bg-gray-400/20 text-gray-300' : 
+                        index === 2 ? 'bg-amber-600/20 text-amber-500' : 'text-gray-400'}
+                    `}>
+                      {index + 1}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <Link
+                      to={`/liga-master/club/${club ? slugify(club.name) : ''}`}
+                      className="flex items-center"
+                    >
+                      <img 
+                        src={club?.logo}
+                        alt={club?.name}
+                        className="w-6 h-6 mr-2"
+                      />
+                      <span className="font-medium">{club?.name}</span>
+                    </Link>
+                  </td>
+                  <td className="p-4 text-center text-gray-400">{team.played}</td>
+                  <td className="p-4 text-center text-gray-400">{team.won}</td>
+                  <td className="p-4 text-center text-gray-400">{team.drawn}</td>
+                  <td className="p-4 text-center text-gray-400">{team.lost}</td>
+                  <td className="p-4 text-center font-bold">{team.points}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -1,7 +1,7 @@
 export const VZ_OFFERS_KEY = 'vz_offers';
 
 import { TransferOffer } from '../types';
-// import { offers as defaultOffers } from '../data/mockData'; // Eliminado por migración a Supabase
+import { offers as defaultOffers } from '../data/mockData';
 
 /**
  * Load transfer offers from localStorage.
@@ -15,7 +15,7 @@ export const getOffers = (): TransferOffer[] => {
     return defaultOffers as TransferOffer[];
   }
 
-  const json = null; // LocalStorage deshabilitado en migración
+  const json = localStorage.getItem(VZ_OFFERS_KEY);
   if (!json) {
     saveOffers(defaultOffers as TransferOffer[]);
     return defaultOffers as TransferOffer[];
@@ -47,5 +47,5 @@ export const getOffers = (): TransferOffer[] => {
 
 export const saveOffers = (data: TransferOffer[]): void => {
   if (typeof localStorage === 'undefined') return;
-  // LocalStorage deshabilitado en migración
+  localStorage.setItem(VZ_OFFERS_KEY, JSON.stringify(data));
 };
