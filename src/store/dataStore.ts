@@ -123,7 +123,7 @@ interface DataState {
   updateOffers: (newOffers: TransferOffer[]) => void;
   updateMarketStatus: (status: boolean) => void;
   addOffer: (offer: TransferOffer) => void;
-  updateOfferStatus: (offerId: string, status: 'pending' | 'accepted' | 'rejected' | 'expired') => void;
+  updateOfferStatus: (offerId: string, status: 'pending' | 'accepted' | 'rejected') => void;
   updateOfferAmount: (offerId: string, amount: number) => void;
   addTransfer: (transfer: Transfer) => void;
   removeTransfer: (id: string) => void;

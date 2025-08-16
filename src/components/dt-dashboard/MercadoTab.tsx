@@ -1,13 +1,12 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Star, Filter } from 'lucide-react';
+import { Search, Star } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
 import { useAuthStore } from '../../store/authStore';
 import { Player } from '../../types/shared';
 import toast from 'react-hot-toast';
 import OffersPanel from '../market/OffersPanel';
 import OfferModal from '../market/OfferModal';
-import MarketBanner from '../common/MarketBanner';
 
 export default function MercadoTab() {
   const { user } = useAuthStore();
@@ -17,7 +16,6 @@ export default function MercadoTab() {
   const [sortBy, setSortBy] = useState<'value' | 'overall' | 'age'>('value');
   const [showOffers, setShowOffers] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
-  const [onlyTransferable, setOnlyTransferable] = useState(false);
 
   const userClub =
     user?.role === 'dt'
@@ -81,7 +79,6 @@ export default function MercadoTab() {
         
         return false;
       })
-      .filter(p => !onlyTransferable || (p as any).transferListed !== false) // Filtro de transferibles
       .sort((a, b) => {
         switch (sortBy) {
           case 'value': {
@@ -123,9 +120,6 @@ export default function MercadoTab() {
 
   return (
     <div className="space-y-6">
-      {/* Market Banner */}
-      <MarketBanner className="mb-6" />
-
       {/* Header Controls */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -167,12 +161,11 @@ export default function MercadoTab() {
               <option value="age">Por edad</option>
             </select>
             
-            {(search || positionFilter !== 'all' || onlyTransferable) && (
+            {(search || positionFilter !== 'all') && (
               <button
                 onClick={() => {
                   setSearch('');
                   setPositionFilter('all');
-                  setOnlyTransferable(false);
                 }}
                 className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 rounded-xl transition-all"
               >
@@ -180,20 +173,6 @@ export default function MercadoTab() {
               </button>
             )}
           </div>
-        </div>
-
-        {/* Filtro de transferibles */}
-        <div className="flex items-center gap-3 mt-4">
-          <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={onlyTransferable}
-              onChange={(e) => setOnlyTransferable(e.target.checked)}
-              className="w-4 h-4 text-primary bg-gray-800 border-gray-600 rounded focus:ring-primary focus:ring-2"
-            />
-            <Filter size={16} />
-            Solo transferibles
-          </label>
         </div>
 
         <div className="flex gap-3">
@@ -279,13 +258,6 @@ export default function MercadoTab() {
                   <div className="absolute top-3 right-3 bg-primary/90 px-2 py-1 rounded-lg text-xs font-bold text-black">
                     {player.valoracion || player.overall || 'N/A'}
                   </div>
-                  
-                  {/* Chip de no transferible */}
-                  {(player as any).transferListed === false && (
-                    <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-red-500/90 px-2 py-1 rounded-lg text-xs font-bold text-white">
-                      No transferible
-                    </div>
-                  )}
                 </div>
                 
                 <div className="p-4">
@@ -312,19 +284,9 @@ export default function MercadoTab() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleMakeOffer(player)}
-                    disabled={!marketStatus || (player as any).transferListed === false}
-                    className={`w-full font-medium py-2 rounded-xl transition-colors ${
-                      !marketStatus || (player as any).transferListed === false
-                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                        : 'bg-primary text-black hover:bg-primary-light'
-                    }`}
+                    className="w-full bg-primary text-black font-medium py-2 rounded-xl hover:bg-primary-light transition-colors"
                   >
-                    {!marketStatus 
-                      ? 'Mercado cerrado' 
-                      : (player as any).transferListed === false 
-                        ? 'No transferible' 
-                        : 'Hacer Oferta'
-                    }
+                    Hacer Oferta
                   </motion.button>
                 </div>
               </motion.div>

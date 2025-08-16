@@ -8,8 +8,6 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
 import { useThemeStore } from "./store/themeStore";
-import { useExpiredOffers } from "./hooks/useExpiredOffers";
-import DevResetButton from "./components/admin/DevResetButton";
 
 const LigaMaster = lazy(() => import("./pages/LigaMaster"));
 const Plantilla = lazy(() => import("./pages/Plantilla"));
@@ -52,9 +50,6 @@ const Admin = lazy(() => import("./pages/Admin"));
 
 function App() {
   const { theme } = useThemeStore();
-  
-  // Hook para verificar ofertas expiradas automáticamente
-  useExpiredOffers();
 
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -65,7 +60,6 @@ function App() {
   return (
     <div className="min-h-screen bg-[#18181f] text-white">
       <Toaster position="top-right" />
-      <DevResetButton />
       <Suspense fallback={<Spinner />}>
         <Routes>
           <Route element={<Layout />}>
