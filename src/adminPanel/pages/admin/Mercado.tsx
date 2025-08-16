@@ -5,6 +5,7 @@ import { useGlobalStore, subscribe as subscribeGlobal } from '../../store/global
 import { useDataStore } from '../../../store/dataStore';
 import SearchFilter from '../../components/admin/SearchFilter';
 import StatsCard from '../../components/admin/StatsCard';
+import { createNotification } from '../../../store/notificationStore';
 
 const Mercado = () => {
   const { transfers, approveTransfer, rejectTransfer } = useGlobalStore();
@@ -97,6 +98,8 @@ const Mercado = () => {
     toast.success('Transferencia rechazada');
   };
 
+  const [marketCloseDate, setMarketCloseDate] = useState<string>('');
+
   const handleToggleMarket = () => {
     setConfirmMarketModal(true);
   };
@@ -104,6 +107,20 @@ const Mercado = () => {
   const confirmToggleMarket = () => {
     const newStatus = !marketStatus;
     updateMarketStatus(newStatus);
+    
+    // Si se está abriendo el mercado, establecer fecha de cierre (48 horas)
+    if (newStatus) {
+      const closeDate = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+      setMarketCloseDate(closeDate);
+      localStorage.setItem('vz_market_close_date', closeDate);
+      createNotification.marketOpened();
+    } else {
+      // Si se está cerrando, limpiar fecha
+      setMarketCloseDate('');
+      localStorage.removeItem('vz_market_close_date');
+      createNotification.marketClosed();
+    }
+    
     setConfirmMarketModal(false);
     toast.success(`Mercado ${newStatus ? 'abierto' : 'cerrado'} exitosamente`);
   };
@@ -120,9 +137,16 @@ const Mercado = () => {
             <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-lg p-3">
               <div className="flex items-center space-x-2">
                 <DollarSign size={20} className="text-blue-400" />
-                <span className="text-blue-400 font-medium">
-                  Mercado {marketStatus ? 'Abierto' : 'Cerrado'}
-                </span>
+                <div>
+                  <div className="text-blue-400 font-medium">
+                    Mercado {marketStatus ? 'Abierto' : 'Cerrado'}
+                  </div>
+                  {marketStatus && marketCloseDate && (
+                    <div className="text-xs text-blue-300">
+                      Cierra: {new Date(marketCloseDate).toLocaleString('es-ES')}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <button

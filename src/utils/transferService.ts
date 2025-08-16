@@ -2,6 +2,8 @@
 import { TransferOffer, Transfer } from '../types';
 import { Player } from '../types/shared';
 import { useDataStore } from '../store/dataStore';
+import { createNotification } from '../store/notificationStore';
+import { MARKET_CONFIG, calculateExpiryDate } from '../config/marketConfig';
 
 /** Params for creating a transfer offer */
 export interface MakeOfferParams {
@@ -63,7 +65,7 @@ export function makeOffer(params: MakeOfferParams): string | null {
 
   // Oferta mínima razonable
   const baseValue = getBaseValue(player);
-  const minAllowed = Math.round(baseValue * 0.7);
+  const minAllowed = Math.round(baseValue * MARKET_CONFIG.MIN_OFFER_PERCENTAGE);
   if (amount < minAllowed) {
     return 'La oferta es demasiado baja';
   }
@@ -76,7 +78,11 @@ export function makeOffer(params: MakeOfferParams): string | null {
     return 'Ya tienes una oferta pendiente por este jugador';
   }
 
-  // Crear oferta
+  // Verificar si el jugador es transferible (opcional, solo para mostrar advertencia)
+  const isTransferable = (player as any).transferListed !== false;
+
+  // Crear oferta con vencimiento configurable
+  const expiresAt = calculateExpiryDate(MARKET_CONFIG.DEFAULT_OFFER_EXPIRY_HOURS);
   const newOffer: TransferOffer = {
     id: `offer${Date.now()}`,
     playerId,
@@ -86,10 +92,15 @@ export function makeOffer(params: MakeOfferParams): string | null {
     amount,
     date: new Date().toISOString(),
     status: 'pending',
-    userId
+    userId,
+    expiresAt
   };
 
   addOffer(newOffer);
+  
+  // Notificar al club vendedor
+  createNotification.offerReceived(playerName, buyerClub.name, amount);
+  
   return null;
 }
 
@@ -102,6 +113,12 @@ export function processTransfer(offerId: string): string | null {
   const offer = offers.find(o => o.id === offerId);
   if (!offer) return 'Oferta no encontrada';
   if (offer.status !== 'pending') return 'Esta oferta ya ha sido procesada';
+  
+  // Verificar si la oferta ha expirado
+  if (new Date() > new Date(offer.expiresAt)) {
+    updateOfferStatus(offerId, 'expired');
+    return 'Esta oferta ha expirado';
+  }
 
   const player = players.find(p => p.id === offer.playerId);
   const buyerClub = clubs.find(c => c.name === offer.toClub);
@@ -148,6 +165,9 @@ export function processTransfer(offerId: string): string | null {
   };
   addTransfer(transfer);
 
+  // Notificar al comprador que su oferta fue aceptada
+  createNotification.offerAccepted(offer.playerName, sellerClub.name, offer.amount);
+
   return null;
 }
 
@@ -163,10 +183,25 @@ function getBaseValue(player: Player): number {
 
 export function getMinOfferAmount(player: Player): number {
   const base = getBaseValue(player);
-  return Math.round(base * 0.7);
+  return Math.round(base * MARKET_CONFIG.MIN_OFFER_PERCENTAGE);
 }
 
 export function getMaxOfferAmount(player: Player, clubBudget: number): number {
   const base = getBaseValue(player);
-  return Math.min(Math.round(base * 1.5), clubBudget);
+  return Math.min(Math.round(base * MARKET_CONFIG.MAX_OFFER_PERCENTAGE), clubBudget);
+}
+
+/** Verifica y marca ofertas expiradas automáticamente */
+export function checkExpiredOffers(): void {
+  const { offers, updateOfferStatus } = useDataStore.getState();
+  const now = new Date();
+  
+  offers.forEach(offer => {
+    if (offer.status === 'pending' && new Date(offer.expiresAt) < now) {
+      updateOfferStatus(offer.id, 'expired');
+      
+      // Notificar expiración
+      createNotification.offerExpired(offer.playerName, offer.toClub);
+    }
+  });
 }

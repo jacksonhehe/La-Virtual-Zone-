@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock, AlertTriangle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
 import { processTransfer } from '../../utils/transferService';
@@ -9,6 +9,7 @@ import Card from '../common/Card';
 import RenegotiateModal from './RenegotiateModal';
 import ConfirmModal from '../common/ConfirmModal';
 import toast from 'react-hot-toast';
+import { createNotification } from '../../store/notificationStore';
 
 interface OffersPanelProps {
   initialView?: 'sent' | 'received';
@@ -41,7 +42,7 @@ const OffersPanel = ({
     user.role === 'dt' && user.club ?
       offers.filter(o => {
         const userClub = clubs.find(c => c.name === user.club);
-        return userClub && o.fromClub === userClub.name;
+        return userClub && o.toClub === userClub.name;
       }) :
       offers.filter(o => o.userId === user.id) :
     [];
@@ -54,7 +55,7 @@ const OffersPanel = ({
         ? offers.filter(o => {
             const userClub = clubs.find(c => c.name === user.club);
             // Offers where my club is selling
-            return userClub && o.toClub === userClub.name;
+            return userClub && o.fromClub === userClub.name;
           })
         : []
     : [];
@@ -116,6 +117,8 @@ const OffersPanel = ({
     } else {
       useDataStore.getState().updateOfferStatus(offerId, 'rejected');
       toast.error(`Has rechazado la oferta por ${offer.playerName}`);
+      // Notificar al comprador que su oferta fue rechazada
+      createNotification.offerRejected(offer.playerName, offer.fromClub, offer.amount);
     }
   };
 
@@ -172,6 +175,31 @@ const OffersPanel = ({
     }
     
     return false;
+  };
+
+  // Función para mostrar el tiempo restante de una oferta
+  const getTimeRemaining = (expiresAt: string) => {
+    const now = new Date().getTime();
+    const expireTime = new Date(expiresAt).getTime();
+    const difference = expireTime - now;
+
+    if (difference <= 0) return 'Expirada';
+
+    const hours = Math.floor(difference / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
+
+  // Función para verificar si una oferta está por expirar (últimas 2 horas)
+  const isExpiringSoon = (expiresAt: string) => {
+    const now = new Date().getTime();
+    const expireTime = new Date(expiresAt).getTime();
+    const difference = expireTime - now;
+    return difference > 0 && difference <= 2 * 60 * 60 * 1000; // 2 horas
   };
   
   return (
@@ -233,6 +261,14 @@ const OffersPanel = ({
                     <div className="text-xs">
                       {getStatusBadge(offer.status)}
                     </div>
+                    {offer.status === 'pending' && offer.expiresAt && (
+                      <div className={`flex items-center gap-1 ${
+                        isExpiringSoon(offer.expiresAt) ? 'text-orange-400' : 'text-gray-400'
+                      }`}>
+                        <Clock size={12} />
+                        <span>{getTimeRemaining(offer.expiresAt)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -248,33 +284,39 @@ const OffersPanel = ({
                 )}
               </button>
             </div>
-            {view === 'received' && (
-              offer.status === 'pending' ? (
-                <div className="mt-3 flex gap-2">
-                  <button
-                    className="text-xs rounded-lg bg-green-600 hover:bg-green-700 text-white px-2 py-1"
-                    onClick={() => handleAccept(offer)}
-                  >
-                    Aceptar
-                  </button>
-                  <button
-                    className="text-xs rounded-lg bg-orange-500 hover:bg-orange-600 text-white px-2 py-1"
-                    onClick={() => handleRenegotiate(offer)}
-                  >
-                    Renegociar
-                  </button>
-                  <button
-                    className="text-xs rounded-lg bg-red-600 hover:bg-red-700 text-white px-2 py-1"
-                    onClick={() => handleReject(offer)}
-                  >
-                    Rechazar
-                  </button>
-                </div>
-              ) : (
-                <div className="mt-3 text-xs">
-                  {getStatusBadge(offer.status)}
-                </div>
-              )
+            {view === 'received' && canRespondToOffer(offer) && offer.status === 'pending' && (
+              <div className="mt-3 flex gap-2">
+                <button
+                  className="text-xs rounded-lg bg-green-600 hover:bg-green-700 text-white px-2 py-1"
+                  onClick={() => handleAccept(offer)}
+                >
+                  Aceptar
+                </button>
+                <button
+                  className="text-xs rounded-lg bg-orange-500 hover:bg-orange-600 text-white px-2 py-1"
+                  onClick={() => handleRenegotiate(offer)}
+                >
+                  Renegociar
+                </button>
+                <button
+                  className="text-xs rounded-lg bg-red-600 hover:bg-red-700 text-white px-2 py-1"
+                  onClick={() => handleReject(offer)}
+                >
+                  Rechazar
+                </button>
+              </div>
+            )}
+            
+            {view === 'received' && !canRespondToOffer(offer) && offer.status === 'pending' && (
+              <div className="mt-3 text-xs text-gray-500">
+                No tienes permisos para responder a esta oferta
+              </div>
+            )}
+            
+            {view === 'received' && offer.status !== 'pending' && (
+              <div className="mt-3 text-xs">
+                {getStatusBadge(offer.status)}
+              </div>
             )}
           </div>
 
@@ -317,6 +359,14 @@ const OffersPanel = ({
                 {offer.responseDate && (
                   <p>Respondida: {formatDate(offer.responseDate)}</p>
                 )}
+                {offer.expiresAt && (
+                  <div className={`flex items-center gap-1 ${
+                    isExpiringSoon(offer.expiresAt) ? 'text-orange-400' : 'text-gray-400'
+                  }`}>
+                    <Clock size={12} />
+                    <span>Expira: {formatDate(offer.expiresAt)}</span>
+                  </div>
+                )}
               </div>
               
               {canRespondToOffer(offer) && (
@@ -351,6 +401,13 @@ const OffersPanel = ({
               {offer.status === 'rejected' && (
                 <div className="mt-2 p-2 bg-red-500/10 text-red-400 text-sm rounded">
                   Esta oferta fue rechazada.
+                </div>
+              )}
+
+              {offer.status === 'expired' && (
+                <div className="mt-2 p-2 bg-yellow-500/10 text-yellow-400 text-sm rounded flex items-center gap-2">
+                  <AlertTriangle size={14} />
+                  <span>Esta oferta ha expirado automáticamente.</span>
                 </div>
               )}
             </div>

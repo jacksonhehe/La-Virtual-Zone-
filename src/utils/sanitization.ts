@@ -27,7 +27,6 @@ const PURIFY_CONFIG = {
   RETURN_TRUSTED_TYPE: false,
   SANITIZE_DOM: true,
   WHOLE_DOCUMENT: false,
-  RETURN_TRUSTED_TYPE: false,
   ADD_URI_SAFE_ATTR: ['target'],
   ALLOW_DATA_ATTR: false,
   USE_PROFILES: {

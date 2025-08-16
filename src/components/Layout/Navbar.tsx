@@ -6,6 +6,7 @@ import { calculateLevel } from '../../utils/helpers';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import useEscapeKey from '../../hooks/useEscapeKey';
 import SmartAvatar from '../common/SmartAvatar';
+import NotificationBell from '../notifications/NotificationBell';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -110,6 +111,9 @@ const Navbar = () => {
           
           {/* User navigation */}
           <div className="flex items-center">
+            {/* Notification Bell */}
+            {isAuthenticated && <NotificationBell />}
+            
             {isAuthenticated ? (
               <div className="relative ml-3">
                 <div>

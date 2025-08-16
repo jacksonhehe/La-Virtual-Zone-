@@ -92,9 +92,10 @@ export interface TransferOffer {
   toClub: string;
   amount: number;
   date: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'accepted' | 'rejected' | 'expired';
   userId: string;
   responseDate?: string;
+  expiresAt: string; // Fecha de vencimiento (48 horas por defecto)
 }
 
 // News types
