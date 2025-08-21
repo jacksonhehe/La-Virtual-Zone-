@@ -72,76 +72,40 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
   const translateStat = (key: string): string => {
     const translations: { [key: string]: string } = {
       // Estadísticas ofensivas
-      offensive: 'Actitud ofensiva',
-      ballControl: 'Control de balón',
+      offensive: 'Actitud Ofensiva',
+      ballControl: 'Control de Balón',
       dribbling: 'Drible',
-      lowPass: 'Pase al ras',
-      loftedPass: 'Pase bombeado',
+      lowPass: 'Pase Raso',
+      loftedPass: 'Pase Bombeado',
       finishing: 'Finalización',
-      placeKicking: 'Balón parado',
+      placeKicking: 'Balón Parado',
       volleys: 'Efecto',
       curl: 'Cabeceador',
       
       // Estadísticas físicas
       speed: 'Velocidad',
       acceleration: 'Aceleración',
-      kickingPower: 'Potencia de tiro',
+      kickingPower: 'Potencia de Tiro',
       stamina: 'Resistencia',
       jumping: 'Salto',
-      physicalContact: 'Contacto físico',
+      physicalContact: 'Contacto Físico',
       balance: 'Equilibrio',
       
       // Estadísticas defensivas
-      defensive: 'Actitud defensiva',
-      ballWinning: 'Recup. de balón',
+      defensive: 'Actitud Defensiva',
+      ballWinning: 'Recuperación de Balón',
       aggression: 'Agresividad',
       
       // Estadísticas de portero
-      goalkeeperReach: 'Actitud de portero',
-      goalkeeperReflexes: 'Reflejos (PT)',
-      goalkeeperClearing: 'Despejar (PT)',
-      goalkeeperThrowing: 'Atajar (PT)',
-      goalkeeperHandling: 'Cobertura (PT)'
+      goalkeeperReach: 'Actitud de Portero',
+      goalkeeperReflexes: 'Reflejos',
+      goalkeeperClearing: 'Despeje',
+      goalkeeperThrowing: 'Atajar',
+      goalkeeperHandling: 'Cobertura'
     };
     
     return translations[key] || key.replace(/([A-Z])/g, ' $1').trim();
   };
-
-  // Helpers de color por rangos (mismos que Panel Admin y PlantillaTab)
-  const getStatColorClass = (value: number) => {
-    if (value > 94 && value <= 99) return 'text-cyan-400';
-    if (value > 84 && value <= 94) return 'text-green-400';
-    if (value > 74 && value < 85) return 'text-orange-400';
-    if (value > 39 && value < 75) return 'text-red-400';
-    return 'text-gray-300';
-  };
-
-  const getStatColorHex = (value: number) => {
-    if (value > 94 && value <= 99) return '#22d3ee';
-    if (value > 84 && value <= 94) return '#34d399';
-    if (value > 74 && value < 85) return '#fb923c';
-    if (value > 39 && value < 75) return '#f87171';
-    return '#9ca3af';
-  };
-
-  const getSliderBackground = (value: number) => {
-    const pct = Math.max(0, Math.min(100, ((value - 40) * 100) / 59));
-    const c = getStatColorHex(value);
-    return `linear-gradient(to right, ${c} 0%, ${c} ${pct}%, #374151 ${pct}%, #374151 100%)`;
-  };
-
-  // Helpers para escalas pequeñas y colores (idénticos a PlantillaTab)
-  const normalizeToScale = (raw: number | undefined, maxScale: number, fallback: number): number => {
-    if (!raw && raw !== 0) return fallback;
-    if (raw <= maxScale) return raw;
-    const clamped = Math.max(40, Math.min(99, raw));
-    const scaled = Math.round(((clamped - 40) / 59) * (maxScale - 1)) + 1;
-    return Math.max(1, Math.min(maxScale, scaled));
-  };
-
-  const colorForEstabilidad = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v <= 4 ? 'text-orange-400 bg-orange-500/20' : v <= 7 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
-  const colorForLesiones = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : 'text-cyan-400 bg-cyan-500/20';
-  const colorForPieMalo = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : v === 3 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -491,7 +455,7 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl p-4 border border-blue-500/30">
                   <div className="text-center">
                     <p className="text-sm text-gray-400 mb-1">Valor</p>
-                    <p className="text-xl font-bold text-blue-400">{(player.value || 0).toLocaleString()}€</p>
+                    <p className="text-xl font-bold text-blue-400">{formatCurrency(player.value || 0)}</p>
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-xl p-4 border border-green-500/30">
@@ -503,8 +467,8 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
               </div>
 
               {/* Personal Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 bg-blue-500/20 rounded-lg">
                       <User size={20} className="text-blue-400" />
@@ -537,7 +501,7 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                   </div>
                 </div>
 
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 bg-green-500/20 rounded-lg">
                       <Target size={20} className="text-green-400" />
@@ -545,7 +509,7 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                     <h3 className="text-lg font-bold text-white">Atributos Principales</h3>
                   </div>
                   <div className="space-y-2">
-                    {Object.entries(player.attributes || {}).map(([key, value]) => (
+                    {Object.entries(player.attributes).map(([key, value]) => (
                       <div key={key} className="flex justify-between">
                         <span className="text-gray-400 capitalize">{key}</span>
                         <span className="text-white">{value}</span>
@@ -554,7 +518,7 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                   </div>
                 </div>
 
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 bg-yellow-500/20 rounded-lg">
                       <DollarSign size={20} className="text-yellow-400" />
@@ -564,11 +528,11 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Salario</span>
-                      <span className="text-white">{(player.contract?.salary || 0).toLocaleString()}€</span>
+                      <span className="text-white">{formatCurrency(player.contract?.salary || 0)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Valor de Mercado</span>
-                      <span className="text-white">{(player.value || 0).toLocaleString()}€</span>
+                      <span className="text-white">{formatCurrency(player.value || 0)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Contrato hasta</span>
@@ -592,8 +556,8 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
 
               {/* Secondary Positions */}
               {player.secondaryPositions && player.secondaryPositions.length > 0 && (
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-                  <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+                  <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 bg-purple-500/20 rounded-lg">
                       <Target size={20} className="text-purple-400" />
                     </div>
@@ -628,9 +592,14 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                       <div key={key} className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-300">{translateStat(key)}</span>
-                          <span className={`text-sm font-bold ${getStatColorClass(value as number)}`}>{value as any}</span>
+                          <span className="text-sm font-bold text-white">{value}</span>
                         </div>
-                        <div className="w-full rounded-full h-2" style={{ background: getSliderBackground(value as number) }}></div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(value / 99) * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -640,9 +609,14 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                       <div key={key} className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-300">{translateStat(key)}</span>
-                          <span className={`text-sm font-bold ${getStatColorClass(value as number)}`}>{value as any}</span>
+                          <span className="text-sm font-bold text-white">{value}</span>
                         </div>
-                        <div className="w-full rounded-full h-2" style={{ background: getSliderBackground(value as number) }}></div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(value / 99) * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -662,89 +636,44 @@ const OfferModal = ({ player, onClose, onOfferSent }: OfferModalProps) => {
                   <h3 className="text-lg font-bold text-white">Características Físicas</h3>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                   <div className="space-y-2">
-                    {(() => {
-                      const est = normalizeToScale(player.consistency as any, 8, 4);
-                      const cls = colorForEstabilidad(est);
-                      return (
-                        <>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-300">Estabilidad (1-8)</span>
-                            <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{est}</span>
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                              style={{ width: `${(est / 8) * 100}%` }}
-                            />
-                          </div>
-                        </>
-                      );
-                    })()}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-300">Consistencia</span>
+                      <span className="text-sm font-bold text-white">{player.consistency || 70}</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((player.consistency || 70) / 99) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    {(() => {
-                      const inj = normalizeToScale(player.injuryResistance as any, 3, 2);
-                      const cls = colorForLesiones(inj);
-                      return (
-                        <>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-300">Resist. a lesiones (1-3)</span>
-                            <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{inj}</span>
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                              style={{ width: `${(inj / 3) * 100}%` }}
-                            />
-                          </div>
-                        </>
-                      );
-                    })()}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-300">Resistencia a Lesiones</span>
+                      <span className="text-sm font-bold text-white">{player.injuryResistance || 70}</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((player.injuryResistance || 70) / 99) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    {(() => {
-                      const uso = normalizeToScale((player as any).uso_pie_malo, 4, 3);
-                      const cls = colorForPieMalo(uso);
-                      return (
-                        <>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-300">Uso de pie malo (1-4)</span>
-                            <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{uso}</span>
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duración-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                              style={{ width: `${(uso / 4) * 100}%` }}
-                            />
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-
-                  <div className="space-y-2">
-                    {(() => {
-                      const pre = normalizeToScale((player as any).precision_pie_malo, 4, 3);
-                      const cls = colorForPieMalo(pre);
-                      return (
-                        <>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-300">Precisión de pie malo (1-4)</span>
-                            <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{pre}</span>
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duración-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                              style={{ width: `${(pre / 4) * 100}%` }}
-                            />
-                          </div>
-                        </>
-                      );
-                    })()}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-300">Moral</span>
+                      <span className="text-sm font-bold text-white">{player.morale || 70}</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((player.morale || 70) / 99) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -239,28 +239,6 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const getStatColorClass = (value: number) => {
-    if (value > 94 && value <= 99) return 'text-cyan-400'; // 95-99 Celeste
-    if (value > 84 && value <= 94) return 'text-green-400'; // 85-94 Verde claro (incluye 94)
-    if (value > 74 && value < 85) return 'text-orange-400'; // 75-84 Naranja
-    if (value > 39 && value < 75) return 'text-red-400'; // 40-74 Rojo
-    return 'text-gray-300';
-  };
-
-  const getStatColorHex = (value: number) => {
-    if (value > 94 && value <= 99) return '#22d3ee'; // cyan-400
-    if (value > 84 && value <= 94) return '#34d399'; // green-400
-    if (value > 74 && value < 85) return '#fb923c'; // orange-400
-    if (value > 39 && value < 75) return '#f87171'; // red-400
-    return '#9ca3af'; // gray-400 fallback
-  };
-
-  const getSliderBackground = (value: number) => {
-    const pct = Math.max(0, Math.min(100, ((value - 40) * 100) / 59));
-    const c = getStatColorHex(value);
-    return `linear-gradient(to right, ${c} 0%, ${c} ${pct}%, #374151 ${pct}%, #374151 100%)`;
-  };
-
   const validate = () => {
     const newErrors: Record<string, string> = {};
     
@@ -276,24 +254,12 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
     if (formData.precio_compra_libre < 0) newErrors.precio_compra_libre = 'Precio de compra libre debe ser positivo';
     
     setErrors(newErrors);
-    const hasErrors = Object.keys(newErrors).length > 0;
-    let firstTab: 'basic' | 'contract' = 'basic';
-    if (!newErrors.nombre_jugador && !newErrors.apellido_jugador && !newErrors.nacionalidad && !newErrors.id_equipo && !newErrors.edad && !newErrors.altura && !newErrors.peso) {
-      if (newErrors.valoracion || newErrors.precio_compra_libre) firstTab = 'contract';
-    }
-    return { valid: !hasErrors, errors: newErrors, firstTab };
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const result = validate();
-    if (!result.valid) {
-      setActiveTab(result.firstTab);
-      const firstMsg = Object.values(result.errors)[0] || 'Revisa los campos obligatorios';
-      toast.error(firstMsg);
-      return;
-    }
-    if (result.valid) {
+    if (validate()) {
       const image = formData.foto_jugador || player.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.nombre_jugador)}&background=1e293b&color=fff&size=128`;
       
       // Calcular overall basado en estadísticas
@@ -734,26 +700,26 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                 {!isGoalkeeper ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                     {[
-                      { key: 'actitud_ofensiva', label: 'Actitud ofensiva', icon: '⚽' },
-                      { key: 'control_balon', label: 'Control de balón', icon: '🎯' },
+                      { key: 'actitud_ofensiva', label: 'Actitud Ofensiva', icon: '⚽' },
+                      { key: 'control_balon', label: 'Control de Balón', icon: '🎯' },
                       { key: 'drible', label: 'Drible', icon: '🏃' },
-                      { key: 'posesion_balon', label: 'Posesión del balón', icon: '👤' },
-                      { key: 'pase_raso', label: 'Pase al ras', icon: '📤' },
-                      { key: 'pase_bombeado', label: 'Pase bombeado', icon: '📡' },
+                      { key: 'posesion_balon', label: 'Posesión de Balón', icon: '👤' },
+                      { key: 'pase_raso', label: 'Pase Raso', icon: '📤' },
+                      { key: 'pase_bombeado', label: 'Pase Bombeado', icon: '📡' },
                       { key: 'finalizacion', label: 'Finalización', icon: '🎯' },
                       { key: 'cabeceador', label: 'Cabeceador', icon: '🤕' },
-                      { key: 'balon_parado', label: 'Balón parado', icon: '⚽' },
+                      { key: 'balon_parado', label: 'Balón Parado', icon: '⚽' },
                       { key: 'efecto', label: 'Efecto', icon: '🌀' },
                       { key: 'velocidad', label: 'Velocidad', icon: '💨' },
                       { key: 'aceleracion', label: 'Aceleración', icon: '🚀' },
-                      { key: 'potencia_tiro', label: 'Potencia de tiro', icon: '💪' },
+                      { key: 'potencia_tiro', label: 'Fuerza de Tiro', icon: '💪' },
                       { key: 'salto', label: 'Salto', icon: '🦘' },
-                      { key: 'contacto_fisico', label: 'Contacto físico', icon: '🛡️' },
+                      { key: 'contacto_fisico', label: 'Contacto Físico', icon: '🛡️' },
                       { key: 'equilibrio', label: 'Equilibrio', icon: '⚖️' },
                       { key: 'resistencia', label: 'Resistencia', icon: '🏃‍♂️' },
                       { key: 'agresividad', label: 'Agresividad', icon: '🔥' },
-                      { key: 'recuperacion_balon', label: 'Recup. de balón', icon: '🎯' },
-                      { key: 'actitud_defensiva', label: 'Actitud defensiva', icon: '🛡️' },
+                      { key: 'recuperacion_balon', label: 'Recuperación de Balón', icon: '🎯' },
+                      { key: 'actitud_defensiva', label: 'Actitud Defensiva', icon: '🛡️' },
                     ].map((stat) => (
                       <div key={stat.key} className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-200">
@@ -766,8 +732,7 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                             max="99"
                             className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                             style={{
-                              background: getSliderBackground(formData[stat.key as keyof PlayerFormData] as number),
-                              ['--thumb-color' as any]: getStatColorHex(formData[stat.key as keyof PlayerFormData] as number)
+                              background: `linear-gradient(to right, #10b981 0%, #10b981 ${((formData[stat.key as keyof PlayerFormData] as number) - 40) * 100 / 59}%, #374151 ${((formData[stat.key as keyof PlayerFormData] as number) - 40) * 100 / 59}%, #374151 100%)`
                             }}
                             value={formData[stat.key as keyof PlayerFormData] as number}
                             onChange={(e) => setFormData({
@@ -775,7 +740,7 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                               [stat.key]: Number(e.target.value)
                             } as any)}
                           />
-                          <span className={`text-sm font-bold min-w-[2.5rem] text-center bg-gray-800 px-2 py-1 rounded-lg ${getStatColorClass(formData[stat.key as keyof PlayerFormData] as number)}`}>
+                          <span className="text-sm font-bold text-white min-w-[2.5rem] text-center bg-gray-800 px-2 py-1 rounded-lg">
                             {formData[stat.key as keyof PlayerFormData] as number}
                           </span>
                         </div>
@@ -800,18 +765,14 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                             type="range"
                             min="40"
                             max="99"
-                            className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                            style={{
-                              background: getSliderBackground(formData[stat.key as keyof PlayerFormData] as number),
-                              ['--thumb-color' as any]: getStatColorHex(formData[stat.key as keyof PlayerFormData] as number)
-                            }}
+                            className="flex-1"
                             value={formData[stat.key as keyof PlayerFormData] as number}
                             onChange={(e) => setFormData({
                               ...formData,
                               [stat.key]: Number(e.target.value)
                             } as any)}
                           />
-                          <span className={`text-sm font-medium min-w-[2rem] text-center ${getStatColorClass(formData[stat.key as keyof PlayerFormData] as number)}`}>
+                          <span className="text-sm font-medium text-white min-w-[2rem] text-center">
                             {formData[stat.key as keyof PlayerFormData] as number}
                           </span>
                         </div>
@@ -833,171 +794,37 @@ const EditPlayerModal = ({ player, onClose, onSave }: Props) => {
                   </div>
                   <div>
                     <h4 className="text-lg font-bold text-white">Características Físicas y Salud</h4>
-                    <p className="text-gray-400 text-sm">Escalas específicas por atributo</p>
+                    <p className="text-gray-400 text-sm">Condición física y resistencia (40-99)</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                  {/* Estabilidad (1-8) */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">Estabilidad (1-8)</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="range"
-                        min={1}
-                        max={8}
-                        step={1}
-                        className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                        style={{
-                          background: (() => {
-                            const thumbHex = getStatColorHex(
-                              formData.estabilidad === 1 ? 45 :
-                              formData.estabilidad <= 4 ? 80 :
-                              formData.estabilidad <= 7 ? 90 : 96
-                            );
-                            const pct = Math.max(0, Math.min(100, (((formData.estabilidad - 1) * (59/7) + 40) - 40) * 100 / 59));
-                            return `linear-gradient(to right, ${thumbHex} 0%, ${thumbHex} ${pct}%, #374151 ${pct}%, #374151 100%)`;
-                          })(),
-                          ['--thumb-color' as any]: getStatColorHex(
-                            formData.estabilidad === 1 ? 45 :
-                            formData.estabilidad <= 4 ? 80 :
-                            formData.estabilidad <= 7 ? 90 : 96
-                          )
-                        }}
-                        value={formData.estabilidad}
-                        onChange={(e) => setFormData({ ...formData, estabilidad: Number(e.target.value) })}
-                      />
-                      {(() => {
-                        const v = formData.estabilidad;
-                        const valColor = v === 1 ? 'text-red-400' : v <= 4 ? 'text-orange-400' : v <= 7 ? 'text-green-400' : 'text-cyan-400';
-                        return (
-                          <span className={`text-sm font-medium min-w-[2rem] text-center ${valColor}`}>
-                            {v}
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* Resistencia a Lesiones (1-3) */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">Resistencia a Lesiones (1-3)</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="range"
-                        min={1}
-                        max={3}
-                        step={1}
-                        className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                        style={{
-                          background: (() => {
-                            const thumbHex = getStatColorHex(
-                              formData.resistencia_lesiones === 1 ? 45 :
-                              formData.resistencia_lesiones === 2 ? 80 : 96
-                            );
-                            const pct = Math.max(0, Math.min(100, (((formData.resistencia_lesiones - 1) * (59/2) + 40) - 40) * 100 / 59));
-                            return `linear-gradient(to right, ${thumbHex} 0%, ${thumbHex} ${pct}%, #374151 ${pct}%, #374151 100%)`;
-                          })(),
-                          ['--thumb-color' as any]: getStatColorHex(
-                            formData.resistencia_lesiones === 1 ? 45 :
-                            formData.resistencia_lesiones === 2 ? 80 : 96
-                          )
-                        }}
-                        value={formData.resistencia_lesiones}
-                        onChange={(e) => setFormData({ ...formData, resistencia_lesiones: Number(e.target.value) })}
-                      />
-                      {(() => {
-                        const v = formData.resistencia_lesiones;
-                        const valColor = v === 1 ? 'text-red-400' : v === 2 ? 'text-orange-400' : 'text-cyan-400';
-                        return (
-                          <span className={`text-sm font-medium min-w-[2rem] text-center ${valColor}`}>
-                            {v}
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* Uso de pie malo (1-4) */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">Uso de pie malo (1-4)</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="range"
-                        min={1}
-                        max={4}
-                        step={1}
-                        className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                        style={{
-                          background: (() => {
-                            const thumbHex = getStatColorHex(
-                              formData.uso_pie_malo === 1 ? 45 :
-                              formData.uso_pie_malo === 2 ? 80 :
-                              formData.uso_pie_malo === 3 ? 90 : 96
-                            );
-                            const pct = Math.max(0, Math.min(100, (((formData.uso_pie_malo - 1) * (59/3) + 40) - 40) * 100 / 59));
-                            return `linear-gradient(to right, ${thumbHex} 0%, ${thumbHex} ${pct}%, #374151 ${pct}%, #374151 100%)`;
-                          })(),
-                          ['--thumb-color' as any]: getStatColorHex(
-                            formData.uso_pie_malo === 1 ? 45 :
-                            formData.uso_pie_malo === 2 ? 80 :
-                            formData.uso_pie_malo === 3 ? 90 : 96
-                          )
-                        }}
-                        value={formData.uso_pie_malo}
-                        onChange={(e) => setFormData({ ...formData, uso_pie_malo: Number(e.target.value) })}
-                      />
-                      {(() => {
-                        const v = formData.uso_pie_malo;
-                        const valColor = v === 1 ? 'text-red-400' : v === 2 ? 'text-orange-400' : v === 3 ? 'text-green-400' : 'text-cyan-400';
-                        return (
-                          <span className={`text-sm font-medium min-w-[2rem] text-center ${valColor}`}>
-                            {v}
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* Precisión de pie malo (1-4) */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">Precisión de pie malo (1-4)</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="range"
-                        min={1}
-                        max={4}
-                        step={1}
-                        className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                        style={{
-                          background: (() => {
-                            const thumbHex = getStatColorHex(
-                              formData.precision_pie_malo === 1 ? 45 :
-                              formData.precision_pie_malo === 2 ? 80 :
-                              formData.precision_pie_malo === 3 ? 90 : 96
-                            );
-                            const pct = Math.max(0, Math.min(100, (((formData.precision_pie_malo - 1) * (59/3) + 40) - 40) * 100 / 59));
-                            return `linear-gradient(to right, ${thumbHex} 0%, ${thumbHex} ${pct}%, #374151 ${pct}%, #374151 100%)`;
-                          })(),
-                          ['--thumb-color' as any]: getStatColorHex(
-                            formData.precision_pie_malo === 1 ? 45 :
-                            formData.precision_pie_malo === 2 ? 80 :
-                            formData.precision_pie_malo === 3 ? 90 : 96
-                          )
-                        }}
-                        value={formData.precision_pie_malo}
-                        onChange={(e) => setFormData({ ...formData, precision_pie_malo: Number(e.target.value) })}
-                      />
-                      {(() => {
-                        const v = formData.precision_pie_malo;
-                        const valColor = v === 1 ? 'text-red-400' : v === 2 ? 'text-orange-400' : v === 3 ? 'text-green-400' : 'text-cyan-400';
-                        return (
-                          <span className={`text-sm font-medium min-w-[2rem] text-center ${valColor}`}>
-                            {v}
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
+                  {[
+                   { key: 'estabilidad', label: 'Estabilidad', icon: '⚖️' },
+                   { key: 'resistencia_lesiones', label: 'Resistencia a Lesiones', icon: '🛡️' },
+                   { key: 'morale', label: 'Moral Inicial', icon: '😊' },
+                 ].map((stat) => (
+                   <div key={stat.key} className="space-y-2">
+                     <label className="block text-sm font-medium text-gray-300">
+                       {stat.icon} {stat.label}
+                     </label>
+                     <div className="flex items-center gap-2">
+                       <input
+                         type="range"
+                         min="40"
+                         max="99"
+                         className="flex-1"
+                         value={formData[stat.key as keyof PlayerFormData] as number}
+                         onChange={(e) => setFormData({
+                           ...formData,
+                           [stat.key]: Number(e.target.value)
+                         } as any)}
+                       />
+                       <span className="text-sm font-medium text-white min-w-[2rem] text-center">
+                         {formData[stat.key as keyof PlayerFormData] as number}
+                       </span>
+                     </div>
+                   </div>
+                 ))}
                 </div>
               </div>
             </div>
@@ -1226,7 +1053,7 @@ const sliderStyles = `
     height: 20px;
     width: 20px;
     border-radius: 50%;
-    background: var(--thumb-color, #10b981);
+    background: #10b981;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
@@ -1235,7 +1062,7 @@ const sliderStyles = `
     height: 20px;
     width: 20px;
     border-radius: 50%;
-    background: var(--thumb-color, #10b981);
+    background: #10b981;
     cursor: pointer;
     border: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);

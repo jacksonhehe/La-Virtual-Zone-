@@ -54,76 +54,39 @@ export default function PlantillaTab() {
   const translateStat = (key: string): string => {
     const translations: { [key: string]: string } = {
       // Estadísticas ofensivas
-      offensive: 'Actitud ofensiva',
-      ballControl: 'Control de balón',
+      offensive: 'Actitud Ofensiva',
+      ballControl: 'Control de Balón',
       dribbling: 'Drible',
-      lowPass: 'Pase al ras',
-      loftedPass: 'Pase bombeado',
+      lowPass: 'Pase Raso',
+      loftedPass: 'Pase Bombeado',
       finishing: 'Finalización',
-      placeKicking: 'Balón parado',
+      placeKicking: 'Balón Parado',
       volleys: 'Efecto',
       curl: 'Cabeceador',
       
       // Estadísticas físicas
       speed: 'Velocidad',
       acceleration: 'Aceleración',
-      kickingPower: 'Potencia de tiro',
+      kickingPower: 'Potencia de Tiro',
       stamina: 'Resistencia',
       jumping: 'Salto',
-      physicalContact: 'Contacto físico',
+      physicalContact: 'Contacto Físico',
       balance: 'Equilibrio',
       
       // Estadísticas defensivas
-      defensive: 'Actitud defensiva',
-      ballWinning: 'Recup. de balón',
+      defensive: 'Actitud Defensiva',
+      ballWinning: 'Recuperación de Balón',
       aggression: 'Agresividad',
       
       // Estadísticas de portero
-      goalkeeperReach: 'Actitud de portero',
-      goalkeeperReflexes: 'Reflejos (PT)',
-      goalkeeperClearing: 'Despejar (PT)',
-      goalkeeperThrowing: 'Atajar (PT)',
-      goalkeeperHandling: 'Cobertura (PT)'
+      goalkeeperReach: 'Actitud de Portero',
+      goalkeeperReflexes: 'Reflejos',
+      goalkeeperClearing: 'Despeje',
+      goalkeeperThrowing: 'Atajar',
+      goalkeeperHandling: 'Cobertura'
     };
     
     return translations[key] || key.replace(/([A-Z])/g, ' $1').trim();
-  };
-
-  // Helpers para escalas pequeñas y colores
-  const normalizeToScale = (raw: number | undefined, maxScale: number, fallback: number): number => {
-    if (!raw && raw !== 0) return fallback;
-    if (raw <= maxScale) return raw;
-    // Normaliza desde 40-99 a 1-maxScale
-    const clamped = Math.max(40, Math.min(99, raw));
-    const scaled = Math.round(((clamped - 40) / 59) * (maxScale - 1)) + 1;
-    return Math.max(1, Math.min(maxScale, scaled));
-  };
-
-  const colorForEstabilidad = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v <= 4 ? 'text-orange-400 bg-orange-500/20' : v <= 7 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
-  const colorForLesiones = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : 'text-cyan-400 bg-cyan-500/20';
-  const colorForPieMalo = (v: number) => v === 1 ? 'text-red-400 bg-red-500/20' : v === 2 ? 'text-orange-400 bg-orange-500/20' : v === 3 ? 'text-green-400 bg-green-500/20' : 'text-cyan-400 bg-cyan-500/20';
-
-  // Coloreo por rangos 40-99 igual que en Panel Admin (Crear/Editar Jugador)
-  const getStatColorClass = (value: number) => {
-    if (value > 94 && value <= 99) return 'text-cyan-400'; // 95-99 Celeste
-    if (value > 84 && value <= 94) return 'text-green-400'; // 85-94 Verde claro
-    if (value > 74 && value < 85) return 'text-orange-400'; // 75-84 Naranja
-    if (value > 39 && value < 75) return 'text-red-400'; // 40-74 Rojo
-    return 'text-gray-300';
-  };
-
-  const getStatColorHex = (value: number) => {
-    if (value > 94 && value <= 99) return '#22d3ee'; // cyan-400
-    if (value > 84 && value <= 94) return '#34d399'; // green-400
-    if (value > 74 && value < 85) return '#fb923c'; // orange-400
-    if (value > 39 && value < 75) return '#f87171'; // red-400
-    return '#9ca3af'; // gray-400 fallback
-  };
-
-  const getSliderBackground = (value: number) => {
-    const pct = Math.max(0, Math.min(100, ((value - 40) * 100) / 59));
-    const c = getStatColorHex(value);
-    return `linear-gradient(to right, ${c} 0%, ${c} ${pct}%, #374151 ${pct}%, #374151 100%)`;
   };
 
   // Helper function to map PES 2021 positions to simplified categories
@@ -889,9 +852,14 @@ export default function PlantillaTab() {
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-300">{translateStat(key)}</span>
-                              <span className={`text-sm font-bold ${getStatColorClass(value as number)}`}>{value as any}</span>
+                              <span className="text-sm font-bold text-white">{value}</span>
                             </div>
-                            <div className="w-full rounded-full h-2" style={{ background: getSliderBackground(value as number) }}></div>
+                            <div className="w-full bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${(value / 99) * 100}%` }}
+                              ></div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -901,9 +869,14 @@ export default function PlantillaTab() {
                           <div key={key} className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-300">{translateStat(key)}</span>
-                              <span className={`text-sm font-bold ${getStatColorClass(value as number)}`}>{value as any}</span>
+                              <span className="text-sm font-bold text-white">{value}</span>
                             </div>
-                            <div className="w-full rounded-full h-2" style={{ background: getSliderBackground(value as number) }}></div>
+                            <div className="w-full bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${(value / 99) * 100}%` }}
+                              ></div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -925,87 +898,42 @@ export default function PlantillaTab() {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       <div className="space-y-2">
-                        {(() => {
-                          const est = normalizeToScale(selectedPlayer.consistency as any, 8, 4);
-                          const cls = colorForEstabilidad(est);
-                          return (
-                            <>
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-300">Estabilidad (1-8)</span>
-                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{est}</span>
-                              </div>
-                              <div className="w-full bg-gray-700 rounded-full h-2">
-                                <div 
-                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                                  style={{ width: `${(est / 8) * 100}%` }}
-                                />
-                              </div>
-                            </>
-                          );
-                        })()}
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-300">Consistencia</span>
+                          <span className="text-sm font-bold text-white">{selectedPlayer.consistency || 70}</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((selectedPlayer.consistency || 70) / 99) * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
-                        {(() => {
-                          const inj = normalizeToScale(selectedPlayer.injuryResistance as any, 3, 2);
-                          const cls = colorForLesiones(inj);
-                          return (
-                            <>
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-300">Resist. a lesiones (1-3)</span>
-                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{inj}</span>
-                              </div>
-                              <div className="w-full bg-gray-700 rounded-full h-2">
-                                <div 
-                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                                  style={{ width: `${(inj / 3) * 100}%` }}
-                                />
-                              </div>
-                            </>
-                          );
-                        })()}
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-300">Resistencia a Lesiones</span>
+                          <span className="text-sm font-bold text-white">{selectedPlayer.injuryResistance || 70}</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((selectedPlayer.injuryResistance || 70) / 99) * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
-                        {(() => {
-                          const uso = normalizeToScale((selectedPlayer as any).uso_pie_malo, 4, 3);
-                          const cls = colorForPieMalo(uso);
-                          return (
-                            <>
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-300">Uso de pie malo (1-4)</span>
-                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{uso}</span>
-                              </div>
-                              <div className="w-full bg-gray-700 rounded-full h-2">
-                                <div 
-                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                                  style={{ width: `${(uso / 4) * 100}%` }}
-                                />
-                              </div>
-                            </>
-                          );
-                        })()}
-                      </div>
-
-                      <div className="space-y-2">
-                        {(() => {
-                          const pre = normalizeToScale((selectedPlayer as any).precision_pie_malo, 4, 3);
-                          const cls = colorForPieMalo(pre);
-                          return (
-                            <>
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-300">Precisión de pie malo (1-4)</span>
-                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${cls}`}>{pre}</span>
-                              </div>
-                              <div className="w-full bg-gray-700 rounded-full h-2">
-                                <div 
-                                  className={`h-2 rounded-full transition-all duration-300 ${cls.split(' ')[1].replace('text-','bg-')}`}
-                                  style={{ width: `${(pre / 4) * 100}%` }}
-                                />
-                              </div>
-                            </>
-                          );
-                        })()}
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-300">Moral</span>
+                          <span className="text-sm font-bold text-white">{selectedPlayer.morale || 70}</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${((selectedPlayer.morale || 70) / 99) * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
                   </div>

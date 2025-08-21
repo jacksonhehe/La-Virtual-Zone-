@@ -30,8 +30,7 @@ export default function Image({
       width={width}
       height={height}
       decoding={decoding}
-      // React no reconoce "fetchPriority" en camelCase. Usar atributo en minúsculas.
-      {...{ fetchpriority: fetchPriority }}
+      fetchPriority={fetchPriority}
       loading={loading}
       className={className}
       style={style}
