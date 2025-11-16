@@ -1,43 +1,45 @@
-import { useState } from 'react';
+import  { useState, useEffect } from 'react';
+import { usePagination } from '../hooks/usePagination';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
-import { Calendar, Search, ChevronRight, FileText } from 'lucide-react';
-import { srcSet, withWidth, defaultSizes } from '@/utils/imageHelpers';
+import { Calendar, User, Tag, Search, ChevronRight, FileText, Clock, TrendingUp, Filter, X } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
-import SEO from '../components/SEO';
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const { posts } = useDataStore();
-  
+  const { posts, refreshPosts } = useDataStore();
+
+  // Initialize posts from localStorage on component mount
+  useEffect(() => {
+    refreshPosts();
+  }, []);
+
   // Filter posts
   const filteredPosts = posts.filter(post => {
     if (selectedCategory !== 'all' && post.category !== selectedCategory) {
       return false;
     }
-    
+
     if (searchQuery && !post.title.toLowerCase().includes(searchQuery.toLowerCase()) && !post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
-    
+
     return true;
   });
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const { items: pageItems, totalPages, next, prev } = usePagination({ items: filteredPosts, perPage: 5, initialPage: page });
   
   // Get categories
-  const categories = ['Noticias', 'Análisis', 'Fichajes', 'Comunidad', 'Humor'];
+  const categories = Array.from(new Set(posts.map(p => p.category)));
   
   return (
-    <>
-      <SEO
-        title="Blog | La Virtual Zone"
-        description="Noticias y artículos de La Virtual Zone"
-        canonical="https://lavirtualzone.com/blog"
-      />
-      <div>
-      <PageHeader
-        title="Blog"
+    <div>
+      <PageHeader 
+        title="Blog" 
         subtitle="Noticias, análisis, entrevistas y todo el contenido editorial sobre La Virtual Zone."
         image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"
       />
@@ -60,19 +62,16 @@ const Blog = () => {
               </div>
             </div>
             
-            {filteredPosts.length > 0 ? (
+            {pageItems.length > 0 ? (
               <div className="space-y-8">
-                {filteredPosts.map(post => (
+                {pageItems.map(post => (
                   <div key={post.id} className="bg-dark-light rounded-lg overflow-hidden border border-gray-800 group">
                     <div className="flex flex-col md:flex-row">
                       <div className="md:w-1/3 aspect-video md:aspect-square overflow-hidden">
-                        <img
-                          src={withWidth(post.image, 480)}
-                          srcSet={srcSet(post.image)}
-                          sizes={defaultSizes}
-                          alt={post.title}
+                        <img 
+                          src={post.image} 
+                          alt={post.title} 
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          loading="lazy"
                         />
                       </div>
                       <div className="md:w-2/3 p-6">
@@ -95,11 +94,10 @@ const Blog = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
                             <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                              <img
-                                src={`https://ui-avatars.com/api/?name=${post.author}&background=111827&color=fff&size=128`}
-                                alt={post.author}
+                              <img 
+                                src={`https://ui-avatars.com/api/?name=${post.author}&background=111827&color=fff&size=128`} 
+                                alt={post.author} 
                                 className="w-full h-full object-cover"
-                                loading="lazy"
                               />
                             </div>
                             <span className="text-sm">{post.author}</span>
@@ -127,6 +125,31 @@ const Blog = () => {
                 </p>
               </div>
             )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                  onClick={prev}
+                  disabled={page === 1}
+                  className="px-4 py-2 bg-dark-light border border-gray-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-dark transition-colors"
+                >
+                  Anterior
+                </button>
+
+                <span className="text-gray-400">
+                  Página {page} de {totalPages}
+                </span>
+
+                <button
+                  onClick={next}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 bg-dark-light border border-gray-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-dark transition-colors"
+                >
+                  Siguiente
+                </button>
+              </div>
+            )}
           </div>
           
           <div>
@@ -137,9 +160,7 @@ const Blog = () => {
                 <button 
                   onClick={() => setSelectedCategory('all')}
                   className={`w-full text-left p-2 rounded-lg ${selectedCategory === 'all' ? 'bg-primary/20 text-primary' : 'hover:bg-dark'}`}
-                >
-                  Todas las categorías
-                </button>
+                >Todas las categorías</button>
                 
                 {categories.map(category => (
                   <button 
@@ -164,13 +185,10 @@ const Blog = () => {
                     className="flex items-start group"
                   >
                     <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 mr-3">
-                      <img
-                        src={withWidth(post.image, 160)}
-                        srcSet={srcSet(post.image)}
-                        sizes="80px"
-                        alt={post.title}
+                      <img 
+                        src={post.image} 
+                        alt={post.title} 
                         className="w-full h-full object-cover"
-                        loading="lazy"
                       />
                     </div>
                     <div>
@@ -219,9 +237,9 @@ const Blog = () => {
         </div>
       </div>
     </div>
-    </>
   );
 };
 
 export default Blog;
  
+

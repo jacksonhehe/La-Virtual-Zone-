@@ -1,11 +1,208 @@
-export * from './shared';
-import { Player } from './shared';
+//  User types
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  role: 'user' | 'dt' | 'admin';
+  roles?: Array<'user' | 'dt' | 'admin'>;
+  avatar: string;
+  clubId?: string;
+  club?: string; // Nombre del club para compatibilidad con datos legacy
+  joinDate: string;
+  status: 'active' | 'suspended' | 'banned' | 'deleted';
+  // Profile customization fields
+  bio?: string;
+  location?: string;
+  website?: string;
+  favoriteTeam?: string;
+  favoritePosition?: string;
+  // Opcionales para control de suspensión/ban
+  suspendedUntil?: string; // ISO date si está suspendido temporalmente
+  suspendedReason?: string; // Motivo de suspensión
+  banReason?: string; // Motivo de ban permanente
+  // Opcionales para eliminación de cuenta
+  deletedAt?: string; // ISO date si la cuenta fue eliminada
+  deletedReason?: string; // Motivo de eliminación
+  notifications: boolean;
+  lastLogin: string;
+  followers: number;
+  following: number;
+}
+
+// Club types
+export interface Club {
+  id: string;
+  name: string;
+  logo: string;
+  foundedYear: number;
+  stadium: string;
+  budget: number;
+  manager: string;
+  playStyle: string;
+  primaryColor: string;
+  secondaryColor: string;
+  description: string;
+  titles: Title[];
+  reputation: number;
+  fanBase: number;
+}
+
+export interface Title {
+  id: string;
+  name: string;
+  year: number;
+  type: 'league' | 'cup' | 'supercup' | 'other';
+}
+
+// Player types
+export interface Player {
+  id: string;
+  name: string;
+  age: number;
+  position: string;
+  nationality: string;
+  clubId: string;
+  overall: number;
+  potential: number;
+  transferListed: boolean;
+  transferValue: number;
+  image: string;
+  attributes: PlayerAttributes;
+  skills: PlayerSkills;
+  playingStyles: PlayingStyles;
+  contract: PlayerContract;
+  form: number;
+  goals: number;
+  assists: number;
+  appearances: number;
+  matches: number; // Partidos jugados (para compatibilidad con datos existentes)
+  dorsal: number; // Número de dorsal del jugador
+  injuryResistance: number; // Resistencia a lesiones
+  height?: number; // Altura en centímetros
+  weight?: number; // Peso en kilogramos
+}
+
+export interface PlayerAttributes {
+  // Atributos generales (26 + 3 subatributos)
+  offensiveAwareness: number;    // Actitud ofensiva
+  ballControl: number;           // Control de balón
+  dribbling: number;             // Drible
+  tightPossession: number;       // Posesión del balón
+  lowPass: number;               // Pase al ras
+  loftedPass: number;            // Pase bombeado
+  finishing: number;             // Finalización
+  heading: number;               // Cabeceador
+  setPieceTaking: number;        // Balón parado
+  curl: number;                  // Efecto
+  speed: number;                 // Velocidad
+  acceleration: number;          // Aceleración
+  kickingPower: number;          // Potencia de tiro
+  jumping: number;               // Salto
+  physicalContact: number;       // Contacto físico
+  balance: number;               // Equilibrio
+  stamina: number;               // Resistencia
+  defensiveAwareness: number;    // Actitud defensiva
+  ballWinning: number;           // Recuperación de balón
+  aggression: number;            // Agresividad
+
+  // Atributos de portero
+  goalkeeping: number;           // Atajar (PT)
+  catching: number;              // Despejar (PT)
+  reflexes: number;              // Reflejos (PT)
+  coverage: number;              // Cobertura (PT)
+  gkHandling: number;            // Actitud de portero (PT)
+
+  // Subatributos especiales (1-4)
+  weakFootUsage: number;         // Uso de pie malo
+  weakFootAccuracy: number;      // Precisión de pie malo
+  form: number;                  // Estabilidad
+
+  // Legacy attributes (para compatibilidad)
+  pace: number;
+  shooting: number;
+  passing: number;
+  defending: number;
+  physical: number;
+}
+
+export interface PlayerContract {
+  expires: string;
+  salary: number;
+}
+
+// Habilidades de jugador (Player Skills) - 39 en total
+export interface PlayerSkills {
+  scissorKick: boolean;          // Tijera
+  doubleTouch: boolean;          // Doble toque
+  flipFlap: boolean;             // Gambeta
+  marseilleTurn: boolean;        // Marsellesa
+  rainbow: boolean;              // Sombrerito
+  chopTurn: boolean;             // Cortada
+  cutBehindAndTurn: boolean;     // Amago por detrás y giro
+  scotchMove: boolean;           // Rebote interior
+  stepOnSkillControl: boolean;   // Pisar el balón
+  heading: boolean;              // Cabeceador
+  longRangeDrive: boolean;       // Cañonero
+  chipShotControl: boolean;      // Sombrero
+  longRanger: boolean;           // Tiro de larga distancia
+  knuckleShot: boolean;          // Tiro con empeine
+  dippingShot: boolean;          // Disparo descendente
+  risingShot: boolean;           // Disparo ascendente
+  acrobaticFinishing: boolean;   // Finalización acrobática
+  heelTrick: boolean;            // Taconazo
+  firstTimeShot: boolean;        // Remate primer toque
+  oneTouchPass: boolean;         // Pase al primer toque
+  throughPassing: boolean;       // Pase en profundidad
+  weightedPass: boolean;         // Pase a profundidad
+  pinpointCrossing: boolean;     // Pase cruzado
+  outsideCurler: boolean;        // Centro con rosca
+  rabona: boolean;               // Rabona
+  noLookPass: boolean;           // Pase sin mirar
+  lowLoftedPass: boolean;        // Pase bombeado bajo
+  giantKill: boolean;            // Patadón en corto
+  longThrow: boolean;            // Patadón en largo
+  longThrow2: boolean;           // Saque largo de banda
+  gkLongThrow: boolean;          // Saque de meta largo
+  penaltySpecialist: boolean;    // Especialista en penales
+  gkPenaltySaver: boolean;       // Parapenales
+  fightingSpirit: boolean;       // Malicia
+  manMarking: boolean;           // Marcar hombre
+  trackBack: boolean;            // Delantero atrasado
+  interception: boolean;         // Interceptor
+  acrobaticClear: boolean;       // Despeje acrobático
+  captaincy: boolean;            // Capitanía
+  superSub: boolean;             // Súper refuerzo
+  comPlayingStyles: boolean;     // Espíritu de lucha
+}
+
+// Estilos de juego (Playing Styles) - 22 en total
+export interface PlayingStyles {
+  goalPoacher: boolean;          // Cazagoles
+  dummyRunner: boolean;          // Señuelo
+  foxInTheBox: boolean;          // Hombre de área
+  targetMan: boolean;            // Referente
+  classicNo10: boolean;          // Creador de jugadas
+  prolificWinger: boolean;       // Extremo prolífico
+  roamingFlank: boolean;         // Extremo móvil
+  crossSpecialist: boolean;      // Especialista en centros
+  holePlayer: boolean;           // Jugador de huecos
+  boxToBox: boolean;             // Omnipresente
+  theDestroyer: boolean;         // El destructor
+  orchestrator: boolean;         // Organizador
+  anchor: boolean;               // Medio escudo
+  offensiveFullback: boolean;    // Lateral ofensivo
+  fullbackFinisher: boolean;     // Lateral finalizador
+  defensiveFullback: boolean;    // Lateral defensivo
+  buildUp: boolean;              // Creación
+  extraFrontman: boolean;        // Atacante extra
+  offensiveGoalkeeper: boolean;  // Portero ofensivo
+  defensiveGoalkeeper: boolean;  // Portero defensivo
+}
 
 // Tournament types
 export interface Tournament {
   id: string;
   name: string;
-  slug?: string;
   type: 'league' | 'cup' | 'friendly';
   logo: string;
   startDate: string;
@@ -14,32 +211,9 @@ export interface Tournament {
   teams: string[];
   rounds: number;
   matches: Match[];
-  results?: Match[];
   winner?: string;
   topScorer?: TopScorer;
   description: string;
-  participants?: string[];
-  maxTeams?: number;
-  prizePool?: number;
-  currentTeams?: number;
-  location?: string;
-
-  /* NUEVOS CAMPOS AVANZADOS */
-  /** Categorías o divisiones del torneo (ej: Sub-18, Libre, Femenino) */
-  categories?: string[];
-  /** Fases múltiples que componen el torneo (grupos, eliminatoria, finales, etc.) */
-  phases?: Phase[];
-  /** Patrocinadores asociados al torneo */
-  sponsors?: Sponsor[];
-  /** Adjuntos (documentos, reglamentos, imágenes) */
-  attachments?: Attachment[];
-  /** URL personalizada pública (sin protocolo) */
-  customUrl?: string;
-
-  /** Tabla de posiciones calculada */
-  standings?: Standing[];
-  /** Ranking de goleadores */
-  topScorersList?: TopScorer[];
 }
 
 export interface TopScorer {
@@ -92,9 +266,20 @@ export interface TransferOffer {
   toClub: string;
   amount: number;
   date: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'accepted' | 'rejected' | 'counter-offer';
   userId: string;
-  responseDate?: string;
+  counterAmount?: number; // Amount proposed in counter-offer
+  counterDate?: string; // Date of counter-offer
+  // History of actions on this offer
+  history?: OfferEvent[];
+}
+
+export interface OfferEvent {
+  id: string;
+  date: string;
+  actor: 'buyer' | 'seller' | 'system';
+  action: 'offer' | 'accept' | 'reject' | 'counter' | 'counter-accept' | 'counter-reject';
+  details?: Record<string, any>;
 }
 
 // News types
@@ -103,12 +288,8 @@ export interface NewsItem {
   title: string;
   content: string;
   type: 'transfer' | 'rumor' | 'result' | 'announcement' | 'statement';
-  /** Optional category label used in some views */
-  category?: string;
-  imageUrl?: string;
-  /** Publication date (alias 'date' used in some components) */
-  publishDate: string;
-  date?: string;
+  image?: string;
+  date: string;
   author: string;
   clubId?: string;
   playerId?: string;
@@ -116,16 +297,16 @@ export interface NewsItem {
   featured: boolean;
 }
 
-// Blog post type
-export interface Post {
+// Blog posts
+export interface BlogPost {
   id: string;
-  slug: string;
   title: string;
+  slug: string;
   excerpt: string;
   image: string;
-  category: string;
-  author: string;
   date: string;
+  author: string;
+  category: string;
   content: string;
 }
 
@@ -160,25 +341,11 @@ export interface StoreItem {
   id: string;
   name: string;
   description: string;
-  category: 'club' | 'user' | 'achievement' | 'background' | 'frame' | 'badge' | 'emoji' | 'theme' | 'booster';
+  category: 'club' | 'user' | 'achievement';
   price: number;
   image: string;
   minLevel: number;
-  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
-  assetURL?: string; // link al recurso a aplicar (imagen, css, etc.)
-  /** true si aún puede comprarse (stock >0 y activo) */
   inStock: boolean;
-  /** Stock numérico limitado; null = ilimitado */
-  stock?: number | null;
-  /** Etiquetas visuales, ej: Nuevo, Limitado */
-  tags?: string[];
-  /** Destacado en portada */
-  featured?: boolean;
-  /** Fecha de lanzamiento y expiración opcionales (ISO) */
-  launchAt?: string;
-  expireAt?: string;
-  /** Control interno para ocultar sin borrar */
-  active?: boolean;
 }
 
 // League standings type
@@ -193,17 +360,6 @@ export interface Standing {
   goalsAgainst: number;
   points: number;
   form: string[];
-  possession: number;
-  cards: number;
-}
- 
-// Activity log types
-export interface ActivityLogEntry {
-  id: string;
-  action: string;
-  userId: string;
-  date: string;
-  details: string;
 }
 
 // Comment types
@@ -211,131 +367,9 @@ export interface Comment {
   id: string;
   postId: string;
   author: string;
+  authorAvatar: string;
   content: string;
   date: string;
-  reported: boolean;
-  hidden: boolean;
-  status?: 'approved' | 'pending' | 'hidden';
-  userId?: string;
-  likes?: number;
-  flags?: number;
+  likes: number;
   replies?: Comment[];
-  updatedAt?: string;
 }
-
-// --- DT dashboard specific types ---
-export interface DtClub {
-  id: string;
-  name: string;
-  slug: string;
-  logo: string;
-  formation: string;
-  budget: number;
-  players: Player[];
-}
-
-export interface DtFixture extends Match {
-  played: boolean;
-}
-
-export interface DtMarket {
-  open: boolean;
-}
-
-export interface DtObjectives {
-  position: number | null;
-  fairplay: number | null;
-}
-
-export interface DtTask {
-  id: string;
-  text: string;
-  done?: boolean;
-}
-
-export interface DtEvent {
-  id: string;
-  message: string;
-  date: string;
-}
-
-export interface DtRanking {
-  id: string;
-  username: string;
-  clubName: string;
-  clubLogo: string;
-  elo: number;
-}
-
-// ------------------ Tipos auxiliares ------------------
-
-export interface Phase {
-  id: string;
-  name: string;
-  /** Tipo de fase, por ejemplo group, knockout, final */
-  type: 'group' | 'knockout' | 'round_robin' | 'final';
-  /** Número de rondas o jornadas en la fase */
-  rounds: number;
-  /** Partidos pertenecientes a esta fase */
-  matches?: Match[];
-}
-
-export interface Sponsor {
-  id: string;
-  name: string;
-  logo: string;
-  website?: string;
-}
-
-export interface Attachment {
-  id: string;
-  title: string;
-  url: string;
-  uploadedAt?: string;
-}
-
-// ----- Modelo unificado para el feed público -----
-export interface FeedItemBase {
-  id: string;
-  type: 'news' | 'match' | 'event' | 'transfer' | 'achievement';
-  title: string;
-  /** Fecha normalizada en UTC ISO */
-  date: string;
-  summary: string;
-  link: string;
-}
-
-export interface NewsMeta {
-  category?: string;
-  image?: string;
-}
-
-export interface MatchMeta {
-  homeTeam: string;
-  awayTeam: string;
-  status: 'scheduled' | 'live' | 'finished';
-  score?: { home: number; away: number };
-  tournament?: string;
-  venue?: string;
-}
-
-export interface TransferMeta {
-  player: string;
-  from: string;
-  to: string;
-  fee?: number;
-}
-
-export interface AchievementMeta {
-  user?: string;
-  club?: string;
-  emblem?: string;
-  level?: number;
-}
-
-export type FeedItem =
-  | (FeedItemBase & { type: 'news'; meta: NewsMeta })
-  | (FeedItemBase & { type: 'match'; meta: MatchMeta })
-  | (FeedItemBase & { type: 'event'; meta: { label: string } })
-  | (FeedItemBase & { type: 'transfer'; meta: TransferMeta })
-  | (FeedItemBase & { type: 'achievement'; meta: AchievementMeta });

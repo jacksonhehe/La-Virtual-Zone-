@@ -1,0 +1,2 @@
+export { mediaItems } from './mockData';
+

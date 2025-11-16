@@ -1,0 +1,2 @@
+export { players } from './mockData';
+

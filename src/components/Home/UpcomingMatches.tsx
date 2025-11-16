@@ -1,13 +1,57 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import { formatDate, formatTime } from '../../utils/helpers';
+import { formatDate, formatTime } from '../../utils/format';
+import { getUpcomingMatches, getMatchesByTournament } from '../../utils/matchService';
 
 const UpcomingMatches = () => {
   const { tournaments, clubs } = useDataStore();
+  const [upcomingMatches, setUpcomingMatches] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadUpcomingMatches = async () => {
+      setLoading(true);
+      try {
+        // Find active tournament
+        const activeTournament = tournaments.find(t => t.status === 'active');
+        
+        if (!activeTournament) {
+          setUpcomingMatches([]);
+          return;
+        }
+        
+        // Get upcoming matches from independent table
+        const matches = await getMatchesByTournament(activeTournament.id);
+        const upcoming = matches
+          .filter(match => match.status === 'scheduled')
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .slice(0, 3);
+        
+        setUpcomingMatches(upcoming);
+      } catch (error) {
+        console.error('Error loading upcoming matches:', error);
+        setUpcomingMatches([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadUpcomingMatches();
+  }, [tournaments]);
   
   // Find active tournament
   const activeTournament = tournaments.find(t => t.status === 'active');
+  
+  if (loading) {
+    return (
+      <div className="card p-6">
+        <h2 className="text-xl font-bold mb-4">Próximos Partidos</h2>
+        <p className="text-gray-400">Cargando...</p>
+      </div>
+    );
+  }
   
   if (!activeTournament) {
     return (
@@ -17,12 +61,6 @@ const UpcomingMatches = () => {
       </div>
     );
   }
-  
-  // Get upcoming matches (scheduled)
-  const upcomingMatches = activeTournament.matches
-    .filter(match => match.status === 'scheduled')
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 3);
   
   if (upcomingMatches.length === 0) {
     return (

@@ -2,35 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(127, 57, 251, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(127, 57, 251, 0.6), 0 0 30px rgba(127, 57, 251, 0.4);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+} 
+
 :root {
   --primary: #7f39fb;
   --primary-light: #9f65fd;
   --primary-dark: #5f2cb8;
-  --secondary: #3b82f6;
   --neon-red: #ff003c;
   --neon-blue: #00b3ff;
   --neon-green: #00ff8f;
   --neon-yellow: #ffe600;
-  --accent: #3ff;
-  --bg-surface: #18181f;
-  --bg-overlay: rgba(255, 255, 255, 0.05);
-  --text-main: #fff;
-}
-
-html:not(.dark) {
-  --bg-surface: #f4f4f5; /* zinc-100 */
-  --bg-overlay: rgba(0, 0, 0, 0.05);
-  --text-main: #27272a; /* zinc-800 */
 }
 
 body {
-  @apply bg-[var(--bg-surface)] text-[var(--text-main)] font-sans;
-}
-
-a:focus-visible,
-button:focus-visible {
-  outline: 2px dashed var(--accent);
-  outline-offset: 2px;
+  @apply bg-gray-900 text-white font-sans;
 }
 
 @layer components {
@@ -41,34 +111,36 @@ button:focus-visible {
   .card {
     @apply bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition-all;
   }
-
+  
   .card-hover {
     @apply hover:border-gray-600 hover:shadow-lg;
-  }
-
-  .card-glass {
-    @apply rounded-2xl border border-white/10 bg-[var(--bg-overlay)] shadow-inner backdrop-blur;
   }
   
   .input {
     @apply bg-gray-900 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-600 transition-all;
   }
+
+  /* Dark selects (force native dropdown to dark) */
+  select,
+  .input-select {
+    @apply bg-gray-900 border border-gray-700 text-white rounded-lg p-2;
+    color-scheme: dark;
+  }
+  select option {
+    background-color: #111827; /* gray-900 */
+    color: #e5e7eb;            /* gray-200 */
+  }
   
   .btn-primary {
-  @apply text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center;
-  background-color: #7f39fb;
-}
+    @apply bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center;
+  }
 
-.btn-primary:hover {
-  background-color: #6b21a8;
-}
-  
   .btn-secondary {
     @apply bg-gray-800 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center border border-gray-700;
   }
 
   .btn-outline {
-    @apply bg-transparent border border-gray-700 text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center hover:bg-gray-700;
+    @apply bg-transparent hover:bg-gray-800 text-gray-300 hover:text-white py-2 px-4 rounded-lg transition-all inline-flex items-center justify-center border border-gray-600;
   }
   
   .badge {
@@ -131,613 +203,87 @@ button:focus-visible {
     }
   }
 
-  /* Consistent shadows for better visual hierarchy */
-  .shadow-consistent {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  /* Base slider styles */
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    background-color: var(--thumb-color, #ef4444);
   }
 
-  .shadow-consistent-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  .slider::-moz-range-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    background-color: var(--thumb-color, #ef4444);
   }
 
-  .shadow-consistent-xl {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  .slider::-webkit-slider-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #374151; /* gray-700 */
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
   }
 
-  /* Smooth transitions for all interactive elements */
-  .transition-smooth {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  .slider::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #374151;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
   }
 
-  /* Gradient text utilities */
-  .gradient-text-primary {
-  background: linear-gradient(90deg, #7f39fb 0%, #3b82f6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-  .gradient-text-white {
-    @apply bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent;
-  }
-
-  /* Card variations */
-  .card-elevated {
-    @apply bg-gradient-to-br from-dark-light to-dark border border-gray-800/50 shadow-xl rounded-2xl;
-  }
-
-  .card-subtle {
-    @apply bg-dark/50 border border-gray-800/50 shadow-lg;
-  }
-
-  .card-interactive {
-    @apply bg-dark-lighter/50 border border-gray-700/50 shadow-md hover:shadow-lg transition-all duration-200;
-  }
-
-  /* Button variations */
-  .btn-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium transition-all duration-200 shadow-lg;  
-  }
-
-  .btn-gradient-success {
-    @apply bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium transition-all duration-200 shadow-lg;
-  }
-
-  .btn-gradient-secondary {
-    @apply bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-medium transition-all duration-200 shadow-lg;
-  }
-
-  /* Icon containers */
-  .icon-container {
-  @apply w-10 h-10 rounded-lg flex items-center justify-center;
-  background-color: rgba(127, 57, 251, 0.2);
-}
-
-  .icon-container-success {
-    @apply w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center;
-  }
-
-  .icon-container-warning {
-    @apply w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center;
-  }
-
-  .icon-container-danger {
-    @apply w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center;
-  }
-
-  /* Status indicators */
-  .status-online {
-    @apply w-3 h-3 bg-green-400 rounded-full;
-  }
-
-  .status-offline {
-    @apply w-3 h-3 bg-gray-400 rounded-full;
-  }
-
-  .status-busy {
-    @apply w-3 h-3 bg-red-400 rounded-full;
-  }
-
-  /* Loading states */
-  .loading-skeleton {
-    @apply animate-pulse bg-gray-700 rounded;
-  }
-
-  /* Focus states */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
-  }
-
-  /* Hover effects */
-  .hover-lift {
-    @apply hover:transform hover:-translate-y-1 hover:shadow-xl transition-all duration-200;
-  }
-
-  .hover-glow {
-  @apply hover:shadow-lg transition-all duration-200;
-}
-
-.hover-glow:hover {
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.25);
-}
-
-  .badge-tournament-active {
-    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-green/20 text-neon-green;
-  }
-
-  .badge-tournament-upcoming {
-    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-blue/20 text-neon-blue;
-  }
-
-  .badge-tournament-finished {
-    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-700/70 text-gray-300;
-  }
-
-  .badge-tournament-ongoing {
-    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-green/20 text-neon-green;
-  }
-
-  .badge-tournament-open {
-    @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-neon-blue/20 text-neon-blue;
-  }
-
-  /* Tarjetas de estadísticas unificadas */
-  .stat-card {
-    @apply card-elevated shadow-consistent-xl hover-lift backdrop-blur-sm;
-  }
-}
-
-/* FullCalendar dark overrides */
-.fc-theme-standard,
-.fc-theme-standard td,
-.fc-theme-standard th {
-  @apply border-zinc-700;
-}
-.fc .fc-button {
-  @apply bg-dark-light text-white border-none hover:bg-dark-lighter rounded;
-}
-.fc .fc-button.fc-button-active {
-  background-color: #7f39fb;
-}
-.fc .fc-daygrid-day-number {
-  @apply text-gray-300;
-}
-.fc .fc-daygrid-event {
-  background-color: rgb(127 57 251 / 0.2);
-  @apply border text-xs rounded px-1;
-  border-color: #7f39fb;
-  color: #7f39fb;
-}
-
-/* Ensure consistent font rendering */
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Prevent layout shift during loading */
-img {
-  @apply transition-opacity duration-200;
-}
-
-img[loading] {
-  @apply opacity-0;
-}
-
-img:not([loading]) {
-  @apply opacity-100;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Custom scrollbar for webkit browsers */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-gray-800;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-600 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
-}
-
-/* Improve contrast for dark theme */
-.dark .text-gray-500 { color: #9ca3af; }
-
-/* Animaciones para la página de Fixtures */
-@keyframes slide-in-from-top {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-in {
-  animation: slide-in-from-top 0.3s ease-out;
-}
-
-.slide-in-from-top-2 {
-  animation: slide-in-from-top 0.2s ease-out;
-}
-
-/* Efectos de hover mejorados para las tarjetas de partidos */
-.match-card-hover {
-  @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
-}
-
-/* Indicador de partido en vivo */
-.live-indicator {
-  @apply absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse;
-}
-
-/* Gradientes mejorados para las tarjetas */
-.card-gradient-primary {
-  background: linear-gradient(135deg, rgba(127, 57, 251, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-}
-
-.card-gradient-secondary {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(127, 57, 251, 0.1) 100%);
-}
-
-/* Efectos para la sección de próximos partidos */
-.match-status-badge {
-  @apply px-3 py-1 rounded-full text-xs font-medium transition-all duration-200;
-}
-
-.match-status-hoy {
-  @apply bg-green-500/10 text-green-400 border border-green-500/20;
-}
-
-.match-status-manana {
-  @apply bg-blue-500/10 text-blue-400 border border-blue-500/20;
-}
-
-.match-status-semana {
-  @apply bg-yellow-500/10 text-yellow-400 border border-yellow-500/20;
-}
-
-.match-status-proximo {
-  @apply bg-gray-500/10 text-gray-400 border border-gray-500/20;
-}
-
-/* Efectos de hover para equipos */
-.team-hover-effect {
-  @apply transition-all duration-300 hover:scale-110;
-}
-
-.team-name-hover {
-  @apply transition-colors duration-200;
-}
-
-.team-name-hover:hover {
-  color: #7f39fb;
-}
-
-/* Efecto de brillo para VS */
-.vs-glow-effect {
-  position: relative;
-}
-
-.vs-glow-effect::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(127, 57, 251, 0.2), transparent);
-  border-radius: 50%;
-  filter: blur(20px);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.vs-glow-effect:hover::after {
-  opacity: 1;
-}
-
-/* Efectos para la sección de clubes participantes */
-.club-card-hover {
-  @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
-}
-
-.club-logo-hover {
-  @apply transition-transform duration-300 hover:scale-110;
-}
-
-.club-status-badge {
-  @apply px-2 py-1 rounded-full text-xs font-medium transition-all duration-200;
-}
-
-.club-status-champion {
-  @apply bg-yellow-500/10 text-yellow-400 border border-yellow-500/20;
-}
-
-.club-status-rising {
-  @apply bg-green-500/10 text-green-400 border border-green-500/20;
-}
-
-.club-status-legendary {
-  @apply bg-purple-500/10 text-purple-400 border border-purple-500/20;
-}
-
-.club-status-active {
-  @apply bg-blue-500/10 text-blue-400 border border-blue-500/20;
-}
-
-/* Efecto de overlay para las tarjetas de clubes */
-.club-overlay-effect {
-  @apply absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 pointer-events-none;
-  background: linear-gradient(135deg, rgba(127, 57, 251, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-}
-
-.club-overlay-effect:hover {
-  @apply opacity-100;
-}
-
-/* Estilos específicos para el modal de oferta */
-.offer-modal-backdrop {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.offer-modal-container {
-  @apply relative rounded-2xl shadow-2xl w-full max-w-lg border border-gray-700/50 overflow-hidden;
-  background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
-  animation: slideInUp 0.4s ease-out;
-}
-
-.offer-modal-header {
-  @apply relative p-6 border-b border-gray-700/50;
-  background: linear-gradient(90deg, rgba(127, 57, 251, 0.2) 0%, rgba(59, 130, 246, 0.2) 50%, rgba(127, 57, 251, 0.2) 100%);
-}
-
-.offer-modal-close-btn {
-  @apply absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-gray-700/50;
-}
-
-.offer-modal-player-card {
-  @apply bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 transition-all duration-300;
-}
-
-.offer-modal-player-card:hover {
-  border-color: rgba(127, 57, 251, 0.3);
-}
-
-.offer-modal-input {
-  @apply w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none transition-all duration-200;
-}
-
-.offer-modal-input:focus {
-  @apply ring-2;
-  border-color: #7f39fb;
-  box-shadow: 0 0 0 2px rgba(127, 57, 251, 0.5);
-}
-
-.offer-modal-progress {
-  @apply w-full bg-gray-700 rounded-full h-2 mb-2 overflow-hidden;
-}
-
-.offer-modal-progress-bar {
-  @apply h-2 rounded-full transition-all duration-300;
-  background: linear-gradient(90deg, #7f39fb 0%, #3b82f6 100%);
-}
-
-.offer-modal-strength-indicator {
-  @apply p-4 rounded-lg border transition-all duration-300;
-}
-
-.offer-modal-strength-excellent {
-  @apply bg-green-500/20 border-green-500/20;
-}
-
-.offer-modal-strength-good {
-  @apply bg-blue-500/20 border-blue-500/20;
-}
-
-.offer-modal-strength-fair {
-  @apply bg-yellow-500/20 border-yellow-500/20;
-}
-
-.offer-modal-strength-low {
-  @apply bg-red-500/20 border-red-500/20;
-}
-
-.offer-modal-submit-btn {
-  @apply flex-1 px-4 py-3 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2;
-  background: linear-gradient(90deg, #7f39fb 0%, #3b82f6 100%);
-}
-
-.offer-modal-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(90deg, rgba(127, 57, 251, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
-}
-
-.offer-modal-cancel-btn {
-  @apply flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors duration-200;
-}
-
-.offer-modal-success {
-  @apply text-center py-8;
-  animation: fadeInScale 0.5s ease-out;
-}
-
-.offer-modal-error {
-  @apply p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg flex items-start;
-  animation: slideInFromTop 0.3s ease-out;
-}
-
-/* Animaciones específicas para el modal */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
+  .slider:hover::-webkit-slider-track {
     opacity: 1;
   }
-}
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
+  .slider:hover::-moz-range-track {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
-}
 
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
+  /* Custom scrollbar for zones table */
+  .scrollbar-thin {
+    scrollbar-width: thin;
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
+
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
   }
-}
 
-@keyframes slideInFromTop {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #374151;
+    border-radius: 4px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 4px;
   }
-}
 
-/* Efectos de hover para elementos del modal */
-.offer-modal-player-card:hover {
-  @apply shadow-lg;
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.1);
-}
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
 
-.offer-modal-input:focus {
-  @apply shadow-lg;
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.2);
-}
+  .scrollbar-thumb-gray-600 {
+    scrollbar-color: #4b5563 #374151;
+  }
 
-.offer-modal-submit-btn:hover:not(:disabled) {
-  @apply shadow-lg transform scale-[1.02];
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.3);
-}
+  .scrollbar-track-gray-800 {
+    scrollbar-color: #1f2937 #374151;
+  }
 
-/* Efecto de pulso para el botón de envío cuando está cargando */
-.offer-modal-submit-btn:disabled {
-  @apply animate-pulse;
 }
-
-/* Efecto de brillo para el indicador de fuerza de oferta */
-.offer-modal-strength-indicator:hover {
-  @apply shadow-lg;
-}
-
-.offer-modal-strength-excellent:hover {
-  @apply shadow-green-500/20;
-}
-
-.offer-modal-strength-good:hover {
-  @apply shadow-blue-500/20;
-}
-
-.offer-modal-strength-fair:hover {
-  @apply shadow-yellow-500/20;
-}
-
-.offer-modal-strength-low:hover {
-  @apply shadow-red-500/20;
-}
-
-/* Estilos específicos para el modal de renegociación */
-.renegotiate-modal-backdrop {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.renegotiate-modal-container {
-  @apply relative rounded-2xl shadow-2xl w-full max-w-lg border border-gray-700/50 overflow-hidden;
-  background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
-  animation: slideInUp 0.4s ease-out;
-}
-
-.renegotiate-modal-header {
-  @apply relative p-6 border-b border-gray-700/50;
-  background: linear-gradient(90deg, rgba(127, 57, 251, 0.2) 0%, rgba(59, 130, 246, 0.2) 50%, rgba(127, 57, 251, 0.2) 100%);
-}
-
-.renegotiate-modal-close-btn {
-  @apply absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-gray-700/50;
-}
-
-.renegotiate-modal-offer-card {
-  @apply bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 transition-all duration-300;
-}
-
-.renegotiate-modal-offer-card:hover {
-  @apply shadow-lg;
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.1);
-}
-
-.renegotiate-modal-input {
-  @apply w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none transition-all duration-200;
-}
-
-.renegotiate-modal-input:focus {
-  @apply ring-2;
-  border-color: #7f39fb;
-  box-shadow: 0 0 0 2px rgba(127, 57, 251, 0.5);
-}
-
-.renegotiate-modal-change-indicator {
-  @apply p-4 rounded-lg border transition-all duration-300;
-}
-
-.renegotiate-modal-submit-btn {
-  @apply flex-1 px-4 py-3 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2;
-  background: linear-gradient(90deg, #7f39fb 0%, #3b82f6 100%);
-}
-
-.renegotiate-modal-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(90deg, rgba(127, 57, 251, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.3);
-  transform: scale(1.02);
-}
-
-.renegotiate-modal-cancel-btn {
-  @apply flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors duration-200;
-}
-
-.renegotiate-modal-success {
-  @apply text-center py-8;
-  animation: fadeInScale 0.5s ease-out;
-}
-
-.renegotiate-modal-error {
-  @apply p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg flex items-start;
-  animation: slideInFromTop 0.3s ease-out;
-}
-
-/* Efectos de hover para elementos del modal de renegociación */
-.renegotiate-modal-offer-card:hover {
-  @apply shadow-lg;
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.1);
-}
-
-.renegotiate-modal-input:focus {
-  @apply shadow-lg;
-  box-shadow: 0 10px 25px rgba(127, 57, 251, 0.2);
-}
-
-.renegotiate-modal-submit-btn:disabled {
-  @apply animate-pulse;
-}
-
-.renegotiate-modal-change-indicator:hover {
-  @apply shadow-lg;
-}
-
-.renegotiate-modal-change-indicator.bg-green-500\/20:hover {
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.2);
-}
-
-.renegotiate-modal-change-indicator.bg-red-500\/20:hover {
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
-}
-
-.renegotiate-modal-change-indicator.bg-gray-500\/20:hover {
-  box-shadow: 0 10px 25px rgba(107, 114, 128, 0.2);
-}
-
+ 

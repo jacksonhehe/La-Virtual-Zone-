@@ -1,172 +1,317 @@
-
-import { TransferOffer, Transfer } from '../types';
+﻿import { TransferOffer, Transfer } from '../types';
 import { Player } from '../types/shared';
 import { useDataStore } from '../store/dataStore';
+import { computeValuation, validateOfferBasics, isFreeAgent } from './marketRules';
+import { syncPlayerToSupabase } from './playerService';
 
-/** Params for creating a transfer offer */
 export interface MakeOfferParams {
   playerId: string;
   playerName: string;
-  /** Seller club (club actual del jugador). Puede ser name o id. */
   fromClub: string;
-  /** Buyer club (tu club). Puede ser name o id. */
   toClub: string;
   amount: number;
   userId: string;
 }
 
-/**
- * Crea una oferta de transferencia. 
- * Reglas clave:
- * - Mercado debe estar abierto.
- * - Club comprador ≠ vendedor.
- * - Presupuesto suficiente.
- * - Jugador debe pertenecer al club vendedor (por id o id_equipo).
- * - No bloqueamos por transferListed (permitimos ofertas aun si no está en la lista).
- */
-export function makeOffer(params: MakeOfferParams): string | null {
-  const { playerId, playerName, fromClub, toClub, amount, userId } = params;
+const getOfferHistoryEntry = (actor: 'buyer' | 'seller', action: string, details: any = {}) => ({
+  id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  date: new Date().toISOString(),
+  actor,
+  action,
+  details
+});
 
-  // Datos desde el store
-  const {
-    players, clubs, offers, addOffer, marketStatus, club: myClub
-  } = useDataStore.getState();
+export async function makeOffer(params: MakeOfferParams): Promise<string | null> {
+  const { playerId, playerName, fromClub, toClub, amount, userId } = params;
+  const { players, clubs, offers, addOffer, updateClubs, updatePlayers, addTransfer, marketStatus, standings } = useDataStore.getState() as any;
 
   if (!marketStatus) {
-    return 'El mercado está cerrado';
+    return 'El mercado estÃ¡ cerrado';
   }
 
-  // Entidades
-  const player = players.find(p => p.id === playerId);
-  const buyerClub = clubs.find(c => c.name === toClub || c.id === toClub) 
-                 || (myClub && (myClub.name === toClub || myClub.id === toClub) ? (clubs.find(c => c.id === myClub.id) || null) : null);
-  const sellerClub = clubs.find(c => c.name === fromClub || c.id === fromClub);
+  const player = players.find((p: Player) => p.id === playerId);
+  const buyerClub = clubs.find((c: any) => c.name === toClub);
+  const sellerClub = fromClub === 'Libre' ? null : clubs.find((c: any) => c.name === fromClub);
 
-  // Validaciones básicas
   if (!player) return 'Jugador no encontrado';
-  if (!buyerClub || !sellerClub) return 'Club no encontrado';
-  if (buyerClub.id === sellerClub.id) return 'No puedes ofertar por tu propio jugador';
+  if (!buyerClub) return 'Club comprador no encontrado';
 
-  // Pertenencia del jugador (admite legacy id_equipo)
-  const playerClubId = (player as any).clubId || (player as any).id_equipo;
-  if (playerClubId !== sellerClub.id) {
-    return 'El jugador no pertenece al club vendedor';
+  const free = isFreeAgent(player);
+
+  const validation = validateOfferBasics({
+    player,
+    buyer: buyerClub,
+    seller: sellerClub,
+    amount,
+    standings
+  });
+  if (!validation.ok) return validation.reason || 'Oferta invÃ¡lida';
+
+  if (!free && !player.transferListed) {
+    return 'El jugador no estÃ¡ en la lista de transferibles';
   }
 
-  // Presupuesto
-  if (buyerClub.budget < amount) {
-    return 'Presupuesto insuficiente';
+  if (free) {
+    if (buyerClub.budget < amount) return 'Presupuesto insuficiente para fichar al agente libre';
+
+    const updatedClubs = clubs.map((club: any) => {
+      if (club.id === buyerClub.id) {
+        return { ...club, budget: club.budget - amount };
+      }
+      return club;
+    });
+
+    const preservedValue = player.transferValue || player.marketValue || 0;
+    const updatedPlayers = players.map((p: Player) => {
+      if (p.id === playerId) {
+        return {
+          ...p,
+          clubId: buyerClub.id,
+          transferListed: false,
+          transferValue: preservedValue
+        };
+      }
+      return p;
+    });
+
+    const transfer: Transfer = {
+      id: `transfer-${Date.now()}`,
+      playerId: player.id,
+      playerName: player.name,
+      fromClub: 'Libre',
+      toClub: buyerClub.name,
+      fee: amount,
+      date: new Date().toISOString()
+    };
+
+    await updateClubs(updatedClubs);
+    await updatePlayers(updatedPlayers);
+    const syncedPlayer = updatedPlayers.find((p: Player) => p.id === playerId);
+    if (syncedPlayer) await syncPlayerToSupabase(syncedPlayer);
+    addTransfer(transfer);
+
+    return null;
   }
 
-  // Nota: NO bloqueamos por transferListed para permitir ofertas a cualquier jugador.
-  // if (!player.transferListed) return 'El jugador no está en la lista de transferibles';
-
-  // Oferta mínima razonable
-  const baseValue = getBaseValue(player);
-  const minAllowed = Math.round(baseValue * 0.7);
-  if (amount < minAllowed) {
-    return 'La oferta es demasiado baja';
-  }
-
-  // Evitar ofertas duplicadas pendientes desde el mismo comprador al mismo jugador
-  const existingOffer = offers.find(o =>
-    o.playerId === playerId && o.toClub === buyerClub.name && o.status === 'pending'
+  const existingOffer = offers.find((o: TransferOffer) =>
+    o.playerId === playerId &&
+    o.toClub === toClub &&
+    o.status === 'pending'
   );
+
   if (existingOffer) {
     return 'Ya tienes una oferta pendiente por este jugador';
   }
 
-  // Crear oferta
   const newOffer: TransferOffer = {
-    id: `offer${Date.now()}`,
+    id: `offer-${Date.now()}`,
     playerId,
     playerName,
-    fromClub: sellerClub.name,
-    toClub: buyerClub.name,
+    fromClub,
+    toClub,
     amount,
     date: new Date().toISOString(),
     status: 'pending',
-    userId
+    userId,
+    history: [getOfferHistoryEntry('buyer', 'offer', { amount })]
   };
 
   addOffer(newOffer);
   return null;
 }
 
-/** Procesa (acepta) una oferta pendiente y mueve al jugador */
-export function processTransfer(offerId: string): string | null {
+export async function processTransfer(offerId: string): Promise<string | null> {
   const {
-    offers, players, clubs, updateOfferStatus, updateClubs, updatePlayers, addTransfer
-  } = useDataStore.getState();
+    offers,
+    players,
+    clubs,
+    updateOfferStatus,
+    updateClubs,
+    updatePlayers,
+    addTransfer
+  } = useDataStore.getState() as any;
 
-  const offer = offers.find(o => o.id === offerId);
+  const offer = offers.find((o: TransferOffer) => o.id === offerId);
   if (!offer) return 'Oferta no encontrada';
-  if (offer.status !== 'pending') return 'Esta oferta ya ha sido procesada';
 
-  const player = players.find(p => p.id === offer.playerId);
-  const buyerClub = clubs.find(c => c.name === offer.toClub);
-  const sellerClub = clubs.find(c => c.name === offer.fromClub);
+  if (offer.status !== 'pending' && offer.status !== 'counter-offer') {
+    return 'Oferta ya procesada';
+  }
+
+  const player = players.find((p: Player) => p.id === offer.playerId);
+  const buyerClub = clubs.find((c: any) => c.name === offer.toClub);
+  const sellerClub = clubs.find((c: any) => c.name === offer.fromClub);
+  const finalAmount = offer.counterAmount ?? offer.amount;
+
   if (!player || !buyerClub || !sellerClub) {
     updateOfferStatus(offerId, 'rejected');
     return 'Datos inválidos, oferta rechazada';
   }
 
-  if (buyerClub.budget < offer.amount) {
-    updateOfferStatus(offerId, 'rejected');
-    return 'Presupuesto insuficiente, oferta rechazada';
+  if (buyerClub.budget < finalAmount) {
+    updateOfferStatus(offerId, 'rejected', { historyEntry: getOfferHistoryEntry('seller', 'reject', { reason: 'Presupuesto insuficiente' }) });
+    return 'Presupuesto insuficiente';
   }
 
-  // Actualizar presupuestos
-  const updatedClubs = clubs.map(club => {
-    if (club.id === buyerClub.id) return { ...club, budget: club.budget - offer.amount };
-    if (club.id === sellerClub.id) return { ...club, budget: club.budget + offer.amount };
+  const updatedClubs = clubs.map((club: any) => {
+    if (club.id === buyerClub.id) {
+      return { ...club, budget: club.budget - finalAmount };
+    }
+    if (club.id === sellerClub.id) {
+      return { ...club, budget: club.budget + finalAmount };
+    }
     return club;
   });
-  updateClubs(updatedClubs);
 
-  // Mover jugador (actualiza clubId y limpia club legacy si existiera)
-  const updatedPlayers = players.map(p => {
+  const preservedValue = player.transferValue || player.marketValue || 0;
+  const updatedPlayers = players.map((p: Player) => {
     if (p.id === player.id) {
-      const copy: any = { ...p, clubId: buyerClub.id };
-      if ('id_equipo' in copy) copy.id_equipo = buyerClub.id;
-      return copy;
+      return {
+        ...p,
+        clubId: buyerClub.id,
+        transferListed: false,
+        transferValue: preservedValue
+      };
     }
     return p;
   });
-  updatePlayers(updatedPlayers);
 
-  // Marcar oferta y registrar transferencia
-  updateOfferStatus(offerId, 'accepted');
   const transfer: Transfer = {
-    id: `transfer${Date.now()}`,
+    id: `transfer-${Date.now()}`,
     playerId: player.id,
-    playerName: player.name || `${(player as any).nombre_jugador || ''} ${(player as any).apellido_jugador || ''}`.trim(),
+    playerName: player.name,
     fromClub: sellerClub.name,
     toClub: buyerClub.name,
-    amount: offer.amount,
+    fee: finalAmount,
     date: new Date().toISOString()
   };
+
+  await updateClubs(updatedClubs);
+  await updatePlayers(updatedPlayers);
+  const syncedTransferredPlayer = updatedPlayers.find((p: Player) => p.id === player.id);
+  if (syncedTransferredPlayer) await syncPlayerToSupabase(syncedTransferredPlayer);
+  updateOfferStatus(offerId, 'accepted', { historyEntry: getOfferHistoryEntry('seller', 'accept', { amount: finalAmount }) });
   addTransfer(transfer);
 
   return null;
 }
 
-/** Valor base robusto (transferValue > marketValue > value > overall*100000) */
-function getBaseValue(player: Player): number {
-  return (
-    (player as any).transferValue ??
-    (player as any).marketValue ??
-    (player as any).value ??
-    ((player as any).overall || (player as any).valoracion || 0) * 100000
-  );
+export function makeCounterOffer(offerId: string, counterAmount: number, message?: string): string | null {
+  const { offers, updateOfferStatus } = useDataStore.getState() as any;
+  const offer = offers.find((o: TransferOffer) => o.id === offerId);
+  if (!offer) return 'Oferta no encontrada';
+  if (offer.status !== 'pending') return 'Solo se puede contra-ofertar cuando la oferta esta pendiente';
+
+  updateOfferStatus(offerId, 'counter-offer', {
+    counterAmount,
+    counterMessage: message,
+    historyEntry: getOfferHistoryEntry('seller', 'counter', { counterAmount, message })
+  });
+
+  return null;
+}
+
+export async function respondToCounterOffer(offerId: string, accept: boolean, message?: string): Promise<string | null> {
+  const { offers } = useDataStore.getState() as any;
+  const offer = offers.find((o: TransferOffer) => o.id === offerId);
+  if (!offer) return 'Oferta no encontrada';
+
+  if (accept) {
+    const amount = offer.counterAmount ?? offer.amount;
+    const result = await processTransfer(offerId);
+    if (result) return result;
+    useDataStore.getState().updateOfferStatus(offerId, 'accepted', {
+      historyEntry: getOfferHistoryEntry('buyer', 'accept', { counterAmount: amount })
+    });
+    return null;
+  }
+
+  useDataStore.getState().updateOfferStatus(offerId, 'rejected', {
+    counterMessage: message,
+    historyEntry: getOfferHistoryEntry('buyer', 'reject', { message })
+  });
+
+  return null;
+}
+
+export async function fetchOffersFromSupabase(): Promise<TransferOffer[]> {
+  const { offers } = useDataStore.getState() as any;
+  return offers;
+}
+
+export async function fetchTransfersFromSupabase(): Promise<Transfer[]> {
+  const { transfers } = useDataStore.getState() as any;
+  return transfers;
 }
 
 export function getMinOfferAmount(player: Player): number {
-  const base = getBaseValue(player);
-  return Math.round(base * 0.7);
+  const { minTransferFee } = computeValuation(player);
+  return Math.max(1, minTransferFee);
 }
 
 export function getMaxOfferAmount(player: Player, clubBudget: number): number {
-  const base = getBaseValue(player);
-  return Math.min(Math.round(base * 1.5), clubBudget);
+  return clubBudget;
 }
+
+export function getOfferSuggestions(player: Player): {
+  low: number;
+  fair: number;
+  high: number;
+  marketValue: number;
+} {
+  const marketValue = player.transferValue || 0;
+  return {
+    low: Math.round(marketValue * 0.7),
+    fair: Math.round(marketValue * 0.9),
+    high: Math.round(marketValue * 1.2),
+    marketValue
+  };
+}
+
+export function getOfferRealismLevel(amount: number, player: Player): {
+  level: 'ridiculous' | 'low' | 'fair' | 'high' | 'excessive';
+  message: string;
+  color: string;
+} {
+  const suggestions = getOfferSuggestions(player);
+  const ratio = player.transferValue ? amount / player.transferValue : 1;
+
+  if (ratio < 0.5) {
+    return { level: 'ridiculous', message: 'Oferta ridÃ­culamente baja', color: 'text-red-400' };
+  }
+
+  if (ratio < 0.7) {
+    return { level: 'low', message: 'Oferta baja - podrÃ­a ser rechazada', color: 'text-orange-400' };
+  }
+
+  if (ratio <= 1.2) {
+    return { level: 'fair', message: 'Oferta razonable', color: 'text-green-400' };
+  }
+
+  if (ratio <= 1.5) {
+    return { level: 'high', message: 'Oferta alta - atractiva', color: 'text-blue-400' };
+  }
+
+  return { level: 'excessive', message: 'Oferta excesiva', color: 'text-purple-400' };
+}
+
+export function debugRecentTransfers(limit = 5) {
+  const { transfers } = useDataStore.getState() as any;
+  return (transfers || []).slice(0, limit);
+}
+
+export function debugOffersStatus() {
+  const { offers } = useDataStore.getState() as any;
+  return offers;
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,2 @@
+export { offers } from './mockData';
+

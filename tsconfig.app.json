@@ -8,17 +8,11 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node"],
-    "paths": {
-      "zod": ["./src/lib/zod"],
-      "@/*": ["./src/*"]
-    },
 
     /* Linting */
     "strict": true,

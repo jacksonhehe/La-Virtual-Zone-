@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, CheckCircle } from 'lucide-react';
+import { User, Mail, Lock, CheckCircle, Loader } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { config } from '../../lib/config';
 
 const RegisterForm = () => {
   const [username, setUsername] = useState('');
@@ -9,28 +10,35 @@ const RegisterForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { register } = useAuthStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+    setIsLoading(true);
+
     if (!username || !email || !password || !confirmPassword) {
       setError('Por favor, completa todos los campos');
+      setIsLoading(false);
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
+      setIsLoading(false);
       return;
     }
-    
+
     try {
-      register(email, username, password);
+      await register(email, username, password);
       navigate('/usuario');
-    } catch {
-      setError('Error al registrarse');
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Error al registrarse. Inténtalo de nuevo.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,6 +72,7 @@ const RegisterForm = () => {
               onChange={(e) => setUsername(e.target.value)}
               className="input pl-10 w-full"
               placeholder="Elige un nombre de usuario"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -81,6 +90,7 @@ const RegisterForm = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="input pl-10 w-full"
               placeholder="Ingresa tu correo electrónico"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -98,6 +108,7 @@ const RegisterForm = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="input pl-10 w-full"
               placeholder="Elige una contraseña segura"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -115,13 +126,14 @@ const RegisterForm = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="input pl-10 w-full"
               placeholder="Repite tu contraseña"
+              disabled={isLoading}
             />
           </div>
         </div>
         
         <div className="mb-6">
           <label className="flex items-start cursor-pointer">
-            <input type="checkbox" className="sr-only peer" required />
+            <input type="checkbox" className="sr-only peer" required disabled={isLoading} />
             <div className="w-5 h-5 mt-0.5 border border-gray-600 rounded-sm bg-dark-lighter peer-checked:bg-primary flex items-center justify-center">
               <CheckCircle size={14} className="hidden peer-checked:block text-white" />
             </div>
@@ -133,9 +145,17 @@ const RegisterForm = () => {
         
         <button
           type="submit"
-          className="btn-primary py-3 w-full"
+          className="btn-primary py-3 w-full flex items-center justify-center"
+          disabled={isLoading}
         >
-          Crear cuenta
+          {isLoading ? (
+            <>
+              <Loader size={16} className="mr-2 animate-spin" />
+              Creando cuenta...
+            </>
+          ) : (
+            'Crear cuenta'
+          )}
         </button>
       </form>
       

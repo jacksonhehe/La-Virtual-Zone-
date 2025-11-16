@@ -1,13 +1,25 @@
-import { Link } from 'react-router-dom';
+import  { useMemo } from 'react';
+import  { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useDataStore } from '../../store/dataStore';
-import slugify from '../../utils/slugify';
+import { createFallbackStandings } from '../../utils/standingsHelpers';
 
 const LeagueStandings = () => {
   const { standings, clubs } = useDataStore();
   
-  // Get top 5 teams
-  const topTeams = standings.slice(0, 5);
+  const clubStandings = useMemo(() => {
+    const source = standings.length ? standings : createFallbackStandings(clubs);
+    return [...source].sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      const diffA = a.goalsFor - a.goalsAgainst;
+      const diffB = b.goalsFor - b.goalsAgainst;
+      if (diffB !== diffA) return diffB - diffA;
+      return (b.goalsFor || 0) - (a.goalsFor || 0);
+    });
+  }, [clubs, standings]);
+
+  // Show top 5 teams in table
+  const topTeams = clubStandings.slice(0, 5);
   
   return (
     <div className="card">
@@ -54,8 +66,8 @@ const LeagueStandings = () => {
                     </span>
                   </td>
                   <td className="p-4">
-                    <Link
-                      to={`/liga-master/club/${club ? slugify(club.name) : ''}`}
+                    <Link 
+                      to={`/liga-master/club/${club?.name.toLowerCase().replace(/\s+/g, '-')}`}
                       className="flex items-center"
                     >
                       <img 

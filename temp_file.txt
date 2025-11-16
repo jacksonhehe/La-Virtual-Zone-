@@ -1,0 +1,2311 @@
+﻿
+  // club17 â†’ Nacional
+  {
+    id: 'club17',
+    name: 'Nacional',
+    logo: '/clubs/nacional.svg',
+    foundedYear: 2023,
+    stadium: 'Bear Cave',
+    budget: 26500000,
+    manager: 'DT Titanium',
+    playStyle: 'Contraataque',
+    primaryColor: '#6b7280',
+    secondaryColor: '#4b5563',
+    description: 'Equipo fuerte y resistente. Especialistas en contraataques potentes.',
+    titles: [],
+    reputation: 87,
+    fanBase: 11500
+  },
+
+  // club18 â†’ La Boca del Sapo
+  {
+    id: 'club18',
+    name: 'La Boca del Sapo',
+    logo: '/clubs/la-boca-del-sapo.svg',
+    foundedYear: 2023,
+    stadium: 'Frog Pond',
+    budget: 2000000,
+    manager: 'DT Frog',
+    playStyle: 'Ofensivo',
+    primaryColor: '#22c55e',
+    secondaryColor: '#16a34a',
+    description: 'Equipo imprevisible y tï¿½ctico. Saltan al ataque cuando menos lo esperas.',
+    titles: [],
+    reputation: 58,
+    fanBase: 2200
+  },
+
+  // club19 â†’ Los Guerreros del Rosario
+  {
+    id: 'club19',
+    name: 'Los Guerreros del Rosario',
+    logo: '/clubs/los-guerreros-del-rosario.svg',
+    foundedYear: 2023,
+    stadium: 'Devil\'s Lair',
+    budget: 4500000,
+    manager: 'DT Ruby',
+    playStyle: 'Vertical',
+    primaryColor: '#b91c1c',
+    secondaryColor: '#991b1b',
+    description: 'Equipo apasionado y agresivo. Especialistas en juego directo y vertical.',
+    titles: [],
+    reputation: 59,
+    fanBase: 2600
+  },
+
+  // club20 â†’ La Cumbre FC
+  {
+    id: 'club20',
+    name: 'La Cumbre FC',
+    logo: '/clubs/la-cumbre-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Shark Tank',
+    budget: 8500000,
+    manager: 'DT Silver',
+    playStyle: 'Defensivo',
+    primaryColor: '#0ea5e9',
+    secondaryColor: '#0284c7',
+    description: 'Equipo depredador y efectivo. Especialistas en defender y contraatacar.',
+    titles: [],
+    reputation: 63,
+    fanBase: 3800
+  },
+
+  // club21 â†’ La Barraca
+  {
+    id: 'club21',
+    name: 'La Barraca',
+    logo: '/clubs/la-barraca.svg',
+    foundedYear: 2023,
+    stadium: 'Eagle Nest',
+    budget: 10500000,
+    manager: 'DT Iron',
+    playStyle: 'Total',
+    primaryColor: '#059669',
+    secondaryColor: '#064e3b',
+    description: 'Equipo fuerte y determinado. Fï¿½tbol total con ï¿½nfasis en lo colectivo.',
+    titles: [],
+    reputation: 65,
+    fanBase: 4400
+  },
+
+  // club22 â†’ La Cuarta
+  {
+    id: 'club22',
+    name: 'La Cuarta',
+    logo: '/clubs/la-cuarta.svg',
+    foundedYear: 2023,
+    stadium: 'Phoenix Stadium',
+    budget: 9500000,
+    manager: 'DT Phoenix',
+    playStyle: 'Ofensivo',
+    primaryColor: '#ea580c',
+    secondaryColor: '#9a3412',
+    description: 'Club que renace de sus cenizas. Especialistas en remontadas ï¿½picas.',
+    titles: [],
+    reputation: 64,
+    fanBase: 4100
+  },
+
+  // club23 â†’ San Martin de Tolosa
+  {
+    id: 'club23',
+    name: 'San Martin de Tolosa',
+    logo: '/clubs/san-martin-de-tolosa.svg',
+    foundedYear: 2023,
+    stadium: 'Cloud Arena',
+    budget: 17500000,
+    manager: 'DT Cloud',
+    playStyle: 'Vertical',
+    primaryColor: '#06d6a0',
+    secondaryColor: '#10b981',
+    description: 'Equipo ligero y rï¿½pido como la nube. Especializados en ataques relï¿½mpago y transiciones.',
+    titles: [],
+    reputation: 76,
+    fanBase: 7200
+  },
+
+  // club24 â†’ Liga de Quito
+  {
+    id: 'club24',
+    name: 'Liga de Quito',
+    logo: '/clubs/liga-de-quito.svg',
+    foundedYear: 2023,
+    stadium: 'Raven\'s Nest',
+    budget: 6500000,
+    manager: 'DT Midnight',
+    playStyle: 'Presiï¿½n alta',
+    primaryColor: '#1f2937',
+    secondaryColor: '#0f172a',
+    description: 'Equipo misterioso y nocturno. Especialistas en presionar en campo rival.',
+    titles: [],
+    reputation: 61,
+    fanBase: 3200
+  },
+
+  // club25 â†’ Deportes Provincial Osorno
+  {
+    id: 'club25',
+    name: 'Deportes Provincial Osorno',
+    logo: '/clubs/deportes-provincial-osorno.svg',
+    foundedYear: 2023,
+    stadium: 'Galactic Arena',
+    budget: 24000000,
+    manager: 'DT Galaxy',
+    playStyle: 'Total',
+    primaryColor: '#14b8a6',
+    secondaryColor: '#1e1e2e',
+    description: 'Club ambicioso con un estilo de fï¿½tbol total. Excelente cantera y desarrollo de jugadores.',
+    titles: [
+      {
+        id: 'title6',
+        name: 'Supercopa Digital',
+        year: 2023,
+        type: 'supercup'
+      }
+    ],
+    reputation: 82,
+    fanBase: 9000
+  },
+
+  // club26 â†’ La Cumbre
+  {
+    id: 'club26',
+    name: 'La Cumbre',
+    logo: '/clubs/la-cumbre-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Mountain Peak',
+    budget: 8000000,
+    manager: 'DT Summit',
+    playStyle: 'Equilibrado',
+    primaryColor: '#64748b',
+    secondaryColor: '#475569',
+    description: 'Equipo que domina las alturas. Especialistas en juego equilibrado y control del medio campo.',
+    titles: [],
+    reputation: 62,
+    fanBase: 3600
+  },
+
+  // club27 â†’ Peritas FC
+  {
+    id: 'club27',
+    name: 'Peritas FC',
+    logo: '/clubs/peritas-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Carbon Arena',
+    budget: 23500000,
+    manager: 'DT Carbon',
+    playStyle: 'Defensivo',
+    primaryColor: '#262626',
+    secondaryColor: '#525252',
+    description: 'Equipo sï¿½lido y resistente. Especialistas en defensa organizada.',
+    titles: [],
+    reputation: 85,
+    fanBase: 10500
+  },
+
+  // club28 â†’ PeÃ±arol
+  {
+    id: 'club28',
+    name: 'PeÃ±arol',
+    logo: '/clubs/penarol.svg',
+    foundedYear: 2023,
+    stadium: 'Aurora Stadium',
+    budget: 22500000,
+    manager: 'DT Aurora',
+    playStyle: 'Ofensivo',
+    primaryColor: '#fbbf24',
+    secondaryColor: '#f59e0b',
+    description: 'Club legendario con tradiciï¿½n ganadora. Especialistas en juego ofensivo y creativo.',
+    titles: [
+      {
+        id: 'title11',
+        name: 'Copa Aurora',
+        year: 2024,
+        type: 'cup'
+      }
+    ],
+    reputation: 86,
+    fanBase: 11000
+  },
+
+  // club29 â†’ Los Villeros del Saca
+  {
+    id: 'club29',
+    name: 'Los Villeros del Saca',
+    logo: '/clubs/los-villeros-del-saca.svg',
+    foundedYear: 2023,
+    stadium: 'Viper\'s Pit',
+    budget: 2500000,
+    manager: 'DT Crimson',
+    playStyle: 'Total',
+    primaryColor: '#dc2626',
+    secondaryColor: '#b91c1c',
+    description: 'Equipo venenoso y letal. Fï¿½tbol total con ï¿½nfasis en lo colectivo.',
+    titles: [],
+    reputation: 57,
+    fanBase: 2000
+  },
+
+  // club30 â†’ Liverpool
+  {
+    id: 'club30',
+    name: 'Liverpool',
+    logo: '/clubs/liverpool.svg',
+    foundedYear: 2023,
+    stadium: 'Emerald Castle',
+    budget: 5500000,
+    manager: 'DT Emerald',
+    playStyle: 'Tiki-Taka',
+    primaryColor: '#16a34a',
+    secondaryColor: '#15803d',
+    description: 'Club elegante y preciso. Especialistas en el toque y la posesiï¿½n.',
+    titles: [],
+    reputation: 60,
+    fanBase: 2900
+  },
+    secondaryColor: '#334155',
+    description: 'Club que combina tradiciï¿½n y modernidad. Juego equilibrado y sï¿½lido en todas las lï¿½neas.',
+    titles: [],
+    reputation: 77,
+    fanBase: 8000
+  },
+
+  // club6 â†’ Beast FC
+  {
+    id: 'club6',
+    name: 'Beast FC',
+    logo: '/clubs/beast-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Error Arena',
+    budget: 17000000,
+    manager: 'DT Glitch',
+    playStyle: 'Presiï¿½n alta',
+    primaryColor: '#84cc16',
+    secondaryColor: '#1e293b',
+    description: 'Club imprevisible conocido por su intensa presiï¿½n y recuperaciï¿½n rï¿½pida del balï¿½n.',
+    titles: [
+      {
+        id: 'title5',
+        name: 'Copa PES',
+        year: 2023,
+        type: 'cup'
+      }
+    ],
+    reputation: 76,
+    fanBase: 7500
+  },
+
+  // club7 â†’ Club Atletico ItuzaingÃ³
+  {
+    id: 'club7',
+    name: 'Club Atletico ItuzaingÃ³',
+    logo: '/clubs/club-atletico-ituzaingo.svg',
+    foundedYear: 2023,
+    stadium: 'Cyber Fortress',
+    budget: 19000000,
+    manager: 'DT Cyber',
+    playStyle: 'Tiki-Taka',
+    primaryColor: '#06b6d4',
+    secondaryColor: '#475569',
+    description: 'Club con filosofï¿½a de toque y posesiï¿½n extrema. Especialistas en dominar el centro del campo.',
+    titles: [],
+    reputation: 78,
+    fanBase: 7800
+  },
+
+  // club8 â†’ Club Atletico Libertadores
+  {
+    id: 'club8',
+    name: 'Club Atletico Libertadores',
+    logo: '/clubs/club-atletico-libertadores.svg',
+    foundedYear: 2023,
+    stadium: 'Binary Park',
+    budget: 21000000,
+    manager: 'DT Binary',
+    playStyle: 'Vertical',
+    primaryColor: '#7c3aed',
+    secondaryColor: '#334155',
+    description: 'Equipo de juego vertical y directo. Especializado en transiciones rï¿½pidas y ataques por banda.',
+    titles: [],
+    reputation: 79,
+    fanBase: 8200
+  },
+
+  // club9 â†’ Comando Sur
+  {
+    id: 'club9',
+    name: 'Comando Sur',
+    logo: '/clubs/comando-sur.svg',
+    foundedYear: 2023,
+    stadium: 'Server Stadium',
+    budget: 16000000,
+    manager: 'DT Connect',
+    playStyle: 'Contraataque',
+    primaryColor: '#eab308',
+    secondaryColor: '#0f172a',
+    description: 'Club que espera al rival y aprovecha los espacios. Especialista en contragolpes letales.',
+    titles: [],
+    reputation: 74,
+    fanBase: 7000
+  },
+
+  // club10 â†’ Deportes Provincial Osorno
+  {
+    id: 'club10',
+    name: 'Deportes Provincial Osorno',
+    logo: '/clubs/deportes-provincial-osorno.svg',
+    foundedYear: 2023,
+    stadium: 'Galactic Arena',
+    budget: 24000000,
+    manager: 'DT Galaxy',
+    playStyle: 'Total',
+    primaryColor: '#14b8a6',
+    secondaryColor: '#1e1e2e',
+    description: 'Club ambicioso con un estilo de fï¿½tbol total. Excelente cantera y desarrollo de jugadores.',
+    titles: [
+      {
+        id: 'title6',
+        name: 'Supercopa Digital',
+        year: 2023,
+        type: 'supercup'
+      }
+    ],
+    reputation: 82,
+    fanBase: 9000
+  },
+
+  // club11 â†’ El Cadu
+  {
+    id: 'club11',
+    name: 'El Cadu',
+    logo: '/clubs/el-cadu.svg',
+    foundedYear: 2023,
+    stadium: 'Quantum Stadium',
+    budget: 18500000,
+    manager: 'DT Quantum',
+    playStyle: 'Posesiï¿½n',
+    primaryColor: '#8b5cf6',
+    secondaryColor: '#312e81',
+    description: 'Club innovador que combina ciencia y fï¿½tbol. Especialistas en juego de posesiï¿½n y pases precisos.',
+    titles: [],
+    reputation: 73,
+    fanBase: 6800
+  },
+
+  // club12 â†’ El Santo Tucumano
+  {
+    id: 'club12',
+    name: 'El Santo Tucumano',
+    logo: '/clubs/el-santo-tucumano.svg',
+    foundedYear: 2023,
+    stadium: 'Thunder Dome',
+    budget: 19500000,
+    manager: 'DT Storm',
+    playStyle: 'Contraataque',
+    primaryColor: '#64748b',
+    secondaryColor: '#1f2937',
+    description: 'Equipo aguerrido que se crece en las adversidades. Especialistas en transiciones rï¿½pidas.',
+    titles: [],
+    reputation: 74,
+    fanBase: 7100
+  },
+
+  // club13 â†’ Elijo Creer
+  {
+    id: 'club13',
+    name: 'Elijo Creer',
+    logo: '/clubs/elijo-creer.svg',
+    foundedYear: 2023,
+    stadium: 'Dragon Arena',
+    budget: 17500000,
+    manager: 'DT Dragon',
+    playStyle: 'Ofensivo',
+    primaryColor: '#dc2626',
+    secondaryColor: '#7f1d1d',
+    description: 'Club pasional con juego vertical y directo. Conocidos por su intensidad y garra.',
+    titles: [],
+    reputation: 72,
+    fanBase: 6500
+  },
+
+  // club14 â†’ Estudiantes de La Plata
+  {
+    id: 'club14',
+    name: 'Estudiantes de La Plata',
+    logo: '/clubs/estudiantes-de-la-plata.svg',
+    foundedYear: 2023,
+    stadium: 'Frozen Stadium',
+    budget: 16500000,
+    manager: 'DT Ice',
+    playStyle: 'Defensivo',
+    primaryColor: '#3b82f6',
+    secondaryColor: '#1e40af',
+    description: 'Equipo sï¿½lido y organizado. Especialistas en mantener la porterï¿½a a cero.',
+    titles: [],
+    reputation: 71,
+    fanBase: 6200
+  },
+
+  // club15 â†’ Furia Verde
+  {
+    id: 'club15',
+    name: 'Furia Verde',
+    logo: '/clubs/furia-verde.svg',
+    foundedYear: 2023,
+    stadium: 'Solar Arena',
+    budget: 15500000,
+    manager: 'DT Solar',
+    playStyle: 'Equilibrado',
+    primaryColor: '#f59e0b',
+    secondaryColor: '#92400e',
+    description: 'Club con filosofï¿½a de fï¿½tbol equilibrado. Formaciï¿½n de jï¿½venes talentos.',
+    titles: [],
+    reputation: 70,
+    fanBase: 5900
+  },
+
+  // club16 â†’ God Sport
+  {
+    id: 'club16',
+    name: 'God Sport',
+    logo: '/clubs/god-sport.svg',
+    foundedYear: 2023,
+    stadium: 'Shadow Colosseum',
+    budget: 14500000,
+    manager: 'DT Shadow',
+    playStyle: 'Presiï¿½n alta',
+    primaryColor: '#374151',
+    secondaryColor: '#111827',
+    description: 'Equipo misterioso y efectivo. Especialistas en presionar y recuperar rï¿½pido.',
+    titles: [],
+    reputation: 69,
+    fanBase: 5600
+  },
+
+  // club17 â†’ Granate
+  {
+    id: 'club17',
+    name: 'Granate',
+    logo: '/clubs/granate.svg',
+    foundedYear: 2023,
+    stadium: 'Titan Stadium',
+    budget: 13500000,
+    manager: 'DT Thunder',
+    playStyle: 'Tiki-Taka',
+    primaryColor: '#7c2d12',
+    secondaryColor: '#451a03',
+    description: 'Club con tradiciï¿½n de buen fï¿½tbol. Especialistas en el toque y la posesiï¿½n.',
+    titles: [],
+    reputation: 68,
+    fanBase: 5300
+  },
+
+  // club18 â†’ Jackson FC
+  {
+    id: 'club18',
+    name: 'Jackson FC',
+    logo: '/clubs/jackson-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Lightning Arena',
+    budget: 12500000,
+    manager: 'DT Lightning',
+    playStyle: 'Vertical',
+    primaryColor: '#facc15',
+    secondaryColor: '#a16207',
+    description: 'Equipo rï¿½pido y electrizante. Especialistas en ataques por bandas.',
+    titles: [],
+    reputation: 67,
+    fanBase: 5000
+  },
+
+  // club19 â†’ Kod FC
+  {
+    id: 'club19',
+    name: 'Kod FC',
+    logo: '/clubs/kod-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Crystal Dome',
+    budget: 11500000,
+    manager: 'DT Crystal',
+    playStyle: 'Contraataque',
+    primaryColor: '#e11d48',
+    secondaryColor: '#881337',
+    description: 'Club elegante y efectivo. Especialistas en contraataques bien elaborados.',
+    titles: [],
+    reputation: 66,
+    fanBase: 4700
+  },
+
+  // club20 â†’ La Barraca
+  {
+    id: 'club20',
+    name: 'La Barraca',
+    logo: '/clubs/la-barraca.svg',
+    foundedYear: 2023,
+    stadium: 'Eagle Nest',
+    budget: 10500000,
+    manager: 'DT Iron',
+    playStyle: 'Total',
+    primaryColor: '#059669',
+    secondaryColor: '#064e3b',
+    description: 'Equipo fuerte y determinado. Fï¿½tbol total con ï¿½nfasis en lo colectivo.',
+    titles: [],
+    reputation: 65,
+    fanBase: 4400
+  },
+
+  // club21 â†’ La Cuarta
+  {
+    id: 'club21',
+    name: 'La Cuarta',
+    logo: '/clubs/la-cuarta.svg',
+    foundedYear: 2023,
+    stadium: 'Phoenix Stadium',
+    budget: 9500000,
+    manager: 'DT Phoenix',
+    playStyle: 'Ofensivo',
+    primaryColor: '#ea580c',
+    secondaryColor: '#9a3412',
+    description: 'Club que renace de sus cenizas. Especialistas en remontadas ï¿½picas.',
+    titles: [],
+    reputation: 64,
+    fanBase: 4100
+  },
+
+  // club22 â†’ La Cumbre FC
+  {
+    id: 'club22',
+    name: 'La Cumbre FC',
+    logo: '/clubs/la-cumbre-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Shark Tank',
+    budget: 8500000,
+    manager: 'DT Silver',
+    playStyle: 'Defensivo',
+    primaryColor: '#0ea5e9',
+    secondaryColor: '#0284c7',
+    description: 'Equipo depredador y efectivo. Especialistas en defender y contraatacar.',
+    titles: [],
+    reputation: 63,
+    fanBase: 3800
+  },
+
+  // club23 â†’ La Tobyneta
+  {
+    id: 'club23',
+    name: 'La Tobyneta',
+    logo: '/clubs/la-tobyneta.svg',
+    foundedYear: 2023,
+    stadium: 'Lion\'s Den',
+    budget: 7500000,
+    manager: 'DT Golden',
+    playStyle: 'Equilibrado',
+    primaryColor: '#fbbf24',
+    secondaryColor: '#d97706',
+    description: 'Club noble y tradicional. Fï¿½tbol equilibrado con ï¿½nfasis en la cantera.',
+    titles: [],
+    reputation: 62,
+    fanBase: 3500
+  },
+
+  // club24 â†’ Liga de Quito
+  {
+    id: 'club24',
+    name: 'Liga de Quito',
+    logo: '/clubs/liga-de-quito.svg',
+    foundedYear: 2023,
+    stadium: 'Raven\'s Nest',
+    budget: 6500000,
+    manager: 'DT Midnight',
+    playStyle: 'Presiï¿½n alta',
+    primaryColor: '#1f2937',
+    secondaryColor: '#0f172a',
+    description: 'Equipo misterioso y nocturno. Especialistas en presionar en campo rival.',
+    titles: [],
+    reputation: 61,
+    fanBase: 3200
+  },
+
+  // club25 â†’ Liverpool
+  {
+    id: 'club25',
+    name: 'Liverpool',
+    logo: '/clubs/liverpool.svg',
+    foundedYear: 2023,
+    stadium: 'Emerald Castle',
+    budget: 5500000,
+    manager: 'DT Emerald',
+    playStyle: 'Tiki-Taka',
+    primaryColor: '#16a34a',
+    secondaryColor: '#15803d',
+    description: 'Club elegante y preciso. Especialistas en el toque y la posesiï¿½n.',
+    titles: [],
+    reputation: 60,
+    fanBase: 2900
+  },
+
+  // club26 â†’ Los Guerreros del Rosario
+  {
+    id: 'club26',
+    name: 'Los Guerreros del Rosario',
+    logo: '/clubs/los-guerreros-del-rosario.svg',
+    foundedYear: 2023,
+    stadium: 'Devil\'s Lair',
+    budget: 4500000,
+    manager: 'DT Ruby',
+    playStyle: 'Vertical',
+    primaryColor: '#b91c1c',
+    secondaryColor: '#991b1b',
+    description: 'Equipo apasionado y agresivo. Especialistas en juego directo y vertical.',
+    titles: [],
+    reputation: 59,
+    fanBase: 2600
+  },
+
+  // club27 â†’ Los Terribles FC
+  {
+    id: 'club27',
+    name: 'Los Terribles FC',
+    logo: '/clubs/los-terribles-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Starlight Stadium',
+    budget: 3500000,
+    manager: 'DT Sapphire',
+    playStyle: 'Contraataque',
+    primaryColor: '#2563eb',
+    secondaryColor: '#1d4ed8',
+    description: 'Club brillante y efectivo. Especialistas en contraataques estelares.',
+    titles: [],
+    reputation: 58,
+    fanBase: 2300
+  },
+
+  // club28 â†’ Los Villeros del Saca
+  {
+    id: 'club28',
+    name: 'Los Villeros del Saca',
+    logo: '/clubs/los-villeros-del-saca.svg',
+    foundedYear: 2023,
+    stadium: 'Viper\'s Pit',
+    budget: 2500000,
+    manager: 'DT Crimson',
+    playStyle: 'Total',
+    primaryColor: '#dc2626',
+    secondaryColor: '#b91c1c',
+    description: 'Equipo venenoso y letal. Fï¿½tbol total con ï¿½nfasis en lo colectivo.',
+    titles: [],
+    reputation: 57,
+    fanBase: 2000
+  },
+
+  // club29 â†’ Lunatics FC
+  {
+    id: 'club29',
+    name: 'Lunatics FC',
+    logo: '/clubs/lunatics-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Azure Bay',
+    budget: 1500000,
+    manager: 'DT Azure',
+    playStyle: 'Ofensivo',
+    primaryColor: '#0284c7',
+    secondaryColor: '#0369a1',
+    description: 'Club fluido y creativo. Especialistas en ataques por bandas.',
+    titles: [],
+    reputation: 56,
+    fanBase: 1700
+  },
+
+  // club30 â†’ Mar del Callao
+  {
+    id: 'club30',
+    name: 'Mar del Callao',
+    logo: '/clubs/mar-del-callao.svg',
+    foundedYear: 2023,
+    stadium: 'Obsidian Fortress',
+    budget: 1000000,
+    manager: 'DT Obsidian',
+    playStyle: 'Defensivo',
+    primaryColor: '#0c0a09',
+    secondaryColor: '#292524',
+    description: 'Equipo sï¿½lido como la roca. Especialistas en la defensa impenetrable.',
+    titles: [],
+    reputation: 55,
+    fanBase: 1400
+  },
+
+  // club31 â†’ Melgar
+  {
+    id: 'club31',
+    name: 'Melgar',
+    logo: '/clubs/melgar.svg',
+    foundedYear: 2023,
+    stadium: 'Platinum Arena',
+    budget: 28000000,
+    manager: 'DT Platinum',
+    playStyle: 'Posesiï¿½n',
+    primaryColor: '#e5e7eb',
+    secondaryColor: '#9ca3af',
+    description: 'Club premium con grandes aspiraciones. Especialistas en juego de posesiï¿½n.',
+    titles: [],
+    reputation: 88,
+    fanBase: 12000
+  },
+
+  // club32 â†’ Nacional
+  {
+    id: 'club32',
+    name: 'Nacional',
+    logo: '/clubs/nacional.svg',
+    foundedYear: 2023,
+    stadium: 'Bear Cave',
+    budget: 26500000,
+    manager: 'DT Titanium',
+    playStyle: 'Contraataque',
+    primaryColor: '#6b7280',
+    secondaryColor: '#4b5563',
+    description: 'Equipo fuerte y resistente. Especialistas en contraataques potentes.',
+    titles: [],
+    reputation: 87,
+    fanBase: 11500
+  },
+
+  // club33 â†’ Olimpia de Paraguay
+  {
+    id: 'club33',
+    name: 'Olimpia de Paraguay',
+    logo: '/clubs/olimpia-de-paraguay.svg',
+    foundedYear: 2023,
+    stadium: 'Olympic Temple',
+    budget: 25500000,
+    manager: 'DT Olympic',
+    playStyle: 'Vertical',
+    primaryColor: '#1e40af',
+    secondaryColor: '#1e3a8a',
+    description: 'Club legendario con tradiciï¿½n de victorias. Especialistas en juego vertical y directo.',
+    titles: [
+      {
+        id: 'title9',
+        name: 'Olympic Cup',
+        year: 2024,
+        type: 'cup'
+      }
+    ],
+    reputation: 86,
+    fanBase: 11000
+  },
+
+  // club34 â†’ Peritas FC
+  {
+    id: 'club34',
+    name: 'Peritas FC',
+    logo: '/clubs/peritas-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Carbon Arena',
+    budget: 23500000,
+    manager: 'DT Carbon',
+    playStyle: 'Defensivo',
+    primaryColor: '#262626',
+    secondaryColor: '#525252',
+    description: 'Equipo sï¿½lido y resistente. Especialistas en defensa organizada.',
+    titles: [],
+    reputation: 85,
+    fanBase: 10500
+  },
+
+  // club35 â†’ Pibe de Oro
+  {
+    id: 'club35',
+    name: 'Pibe de Oro',
+    logo: '/clubs/pibe-de-oro.svg',
+    foundedYear: 2023,
+    stadium: 'Neon Aquarium',
+    budget: 22000000,
+    manager: 'DT Neon Shark',
+    playStyle: 'Equilibrado',
+    primaryColor: '#00ffff',
+    secondaryColor: '#0891b2',
+    description: 'Club colorido y equilibrado. Especialistas en juego versï¿½til.',
+    titles: [],
+    reputation: 84,
+    fanBase: 10000
+  },
+
+  // club36 â†’ La Boca del Sapo
+  {
+    id: 'club36',
+    name: 'La Boca del Sapo',
+    logo: '/clubs/la-boca-del-sapo.svg',
+    foundedYear: 2023,
+    stadium: 'Frog Pond',
+    budget: 2000000,
+    manager: 'DT Frog',
+    playStyle: 'Ofensivo',
+    primaryColor: '#22c55e',
+    secondaryColor: '#16a34a',
+    description: 'Equipo imprevisible y tï¿½ctico. Saltan al ataque cuando menos lo esperas.',
+    titles: [],
+    reputation: 58,
+    fanBase: 2200
+  },
+
+  // club37 â†’ Quilmes
+  {
+    id: 'club37',
+    name: 'Quilmes',
+    logo: '/clubs/quilmes.svg',
+    foundedYear: 2023,
+    stadium: 'Plasma Stadium',
+    budget: 19000000,
+    manager: 'DT Plasma',
+    playStyle: 'Tiki-Taka',
+    primaryColor: '#ff4500',
+    secondaryColor: '#ea580c',
+    description: 'Club ardiente y tï¿½cnico. Especialistas en el toque y la posesiï¿½n.',
+    titles: [],
+    reputation: 82,
+    fanBase: 9000
+  },
+
+  // club38 â†’ Real Madrid
+  {
+    id: 'club38',
+    name: 'Real Madrid',
+    logo: '/clubs/real-madrid.svg',
+    foundedYear: 2023,
+    stadium: 'Quasar Dome',
+    budget: 17500000,
+    manager: 'DT Quantum Q',
+    playStyle: 'Vertical',
+    primaryColor: '#8b008b',
+    secondaryColor: '#7c2d12',
+    description: 'Equipo cï¿½smico y directo. Especialistas en ataques verticales.',
+    titles: [],
+    reputation: 81,
+    fanBase: 8500
+  },
+
+  // club39 â†’ River Plate
+  {
+    id: 'club39',
+    name: 'River Plate',
+    logo: '/clubs/river-plate.svg',
+    foundedYear: 2023,
+    stadium: 'Cyber Nest',
+    budget: 16000000,
+    manager: 'DT Cyber C',
+    playStyle: 'Contraataque',
+    primaryColor: '#00ff00',
+    secondaryColor: '#16a34a',
+    description: 'Club cibernï¿½tico y letal. Especialistas en contraataques rï¿½pidos.',
+    titles: [],
+    reputation: 80,
+    fanBase: 8000
+  },
+
+  // club40 â†’ Riverpool
+  {
+    id: 'club40',
+    name: 'Riverpool',
+    logo: '/clubs/riverpool.svg',
+    foundedYear: 2023,
+    stadium: 'Digital Lair',
+    budget: 14500000,
+    manager: 'DT Digital',
+    playStyle: 'Total',
+    primaryColor: '#ff6600',
+    secondaryColor: '#ea580c',
+    description: 'Club digital y completo. Especialistas en fï¿½tbol total moderno.',
+    titles: [],
+    reputation: 79,
+    fanBase: 7500
+  },
+
+  // club41 â†’ Sahur FC
+  {
+    id: 'club41',
+    name: 'Sahur FC',
+    logo: '/clubs/sahur-fc.svg',
+    foundedYear: 2023,
+    stadium: 'Quantum Field',
+    budget: 19500000,
+    manager: 'DT Quantum',
+    playStyle: 'Posesiï¿½n',
+    primaryColor: '#8b5cf6',
+    secondaryColor: '#6366f1',
+    description: 'Club que representa la fï¿½sica cuï¿½ntica del fï¿½tbol. Impredecibles y con un estilo ï¿½nico.',
+    titles: [],
+    reputation: 78,
+    fanBase: 7600
+  },
+
+  // club42 â†’ San Francisco
+  {
+    id: 'club42',
+    name: 'San Francisco',
+    logo: '/clubs/san-francisco.svg',
+    foundedYear: 2023,
+    stadium: 'Firewall Stadium',
+    budget: 18500000,
+    manager: 'DT Firewall',
+    playStyle: 'Defensivo',
+    primaryColor: '#dc2626',
+    secondaryColor: '#991b1b',
+    description: 'Defensa impenetrable como un firewall. Especialistas en mantener el cero en su arco.',
+    titles: [
+      {
+        id: 'title7',
+        name: 'Copa Defensiva',
+        year: 2024,
+        type: 'cup'
+      }
+    ],
+    reputation: 81,
+    fanBase: 7800
+  },
+
+  // club43 â†’ San Martin de Tolosa
+  {
+    id: 'club43',
+    name: 'San Martin de Tolosa',
+    logo: '/clubs/san-martin-de-tolosa.svg',
+    foundedYear: 2023,
+    stadium: 'Cloud Arena',
+    budget: 17500000,
+    manager: 'DT Cloud',
+    playStyle: 'Vertical',
+    primaryColor: '#06d6a0',
+    secondaryColor: '#10b981',
+    description: 'Equipo ligero y rï¿½pido como la nube. Especializados en ataques relï¿½mpago y transiciones.',
+    titles: [],
+    reputation: 76,
+    fanBase: 7200
+  },
+
+  // club44 â†’ SeÃ±or de los Milagros
+  {
+    id: 'club44',
+    name: 'SeÃ±or de los Milagros',
+    logo: '/clubs/senor-de-los-milagros.svg',
+    foundedYear: 2023,
+    stadium: 'Virus Dome',
+    budget: 16500000,
+    manager: 'DT Virus',
+    playStyle: 'Contraataque',
+    primaryColor: '#7c2d12',
+    secondaryColor: '#a16207',
+    description: 'Equipo contagioso que se propaga rï¿½pidamente. Especialistas en contraataques letales.',
+    titles: [],
+    reputation: 75,
+    fanBase: 6900
+  },
+
+  // club45 â†’ Sporting Cristal
+  {
+    id: 'club45',
+    name: 'Sporting Cristal',
+    logo: '/clubs/sporting-cristal.svg',
+    foundedYear: 2023,
+    stadium: 'Matrix Colosseum',
+    budget: 21500000,
+    manager: 'DT Matrix',
+    playStyle: 'Total',
+    primaryColor: '#059669',
+    secondaryColor: '#10b981',
+    description: 'Club que domina la realidad del fï¿½tbol. Especialistas en controlar todos los aspectos del juego.',
+    titles: [
+      {
+        id: 'title8',
+        name: 'Supercopa Matrix',
+        year: 2024,
+        type: 'supercup'
+      }
+    ],
+    reputation: 84,
+    fanBase: 9200
+  },
+
+  // club46 â†’ U de Chile
+  {
+    id: 'club46',
+    name: 'U de Chile',
+    logo: '/clubs/u-de-chile.svg',
+    foundedYear: 2023,
+    stadium: 'Blockchain Stadium',
+    budget: 15500000,
+    manager: 'DT Block',
+    playStyle: 'Equilibrado',
+    primaryColor: '#f59e0b',
+    secondaryColor: '#d97706',
+    description: 'Equipo sï¿½lido y confiable como el blockchain. Especialistas en juego consistente.',
+    titles: [],
+    reputation: 73,
+    fanBase: 6800
+  },
+
+  // club47 â†’ Union Milagro
+  {
+    id: 'club47',
+    name: 'Union Milagro',
+    logo: '/clubs/union-milagro.svg',
+    foundedYear: 2023,
+    stadium: 'Neural Network Arena',
+    budget: 24500000,
+    manager: 'DT AI',
+    playStyle: 'Ofensivo',
+    primaryColor: '#7c3aed',
+    secondaryColor: '#8b5cf6',
+    description: 'Club impulsado por inteligencia artificial. Especialistas en anï¿½lisis predictivo y juego inteligente.',
+    titles: [
+      {
+        id: 'title9',
+        name: 'Liga AI',
+        year: 2024,
+        type: 'league'
+      }
+    ],
+    reputation: 86,
+    fanBase: 9800
+  },
+
+  // club48 â†’ Universitario de Peru
+  {
+    id: 'club48',
+    name: 'Universitario de Peru',
+    logo: '/clubs/universitario-de-peru.svg',
+    foundedYear: 2023,
+    stadium: 'Phoenix Nest',
+    budget: 20500000,
+    manager: 'DT Phoenix',
+    playStyle: 'Presiï¿½n alta',
+    primaryColor: '#be123c',
+    secondaryColor: '#dc2626',
+    description: 'Club que renace de las cenizas. Especialistas en presiï¿½n alta y recuperaciï¿½n rï¿½pida.',
+    titles: [
+      {
+        id: 'title10',
+        name: 'Copa Phoenix',
+        year: 2024,
+        type: 'cup'
+      }
+    ],
+    reputation: 82,
+    fanBase: 8700
+  }
+];
+
+// Datos para generar jugadores ficticios
+const playerNames = {
+  firstNames: [
+    // EspaÃ±a
+    'Carlos', 'David', 'Javier', 'Antonio', 'Francisco', 'JosÃ©', 'Manuel', 'Juan', 'Miguel', 'Rafael',
+    'Ãngel', 'JesÃºs', 'Alberto', 'Sergio', 'Roberto', 'Diego', 'Pablo', 'Alejandro', 'Fernando', 'Luis',
+    // LatinoamÃ©rica
+    'Gabriel', 'Santiago', 'MatÃ­as', 'SebastiÃ¡n', 'NicolÃ¡s', 'Lucas', 'TomÃ¡s', 'Juan Pablo', 'Diego', 'Emiliano',
+    'Facundo', 'Gonzalo', 'MartÃ­n', 'Federico', 'Leonardo', 'Rodrigo', 'Alejandro', 'Cristian', 'Daniel', 'Walter',
+    // Brasil
+    'JoÃ£o', 'Pedro', 'Lucas', 'Gabriel', 'Matheus', 'Rafael', 'Felipe', 'Bruno', 'Carlos', 'Eduardo',
+    'AndrÃ©', 'Thiago', 'VinÃ­cius', 'Gustavo', 'Leonardo', 'Ricardo', 'Roberto', 'Daniel', 'Alexandre', 'Paulo',
+    // Portugal
+    'Cristiano', 'Bruno', 'Bernardo', 'JoÃ£o', 'Diogo', 'RÃºben', 'AndrÃ©', 'NÃ©lson', 'Ricardo', 'Tiago',
+    'Miguel', 'GonÃ§alo', 'Francisco', 'AntÃ³nio', 'JosÃ©', 'Manuel', 'Pedro', 'Luis', 'Carlos', 'Fernando',
+    // Italia
+    'Marco', 'Luca', 'Giuseppe', 'Antonio', 'Giovanni', 'Francesco', 'Alessandro', 'Roberto', 'Stefano', 'Paolo',
+    'Matteo', 'Andrea', 'Simone', 'Davide', 'Federico', 'Gabriele', 'Emanuele', 'Christian', 'Daniele', 'Filippo',
+    // Francia
+    'Antoine', 'Kylian', 'Paul', 'RaphaÃ«l', 'Olivier', 'Thomas', 'Nicolas', 'Alexandre', 'Benjamin', 'Pierre',
+    'Julien', 'Mathieu', 'Florian', 'Adrien', 'SÃ©bastien', 'David', 'Christophe', 'Vincent', 'Laurent', 'Marc',
+    // Alemania
+    'Thomas', 'Manuel', 'Timo', 'Marco', 'Lukas', 'Leon', 'Julian', 'Florian', 'Kevin', 'Dennis',
+    'Stefan', 'Michael', 'Andreas', 'Patrick', 'Sebastian', 'Daniel', 'Christian', 'Markus', 'Jens', 'Bernd',
+    // Inglaterra
+    'Harry', 'Jack', 'Charlie', 'Oliver', 'James', 'William', 'George', 'Thomas', 'Jacob', 'Ethan',
+    'Michael', 'David', 'John', 'Robert', 'Paul', 'Mark', 'Steven', 'Andrew', 'Matthew', 'Ryan',
+    // PaÃ­ses Bajos
+    'Robin', 'Arjen', 'Wesley', 'Davy', 'Dirk', 'Rafael', 'Memphis', 'Georginio', 'Frenkie', 'Matthijs',
+    'Virgil', 'Stefan', 'Kevin', 'Ryan', 'Nathan', 'Denzel', 'Donny', 'Cody', 'Steven', 'Leroy',
+    // Europa del Este
+    'Nikola', 'Luka', 'Marko', 'Ivan', 'Stefan', 'Aleksandar', 'Milos', 'Dusan', 'Filip', 'Viktor',
+    'Andrei', 'Dmitri', 'Sergei', 'Alexei', 'Vladimir', 'Mikhail', 'Pavel', 'Igor', 'Oleg', 'Yuri'
+  ],
+  lastNames: [
+    // EspaÃ±a
+    'GarcÃ­a', 'RodrÃ­guez', 'GonzÃ¡lez', 'FernÃ¡ndez', 'LÃ³pez', 'MartÃ­nez', 'SÃ¡nchez', 'PÃ©rez', 'MartÃ­n', 'Ruiz',
+    'HernÃ¡ndez', 'DÃ­az', 'Moreno', 'Ãlvarez', 'Romero', 'Torres', 'RamÃ­rez', 'Flores', 'Rivera', 'GÃ³mez',
+    // LatinoamÃ©rica
+    'GarcÃ­a', 'RodrÃ­guez', 'GonzÃ¡lez', 'FernÃ¡ndez', 'LÃ³pez', 'MartÃ­nez', 'SÃ¡nchez', 'PÃ©rez', 'MartÃ­n', 'Ruiz',
+    'HernÃ¡ndez', 'DÃ­az', 'Moreno', 'Ãlvarez', 'Romero', 'Torres', 'RamÃ­rez', 'Flores', 'Rivera', 'GÃ³mez',
+    'Silva', 'Santos', 'Oliveira', 'Souza', 'Costa', 'Pereira', 'Alves', 'Ferreira', 'Lima', 'Barbosa',
+    // Brasil
+    'Silva', 'Santos', 'Oliveira', 'Souza', 'Costa', 'Pereira', 'Alves', 'Ferreira', 'Lima', 'Barbosa',
+    'Carvalho', 'Melo', 'Cardoso', 'Reis', 'Dias', 'Castro', 'Campos', 'Nunes', 'Machado', 'Miranda',
+    // Portugal
+    'Silva', 'Santos', 'Ferreira', 'Pereira', 'Oliveira', 'Costa', 'Rodrigues', 'Martins', 'Jesus', 'Sousa',
+    'Fernandes', 'GonÃ§alves', 'Lopes', 'Marques', 'Alves', 'Ribeiro', 'Pinto', 'Carvalho', 'Teixeira', 'Moreira',
+    // Italia
+    'Rossi', 'Ferrari', 'Russo', 'Bianchi', 'Romano', 'Colombo', 'Ricci', 'Marino', 'Greco', 'Bruno',
+    'Gallo', 'Conti', 'De Luca', 'Mancini', 'Costa', 'Giordano', 'Rizzo', 'Lombardi', 'Moretti', 'Barbieri',
+    // Francia
+    'Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy', 'Moreau',
+    'Simon', 'Laurent', 'Lefebvre', 'Michel', 'Garcia', 'David', 'Bertrand', 'Roux', 'Vincent', 'Fournier',
+    // Alemania
+    'MÃ¼ller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Schulz', 'Hoffmann',
+    'SchÃ¤fer', 'Koch', 'Bauer', 'Richter', 'Klein', 'Wolf', 'SchrÃ¶der', 'Neumann', 'Schwarz', 'Zimmermann',
+    // Inglaterra
+    'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+    'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+    // PaÃ­ses Bajos
+    'van der Berg', 'Jansen', 'van Dijk', 'Bakker', 'Visser', 'Smit', 'Meijer', 'de Boer', 'Mulder', 'de Groot',
+    'Bos', 'Vos', 'Peters', 'Hendriks', 'van Leeuwen', 'Dekker', 'Brouwer', 'Willems', 'de Wit', 'Knol',
+    // Europa del Este
+    'Ivanov', 'Petrov', 'Sidorov', 'Kozlov', 'Morozov', 'Novikov', 'Fedorov', 'Mikhailov', 'Nikolaev', 'Pavlov',
+    'Semenov', 'Golubev', 'Vinogradov', 'Bogdanov', 'Vorobyov', 'Solovyov', 'Vasilyev', 'Zaitsev', 'Grigoryev', 'Orlov'
+  ]
+};
+
+const nationalities = [
+  'EspaÃ±a', 'Argentina', 'Brasil', 'Portugal', 'Italia', 'Francia', 'Alemania', 'Inglaterra',
+  'PaÃ­ses Bajos', 'BÃ©lgica', 'Croacia', 'Serbia', 'Polonia', 'Rusia', 'Ucrania', 'Suecia',
+  'Noruega', 'Dinamarca', 'Suiza', 'Austria', 'RepÃºblica Checa', 'Eslovaquia', 'HungrÃ­a',
+  'Rumania', 'Bulgaria', 'Grecia', 'TurquÃ­a', 'MÃ©xico', 'Colombia', 'Uruguay', 'Chile',
+  'PerÃº', 'Ecuador', 'Paraguay', 'Venezuela', 'Costa Rica', 'PanamÃ¡', 'Estados Unidos',
+  'CanadÃ¡', 'JapÃ³n', 'Corea del Sur', 'China', 'Australia', 'Nigeria', 'Ghana', 'CamerÃºn',
+  'Senegal', 'Costa de Marfil', 'Marruecos', 'Argelia', 'TÃºnez', 'Egipto', 'SudÃ¡frica'
+];
+
+const positions = ['PT', 'DEC', 'LI', 'LD', 'MCD', 'MC', 'MDI', 'MDD', 'EXI', 'EXD', 'CD', 'SD'];
+
+// FunciÃ³n para generar nombre completo aleatorio
+// Set para mantener registro de nombres ya usados
+const usedNames = new Set<string>();
+
+function generateRandomName(): string {
+  let attempts = 0;
+  const maxAttempts = 1000; // Evitar bucles infinitos
+
+  while (attempts < maxAttempts) {
+    const firstName = playerNames.firstNames[Math.floor(Math.random() * playerNames.firstNames.length)];
+    const lastName = playerNames.lastNames[Math.floor(Math.random() * playerNames.lastNames.length)];
+    const fullName = `${firstName} ${lastName}`;
+
+    if (!usedNames.has(fullName)) {
+      usedNames.add(fullName);
+      return fullName;
+    }
+    attempts++;
+  }
+
+  // Si no se puede generar un nombre Ãºnico, agregar un sufijo numÃ©rico
+  const firstName = playerNames.firstNames[Math.floor(Math.random() * playerNames.firstNames.length)];
+  const lastName = playerNames.lastNames[Math.floor(Math.random() * playerNames.lastNames.length)];
+  let counter = 1;
+  let uniqueName = `${firstName} ${lastName}`;
+
+  while (usedNames.has(uniqueName)) {
+    uniqueName = `${firstName} ${lastName} ${counter}`;
+    counter++;
+  }
+
+  usedNames.add(uniqueName);
+  return uniqueName;
+}
+
+// FunciÃ³n para generar nacionalidad aleatoria
+function generateRandomNationality(): string {
+  return nationalities[Math.floor(Math.random() * nationalities.length)];
+}
+
+// FunciÃ³n para generar posiciÃ³n aleatoria
+function generateRandomPosition(): string {
+  return positions[Math.floor(Math.random() * positions.length)];
+}
+
+// FunciÃ³n para generar atributos de jugador basados en posiciÃ³n y valoraciÃ³n
+function generatePlayerAttributes(position: string, overall: number) {
+  const baseAttributes = {
+    offensiveAwareness: 50,
+    ballControl: 50,
+    dribbling: 50,
+    tightPossession: 50,
+    lowPass: 50,
+    loftedPass: 50,
+    finishing: 50,
+    heading: 50,
+    setPieceTaking: 50,
+    curl: 50,
+    speed: 50,
+    acceleration: 50,
+    kickingPower: 50,
+    jumping: 50,
+    physicalContact: 50,
+    balance: 50,
+    stamina: 50,
+    defensiveAwareness: 50,
+    ballWinning: 50,
+    aggression: 50,
+    goalkeeping: 50,
+    catching: 50,
+    reflexes: 50,
+    coverage: 50,
+    gkHandling: 50,
+    weakFootUsage: Math.floor(Math.random() * 4) + 1,
+    weakFootAccuracy: Math.floor(Math.random() * 4) + 1,
+    form: Math.floor(Math.random() * 4) + 1
+  };
+
+  // Ajustes segÃºn posiciÃ³n
+  const positionMultipliers = {
+    POR: { goalkeeping: 2.5, catching: 2.2, reflexes: 2.3, coverage: 2.1, gkHandling: 2.4, defensiveAwareness: 1.8 },
+    CT: { defensiveAwareness: 2.2, ballWinning: 2.1, physicalContact: 2.0, heading: 2.0 },
+    LI: { defensiveAwareness: 2.0, ballWinning: 1.9, speed: 1.7, stamina: 1.8 },
+    LD: { defensiveAwareness: 2.0, ballWinning: 1.9, speed: 1.7, stamina: 1.8 },
+    MCD: { defensiveAwareness: 2.1, ballWinning: 2.0, lowPass: 1.8, stamina: 1.9 },
+    MC: { lowPass: 2.0, ballControl: 1.9, tightPossession: 1.8, stamina: 1.7 },
+    MDI: { speed: 1.8, acceleration: 1.9, dribbling: 1.7, lowPass: 1.6 },
+    MDD: { speed: 1.8, acceleration: 1.9, dribbling: 1.7, lowPass: 1.6 },
+    EXI: { speed: 2.0, acceleration: 2.1, dribbling: 2.0, finishing: 1.8 },
+    EXD: { speed: 2.0, acceleration: 2.1, dribbling: 2.0, finishing: 1.8 },
+    DC: { finishing: 2.2, heading: 2.0, offensiveAwareness: 1.9, physicalContact: 1.8 }
+  };
+
+  const multipliers = positionMultipliers[position as keyof typeof positionMultipliers] || { lowPass: 1.5 };
+
+  Object.keys(multipliers).forEach(attr => {
+    const key = attr as keyof typeof baseAttributes;
+    if (key in baseAttributes) {
+      const multiplier = multipliers[key as keyof typeof multipliers];
+      baseAttributes[key] = Math.min(99, Math.floor(baseAttributes[key] + (overall - 50) * (multiplier - 1)));
+    }
+  });
+
+  // AÃ±adir variaciÃ³n aleatoria
+  Object.keys(baseAttributes).forEach(attr => {
+    const key = attr as keyof typeof baseAttributes;
+    const variation = Math.floor(Math.random() * 10) - 5;
+    baseAttributes[key] = Math.max(1, Math.min(99, baseAttributes[key] + variation));
+  });
+
+  // Calcular atributos legacy
+  const legacyAttributes = {
+    pace: Math.round((baseAttributes.speed + baseAttributes.acceleration) / 2),
+    shooting: Math.round((baseAttributes.finishing + baseAttributes.kickingPower + baseAttributes.curl) / 3),
+    passing: Math.round((baseAttributes.lowPass + baseAttributes.loftedPass + baseAttributes.curl) / 3),
+    dribbling: Math.round((baseAttributes.dribbling + baseAttributes.ballControl + baseAttributes.tightPossession) / 3),
+    defending: Math.round((baseAttributes.defensiveAwareness + baseAttributes.ballWinning + baseAttributes.physicalContact) / 3),
+    physical: Math.round((baseAttributes.stamina + baseAttributes.physicalContact + baseAttributes.balance) / 3)
+  };
+
+  return {
+    ...baseAttributes,
+    ...legacyAttributes
+  };
+}
+
+// FunciÃ³n para generar un jugador ficticio completo
+function generateFictionalPlayer(clubId: string, dorsal: number, uniqueId: number): Player {
+  const name = generateRandomName();
+  const age = Math.floor(Math.random() * 18) + 18; // 18-35 aÃ±os
+  const nationality = generateRandomNationality();
+  const position = generateRandomPosition();
+  const overall = Math.floor(Math.random() * 40) + 60; // 60-99 overall
+
+  // Generar atributos basados en posiciÃ³n y overall
+  const attributes = generatePlayerAttributes(position, overall);
+
+  // Generar estadÃ­sticas realistas basadas en posiciÃ³n y overall
+  const isForward = ['CD', 'EXI', 'EXD', 'MO', 'SD'].includes(position);
+  const isMidfielder = ['MC', 'MCD', 'MDI', 'MDD'].includes(position);
+  const isDefender = ['DEC', 'LI', 'LD'].includes(position);
+  const isGoalkeeper = position === 'PT';
+
+  const baseGoals = isForward ? Math.floor(overall / 5) :
+                   isMidfielder ? Math.floor(overall / 8) :
+                   isDefender ? Math.floor(overall / 12) :
+                   0;
+
+  const baseAssists = isMidfielder ? Math.floor(overall / 6) :
+                     isForward ? Math.floor(overall / 8) :
+                     Math.floor(overall / 10);
+
+  // Generar habilidades y estilos de juego
+  const skills: PlayerSkills = {
+    scissorKick: Math.random() > 0.8 && overall > 75,
+    doubleTouch: Math.random() > 0.7 && overall > 70,
+    flipFlap: Math.random() > 0.85 && overall > 75,
+    marseilleTurn: Math.random() > 0.8 && overall > 70,
+    rainbow: Math.random() > 0.9 && overall > 75,
+    chopTurn: Math.random() > 0.75 && overall > 70,
+    cutBehindAndTurn: Math.random() > 0.8 && overall > 70,
+    scotchMove: Math.random() > 0.85 && overall > 75,
+    stepOnSkillControl: Math.random() > 0.7 && overall > 70,
+    heading: Math.random() > 0.6 && (position === 'CD' || position === 'DEC'),
+    longRangeDrive: Math.random() > 0.7 && overall > 75,
+    chipShotControl: Math.random() > 0.8 && overall > 70,
+    longRanger: Math.random() > 0.75 && overall > 75,
+    knuckleShot: Math.random() > 0.8 && overall > 75,
+    dippingShot: Math.random() > 0.8 && overall > 75,
+    risingShot: Math.random() > 0.8 && overall > 75,
+    acrobaticFinishing: Math.random() > 0.9 && overall > 80,
+    heelTrick: Math.random() > 0.8 && overall > 75,
+    firstTimeShot: Math.random() > 0.7 && overall > 70,
+    oneTouchPass: Math.random() > 0.6 && overall > 70,
+    throughPassing: Math.random() > 0.7 && (position === 'MC' || position === 'MO' || position === 'CD'),
+    weightedPass: Math.random() > 0.75 && overall > 75,
+    pinpointCrossing: Math.random() > 0.7 && (position === 'MDI' || position === 'MDD' || position === 'EXD' || position === 'EXI'),
+    outsideCurler: Math.random() > 0.8 && overall > 75,
+    rabona: Math.random() > 0.9 && overall > 80,
+    noLookPass: Math.random() > 0.85 && overall > 75,
+    lowLoftedPass: Math.random() > 0.7 && overall > 70,
+    giantKill: Math.random() > 0.8 && overall > 75,
+    longThrow: Math.random() > 0.7 && (position === 'LI' || position === 'LD'),
+    longThrow2: Math.random() > 0.8 && (position === 'LI' || position === 'LD'),
+    gkLongThrow: position === 'PT' && Math.random() > 0.6,
+    penaltySpecialist: Math.random() > 0.7 && overall > 75,
+    gkPenaltySaver: position === 'PT' && Math.random() > 0.7,
+    fightingSpirit: Math.random() > 0.6,
+    manMarking: Math.random() > 0.7 && (position === 'DEC' || position === 'MCD'),
+    trackBack: Math.random() > 0.6 && (position === 'CD' || position === 'EXI' || position === 'EXD'),
+    interception: Math.random() > 0.7 && (position === 'MCD' || position === 'MC'),
+    acrobaticClear: position === 'PT' && Math.random() > 0.7,
+    captaincy: Math.random() > 0.8 && overall > 80,
+    superSub: Math.random() > 0.75,
+    comPlayingStyles: Math.random() > 0.6
+  };
+
+  const playingStyles: PlayingStyles = {
+    goalPoacher: position === 'CD' && Math.random() > 0.7,
+    dummyRunner: Math.random() > 0.8,
+    foxInTheBox: position === 'CD' && Math.random() > 0.7,
+    targetMan: (position === 'CD' || position === 'DEC') && Math.random() > 0.6,
+    classicNo10: position === 'MO' && Math.random() > 0.7,
+    prolificWinger: (position === 'EXD' || position === 'EXI') && Math.random() > 0.7,
+    roamingFlank: (position === 'MDI' || position === 'MDD') && Math.random() > 0.6,
+    crossSpecialist: (position === 'MDI' || position === 'MDD' || position === 'EXD' || position === 'EXI') && Math.random() > 0.7,
+    holePlayer: position === 'MO' && Math.random() > 0.7,
+    boxToBox: position === 'MC' && Math.random() > 0.7,
+    theDestroyer: position === 'MCD' && Math.random() > 0.7,
+    orchestrator: position === 'MC' && Math.random() > 0.8,
+    anchor: position === 'MCD' && Math.random() > 0.7,
+    offensiveFullback: position === 'LD' && Math.random() > 0.7,
+    fullbackFinisher: position === 'LI' && Math.random() > 0.8,
+    defensiveFullback: (position === 'LI' || position === 'LD') && Math.random() > 0.7,
+    buildUp: Math.random() > 0.6,
+    extraFrontman: position === 'CD' && Math.random() > 0.7,
+    offensiveGoalkeeper: position === 'PT' && Math.random() > 0.6,
+    defensiveGoalkeeper: position === 'PT' && Math.random() > 0.7
+  };
+
+  return {
+    id: `player-fictional-${uniqueId}`,
+    name,
+    age,
+    position,
+    nationality,
+    clubId,
+    overall,
+    potential: Math.min(99, overall + Math.floor(Math.random() * 6)),
+    transferListed: Math.random() > 0.7,
+    transferValue: Math.floor(overall * 10000) + Math.floor(Math.random() * 5000000),
+    image: defaultPlayerImage,
+    dorsal,
+    matches: Math.floor(Math.random() * 30) + 5,
+    goals: isGoalkeeper ? 0 : baseGoals + Math.floor(Math.random() * 10),
+    assists: baseAssists + Math.floor(Math.random() * 8),
+    appearances: Math.floor(Math.random() * 25) + 10,
+    form: Math.floor(Math.random() * 5) + 1,
+    injuryResistance: Math.floor(Math.random() * 20) + 80,
+    attributes,
+    skills,
+    playingStyles,
+    contract: {
+      expires: `202${5 + Math.floor(Math.random() * 3)}-05-30`,
+      salary: Math.floor(overall * 500) + Math.floor(Math.random() * 10000)
+    }
+  };
+}
+
+// Function to generate players for each club
+function generatePlayers(): Player[] {
+  const players: Player[] = [];
+  let fictionalPlayerCounter = 1;
+
+  // Cada club debe tener exactamente 23 jugadores
+  const PLAYERS_PER_CLUB = 23;
+  const TOTAL_EXPECTED_PLAYERS = clubs.length * PLAYERS_PER_CLUB;
+
+  console.log(`ðŸŽ¯ Generando ${TOTAL_EXPECTED_PLAYERS} jugadores totales (${clubs.length} clubes Ã— ${PLAYERS_PER_CLUB} jugadores)`);
+
+  // Distribuir los jugadores del JSON equitativamente entre todos los clubes
+  const playersPerClubFromJSON = Math.floor(playersData.length / clubs.length);
+  const remainingPlayersFromJSON = playersData.length % clubs.length;
+
+  clubs.forEach((club, clubIndex) => {
+    let playersAdded = 0;
+
+    // Calcular cuÃ¡ntos jugadores reales asignar a este club
+    const jsonPlayersForThisClub = playersPerClubFromJSON + (clubIndex < remainingPlayersFromJSON ? 1 : 0);
+    const jsonStartIndex = clubIndex * playersPerClubFromJSON + Math.min(clubIndex, remainingPlayersFromJSON);
+
+    // Asignar jugadores del JSON si hay disponibles
+    for (let i = 0; i < jsonPlayersForThisClub && jsonStartIndex + i < playersData.length; i++) {
+      const jsonPlayer = playersData[jsonStartIndex + i] as JsonPlayer;
+      const player = convertJsonPlayerToPlayer(jsonPlayer, club.id, playersAdded + 1, jsonStartIndex + i);
+      players.push(player);
+      playersAdded++;
+    }
+
+    // Completar con jugadores ficticios hasta llegar a 23
+    while (playersAdded < PLAYERS_PER_CLUB) {
+      const player = generateFictionalPlayer(club.id, playersAdded + 1, fictionalPlayerCounter);
+      players.push(player);
+      fictionalPlayerCounter++;
+      playersAdded++;
+    }
+
+    console.log(`âœ… ${club.name}: ${playersAdded} jugadores (${jsonPlayersForThisClub} reales + ${PLAYERS_PER_CLUB - jsonPlayersForThisClub} ficticios)`);
+  });
+
+  console.log(`ðŸŽ¯ Total generado: ${players.length} jugadores`);
+  console.log(`ðŸ“Š DistribuciÃ³n: ${playersPerClubFromJSON} jugadores reales + ${PLAYERS_PER_CLUB - playersPerClubFromJSON} jugadores ficticios por club`);
+  console.log(`ðŸ’¡ Jugadores reales totales: ${Math.min(playersData.length, TOTAL_EXPECTED_PLAYERS)}`);
+  console.log(`ðŸ¤– Jugadores ficticios totales: ${TOTAL_EXPECTED_PLAYERS - Math.min(playersData.length, TOTAL_EXPECTED_PLAYERS)}`);
+
+  return players;
+}
+
+// Generate players - only call this when needed
+export const players = generatePlayers();
+
+// VerificaciÃ³n automÃ¡tica al importar (solo en desarrollo)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  setTimeout(() => {
+    verifyPlayerDistribution();
+  }, 1000);
+}
+
+// Verificar distribuciÃ³n de jugadores por club
+export function verifyPlayerDistribution() {
+  const playersByClub: Record<string, number> = {};
+
+  players.forEach(player => {
+    playersByClub[player.clubId] = (playersByClub[player.clubId] || 0) + 1;
+  });
+
+  console.log('DistribuciÃ³n de jugadores por club:');
+  Object.keys(playersByClub).sort().forEach(clubId => {
+    console.log(`${clubs.find(c => c.id === clubId)?.name || clubId}: ${playersByClub[clubId]} jugadores`);
+  });
+
+  const totalPlayers = players.length;
+  const totalClubs = clubs.length;
+  const expectedPlayers = totalClubs * 23;
+
+  console.log(`\nTotal de clubes: ${totalClubs}`);
+  console.log(`Total de jugadores: ${totalPlayers}`);
+  console.log(`Jugadores esperados (${totalClubs} x 23): ${expectedPlayers}`);
+  console.log(`DistribuciÃ³n correcta: ${totalPlayers === expectedPlayers ? 'âœ…' : 'âŒ'}`);
+
+  return totalPlayers === expectedPlayers;
+}
+
+// Function to generate matches for a tournament
+function generateMatches(teams: string[], tournamentId: string, preseason: boolean = false): Match[] {
+  const matches: Match[] = [];
+  const rounds = preseason ? 1 : 2; // Single round for preseason, double for regular season
+  const pastMatches = 6; // Number of past matches (with results)
+  
+  // Calculate date for first match
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - (pastMatches * 7)); // Start X weeks ago
+  
+  let matchId = 1;
+  
+  for (let round = 1; round <= rounds; round++) {
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        // Home and away matches
+        const homeTeam = round === 1 ? teams[i] : teams[j];
+        const awayTeam = round === 1 ? teams[j] : teams[i];
+        
+        // Calculate match date (1 week between rounds)
+        const matchDate = new Date(startDate);
+        matchDate.setDate(startDate.getDate() + (matchId - 1) * 7);
+        
+        // Determine if match is in the past
+        const isPastMatch = matchId <= pastMatches;
+        
+        // Create the match
+        const match: Match = {
+          id: `match${matchId}`,
+          tournamentId,
+          round: Math.ceil(matchId / (teams.length * (teams.length - 1) / 2)),
+          date: matchDate.toISOString(),
+          homeTeam,
+          awayTeam,
+          status: isPastMatch ? 'finished' : 'scheduled'
+        };
+        
+        // Add scores for past matches
+        if (isPastMatch) {
+          match.homeScore = Math.floor(Math.random() * 5);
+          match.awayScore = Math.floor(Math.random() * 5);
+          
+          // Generate scorers if there are goals
+          match.scorers = [];
+          
+          // Home team scorers
+          if (match.homeScore > 0) {
+            const homeClub = clubs.find(c => c.name === homeTeam);
+            if (homeClub) {
+              const clubPlayers = players.filter(p => p.clubId === homeClub.id && ['DC', 'EXI', 'EXD', 'MO'].includes(p.position));
+              for (let g = 0; g < match.homeScore; g++) {
+                const scorer = clubPlayers[Math.floor(Math.random() * clubPlayers.length)];
+                if (scorer) {
+                  match.scorers.push({
+                    playerId: scorer.id,
+                    playerName: scorer.name,
+                    clubId: homeClub.id,
+                    minute: 1 + Math.floor(Math.random() * 90)
+                  });
+                }
+              }
+            }
+          }
+          
+          // Away team scorers
+          if (match.awayScore > 0) {
+            const awayClub = clubs.find(c => c.name === awayTeam);
+            if (awayClub) {
+              const clubPlayers = players.filter(p => p.clubId === awayClub.id && ['DC', 'EXI', 'EXD', 'MO'].includes(p.position));
+              for (let g = 0; g < match.awayScore; g++) {
+                const scorer = clubPlayers[Math.floor(Math.random() * clubPlayers.length)];
+                if (scorer) {
+                  match.scorers.push({
+                    playerId: scorer.id,
+                    playerName: scorer.name,
+                    clubId: awayClub.id,
+                    minute: 1 + Math.floor(Math.random() * 90)
+                  });
+                }
+              }
+            }
+          }
+          
+          // Sort scorers by minute
+          match.scorers.sort((a, b) => a.minute - b.minute);
+        }
+        
+        matches.push(match);
+        matchId++;
+      }
+    }
+  }
+  
+  return matches;
+}
+
+// Tournament data
+export const tournaments: Tournament[] = [
+  {
+    id: 'tournament1',
+    name: 'Liga Master 2025',
+    type: 'league',
+    logo: 'https://ui-avatars.com/api/?name=LM&background=7f39fb&color=fff&size=128&bold=true',
+    startDate: '2025-01-15',
+    endDate: '2025-05-30',
+    status: 'active',
+    teams: clubs.map(club => club.name),
+    rounds: 38,
+    matches: [],
+    description: 'La competiciï¿½n principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 40 equipos participantes.'
+  },
+  {
+    id: 'tournament2',
+    name: 'Copa PES 2025',
+    type: 'cup',
+    logo: 'https://ui-avatars.com/api/?name=CP&background=f97316&color=fff&size=128&bold=true',
+    startDate: '2025-02-10',
+    endDate: '2025-04-20',
+    status: 'upcoming',
+    teams: clubs.map(club => club.name),
+    rounds: 6,
+    matches: [],
+    description: 'Torneo eliminatorio con emparejamientos por sorteo. El ganador obtiene plaza para la Supercopa Digital.'
+  },
+  {
+    id: 'tournament3',
+    name: 'Supercopa Digital 2025',
+    type: 'cup',
+    logo: 'https://ui-avatars.com/api/?name=SC&background=ec4899&color=fff&size=128&bold=true',
+    startDate: '2025-06-15',
+    endDate: '2025-06-15',
+    status: 'upcoming',
+    teams: ['Rayo Digital FC', 'Neï¿½n FC'],
+    rounds: 1,
+    matches: [],
+    description: 'Partido ï¿½nico entre el campeï¿½n de Liga y el campeï¿½n de Copa. El evento mï¿½s prestigioso de la temporada.'
+  },
+  {
+    id: 'tournament4',
+    name: 'Torneo Pretemporada 2025',
+    type: 'friendly',
+    logo: 'https://ui-avatars.com/api/?name=TP&background=a855f7&color=fff&size=128&bold=true',
+    startDate: '2024-12-01',
+    endDate: '2024-12-20',
+    status: 'finished',
+    teams: clubs.slice(0, 16).map(club => club.name),
+    rounds: 4,
+    matches: [],
+    winner: 'Rayo Digital FC',
+    topScorer: {
+      id: 'topscorer1',
+      playerId: 'player1',
+      playerName: 'Carlos Garcï¿½a',
+      clubId: 'club1',
+      clubName: 'Rayo Digital FC',
+      goals: 7
+    },
+    description: 'Torneo amistoso previo al inicio de la temporada oficial. Sirve como preparaciï¿½n para los equipos.'
+  }
+];
+
+// Generate matches for each tournament
+// Note: tournament.teams should be dynamically updated based on current clubs
+tournaments.forEach(tournament => {
+  tournament.matches = generateMatches(
+    tournament.teams,
+    tournament.id,
+    tournament.type === 'friendly'
+  );
+});
+
+// Generate past transfers
+export const transfers: Transfer[] = [
+  {
+    id: 'transfer1',
+    playerId: 'player21',
+      playerName: 'Diego Lï¿½pez',
+    fromClub: 'Atlï¿½tico Pixelado',
+    toClub: 'Rayo Digital FC',
+    fee: 8500000,
+    date: '2024-12-15'
+  },
+  {
+    id: 'transfer2',
+    playerId: 'player42',
+    playerName: 'Marcos Rodrï¿½guez',
+    fromClub: 'Neï¿½n FC',
+    toClub: 'Glitchers 404',
+    fee: 12000000,
+    date: '2024-12-18'
+  },
+  {
+    id: 'transfer3',
+    playerId: 'player63',
+    playerName: 'Pablo Hernï¿½ndez',
+    fromClub: 'Defensores del Lag',
+    toClub: 'Cyber Warriors',
+    fee: 5800000,
+    date: '2024-12-20'
+  },
+  {
+    id: 'transfer4',
+    playerId: 'player84',
+    playerName: 'Sergio Martï¿½nez',
+    fromClub: 'Binary Strikers',
+    toClub: 'Haxball United',
+    fee: 9200000,
+    date: '2024-12-23'
+  },
+  {
+    id: 'transfer5',
+    playerId: 'player105',
+    playerName: 'Toni Gonzï¿½lez',
+    fromClub: 'Connection FC',
+    toClub: 'Pixel Galaxy',
+    fee: 7600000,
+    date: '2024-12-26'
+  }
+];
+
+// Pending transfer offers
+export const offers: TransferOffer[] = [
+  {
+    id: 'offer1',
+    playerId: 'player5',
+    playerName: 'Alex Torres',
+    fromClub: 'Rayo Digital FC',
+    toClub: 'Atlï¿½tico Pixelado',
+    amount: 9800000,
+    date: '2025-01-05',
+    status: 'pending',
+    userId: '2'
+  },
+  {
+    id: 'offer2',
+    playerId: 'player26',
+    playerName: 'Victor Pï¿½rez',
+    fromClub: 'Atlï¿½tico Pixelado',
+    toClub: 'Neï¿½n FC',
+    amount: 11500000,
+    date: '2025-01-06',
+    status: 'accepted',
+    userId: '2'
+  },
+  {
+    id: 'offer3',
+    playerId: 'player47',
+    playerName: 'Lucas Sï¿½nchez',
+    fromClub: 'Neï¿½n FC',
+    toClub: 'Defensores del Lag',
+    amount: 7800000,
+    date: '2025-01-07',
+    status: 'rejected',
+    userId: '2'
+  },
+  {
+    id: 'offer4',
+    playerId: 'player12',
+    playerName: 'Carlos Mendoza',
+    fromClub: 'Pixel Galaxy',
+    toClub: 'Connection FC',
+    amount: 12500000,
+    date: '2025-01-08',
+    status: 'counter-offer',
+    userId: '2',
+    counterAmount: 15000000,
+    counterDate: '2025-01-09'
+  },
+  {
+    id: 'offer5',
+    playerId: 'player15',
+    playerName: 'Diego Lï¿½pez',
+    fromClub: 'Neï¿½n FC',
+    toClub: 'Atlï¿½tico Pixelado',
+    amount: 8900000,
+    date: '2025-01-10',
+    status: 'pending',
+    userId: '2'
+  },
+  {
+    id: 'offer6',
+    playerId: 'player8',
+    playerName: 'Marco Silva',
+    fromClub: 'Defensores del Lag',
+    toClub: 'Connection FC',
+    amount: 7200000,
+    date: '2025-01-11',
+    status: 'pending',
+    userId: '2'
+  },
+  {
+    id: 'offer7',
+    playerId: 'player33',
+    playerName: 'Ana Garcï¿½a',
+    fromClub: 'Rayo Digital FC',
+    toClub: 'Pixel Galaxy',
+    amount: 6500000,
+    date: '2025-01-12',
+    status: 'pending',
+    userId: '2'
+  },
+  {
+    id: 'offer8',
+    playerId: 'player8',
+    playerName: 'Marco Silva',
+    fromClub: 'Defensores del Lag',
+    toClub: 'Rayo Digital FC',
+    amount: 7200000,
+    date: '2025-01-13',
+    status: 'pending',
+    userId: '1'
+  },
+  {
+    id: 'offer9',
+    playerId: 'player15',
+    playerName: 'Diego Lï¿½pez',
+    fromClub: 'Rayo Digital FC',
+    toClub: 'Atlï¿½tico Pixelado',
+    amount: 8900000,
+    date: '2025-01-14',
+    status: 'pending',
+    userId: '1'
+  },
+  {
+    id: 'offer10',
+    playerId: 'player3',
+    playerName: 'Carlos Ruiz',
+    fromClub: 'Connection FC',
+    toClub: 'Rayo Digital FC',
+    amount: 10500000,
+    date: '2025-01-15',
+    status: 'pending',
+    userId: '1'
+  },
+  {
+    id: 'offer11',
+    playerId: 'player7',
+    playerName: 'Javier Morales',
+    fromClub: 'Pixel Galaxy',
+    toClub: 'Rayo Digital FC',
+    amount: 9200000,
+    date: '2025-01-16',
+    status: 'pending',
+    userId: '1'
+  },
+  {
+    id: 'offer12',
+    playerId: 'player1',
+    playerName: 'David Silva',
+    fromClub: 'Atlï¿½tico Pixelado',
+    toClub: 'Rayo Digital FC',
+    amount: 15000000,
+    date: '2025-01-17',
+    status: 'pending',
+    userId: '2'
+  },
+  {
+    id: 'offer13',
+    playerId: 'player2',
+    playerName: 'Roberto Garcï¿½a',
+    fromClub: 'Connection FC',
+    toClub: 'Rayo Digital FC',
+    amount: 12000000,
+    date: '2025-01-18',
+    status: 'pending',
+    userId: '2'
+  },
+  {
+    id: 'offer14',
+    playerId: 'player4',
+    playerName: 'Miguel Torres',
+    fromClub: 'Pixel Galaxy',
+    toClub: 'Rayo Digital FC',
+    amount: 13500000,
+    date: '2025-01-19',
+    status: 'counter-offer',
+    userId: '2',
+    counterAmount: 16000000,
+    counterDate: '2025-01-20'
+  }
+];
+
+// Market status
+export const marketStatus = true;
+
+// Blog posts (mock)
+export const posts = [
+  {
+    id: 'post1',
+    title: 'Resumen de la jornada',
+    slug: 'resumen-de-la-jornada',
+    excerpt: 'Lo mï¿½s destacado de la ï¿½ltima fecha en La Virtual Zone.',
+    image: 'https://images.unsplash.com/photo-1521417531058-0a1f59a8f77b?q=80&w=1200&auto=format&fit=crop',
+    date: '2025-01-05',
+    author: 'Redacciï¿½n',
+    category: 'Noticias',
+    content: '<p>Resumen de la jornada con los partidos mï¿½s destacados, goleadores y tablas de posiciones.</p>'
+  },
+  {
+    id: 'post2',
+    title: 'Anï¿½lisis tï¿½ctico: presiï¿½n alta',
+    slug: 'analisis-presion-alta',
+    excerpt: 'Cï¿½mo optimizar la presiï¿½n alta en tus partidos de LM.',
+    image: 'https://images.unsplash.com/photo-1522771930-78848d9293e8?q=80&w=1200&auto=format&fit=crop',
+    date: '2025-01-10',
+    author: 'Tï¿½cticas Pro',
+    category: 'Anï¿½lisis',
+    content: '<p>Anï¿½lisis detallado sobre cï¿½mo implementar y optimizar la presiï¿½n alta en La Virtual Zone. Estrategias, formaciones y consejos prï¿½cticos.</p>'
+  }
+];
+
+// Generate standings based on past matches
+export function generateStandings(tournamentId: string): Standing[] {
+  const tournament = tournaments.find(t => t.id === tournamentId);
+  if (!tournament) return [];
+  
+  // Initialize standings
+  const standings: Record<string, Standing> = {};
+  
+  tournament.teams.forEach(team => {
+    const clubId = clubs.find(c => c.name === team)?.id || '';
+    
+    standings[team] = {
+      clubId,
+      clubName: team,
+      played: 0,
+      won: 0,
+      drawn: 0,
+      lost: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      points: 0,
+      form: []
+    };
+  });
+  
+  // Process finished matches
+  tournament.matches
+    .filter(match => match.status === 'finished' && match.homeScore !== undefined && match.awayScore !== undefined)
+    .forEach(match => {
+      const homeTeam = standings[match.homeTeam];
+      const awayTeam = standings[match.awayTeam];
+      
+      if (homeTeam && awayTeam) {
+        // Update matches played
+        homeTeam.played++;
+        awayTeam.played++;
+        
+        // Update goals
+        homeTeam.goalsFor += match.homeScore!;
+        homeTeam.goalsAgainst += match.awayScore!;
+        awayTeam.goalsFor += match.awayScore!;
+        awayTeam.goalsAgainst += match.homeScore!;
+        
+        // Update results
+        if (match.homeScore! > match.awayScore!) {
+          // Home win
+          homeTeam.won++;
+          homeTeam.points += 3;
+          awayTeam.lost++;
+          homeTeam.form.push('W');
+          awayTeam.form.push('L');
+        } else if (match.homeScore! < match.awayScore!) {
+          // Away win
+          awayTeam.won++;
+          awayTeam.points += 3;
+          homeTeam.lost++;
+          homeTeam.form.push('L');
+          awayTeam.form.push('W');
+        } else {
+          // Draw
+          homeTeam.drawn++;
+          homeTeam.points++;
+          awayTeam.drawn++;
+          awayTeam.points++;
+          homeTeam.form.push('D');
+          awayTeam.form.push('D');
+        }
+        
+        // Keep only last 5 form results
+        homeTeam.form = homeTeam.form.slice(-5);
+        awayTeam.form = awayTeam.form.slice(-5);
+      }
+    });
+  
+  // Convert to array and sort
+  const standingsArray = Object.values(standings);
+  
+  standingsArray.sort((a, b) => {
+    // Sort by points
+    if (a.points !== b.points) {
+      return b.points - a.points;
+    }
+    
+    // Sort by goal difference
+    const aGD = a.goalsFor - a.goalsAgainst;
+    const bGD = b.goalsFor - b.goalsAgainst;
+    if (aGD !== bGD) {
+      return bGD - aGD;
+    }
+    
+    // Sort by goals scored
+    if (a.goalsFor !== b.goalsFor) {
+      return b.goalsFor - a.goalsFor;
+    }
+    
+    // Sort alphabetically as last resort
+    return a.clubName.localeCompare(b.clubName);
+  });
+  
+  return standingsArray;
+}
+
+// Get standings for the main league
+export const leagueStandings = generateStandings('tournament1');
+
+// News items
+export const newsItems: NewsItem[] = [
+  {
+    id: 'news1',
+    title: 'Comienza la Liga Master 2025',
+    content: 'La temporada 2025 de La Virtual Zone ha arrancado oficialmente. 10 clubes compiten por el tï¿½tulo en una liga que promete emociones hasta la ï¿½ltima jornada.',
+    type: 'announcement',
+    image: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    date: '2025-01-15',
+    author: 'Admin',
+    featured: true
+  },
+  {
+    id: 'news2',
+    title: 'El mercado de fichajes estï¿½ abierto',
+    content: 'Desde hoy los clubes pueden realizar ofertas por jugadores de otros equipos. El mercado permanecerï¿½ abierto hasta el 15 de febrero.',
+    type: 'announcement',
+    image: 'https://images.unsplash.com/photo-1494178270175-e96de2971df9?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw0fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    date: '2025-01-16',
+    author: 'Admin',
+    featured: false
+  },
+  {
+    id: 'news3',
+    title: 'Diego Lï¿½pez ficha por Rayo Digital FC',
+    content: 'El delantero ha firmado un contrato de 3 temporadas tras el pago de 8.5 millones. "Estoy emocionado por este nuevo reto", declarï¿½ el jugador.',
+    type: 'transfer',
+    date: '2025-01-05',
+    author: 'Admin',
+    clubId: 'club1',
+    playerId: 'player21',
+    featured: false
+  },
+  {
+    id: 'news4',
+    title: 'Rayo Digital vence en el derbi',
+    content: 'Los rojiblancos se impusieron 3-1 a Atlï¿½tico Pixelado en un partido vibrante. Diego Lï¿½pez, nuevo fichaje, marcï¿½ dos goles.',
+    type: 'result',
+    date: '2025-01-20',
+    author: 'Admin',
+    clubId: 'club1',
+    tournamentId: 'tournament1',
+    featured: false
+  },
+  {
+    id: 'news5',
+    title: 'Rumor: Neï¿½n FC tras una estrella de Binary Strikers',
+    content: 'Segï¿½n fuentes cercanas al club, los neonistas estarï¿½an dispuestos a pagar hasta 15 millones por un centrocampista de los Strikers.',
+    type: 'rumor',
+    date: '2025-01-22',
+    author: 'Admin',
+    clubId: 'club4',
+    featured: false
+  },
+  {
+    id: 'news6',
+    title: 'DT de Glitchers 404: "Vamos a por el tï¿½tulo"',
+    content: '"Este aï¿½o tenemos un equipo para luchar arriba. No renunciamos a nada y vamos partido a partido", declarï¿½ el tï¿½cnico tras la victoria 2-0 ante Connection FC.',
+    type: 'statement',
+    date: '2025-01-23',
+    author: 'Admin',
+    clubId: 'club6',
+    featured: false
+  }
+];
+
+// Gallery media items
+export const mediaItems: MediaItem[] = [
+  {
+    id: 'media1',
+    title: 'Gol espectacular de Diego Lï¿½pez',
+    type: 'clip',
+    url: 'https://images.unsplash.com/photo-1556856425-366d6618905d?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwxfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1556856425-366d6618905d?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwxfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    uploadDate: '2025-01-20',
+    uploader: 'Admin',
+    category: 'Goles',
+    likes: 45,
+    views: 320,
+    tags: ['gol', 'chilena', 'rayo digital'],
+    clubId: 'club1',
+    playerId: 'player21'
+  },
+  {
+    id: 'media2',
+    title: 'Trofeo Liga Master 2024',
+    type: 'image',
+    url: 'https://images.unsplash.com/photo-1512242712282-774a8bc0d9d3?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1512242712282-774a8bc0d9d3?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    uploadDate: '2024-12-15',
+    uploader: 'Admin',
+    category: 'Trofeos',
+    likes: 38,
+    views: 280,
+    tags: ['trofeo', 'liga master', 'premio'],
+    tournamentId: 'tournament1'
+  },
+  {
+    id: 'media3',
+    title: 'Final Copa PES 2024',
+    type: 'video',
+    url: 'https://images.unsplash.com/photo-1544194215-541c2d3561a4?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw1fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1544194215-541c2d3561a4?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw1fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    uploadDate: '2024-11-20',
+    uploader: 'Admin',
+    category: 'Partidos',
+    likes: 52,
+    views: 430,
+    tags: ['final', 'copa', 'partido completo'],
+    tournamentId: 'tournament2'
+  },
+  {
+    id: 'media4',
+    title: 'Parada espectacular del portero de Cyber Warriors',
+    type: 'clip',
+    url: 'https://images.unsplash.com/photo-1554290712-e640351074bd?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwzfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1554290712-e640351074bd?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwzfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    uploadDate: '2025-01-18',
+    uploader: 'DT Cyber',
+    category: 'Paradas',
+    likes: 41,
+    views: 310,
+    tags: ['parada', 'portero', 'cyber warriors'],
+    clubId: 'club7'
+  },
+  {
+    id: 'media5',
+    title: 'Celebraciï¿½n del tï¿½tulo Neï¿½n FC',
+    type: 'image',
+    url: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    uploadDate: '2024-12-05',
+    uploader: 'DT Neon',
+    category: 'Celebraciones',
+    likes: 64,
+    views: 520,
+    tags: ['celebraciï¿½n', 'tï¿½tulo', 'neï¿½n fc'],
+    clubId: 'club4'
+  },
+  {
+    id: 'media6',
+    title: 'Presentaciï¿½n de la temporada 2025',
+    type: 'video',
+    url: 'https://images.unsplash.com/photo-1556856425-366d6618905d?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwxfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1556856425-366d6618905d?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwxfHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0',
+    uploadDate: '2025-01-10',
+    uploader: 'Admin',
+    category: 'Eventos',
+    likes: 72,
+    views: 650,
+    tags: ['presentaciï¿½n', 'temporada', 'liga master'],
+    tournamentId: 'tournament1'
+  }
+];
+
+// FAQs
+export const faqs: FAQ[] = [
+  {
+    id: 'faq1',
+    question: 'ï¿½Cï¿½mo me registro en La Virtual Zone?',
+    answer: 'Para registrarte, haz clic en el botï¿½n "Crear Cuenta" en la pï¿½gina principal. Completa el formulario con tu correo electrï¿½nico, nombre de usuario y contraseï¿½a. Una vez registrado, podrï¿½s acceder a todas las funciones bï¿½sicas de la plataforma.',
+    category: 'account'
+  },
+  {
+    id: 'faq2',
+    question: 'ï¿½Cï¿½mo puedo obtener un club en la Liga Master?',
+    answer: 'Para obtener un club en la Liga Master, debes tener una cuenta con rol de DT. Desde tu panel de usuario, haz clic en "Solicitar club". Si hay plazas disponibles, se te asignarï¿½ un club. Si no hay cupos, entrarï¿½s en lista de espera. Los administradores revisan las solicitudes periï¿½dicamente.',
+    category: 'league'
+  },
+  {
+    id: 'faq3',
+    question: 'ï¿½Cï¿½mo funciona el mercado de fichajes?',
+    answer: 'El mercado de fichajes es el sistema donde los DTs pueden comprar y vender jugadores. Para hacer una oferta, debes tener suficiente presupuesto, visitar la secciï¿½n de mercado, seleccionar un jugador disponible y enviar tu oferta. El club propietario decidirï¿½ si acepta. Las transacciones son irreversibles una vez aceptadas.',
+    category: 'market'
+  },
+  {
+    id: 'faq4',
+    question: 'ï¿½Cï¿½mo participar en un torneo?',
+    answer: 'Para participar en un torneo abierto, visita la secciï¿½n "Torneos" y busca aquellos con estado "Inscripciones abiertas". Haz clic en "Ver detalles" y luego en "Solicitar participaciï¿½n". Los torneos cerrados como la Liga Master requieren invitaciï¿½n o tener un club asignado previamente.',
+    category: 'tournament'
+  },
+  {
+    id: 'faq5',
+    question: 'ï¿½Quï¿½ es el sistema de XP y niveles?',
+    answer: 'El sistema de XP (experiencia) te permite subir de nivel a medida que participas en la plataforma. Ganas XP por ganar partidos, participar en torneos, comentar, votar y otras actividades. Cada nivel desbloquea nuevos contenidos en la tienda y aumenta tu reputaciï¿½n en la comunidad.',
+    category: 'account'
+  },
+  {
+    id: 'faq6',
+    question: 'ï¿½Puedo cambiar el escudo o nombre de mi club?',
+    answer: 'Los DTs pueden personalizar aspectos de su club desde el panel de usuario en la secciï¿½n "Mi Club". Algunos cambios como el escudo pueden requerir monedas virtuales que se obtienen a travï¿½s de logros o pueden comprarse en la tienda. Los cambios de nombre requieren aprobaciï¿½n administrativa.',
+    category: 'league'
+  },
+  {
+    id: 'faq7',
+    question: 'ï¿½Quï¿½ ocurre si no puedo disputar un partido programado?',
+    answer: 'Si no puedes disputar un partido, debes notificarlo con al menos 24 horas de antelaciï¿½n a travï¿½s del sistema de mensajes o en el Discord oficial. En casos extraordinarios, el partido puede ser reprogramado. Las ausencias sin justificaciï¿½n pueden conllevar sanciones deportivas.',
+    category: 'tournament'
+  },
+  {
+    id: 'faq8',
+    question: 'ï¿½Cï¿½mo puedo subir contenido a la galerï¿½a?',
+    answer: 'Para subir contenido a la galerï¿½a, ve a la secciï¿½n "Galerï¿½a" y haz clic en "Subir contenido". Puedes compartir capturas, clips o videos relacionados con La Virtual Zone. Todo el contenido es moderado para asegurar que cumple con las normas de la comunidad.',
+    category: 'other'
+  },
+  {
+    id: 'faq9',
+    question: 'ï¿½Cï¿½mo funcionan las tï¿½cticas de equipo?',
+    answer: 'En la secciï¿½n "Tï¿½cticas" de tu club, puedes definir la formaciï¿½n, alineaciï¿½n y estilo de juego. Estas configuraciones son visibles para otros usuarios y reflejan tu filosofï¿½a como DT. Las tï¿½cticas pueden modificarse entre partidos pero no durante los mismos.',
+    category: 'league'
+  },
+  {
+    id: 'faq10',
+    question: 'ï¿½Quï¿½ ocurre al final de la temporada?',
+    answer: 'Al finalizar la temporada, se celebra una ceremonia de premiaciï¿½n virtual donde se reconocen los logros individuales y colectivos. Los clubes mantienen su historial y plantilla (con algunos cambios por edad/rendimiento), y se preparan para la siguiente temporada con un nuevo draft y periodo de fichajes.',
+    category: 'league'
+  }
+];
+
+// Store items
+export const storeItems: StoreItem[] = [
+  {
+    id: 'store1',
+    name: 'Escudo Premium - Neï¿½n',
+    description: 'Escudo con efectos de neï¿½n personalizables para tu club. Destacarï¿½ en todas las vistas del torneo.',
+    category: 'club',
+    price: 1500,
+    image: 'https://ui-avatars.com/api/?name=EP&background=00b3ff&color=fff&size=128&bold=true',
+    minLevel: 5,
+    inStock: true
+  },
+  {
+    id: 'store2',
+    name: 'Marco de Perfil - Campeï¿½n',
+    description: 'Marco dorado para tu avatar que muestra tu estatus como campeï¿½n de un torneo oficial.',
+    category: 'user',
+    price: 2000,
+    image: 'https://ui-avatars.com/api/?name=MP&background=eab308&color=fff&size=128&bold=true',
+    minLevel: 8,
+    inStock: true
+  },
+  {
+    id: 'store3',
+    name: 'Equipaciï¿½n Alternativa',
+    description: 'Desbloquea una tercera equipaciï¿½n para tu club con colores personalizables.',
+    category: 'club',
+    price: 1200,
+    image: 'https://ui-avatars.com/api/?name=EA&background=ec4899&color=fff&size=128&bold=true',
+    minLevel: 3,
+    inStock: true
+  },
+  {
+    id: 'store4',
+    name: 'Tï¿½tulo - Leyenda',
+    description: 'Aï¿½ade el tï¿½tulo "Leyenda" a tu perfil de usuario. Visible en comentarios, foros y rankings.',
+    category: 'user',
+    price: 3000,
+    image: 'https://ui-avatars.com/api/?name=TL&background=84cc16&color=fff&size=128&bold=true',
+    minLevel: 15,
+    inStock: true
+  },
+  {
+    id: 'store5',
+    name: 'Estadio Personalizado',
+    description: 'Personaliza el nombre y aspecto visual del estadio de tu club.',
+    category: 'club',
+    price: 2500,
+    image: 'https://ui-avatars.com/api/?name=E&background=a855f7&color=fff&size=128&bold=true',
+    minLevel: 10,
+    inStock: true
+  },
+  {
+    id: 'store6',
+    name: 'Logro - Primer Fichaje',
+    description: 'Reconocimiento por completar tu primer fichaje en el mercado de transferencias.',
+    category: 'achievement',
+    price: 500,
+    image: 'https://ui-avatars.com/api/?name=PF&background=ef4444&color=fff&size=128&bold=true',
+    minLevel: 1,
+    inStock: true
+  }
+];
+ 
+

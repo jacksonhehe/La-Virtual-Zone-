@@ -1,0 +1,2 @@
+export { tournaments } from './mockData';
+

@@ -1,0 +1,381 @@
+import HeroSection from '../components/home/HeroSection';
+import LeagueStandings from '../components/home/LeagueStandings';
+import FeaturedTournaments from '../components/home/FeaturedTournaments';
+import LatestNews from '../components/home/LatestNews';
+import UpcomingMatches from '../components/home/UpcomingMatches';
+import { Link } from 'react-router-dom';
+import { Users, Trophy, HelpCircle, TrendingUp, Calendar, Target, DollarSign } from 'lucide-react';
+import { useAuthStore } from '../store/authStore';
+import { useDataStore } from '../store/dataStore';
+
+const Home = () => {
+  const { isAuthenticated, user, hasRole } = useAuthStore();
+  const { marketStatus, players, clubs, tournaments, standings } = useDataStore();
+  const transferListedCount = players.filter((player) => player.transferListed).length;
+
+  // Check if user is DT
+  const isDT = hasRole('dt');
+
+  // Get user's club if DT
+  const userClub = isDT && user?.clubId
+    ? clubs.find(c => c.id === user?.clubId)
+    : null;
+
+  // Get user's team standing
+  const userTeamStanding = userClub
+    ? standings.find(s => s.clubId === userClub.id)
+    : null;
+
+  // Get next match for user's club
+  const nextMatch = userClub && tournaments.length > 0
+    ? tournaments[0].matches?.filter(m =>
+        m.status === 'scheduled' &&
+        (m.homeTeam === userClub.name || m.awayTeam === userClub.name)
+      ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
+    : null;
+
+  return (
+    <div>
+      <HeroSection />
+
+      <div className="container mx-auto px-4 py-12 md:py-20">
+        <FeaturedTournaments />
+      </div>
+
+      <div className="bg-dark py-12 md:py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold mb-3">Liga Master 2025</h2>
+                <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+                  {isAuthenticated
+                    ? (isDT && userClub
+                        ? `Gestiona ${userClub.name} y compite por el título de la Liga Master`
+                        : 'La competición más prestigiosa del fútbol virtual español'
+                      )
+                    : 'La competición más prestigiosa del fútbol virtual español. Gestiona tu club, compite por el título y forma parte de la élite del fútbol virtual.'
+                  }
+                </p>
+              </div>
+
+              {/* Contenido condicional según estado de autenticación */}
+              {isAuthenticated ? (
+                /* CONTENIDO PARA USUARIOS LOGUEADOS */
+                <div className="space-y-8">
+                  {/* Dashboard personalizado para DTs */}
+                  {isDT && userClub ? (
+                    <div>
+                      {/* Información del club del DT */}
+                      <div className="card p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="flex items-center">
+                            <img
+                              src={userClub.logo}
+                              alt={userClub.name}
+                              className="w-12 h-12 mr-4 rounded"
+                            />
+                            <div>
+                              <h3 className="text-xl font-bold">{userClub.name}</h3>
+                              <p className="text-gray-400">Tu club en la Liga Master</p>
+                            </div>
+                          </div>
+                          {userTeamStanding && (
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-primary">#{userTeamStanding.position}</div>
+                              <div className="text-sm text-gray-400">Posición</div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                          <div className="text-center">
+                            <Target className="text-blue-400 mx-auto mb-2" size={20} />
+                            <div className="text-lg font-bold">{userTeamStanding?.points || 0}</div>
+                            <div className="text-sm text-gray-400">Puntos</div>
+                          </div>
+                          <div className="text-center">
+                            <DollarSign className="text-green-400 mx-auto mb-2" size={20} />
+                            <div className="text-lg font-bold">€{(userClub.budget / 1000000).toFixed(1)}M</div>
+                            <div className="text-sm text-gray-400">Presupuesto</div>
+                          </div>
+                          <div className="text-center">
+                            <Users className="text-purple-400 mx-auto mb-2" size={20} />
+                            <div className="text-lg font-bold">
+                              {players.filter(p => p.clubId === userClub.id).length}
+                            </div>
+                            <div className="text-sm text-gray-400">Jugadores</div>
+                          </div>
+                        </div>
+
+                        {/* Próximo partido */}
+                        {nextMatch && (
+                          <div className="border-t border-gray-800 pt-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center">
+                                <Calendar className="text-yellow-400 mr-2" size={16} />
+                                <span className="text-sm font-medium">Próximo partido:</span>
+                              </div>
+                              <span className="text-sm text-gray-400">
+                                {new Date(nextMatch.date).toLocaleDateString('es-ES', {
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-center mt-2">
+                              <span className={`font-medium ${nextMatch.homeTeam === userClub.name ? 'text-primary' : 'text-gray-300'}`}>
+                                {nextMatch.homeTeam}
+                              </span>
+                              <span className="mx-3 text-gray-500">vs</span>
+                              <span className={`font-medium ${nextMatch.awayTeam === userClub.name ? 'text-primary' : 'text-gray-300'}`}>
+                                {nextMatch.awayTeam}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Accesos rápidos para DTs */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Link to="/liga-master/mercado" className="card card-hover p-5 flex items-center">
+                          <TrendingUp className="text-green-400 mr-3" size={20} />
+                          <div>
+                            <h4 className="font-medium">Mercado</h4>
+                            <p className="text-gray-400 text-sm">Fichajes y ventas</p>
+                          </div>
+                        </Link>
+
+                        <Link to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/plantilla`} className="card card-hover p-5 flex items-center">
+                          <Users className="text-blue-400 mr-3" size={20} />
+                          <div>
+                            <h4 className="font-medium">Plantilla</h4>
+                            <p className="text-gray-400 text-sm">Gestionar jugadores</p>
+                          </div>
+                        </Link>
+
+                        <Link to="/liga-master/fixture" className="card card-hover p-5 flex items-center">
+                          <Calendar className="text-yellow-400 mr-3" size={20} />
+                          <div>
+                            <h4 className="font-medium">Fixture</h4>
+                            <p className="text-gray-400 text-sm">Calendario y resultados</p>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    /* CONTENIDO PARA USUARIOS LOGUEADOS NO DTs */
+                    <div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div className="card p-6">
+                        <div className="flex items-center mb-4">
+                          <Trophy className="text-primary mr-3" size={24} />
+                          <h3 className="text-lg font-bold">Estado de la Liga</h3>
+                        </div>
+                        <p className="text-gray-300 mb-4">
+                          La Liga Master está en pleno desarrollo. {clubs.length} clubes compiten por el título
+                          en un formato de temporada regular.
+                        </p>
+                        <Link to="/liga-master/rankings" className="btn-primary">
+                          Ver Clasificación
+                        </Link>
+                      </div>
+
+                      <div className="card p-6">
+                        <div className="flex items-center mb-4">
+                          <Users className="text-green-400 mr-3" size={24} />
+                          <h3 className="text-lg font-bold">Mercado de Fichajes</h3>
+                        </div>
+                        <p className="text-gray-300 mb-4">
+                          El mercado está {marketStatus ? 'abierto' : 'cerrado'} con {transferListedCount}
+                          {transferListedCount === 1 ? ' jugador disponible' : ' jugadores disponibles'}.
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <span
+                            className={`inline-flex items-center px-2 py-1 rounded text-xs ${
+                              marketStatus ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                            }`}
+                          >
+                            <span
+                              className={`w-2 h-2 rounded-full mr-1 ${marketStatus ? 'bg-green-500' : 'bg-red-500'}`}
+                            ></span>
+                            {marketStatus ? 'Mercado abierto' : 'Mercado cerrado'}
+                          </span>
+                        </div>
+                      </div>
+                      </div>
+
+                      {/* Accesos rápidos para usuarios logueados */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Link to="/liga-master/rankings" className="card card-hover p-5 flex items-center">
+                        <Trophy className="text-yellow-400 mr-3" size={20} />
+                        <div>
+                          <h4 className="font-medium">Rankings</h4>
+                          <p className="text-gray-400 text-sm">Clasificaciones completas</p>
+                        </div>
+                      </Link>
+
+                      <Link to="/liga-master/fixture" className="card card-hover p-5 flex items-center">
+                        <Calendar className="text-blue-400 mr-3" size={20} />
+                        <div>
+                          <h4 className="font-medium">Fixture</h4>
+                          <p className="text-gray-400 text-sm">Calendario de partidos</p>
+                        </div>
+                      </Link>
+
+                      <Link to="/liga-master/mercado" className="card card-hover p-5 flex items-center">
+                        <TrendingUp className="text-green-400 mr-3" size={20} />
+                        <div>
+                          <h4 className="font-medium">Mercado</h4>
+                          <p className="text-gray-400 text-sm">Transferencias y fichajes</p>
+                        </div>
+                      </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* CONTENIDO PARA USUARIOS NO LOGUEADOS */
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="card p-6">
+                  <div className="flex items-center mb-4">
+                    <Trophy className="text-primary mr-3" size={24} />
+                    <h3 className="text-lg font-bold">¿Qué es un DT?</h3>
+                  </div>
+                  <p className="text-gray-300 mb-4">
+                    DT significa Director Técnico. Como DT, tendrás el control absoluto de un club profesional:
+                    eliges la formación, compras y vendes jugadores, defines la estrategia y compites por el título.
+                  </p>
+                  <div className="space-y-2 text-sm text-gray-400">
+                    <p>• Gestion completa de plantilla</p>
+                    <p>• Decisiones tacticas y estrategicas</p>
+                    <p>• Competencia semanal</p>
+                  </div>
+                </div>
+
+                <div className="card p-6">
+                  <div className="flex items-center mb-4">
+                    <Users className="text-green-400 mr-3" size={24} />
+                    <h3 className="text-lg font-bold">Mercado de Fichajes</h3>
+                  </div>
+                  <p className="text-gray-300 mb-4">
+                    El mercado de fichajes es donde compras y vendes jugadores. Refuerza tu plantilla con nuevos
+                    talentos, vende excedentes para financiar mejoras y compite por las estrellas del fútbol virtual.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded text-xs ${
+                        marketStatus ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                      }`}
+                    >
+                      <span
+                        className={`w-2 h-2 rounded-full mr-1 ${marketStatus ? 'bg-green-500' : 'bg-red-500'}`}
+                      ></span>
+                      {marketStatus ? 'Mercado abierto' : 'Mercado cerrado'}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-xs">
+                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-1"></span>
+                      {transferListedCount > 0
+                        ? `${transferListedCount} ${transferListedCount === 1 ? 'jugador' : 'jugadores'} en venta`
+                        : 'Mercado activo'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Beneficios de participar */}
+                <div className="card p-6 mb-8">
+                  <h3 className="text-xl font-bold mb-4 text-center">¿Por qué participar en la Liga Master?</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <Trophy className="text-primary mx-auto mb-2" size={20} />
+                      <h4 className="font-semibold mb-2">Reconocimiento</h4>
+                      <p className="text-gray-400 text-sm">Gana prestigio como DT y forma parte del Hall of Fame</p>
+                    </div>
+                    <div className="text-center">
+                      <Users className="text-secondary mx-auto mb-2" size={20} />
+                      <h4 className="font-semibold mb-2">Comunidad</h4>
+                      <p className="text-gray-400 text-sm">Conecta con otros apasionados del fútbol virtual</p>
+                    </div>
+                    <div className="text-center">
+                      <TrendingUp className="text-green-400 mx-auto mb-2" size={20} />
+                      <h4 className="font-semibold mb-2">Crecimiento</h4>
+                      <p className="text-gray-400 text-sm">Desarrolla tus habilidades de gestión deportiva</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <LatestNews />
+          <UpcomingMatches />
+        </div>
+
+          <div>
+              <LeagueStandings />
+
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+                <Link to="/usuarios" className="card card-hover p-5 flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mr-4">
+                    <Users size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Comunidad</h3>
+                    <p className="text-gray-400 text-sm">Explora perfiles de DTs y usuarios</p>
+                  </div>
+                </Link>
+
+                <Link to="/torneos" className="card card-hover p-5 flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400 mr-4">
+                    <Trophy size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Torneos</h3>
+                    <p className="text-gray-400 text-sm">Competiciones y eventos especiales</p>
+                  </div>
+                </Link>
+
+                <Link to="/ayuda" className="card card-hover p-5 flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mr-4">
+                    <HelpCircle size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Centro de Ayuda</h3>
+                    <p className="text-gray-400 text-sm">Preguntas frecuentes y soporte</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {!isAuthenticated && (
+        <div className="container mx-auto px-4 py-12 md:py-20">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4">¿Listo para comenzar tu carrera como DT?</h2>
+            <p className="text-gray-300 mb-8">
+              Regístrate para acceder a todas las funciones, solicitar un club y comenzar a competir en la Liga Master y
+              torneos exclusivos.
+            </p>
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
+              <Link to="/registro" className="btn-primary">
+                Crear Cuenta
+              </Link>
+              <Link to="/ayuda" className="btn-secondary">
+                Saber Más
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Home;

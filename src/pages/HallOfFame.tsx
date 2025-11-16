@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { useDataStore } from '../store/dataStore';
+import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Award, ChevronLeft, Star, Shield, Trophy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
+import { getTranslatedPosition } from '../utils/helpers';
 
 const HallOfFame = () => {
   const [activeSection, setActiveSection] = useState('clubs');
-  const { clubs } = useDataStore();
   
   // Mock legendary clubs
   const legendaryClubs = [
@@ -56,7 +55,7 @@ const HallOfFame = () => {
       name: 'Carlos García',
       image: 'https://ui-avatars.com/api/?name=CG&background=1e293b&color=fff&size=128',
       position: 'ST',
-      clubId: 'club1',
+      club: 'Rayo Digital FC',
       nationality: 'España',
       activeYears: '2023-Presente',
       achievements: 'Máximo goleador histórico con 42 goles. Bicampeón de la Liga Master.',
@@ -67,7 +66,7 @@ const HallOfFame = () => {
       name: 'Diego López',
       image: 'https://ui-avatars.com/api/?name=DL&background=1e293b&color=fff&size=128',
       position: 'CAM',
-      clubId: 'club4',
+      club: 'Neón FC',
       nationality: 'Argentina',
       activeYears: '2023-Presente',
       achievements: 'MVP de la temporada 2024. Campeón de Liga Master.',
@@ -78,7 +77,7 @@ const HallOfFame = () => {
       name: 'Victor Pérez',
       image: 'https://ui-avatars.com/api/?name=VP&background=1e293b&color=fff&size=128',
       position: 'CB',
-      clubId: 'club6',
+      club: 'Glitchers 404',
       nationality: 'España',
       activeYears: '2023-Presente',
       achievements: 'Defensa del año en 2023 y 2024. Campeón de Copa.',
@@ -89,7 +88,7 @@ const HallOfFame = () => {
       name: 'Lucas Sánchez',
       image: 'https://ui-avatars.com/api/?name=LS&background=1e293b&color=fff&size=128',
       position: 'GK',
-      clubId: 'club10',
+      club: 'Pixel Galaxy',
       nationality: 'México',
       activeYears: '2023-Presente',
       achievements: 'Portero con más porterías a cero (24). Supercampeón 2023.',
@@ -100,18 +99,13 @@ const HallOfFame = () => {
       name: 'Marcos Rodríguez',
       image: 'https://ui-avatars.com/api/?name=MR&background=1e293b&color=fff&size=128',
       position: 'CDM',
-      clubId: 'club2',
+      club: 'Atlético Pixelado',
       nationality: 'Colombia',
       activeYears: '2023-Presente',
       achievements: 'Centrocampista con más recuperaciones. Finalista de Copa 2024.',
       stats: { goals: 12, assists: 18, matches: 52 }
     }
   ];
-
-  const getClubName = (clubId: string) => {
-    const club = clubs.find(c => c.id === clubId);
-    return club ? club.name : 'Desconocido';
-  };
   
   // Mock legendary managers
   const legendaryManagers = [
@@ -273,8 +267,8 @@ const HallOfFame = () => {
                         </div>
                       </div>
                       
-                      <Link
-                        to={`/liga-master/club/${club.slug}`}
+                      <Link 
+                        to={`/liga-master/club/${club.name.toLowerCase().replace(/\s+/g, '-')}`}
                         className="btn-secondary w-full mt-4 text-center"
                       >
                         Ver Club
@@ -294,21 +288,28 @@ const HallOfFame = () => {
                 {legendaryPlayers.map(player => (
                   <div key={player.id} className="card overflow-hidden">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 flex items-center">
-                      <img 
-                        src={player.image} 
+                      <img
+                        src={player.image || '/default.png'}
                         alt={player.name}
                         className="w-16 h-16 rounded-full mr-4"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/default.png';
+                        }}
                       />
                       <div>
                         <h3 className="text-xl font-bold">{player.name}</h3>
                         <div className="flex items-center space-x-2">
                           <span className={`inline-block px-2 py-0.5 rounded text-xs ${
-                            player.position === 'GK' ? 'bg-yellow-500/20 text-yellow-400' :
-                            ['CB', 'LB', 'RB'].includes(player.position) ? 'bg-blue-500/20 text-blue-400' :
-                            ['CDM', 'CM', 'CAM'].includes(player.position) ? 'bg-green-500/20 text-green-400' :
+                            player.position === 'PT' ? 'bg-yellow-500/20 text-yellow-400' :
+                            player.position === 'DEC' ? 'bg-blue-500/20 text-blue-400' :
+                            player.position === 'CD' ? 'bg-red-500/20 text-red-400' :
+                            player.position === 'SD' ? 'bg-red-500/20 text-red-400' :
+                            ['LI', 'LD'].includes(player.position) ? 'bg-blue-500/20 text-blue-400' :
+                            ['MCD', 'MC', 'MO'].includes(player.position) ? 'bg-green-500/20 text-green-400' :
                             'bg-red-500/20 text-red-400'
                           }`}>
-                            {player.position}
+                            {getTranslatedPosition(player.position)}
                           </span>
                           <span className="text-gray-400">{player.nationality}</span>
                         </div>
@@ -318,7 +319,7 @@ const HallOfFame = () => {
                     <div className="p-6">
                       <div className="flex items-center mb-4">
                         <span className="text-gray-400 mr-1">Club:</span>
-                        <span className="font-medium">{getClubName(player.clubId)}</span>
+                        <span className="font-medium">{player.club}</span>
                       </div>
                       
                       <p className="text-gray-300 mb-4">

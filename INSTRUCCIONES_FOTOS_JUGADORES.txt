@@ -1,0 +1,39 @@
+🎯 SISTEMA AUTOMÁTICO DE FOTOS DE JUGADORES
+
+Las fotos se gestionan completamente automáticamente. Solo agrega fotos y el sistema las detecta.
+
+📸 PARA AGREGAR NUEVAS FOTOS:
+
+MÉTODO AUTOMÁTICO (Recomendado):
+1. Copia las fotos PNG a: public/Fotos_Jugadores/[NombreClub]/
+2. El sistema las detecta automáticamente al hacer clic en "Actualizar Lista de Fotos"
+
+MÉTODO MANUAL (Si necesitas forzar actualización):
+1. Agrega las fotos a public/Fotos_Jugadores/[Club]/
+2. Ejecuta: node scripts/read_photos.js
+
+🚀 PARA EMPAREJAR FOTOS CON JUGADORES:
+
+1. Abre la aplicación en el navegador (http://localhost:5173)
+2. Ve al Panel Admin → Jugadores
+3. Haz clic en "Actualizar Lista de Fotos" (botón verde 🔄)
+4. Haz clic en "Emparejar Todas las Fotos" (botón naranja 📸)
+
+¡Eso es todo! El sistema lee automáticamente todas las fotos de las carpetas.
+
+📊 FOTOS ACTUALMENTE DISPONIBLES:
+
+Jackson FC (23 fotos):
+- Akim Zedadka, Braian Martínez, Bruno Zapelli, Corentin Jean
+- Dejan Stojanovic, Enric Saborit, Felix Beijmo, Gabi Kanichowsky
+- Jacob Barrett Laursen, Jasper Löffelsend, Jón Daði Böðvarsson
+- Joyskim Dawa, Kevin Escamilla, Marcelo Ferreira, Markus Henriksen
+- Nuraly Alip, Oday Dabbagh, Pere Milla, Sergio González
+- Sergio Padt, Shoya Nakajima, Valeri Qazaishvili, Zan Majer
+
+Jugadores Libres (10 fotos):
+- Cristiano Ronaldo, Erling Haaland, Harry Kane, Jan Oblak
+- Kevin De Bruyne, Kylian Mbappé, Lionel Messi, Neymar Jr
+- Thibaut Courtois, Vinicius Junior
+
+🔍 El sistema busca automáticamente coincidencias exactas y parciales entre los nombres de los jugadores y las fotos disponibles.

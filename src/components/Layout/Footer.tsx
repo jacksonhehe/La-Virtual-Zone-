@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import  { Link } from 'react-router-dom';
 import { 
   Trophy, 
   Mail, 
@@ -26,40 +26,16 @@ const Footer = () => {
               Gestiona tu club, ficha jugadores, y compite en ligas y torneos.
             </p>
             <div className="flex space-x-4">
-              <a
-                href="https://github.com/jacksonhehe/La-Virtual-Zone-"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-                aria-label="GitHub"
-              >
+              <a href="#" className="text-gray-400 hover:text-white">
                 <Github size={20} />
               </a>
-              <a
-                href="https://twitter.com/lavirtualzone"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-                aria-label="Twitter"
-              >
+              <a href="#" className="text-gray-400 hover:text-white">
                 <Twitter size={20} />
               </a>
-              <a
-                href="https://instagram.com/lavirtualzone"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-                aria-label="Instagram"
-              >
+              <a href="#" className="text-gray-400 hover:text-white">
                 <Instagram size={20} />
               </a>
-              <a
-                href="https://facebook.com/lavirtualzone"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-                aria-label="Facebook"
-              >
+              <a href="#" className="text-gray-400 hover:text-white">
                 <Facebook size={20} />
               </a>
             </div>
@@ -71,6 +47,11 @@ const Footer = () => {
               <li>
                 <Link to="/liga-master" className="text-gray-400 hover:text-white">
                   Vista General
+                </Link>
+              </li>
+              <li>
+                <Link to="/liga-master/mercado" className="text-gray-400 hover:text-white">
+                  Mercado de Fichajes
                 </Link>
               </li>
               <li>
@@ -152,22 +133,12 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} La Virtual Zone. Todos los derechos reservados.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a
-              href="/terminos"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white text-sm"
-            >
+            <Link to="/terminos" className="text-gray-400 hover:text-white text-sm">
               Términos de Servicio
-            </a>
-            <a
-              href="/privacidad"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white text-sm"
-            >
+            </Link>
+            <Link to="/privacidad" className="text-gray-400 hover:text-white text-sm">
               Política de Privacidad
-            </a>
+            </Link>
           </div>
         </div>
       </div>

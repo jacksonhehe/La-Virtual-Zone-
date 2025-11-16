@@ -1,0 +1,2 @@
+export { marketStatus } from './mockData';
+

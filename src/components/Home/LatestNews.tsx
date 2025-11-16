@@ -1,24 +1,22 @@
-import { Link } from 'react-router-dom';
+import  { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-
-const prefetchBlog = () => import('../../pages/Blog');
 import { useDataStore } from '../../store/dataStore';
-import { formatDate, formatNewsType, getNewsTypeColor } from '../../utils/helpers';
+import { formatDate } from '../../utils/format';
+import { formatNewsType, getNewsTypeColor } from '../../utils/helpers';
 
 const LatestNews = () => {
-  const { newsItems } = useDataStore();
-  
-  // Get latest 4 news
-  const latestNews = newsItems.slice(0, 4);
+  const { posts } = useDataStore();
+
+  // Get latest 4 posts
+  const latestNews = posts.slice(0, 4);
   
   return (
     <div className="card">
       <div className="p-6 border-b border-gray-800">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Últimas Noticias</h2>
-          <Link
-            to="/blog"
-            onMouseEnter={prefetchBlog}
+          <Link 
+            to="/blog" 
             className="text-primary hover:text-primary-light flex items-center text-sm"
           >
             <span>Ver todo</span>
@@ -36,11 +34,8 @@ const LatestNews = () => {
                   {formatNewsType(news.type)}
                 </span>
                 <span className="text-gray-400 text-sm">
-                  {formatDate(news.publishDate)}
+                  {formatDate(news.date)}
                 </span>
-                {new Date(news.publishDate) > new Date() && (
-                  <span className="badge bg-yellow-500/20 text-yellow-400">Programado</span>
-                )}
               </div>
               
               <h3 className="font-medium mb-1">

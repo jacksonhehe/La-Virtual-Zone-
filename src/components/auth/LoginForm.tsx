@@ -1,35 +1,56 @@
-import { useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, User, Lock } from 'lucide-react';
+import { LogIn, User, Lock, Loader } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { config } from '../../lib/config';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, accountBlock } = useAuthStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (accountBlock) {
+      navigate('/cuenta-suspendida', { replace: true });
+    }
+  }, [accountBlock, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+    setIsLoading(true);
+
     if (!username || !password) {
       setError('Por favor, ingresa todos los campos');
+      setIsLoading(false);
       return;
     }
-    
+
     try {
-      login(username, password);
+      await login(username, password);
       navigate('/usuario');
-    } catch {
-      setError('Credenciales incorrectas');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Error al iniciar sesión. Verifica tus credenciales.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDemoLogin = () => {
-    login('admin', 'password');
-    navigate('/usuario');
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    try {
+      await login('admin', 'admin');
+      navigate('/usuario');
+    } catch (err: any) {
+      console.error('Demo login error:', err);
+      setError('Error al iniciar sesión demo');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,18 +71,21 @@ const LoginForm = () => {
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-1">Nombre de usuario</label>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-1">
+            {config.useSupabase ? 'Correo electrónico' : 'Nombre de usuario'}
+          </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <User size={16} className="text-gray-500" />
             </div>
             <input
               id="username"
-              type="text"
+              type={config.useSupabase ? "email" : "text"}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="input pl-10 w-full"
-              placeholder="Ingresa tu nombre de usuario"
+              placeholder={config.useSupabase ? "Ingresa tu correo electrónico" : "Ingresa tu nombre de usuario"}
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -79,6 +103,7 @@ const LoginForm = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="input pl-10 w-full"
               placeholder="Ingresa tu contraseña"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -86,18 +111,36 @@ const LoginForm = () => {
         <div className="flex flex-col space-y-3">
           <button
             type="submit"
-            className="btn-primary py-3 w-full"
+            className="btn-primary py-3 w-full flex items-center justify-center"
+            disabled={isLoading}
           >
-            Iniciar Sesión
+            {isLoading ? (
+              <>
+                <Loader size={16} className="mr-2 animate-spin" />
+                Iniciando sesión...
+              </>
+            ) : (
+              'Iniciar Sesión'
+            )}
           </button>
-          
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            className="btn-outline py-3 w-full"
-          >
-            Iniciar Sesión Demo
-          </button>
+
+          {!config.useSupabase && (
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              className="btn-outline py-3 w-full flex items-center justify-center"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader size={16} className="mr-2 animate-spin" />
+                  Cargando...
+                </>
+              ) : (
+                'Iniciar Sesión Demo'
+              )}
+            </button>
+          )}
         </div>
       </form>
       

@@ -1,260 +1,256 @@
-# 🚀 Configuración de Supabase para La Virtual Zone
+# 🚀 Configuración de Supabase - La Virtual Zone
 
-## 📋 Pasos para Configurar Supabase
+## 📋 Paso 1: Crear proyecto en Supabase
 
-### 1. **Configurar Variables de Entorno**
+1. Ve a [supabase.com](https://supabase.com) y crea una cuenta
+2. Crea un nuevo proyecto
+3. Espera a que se complete la configuración inicial
 
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+## 🔑 Paso 2: Obtener las claves API
 
-```env
-# Supabase Configuration
-VITE_SUPABASE_URL=https://zufqbiwbxcnwmrchtiom.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZnFiaXdieGNud21yY2h0aW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzI2NzgsImV4cCI6MjA2OTU0ODY3OH0.CE3Dh3l6XTtS73Akes25wP4wI0n-v9Mlgb4X4ijhaRA
+Una vez creado el proyecto, ve a:
+**Settings → API**
 
-# API Configuration (for backward compatibility)
-VITE_API_URL=http://localhost:3000
-
-# App Configuration
-VITE_APP_NAME=La Virtual Zone
-VITE_APP_VERSION=1.0.0
-```
-
-### 2. **Configurar la Base de Datos en Supabase**
-
-1. Ve al panel de administración de Supabase
-2. Navega a **SQL Editor**
-3. Ejecuta el script `supabase-schema.sql` que está en la raíz del proyecto
-4. Esto creará todas las tablas necesarias con las políticas de seguridad
-
-### 3. **Configurar Autenticación**
-
-1. En el panel de Supabase, ve a **Authentication > Settings**
-2. Configura las siguientes opciones:
-   - **Site URL**: `http://localhost:5173`
-   - **Redirect URLs**: `http://localhost:5173/auth/callback`
-   - **Enable email confirmations**: Desactivado (para desarrollo)
-
-### 4. **Configurar Almacenamiento**
-
-1. Ve a **Storage** en el panel de Supabase
-2. Crea un bucket llamado `images` con las siguientes configuraciones:
-   - **Public bucket**: Activado
-   - **File size limit**: 5MB
-   - **Allowed MIME types**: `image/*`
-
-### 5. **Instalar Dependencias**
+Copia los siguientes valores:
 
 ```bash
-npm install @supabase/supabase-js
+# URL de tu proyecto Supabase
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+
+# Clave anónima (public) - segura para usar en el frontend
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+
+# Clave de servicio (private) - usar solo en desarrollo para scripts de migración
+VITE_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-### 6. **Verificar la Configuración**
+## 📁 Paso 3: Configurar variables de entorno
 
-Ejecuta el servidor de desarrollo:
+Crea un archivo `.env.local` en la raíz del proyecto:
 
 ```bash
-npm run dev
+# Copia y pega los valores obtenidos
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+# Mantén esto en false hasta que completes la configuración
+VITE_USE_SUPABASE=false
 ```
 
-## 🔧 Estructura de Archivos Creados
+## 🗄️ Paso 4: Configurar base de datos
 
-### **Servicios de Supabase**
-- `src/lib/supabase.ts` - Cliente de Supabase y tipos
-- `src/services/supabaseAuth.ts` - Servicio de autenticación
-- `src/services/supabaseData.ts` - Servicio de datos
-- `src/store/supabaseStore.ts` - Store de Zustand con Supabase
+Ejecuta los siguientes scripts SQL en el **SQL Editor** de Supabase:
 
-### **Esquema de Base de Datos**
-- `supabase-schema.sql` - Script SQL completo
+### 4.1 Tabla de perfiles (extiende auth.users)
 
-## 📊 Tablas Creadas
+```sql
+-- Crear tabla de perfiles
+create table public.profiles (
+  id uuid references auth.users on delete cascade primary key,
+  username text unique not null,
+  email text,
+  role text default 'user' check (role in ('user', 'dt', 'admin')),
+  avatar text,
+  xp integer default 0,
+  club_id text,
+  status text default 'active' check (status in ('active', 'suspended', 'banned', 'deleted')),
+  bio text,
+  location text,
+  website text,
+  favorite_team text,
+  favorite_position text,
+  suspended_until timestamp with time zone,
+  suspended_reason text,
+  ban_reason text,
+  deleted_at timestamp with time zone,
+  deleted_reason text,
+  notifications boolean default true,
+  last_login timestamp with time zone default now(),
+  followers integer default 0,
+  following integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
 
-### **users**
-- `id` (UUID, PK) - Referencia a auth.users
-- `email` (TEXT) - Email del usuario
-- `username` (TEXT) - Nombre de usuario
-- `role` (TEXT) - Rol: ADMIN, CLUB, USER
-- `created_at` (TIMESTAMP)
-- `updated_at` (TIMESTAMP)
+-- Habilitar RLS
+alter table public.profiles enable row level security;
 
-### **clubs**
-- `id` (SERIAL, PK)
-- `name` (TEXT) - Nombre del club
-- `slug` (TEXT) - URL amigable
-- `logo` (TEXT) - URL del logo
-- `founded_year` (INTEGER) - Año de fundación
-- `stadium` (TEXT) - Nombre del estadio
-- `manager_id` (UUID) - Referencia al DT
-- `budget` (INTEGER) - Presupuesto
-- `play_style` (TEXT) - Estilo de juego
-- `primary_color` (TEXT) - Color primario
-- `secondary_color` (TEXT) - Color secundario
-- `description` (TEXT) - Descripción del club
+-- Políticas de seguridad
+create policy "Public profiles are viewable by everyone" on public.profiles
+  for select using (true);
 
-### **players**
-- `id` (SERIAL, PK)
-- `name` (TEXT) - Nombre del jugador
-- `age` (INTEGER) - Edad (15-50)
-- `nationality` (TEXT) - Nacionalidad
-- `dorsal` (INTEGER) - Número de dorsal (1-99)
-- `position` (TEXT) - Posición: POR, DEF, MED, DEL
-- `club_id` (INTEGER) - Club al que pertenece
-- `overall` (INTEGER) - Valoración general (40-99)
-- `potential` (INTEGER) - Potencial (40-99)
-- `price` (INTEGER) - Valor de mercado
-- `image` (TEXT) - URL de la foto
-- `contract_expires` (TEXT) - Año de expiración
-- `salary` (INTEGER) - Salario mensual
+create policy "Users can insert their own profile" on public.profiles
+  for insert with check (auth.uid() = id);
 
-### **matches**
-- `id` (SERIAL, PK)
-- `home_club_id` (INTEGER) - Club local
-- `away_club_id` (INTEGER) - Club visitante
-- `home_score` (INTEGER) - Goles local
-- `away_score` (INTEGER) - Goles visitante
-- `status` (TEXT) - Estado: scheduled, live, finished
-- `played_at` (TIMESTAMP) - Fecha del partido
+create policy "Users can update own profile" on public.profiles
+  for update using (auth.uid() = id);
 
-### **transfers**
-- `id` (SERIAL, PK)
-- `player_id` (INTEGER) - Jugador transferido
-- `from_club_id` (INTEGER) - Club origen
-- `to_club_id` (INTEGER) - Club destino
-- `amount` (INTEGER) - Monto de la transferencia
-- `status` (TEXT) - Estado: pending, completed, cancelled
+-- Función para manejar nuevos usuarios
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, username, email)
+  values (new.id, new.raw_user_meta_data->>'username', new.email);
+  return new;
+end;
+$$ language plpgsql security definer;
 
-### **news**
-- `id` (SERIAL, PK)
-- `title` (TEXT) - Título de la noticia
-- `content` (TEXT) - Contenido
-- `image` (TEXT) - URL de la imagen
-- `author_id` (UUID) - Autor de la noticia
-
-## 🔐 Políticas de Seguridad (RLS)
-
-### **Usuarios**
-- ✅ Cualquiera puede ver usuarios
-- ✅ Usuarios pueden actualizar su propio perfil
-- ✅ Usuarios pueden crear su perfil
-
-### **Clubes**
-- ✅ Cualquiera puede ver clubes
-- ✅ Usuarios autenticados pueden crear clubes
-- ✅ DTs pueden actualizar sus clubes
-- ✅ Solo admins pueden eliminar clubes
-
-### **Jugadores**
-- ✅ Cualquiera puede ver jugadores
-- ✅ Usuarios autenticados pueden crear jugadores
-- ✅ DTs pueden actualizar jugadores de su club
-- ✅ Solo admins pueden eliminar jugadores
-
-### **Partidos**
-- ✅ Cualquiera puede ver partidos
-- ✅ Usuarios autenticados pueden crear partidos
-- ✅ Solo admins pueden actualizar partidos
-
-### **Transferencias**
-- ✅ Cualquiera puede ver transferencias
-- ✅ Usuarios autenticados pueden crear transferencias
-- ✅ Solo admins pueden actualizar transferencias
-
-### **Noticias**
-- ✅ Cualquiera puede ver noticias
-- ✅ Usuarios autenticados pueden crear noticias
-- ✅ Autores pueden actualizar sus noticias
-- ✅ Solo admins pueden eliminar noticias
-
-## 🚀 Migración desde el Sistema Actual
-
-### **Paso 1: Actualizar Stores**
-Reemplaza los stores actuales con el nuevo `useSupabaseStore`:
-
-```typescript
-// Antes
-import { useAuthStore } from '../store/authStore'
-import { useDataStore } from '../store/dataStore'
-
-// Después
-import { useSupabaseStore } from '../store/supabaseStore'
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
 ```
 
-### **Paso 2: Actualizar Componentes**
-Actualiza los componentes para usar las nuevas funciones:
+### 4.2 Tabla de clubs
 
-```typescript
-// Antes
-const { user, login } = useAuthStore()
-const { clubs, fetchClubs } = useDataStore()
+```sql
+create table public.clubs (
+  id text primary key,
+  name text not null,
+  logo text,
+  founded_year integer,
+  stadium text,
+  budget bigint default 0,
+  manager text,
+  play_style text default 'Equilibrado',
+  primary_color text default '#ffffff',
+  secondary_color text default '#000000',
+  description text,
+  reputation integer default 0,
+  fan_base integer default 0,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
 
-// Después
-const { user, login, clubs, fetchClubs } = useSupabaseStore()
+alter table public.clubs enable row level security;
+create policy "Clubs are viewable by everyone" on public.clubs for select using (true);
+create policy "Only admins can insert clubs" on public.clubs for insert with check (auth.jwt() ->> 'role' = 'admin');
+create policy "Only admins can update clubs" on public.clubs for update using (auth.jwt() ->> 'role' = 'admin');
 ```
 
-### **Paso 3: Migrar Datos**
-Crea un script para migrar los datos existentes a Supabase:
+### 4.3 Tabla de players
 
-```typescript
-// Ejemplo de migración
-const migrateData = async () => {
-  const oldData = getOldData() // Datos actuales
-  const store = useSupabaseStore.getState()
-  
-  for (const club of oldData.clubs) {
-    await store.createClub(club)
-  }
-  
-  for (const player of oldData.players) {
-    await store.createPlayer(player)
-  }
-}
+```sql
+create table public.players (
+  id text primary key,
+  name text not null,
+  age integer not null,
+  position text not null,
+  nationality text not null,
+  club_id text references public.clubs(id),
+  overall integer not null,
+  potential integer not null,
+  transfer_listed boolean default false,
+  transfer_value bigint default 0,
+  image text,
+  attributes jsonb,
+  skills jsonb,
+  playing_styles jsonb,
+  contract jsonb,
+  form integer default 50,
+  goals integer default 0,
+  assists integer default 0,
+  appearances integer default 0,
+  matches integer default 0,
+  dorsal integer default 0,
+  injury_resistance integer default 50,
+  height numeric,
+  weight numeric,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
+alter table public.players enable row level security;
+create policy "Players are viewable by everyone" on public.players for select using (true);
+create policy "Only admins can manage players" on public.players for all using (auth.jwt() ->> 'role' = 'admin');
 ```
 
-## 🎯 Beneficios de Supabase
+### 4.4 Tabla de tournaments
 
-### **✅ Ventajas**
-- **Autenticación robusta** con Supabase Auth
-- **Base de datos PostgreSQL** escalable
-- **Almacenamiento de archivos** integrado
-- **Tiempo real** con suscripciones
-- **Políticas de seguridad** granulares
-- **Backup automático** y recuperación
-- **Panel de administración** completo
+```sql
+create table public.tournaments (
+  id text primary key,
+  name text not null,
+  type text check (type in ('league', 'cup', 'friendly')),
+  logo text,
+  start_date date not null,
+  end_date date not null,
+  status text default 'upcoming' check (status in ('upcoming', 'active', 'finished')),
+  teams text[] default '{}',
+  rounds integer default 1,
+  matches jsonb default '[]',
+  winner text,
+  top_scorer jsonb,
+  description text,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
 
-### **🔄 Funcionalidades Nuevas**
-- **Autenticación social** (Google, Facebook, etc.)
-- **Recuperación de contraseña** por email
-- **Verificación de email** opcional
-- **Sesiones persistentes** automáticas
-- **Subida de archivos** directa a Supabase Storage
-- **Sincronización en tiempo real** de datos
-
-## 🐛 Solución de Problemas
-
-### **Error de Conexión**
-```bash
-# Verificar variables de entorno
-echo $VITE_SUPABASE_URL
-echo $VITE_SUPABASE_ANON_KEY
+alter table public.tournaments enable row level security;
+create policy "Tournaments are viewable by everyone" on public.tournaments for select using (true);
+create policy "Only admins can manage tournaments" on public.tournaments for all using (auth.jwt() ->> 'role' = 'admin');
 ```
 
-### **Error de Autenticación**
-1. Verificar que las políticas RLS estén configuradas
-2. Comprobar que el usuario esté autenticado
-3. Revisar los logs en el panel de Supabase
+### 4.5 Tabla de matches
 
-### **Error de Permisos**
-1. Verificar que las políticas de almacenamiento estén configuradas
-2. Comprobar que el bucket `images` exista
-3. Verificar que el usuario tenga permisos para subir archivos
+```sql
+create table public.matches (
+  id text primary key,
+  tournament_id text references public.tournaments(id),
+  round integer default 1,
+  date timestamp with time zone not null,
+  home_team text not null,
+  away_team text not null,
+  home_score integer,
+  away_score integer,
+  status text default 'scheduled' check (status in ('scheduled', 'live', 'finished')),
+  scorers jsonb default '[]',
+  highlights text[] default '{}',
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
 
-## 📞 Soporte
+alter table public.matches enable row level security;
+create policy "Matches are viewable by everyone" on public.matches for select using (true);
+create policy "Only admins can manage matches" on public.matches for all using (auth.jwt() ->> 'role' = 'admin');
+```
 
-Si tienes problemas con la configuración:
+### 4.6 Tabla de transfers
 
-1. **Revisa los logs** en el panel de Supabase
-2. **Verifica las políticas RLS** en la base de datos
-3. **Comprueba las variables de entorno** en el archivo `.env`
-4. **Revisa la consola del navegador** para errores de JavaScript
+```sql
+create table public.transfers (
+  id text primary key,
+  player_id text references public.players(id),
+  player_name text not null,
+  from_club text not null,
+  to_club text not null,
+  fee bigint not null,
+  date timestamp with time zone not null,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
 
-¡Con esto tu aplicación estará 100% conectada a Supabase! 🎉 
+alter table public.transfers enable row level security;
+create policy "Transfers are viewable by everyone" on public.transfers for select using (true);
+create policy "Only admins can manage transfers" on public.transfers for all using (auth.jwt() ->> 'role' = 'admin');
+```
+
+## 🔧 Paso 5: Probar la conexión
+
+Una vez configurado todo:
+
+1. Actualiza `.env.local` con tus claves reales
+2. Cambia `VITE_USE_SUPABASE=true`
+3. Reinicia el servidor de desarrollo
+4. Verifica que no hay errores en la consola
+
+## 📋 Próximos pasos
+
+Una vez completada esta configuración base, continuaremos con:
+
+1. **Migración de autenticación** (Supabase Auth)
+2. **Actualización de servicios** (clubService, playerService, etc.)
+3. **Implementación de sincronización** (online/offline)
+4. **Migración de datos existentes**
+
+¿Has completado la configuración de Supabase? ¿Necesitas ayuda con algún paso específico?

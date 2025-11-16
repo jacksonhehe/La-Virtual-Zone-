@@ -1,0 +1,2 @@
+export { newsItems } from './mockData';
+

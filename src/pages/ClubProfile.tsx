@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import  { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { 
-  ChevronLeft, 
-  Calendar, 
-  Users, 
-  Award, 
-  Briefcase, 
+import {
+  ChevronLeft,
+  Calendar,
+  Users,
+  Award,
+  Briefcase,
   Trophy,
   Star
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import StatsCard from '../components/common/StatsCard';
 import { useDataStore } from '../store/dataStore';
-import { formatDate, formatCurrency, getMatchResult } from '../utils/helpers';
+import { formatDate, formatCurrency } from '../utils/format';
+import { getTranslatedPosition } from '../utils/helpers';
+import { getMatchResult } from '../utils/helpers';
 
 const ClubProfile = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -21,7 +23,7 @@ const ClubProfile = () => {
   const { clubs, players, tournaments } = useDataStore();
   
   // Find club by slug
-  const club = clubs.find(c => c.slug === clubName);
+  const club = clubs.find(c => c.name.toLowerCase().replace(/\s+/g, '-') === clubName);
   
   if (!club) {
     return (
@@ -65,7 +67,7 @@ const ClubProfile = () => {
     }
     
     stats.played++;
-    
+
     const result = getMatchResult(match, club.name);
     if (result === 'win') {
       stats.wins++;
@@ -121,7 +123,7 @@ const ClubProfile = () => {
               <img 
                 src={club.logo} 
                 alt={club.name}
-                className="w-32 h-32 mx-auto mb-4 object-contain"
+                className="w-32 h-32 mx-auto mb-4"
               />
               <h1 className="text-2xl font-bold mb-1">{club.name}</h1>
               <p className="text-gray-400 mb-4">
@@ -129,14 +131,15 @@ const ClubProfile = () => {
               </p>
               
               <div className="flex justify-center space-x-4 mb-6">
-                {club.titles.map((title, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <Trophy size={24} className="text-yellow-400 mb-1" />
-                    <span className="text-sm">{title.name}</span>
-                    <span className="text-xs text-gray-400">{title.year}</span>
-                  </div>
-                ))}
-                {club.titles.length === 0 && (
+                {club.titles && club.titles.length > 0 ? (
+                  club.titles.map((title, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      <Trophy size={24} className="text-yellow-400 mb-1" />
+                      <span className="text-sm">{title.name}</span>
+                      <span className="text-xs text-gray-400">{title.year}</span>
+                    </div>
+                  ))
+                ) : (
                   <div className="text-gray-400 text-sm">
                     Sin títulos
                   </div>
@@ -157,19 +160,26 @@ const ClubProfile = () => {
               </div>
               
               <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  to={`/liga-master/club/${club.slug}/plantilla`}
+                <Link 
+                  to={`/liga-master/club/${clubName}/plantilla`}
                   className="btn-secondary text-sm"
                 >
                   <Users size={16} className="mr-2" />
                   Ver Plantilla
                 </Link>
-                <Link
-                  to={`/liga-master/club/${club.slug}/finanzas`}
+                <Link 
+                  to={`/liga-master/club/${clubName}/finanzas`}
                   className="btn-secondary text-sm"
                 >
                   <Briefcase size={16} className="mr-2" />
                   Ver Finanzas
+                </Link>
+                <Link 
+                  to={`/liga-master/club/${clubName}/palmares`}
+                  className="btn-secondary text-sm"
+                >
+                  <Trophy size={16} className="mr-2" />
+                  Ver Palmarés
                 </Link>
               </div>
             </div>
@@ -256,21 +266,12 @@ const ClubProfile = () => {
                             <span className="text-gray-400">Reputación</span>
                             <div className="flex">
                               {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
+                                <Star 
                                   key={i}
                                   size={16}
                                   className={i < Math.round(club.reputation / 20) ? "text-yellow-400" : "text-gray-700"}
                                 />
                               ))}
-                            </div>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-gray-400">Moral</span>
-                            <div className="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-green-500"
-                                style={{ width: `${club.morale ?? 0}%` }}
-                              ></div>
                             </div>
                           </div>
                         </div>
@@ -292,7 +293,7 @@ const ClubProfile = () => {
                                     <img 
                                       src={opponentClub?.logo} 
                                       alt={opponentClub?.name}
-                                      className="w-10 h-10 object-contain rounded"
+                                      className="w-10 h-10 object-contain"
                                     />
                                   </div>
                                   <div>
@@ -316,7 +317,7 @@ const ClubProfile = () => {
                     {/* Club titles */}
                     <div className="mt-6">
                       <h3 className="text-lg font-bold mb-4">Títulos y Logros</h3>
-                      {club.titles.length > 0 ? (
+                      {club.titles && club.titles.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                           {club.titles.map((title, index) => (
                             <div key={index} className="p-4 bg-gray-800 rounded-lg flex items-center">
@@ -364,7 +365,7 @@ const ClubProfile = () => {
                                   <img 
                                     src={opponentClub?.logo} 
                                     alt={opponentClub?.name}
-                                    className="w-8 h-8 object-contain rounded"
+                                    className="w-8 h-8 object-contain"
                                   />
                                 </div>
                                 <div>
@@ -414,8 +415,8 @@ const ClubProfile = () => {
                   <div>
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-bold">Plantilla del Club</h3>
-                      <Link
-                        to={`/liga-master/club/${club.slug}/plantilla`}
+                      <Link 
+                        to={`/liga-master/club/${clubName}/plantilla`}
                         className="text-primary text-sm flex items-center"
                       >
                         Ver Plantilla Completa
@@ -442,22 +443,29 @@ const ClubProfile = () => {
                               <tr key={player.id} className="hover:bg-gray-800">
                                 <td className="p-3">
                                   <div className="flex items-center">
-                                    <img 
-                                      src={player.image} 
+                                    <img
+                                      src={player.image || '/default.png'}
                                       alt={player.name}
                                       className="w-8 h-8 rounded-full object-cover mr-2"
+                                      onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.src = '/default.png';
+                                      }}
                                     />
                                     <span className="font-medium">{player.name}</span>
                                   </div>
                                 </td>
                                 <td className="p-3 text-center">
                                   <span className={`inline-block px-2 py-0.5 rounded text-xs ${
-                                    player.position === 'GK' ? 'bg-yellow-500/20 text-yellow-400' :
-                                    ['CB', 'LB', 'RB'].includes(player.position) ? 'bg-blue-500/20 text-blue-400' :
-                                    ['CDM', 'CM', 'CAM'].includes(player.position) ? 'bg-green-500/20 text-green-400' :
+                                    player.position === 'PT' ? 'bg-yellow-500/20 text-yellow-400' :
+                                    player.position === 'DEC' ? 'bg-blue-500/20 text-blue-400' :
+                                    player.position === 'CD' ? 'bg-red-500/20 text-red-400' :
+                                    player.position === 'SD' ? 'bg-red-500/20 text-red-400' :
+                                    ['LI', 'LD'].includes(player.position) ? 'bg-blue-500/20 text-blue-400' :
+                                    ['MCD', 'MC', 'MO'].includes(player.position) ? 'bg-green-500/20 text-green-400' :
                                     'bg-red-500/20 text-red-400'
                                   }`}>
-                                    {player.position}
+                                    {getTranslatedPosition(player.position)}
                                   </span>
                                 </td>
                                 <td className="p-3 text-center text-gray-300">{player.age}</td>

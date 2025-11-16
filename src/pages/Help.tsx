@@ -1,21 +1,14 @@
-import { useState } from 'react';
+﻿import  { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
-import { Link } from 'react-router-dom';
-import { Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, ShoppingBag, Trophy, FileText, Info } from 'lucide-react';
-import { useDataStore } from '../store/dataStore';
+import { HelpCircle, Mail, ChevronDown, ChevronUp, AlertCircle, Calendar, Trophy, Users, FileText, ArrowRight, Info } from 'lucide-react';
 
 const Help = () => {
   const [activeSection, setActiveSection] = useState('account');
   const [openFaq, setOpenFaq] = useState<string | null>('faq-1');
-  const { marketStatus, tournaments } = useDataStore();
   
   const toggleFaq = (id: string) => {
     setOpenFaq(openFaq === id ? null : id);
   };
-
-  // Get system status
-  const activeTournaments = tournaments.filter(t => t.status === 'active').length;
-  const upcomingTournaments = tournaments.filter(t => t.status === 'upcoming').length;
   
   return (
     <div>
@@ -82,21 +75,14 @@ const Help = () => {
                     <span className="text-gray-400">Mercado</span>
                     <span className="flex items-center text-green-500">
                       <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                      {marketStatus ? 'Abierto' : 'Cerrado'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Torneos activos</span>
-                    <span className="flex items-center text-blue-500">
-                      <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-                      {activeTournaments}
+                      Abierto
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Inscripciones</span>
                     <span className="flex items-center text-yellow-500">
                       <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>
-                      {upcomingTournaments > 0 ? `${upcomingTournaments} próximos` : 'Sin torneos próximos'}
+                      En curso
                     </span>
                   </div>
                 </div>
@@ -271,7 +257,7 @@ const Help = () => {
                       {openFaq === 'league-1' && (
                         <div className="p-4 bg-dark">
                           <p className="text-gray-300">
-                            La Liga Master es el modo de juego principal de La Virtual Zone. Es una liga cerrada con hasta 40 clubes ficticios, donde cada equipo es administrado por un usuario con rol de DT (Director Técnico).
+                            La Liga Master es la competición principal de La Virtual Zone. Es una liga cerrada con hasta 40 clubes ficticios, donde cada equipo es administrado por un usuario con rol de DT (Director Técnico).
                           </p>
                           <p className="mt-2 text-gray-300">
                             Características principales:
@@ -342,7 +328,7 @@ const Help = () => {
                             <li>Toda transferencia debe respetar el presupuesto del club.</li>
                           </ul>
                           <p className="mt-2 text-gray-300">
-                            Para acceder al mercado, abre el Tablero de DT y selecciona la pestaña "Mercado".
+                            Para acceder al mercado, ve a la sección "Liga Master" y luego a "Mercado de Fichajes".
                           </p>
                         </div>
                       )}
@@ -363,7 +349,7 @@ const Help = () => {
                             Para hacer una oferta por un jugador:
                           </p>
                           <ol className="mt-2 space-y-2 text-gray-300 list-decimal list-inside">
-                            <li>Abre el Tablero de DT y ve a la pestaña "Mercado".</li>
+                            <li>Accede a la sección "Mercado de Fichajes".</li>
                             <li>Busca el jugador que te interesa usando los filtros disponibles.</li>
                             <li>Haz clic en "Ofertar" junto al jugador.</li>
                             <li>Introduce la cantidad que ofreces (debe estar dentro de tu presupuesto).</li>
@@ -591,26 +577,18 @@ const Help = () => {
                   <div className="bg-dark rounded-lg p-6">
                     <h3 className="font-bold mb-4">Enlaces útiles</h3>
                     <div className="space-y-2">
-                      <Link to="/terms" className="flex items-center text-primary hover:text-primary-light">
+                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
                         <FileText size={16} className="mr-2" />
-                        <span>Términos y Condiciones</span>
-                      </Link>
-                      <Link to="/privacy" className="flex items-center text-primary hover:text-primary-light">
-                        <FileText size={16} className="mr-2" />
-                        <span>Política de Privacidad</span>
-                      </Link>
-                      <Link to="/liga-master" className="flex items-center text-primary hover:text-primary-light">
+                        <span>Reglamento general</span>
+                      </a>
+                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
                         <Trophy size={16} className="mr-2" />
                         <span>Reglamento Liga Master</span>
-                      </Link>
-                      <Link to="/liga-master/calendario" className="flex items-center text-primary hover:text-primary-light">
+                      </a>
+                      <a href="#" className="flex items-center text-primary hover:text-primary-light">
                         <Calendar size={16} className="mr-2" />
                         <span>Calendario de eventos</span>
-                      </Link>
-                      <Link to="/store" className="flex items-center text-primary hover:text-primary-light">
-                        <ShoppingBag size={16} className="mr-2" />
-                        <span>Guía de la tienda</span>
-                      </Link>
+                      </a>
                     </div>
                   </div>
                 </div>
