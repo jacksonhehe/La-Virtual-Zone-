@@ -372,4 +372,5 @@ export interface Comment {
   date: string;
   likes: number;
   replies?: Comment[];
+  likedBy?: string[];
 }

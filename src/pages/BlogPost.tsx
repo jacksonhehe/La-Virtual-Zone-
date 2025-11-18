@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, User, Tag, ChevronLeft, MessageSquare, Share, ThumbsUp, ArrowRight } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { useAuthStore } from '../store/authStore';
-import { getCommentsForPost, addComment, updateCommentLikes, initializeComments } from '../utils/commentService';
+import { getCommentsForPost, addComment, likeComment, addReplyToComment, initializeComments } from '../utils/commentService';
 import { Comment } from '../types';
 
 const BlogPost = () => {
@@ -21,6 +21,10 @@ const BlogPost = () => {
 
   // Comments state
   const [comments, setComments] = useState<Comment[]>([]);
+  const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [replyMessage, setReplyMessage] = useState('');
+  const [isReplySubmitting, setIsReplySubmitting] = useState(false);
 
   // Find post by slug or ID
   const post = posts.find(p => p.slug === postId || p.id === postId);
@@ -96,17 +100,90 @@ const BlogPost = () => {
 
   // Handle like comment
   const handleLikeComment = async (commentId: string) => {
+    if (!user?.id) {
+      alert('Debes iniciar sesión para dar me gusta.');
+      return;
+    }
+
     const comment = comments.find(c => c.id === commentId);
     if (!comment) return;
 
-    const newLikesCount = comment.likes + 1;
+    if (comment.likedBy?.includes(user.id)) {
+      alert('Ya diste me gusta a este comentario.');
+      return;
+    }
+
     try {
-      const updatedComment = await updateCommentLikes(commentId, newLikesCount);
+      const updatedComment = await likeComment(commentId, user.id);
       if (updatedComment) {
         setComments(prev => prev.map(c => c.id === commentId ? updatedComment : c));
       }
     } catch (error) {
       console.error('BlogPost: failed to like comment', error);
+    }
+  };
+
+  const handleReplyClick = (commentId: string) => {
+    if (replyingToCommentId === commentId) {
+      setReplyingToCommentId(null);
+      setReplyText('');
+      setReplyMessage('');
+      return;
+    }
+    setReplyingToCommentId(commentId);
+    setReplyText('');
+    setReplyMessage('');
+  };
+
+  const handleSubmitReply = async (
+    e: React.FormEvent,
+    parentCommentId: string
+  ) => {
+    e.preventDefault();
+    if (!post || !replyText.trim()) {
+      setReplyMessage('Por favor, escribe una respuesta antes de enviar.');
+      return;
+    }
+
+    if (replyText.trim().length < 3) {
+      setReplyMessage('La respuesta debe tener al menos 3 caracteres.');
+      return;
+    }
+
+    setIsReplySubmitting(true);
+    setReplyMessage('');
+
+    try {
+      const authorName =
+        user?.username?.trim() ||
+        user?.email?.split('@')[0] ||
+        'Usuario An��nimo';
+      const avatarUrl = user?.avatar?.trim();
+
+      const updatedComment = await addReplyToComment(
+        parentCommentId,
+        authorName,
+        replyText,
+        { avatarUrl }
+      );
+
+      if (updatedComment) {
+        setComments(prev =>
+          prev.map(comment =>
+            comment.id === updatedComment.id ? updatedComment : comment
+          )
+        );
+        setReplyText('');
+        setReplyingToCommentId(null);
+        setReplyMessage('');
+      } else {
+        setReplyMessage('No se pudo agregar la respuesta. Intenta nuevamente.');
+      }
+    } catch (error) {
+      console.error('BlogPost: Error submitting reply:', error);
+      setReplyMessage('Error al enviar la respuesta. Intenta de nuevo.');
+    } finally {
+      setIsReplySubmitting(false);
     }
   };
   
@@ -286,8 +363,87 @@ const BlogPost = () => {
                             <ThumbsUp size={12} className="mr-1" />
                             {comment.likes > 0 ? `${comment.likes} ${comment.likes === 1 ? 'me gusta' : 'me gusta'}` : 'Me gusta'}
                           </button>
-                          <button className="hover:text-primary transition-colors">Responder</button>
+                          <button
+                            className="hover:text-primary transition-colors"
+                            onClick={() => handleReplyClick(comment.id)}
+                          >
+                            {replyingToCommentId === comment.id ? 'Cancelar' : 'Responder'}
+                          </button>
                         </div>
+                        {replyingToCommentId === comment.id && (
+                          <form
+                            className="mt-3"
+                            onSubmit={(e) => handleSubmitReply(e, comment.id)}
+                          >
+                            {replyMessage && (
+                              <p className="text-xs mb-2 text-red-400">
+                                {replyMessage}
+                              </p>
+                            )}
+                            <textarea
+                              className="input w-full min-h-[80px] mb-2"
+                              placeholder="Escribe tu respuesta aqu��..."
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              disabled={isReplySubmitting}
+                            />
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                type="button"
+                                className="text-sm text-gray-400 hover:text-primary transition-colors"
+                                onClick={() => {
+                                  setReplyingToCommentId(null);
+                                  setReplyText('');
+                                  setReplyMessage('');
+                                }}
+                              >
+                                Cerrar
+                              </button>
+                              <button
+                                type="submit"
+                                className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                                disabled={isReplySubmitting || !replyText.trim()}
+                              >
+                                {isReplySubmitting ? 'Enviando...' : 'Publicar respuesta'}
+                              </button>
+                            </div>
+                          </form>
+                        )}
+                        {comment.replies && comment.replies.length > 0 && (
+                          <div className="mt-4 space-y-4 border-l border-gray-800 pl-4">
+                            {comment.replies.map(reply => (
+                              <div key={reply.id} className="flex">
+                                <div className="w-8 h-8 rounded-full overflow-hidden mr-2 flex-shrink-0">
+                                  <img
+                                    src={reply.authorAvatar}
+                                    alt={reply.author}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="flex-grow">
+                                  <div className="bg-dark rounded-lg p-3">
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className="text-sm font-medium">{reply.author}</span>
+                                      <span className="text-[10px] text-gray-400">
+                                        {new Date(reply.date).toLocaleDateString('es-ES', {
+                                          day: '2-digit',
+                                          month: 'short'
+                                        })}
+                                        {` ${new Date(reply.date).toLocaleTimeString('es-ES', {
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}`}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-gray-300">
+                                      {reply.content}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))

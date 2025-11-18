@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1062 742">
-  <rect width="1062" height="742" fill="#009739"/>
-  <polygon points="0,0 529,371 0,742" fill="#FEDD00"/>
-  <circle cx="531" cy="371" r="177" fill="#002776"/>
-  <circle cx="531" cy="371" r="133" fill="#FFFFFF"/>
-  <path d="M531 238 A133 133 0 0 1 531 504 A133 133 0 0 1 531 238 Z" fill="#009739"/>
-  <path d="M451 371 A80 80 0 0 1 531 291 A80 80 0 0 1 611 371 A80 80 0 0 1 531 451 A80 80 0 0 1 451 371 Z" fill="#FFFFFF"/>
-</svg>

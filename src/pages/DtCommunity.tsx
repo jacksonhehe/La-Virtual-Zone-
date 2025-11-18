@@ -167,33 +167,28 @@ const DtCommunity = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-gradient-to-br from-gray-800/90 via-gray-800/80 to-gray-850/90 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-gray-700/30 mb-8 relative overflow-hidden">
-            {/* Decorative background elements */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 rounded-2xl"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 rounded-full blur-2xl translate-y-12 -translate-x-12"></div>
-
-            <div className="relative z-10 flex items-center justify-between mb-6">
+          <div className="bg-gray-800/50 rounded-lg p-8 border border-gray-700 mb-8">
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-5">
-                <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl border border-primary/20 shadow-lg">
-                  <Crown size={36} className="text-primary drop-shadow-sm" />
+                <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
+                  <Crown size={36} className="text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-2">
+                  <h1 className="text-3xl font-bold text-white mb-2">
                     DT's Oficiales LVZ
                   </h1>
-                  <p className="text-gray-400 text-lg font-medium leading-relaxed">
+                  <p className="text-gray-400 text-base">
                     Comunidad de Directores Técnicos de La Virtual Zone
                   </p>
                 </div>
               </div>
               <Link
                 to="/liga-master"
-                className="bg-gradient-to-r from-secondary/80 to-secondary/70 hover:from-secondary hover:to-secondary/90 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-secondary/40 transform hover:scale-105 flex items-center border border-secondary/30"
+                className="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
               >
                 <ArrowLeft size={18} className="mr-2" />
                 Volver al Dashboard
@@ -202,13 +197,13 @@ const DtCommunity = () => {
 
             {/* Contador dinámico */}
             <div className="relative z-10 grid grid-cols-2 gap-8">
-              <div className="text-center p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/20 backdrop-blur-sm">
+              <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/20">
                 <div className="text-4xl font-bold text-primary mb-1">{filteredDts.length}</div>
                 <div className="text-sm text-gray-400 font-medium">
                   {filteredDts.length === 1 ? 'DT encontrado' : 'DTs encontrados'}
                 </div>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-xl border border-blue-500/20 backdrop-blur-sm">
+              <div className="text-center p-4 bg-blue-500/5 rounded-lg border border-blue-500/20">
                 <div className="text-4xl font-bold text-blue-400 mb-1">
                   {uniquePaises.length}
                 </div>
@@ -218,10 +213,9 @@ const DtCommunity = () => {
           </div>
 
           {/* Controles de filtros */}
-          <div className="bg-gradient-to-br from-gray-800/90 via-gray-800/80 to-gray-850/90 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-gray-700/30 mb-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/3 via-transparent to-secondary/3 rounded-2xl"></div>
+          <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700 mb-8">
 
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Filtros */}
               <div>
                 <label className="block text-sm font-semibold text-gray-200 mb-3 flex items-center">
@@ -231,7 +225,7 @@ const DtCommunity = () => {
                 <select
                   value={selectedClub}
                   onChange={(e) => setSelectedClub(e.target.value)}
-                  className="w-full px-4 py-4 bg-gray-700/60 border border-gray-600/60 rounded-xl text-white focus:border-secondary/60 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all duration-300 hover:border-gray-500/60 appearance-none"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-secondary focus:outline-none"
                 >
                   <option value="">Todos los clubes</option>
                   {clubs.map(club => (
@@ -249,7 +243,7 @@ const DtCommunity = () => {
                 <select
                   value={selectedPais}
                   onChange={(e) => setSelectedPais(e.target.value)}
-                  className="w-full px-4 py-4 bg-gray-700/60 border border-gray-600/60 rounded-xl text-white focus:border-blue-500/60 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 hover:border-gray-500/60 appearance-none"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
                 >
                   <option value="">Todos los países</option>
                   {uniquePaises.map(pais => (
@@ -267,7 +261,7 @@ const DtCommunity = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'name' | 'club' | 'country')}
-                  className="w-full px-4 py-4 bg-gray-700/60 border border-gray-600/60 rounded-xl text-white focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-300 hover:border-gray-500/60 appearance-none"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-primary focus:outline-none"
                 >
                   <option value="name">A-Z (Nombre)</option>
                   <option value="club">Club</option>
@@ -313,7 +307,7 @@ const DtCommunity = () => {
 
           {/* Grid de DTs */}
           {filteredDts.length === 0 ? (
-            <div className="bg-gradient-to-br from-dark-lighter to-dark-lighter/95 rounded-xl p-12 shadow-xl border border-gray-700/50 backdrop-blur-sm text-center">
+            <div className="bg-gray-800/50 rounded-lg p-8 border border-gray-700 text-center">
               <Users size={64} className="text-gray-500 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">No se encontraron DTs</h3>
               <p className="text-gray-400 mb-6">
@@ -334,17 +328,13 @@ const DtCommunity = () => {
                 return (
                   <div
                     key={dt.id}
-                    className="group relative bg-gradient-to-br from-gray-800/90 via-gray-800/80 to-gray-900/90 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-gray-700/40 hover:border-primary/50 transition-all duration-500 hover:scale-[1.03] hover:shadow-primary/30 animate-fade-up overflow-hidden"
+                    className="bg-gray-800/50 rounded-lg p-6 border border-gray-700"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    {/* Decorative background elements */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-secondary/8 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/15 rounded-full blur-3xl -translate-y-12 translate-x-12 group-hover:bg-primary/25 group-hover:scale-150 transition-all duration-700"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 rounded-full blur-2xl translate-y-12 -translate-x-12 group-hover:bg-secondary/20 transition-all duration-700"></div>
                     
                     {/* Badge de verificado */}
                     {dt.verificado && (
-                      <div className="absolute top-4 right-4 z-20 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-sm rounded-full p-2 border border-yellow-500/30 shadow-lg">
+                      <div className="absolute top-4 right-4 bg-yellow-500/10 rounded-full p-2 border border-yellow-500/20">
                         <Crown size={16} className="text-yellow-400" />
                       </div>
                     )}
@@ -352,69 +342,57 @@ const DtCommunity = () => {
                     {/* Avatar con mejor diseño */}
                     <div className="relative mb-6 flex justify-center">
                       <div className="relative">
-                        {/* Anillo decorativo exterior */}
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/40 via-secondary/40 to-primary/40 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-700 animate-spin-slow"></div>
-                        
-                        {/* Borde del avatar */}
-                        <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-primary/40 group-hover:border-primary/70 transition-all duration-500 shadow-2xl group-hover:shadow-primary/50 relative z-10">
-                          <img
-                            src={`/Fotos_DT/${dt.avatar}`}
-                            alt={`${dt.nombre} ${dt.apellido}`}
-                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-115 group-hover:brightness-110"
-                            loading="lazy"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = '/default-player.svg';
-                            }}
-                          />
-                        </div>
-
-                        {/* Halo effect mejorado */}
-                        <div className="absolute inset-0 rounded-full bg-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl -z-10 scale-150"></div>
+                        <img
+                          src={`/Fotos_DT/${dt.avatar}`}
+                          alt={`${dt.nombre} ${dt.apellido}`}
+                          className="w-24 h-24 rounded-full border-2 border-gray-600 object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/default-player.svg';
+                          }}
+                        />
                       </div>
                     </div>
 
                     {/* Info mejorada */}
                     <div className="text-center relative z-10">
                       {/* Nombre */}
-                      <h4 className="font-bold text-white text-xl mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-secondary transition-all duration-500">
+                      <h4 className="font-bold text-white text-lg mb-2">
                         {dt.nombre} {dt.apellido}
                       </h4>
                       
                       {/* Nickname */}
                       {dt.nickname && (
                         <div className="mb-4">
-                          <span className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-primary/20 to-primary/10 rounded-full border border-primary/30 text-primary text-xs font-semibold shadow-md">
+                          <span className="inline-flex items-center px-3 py-1 bg-primary/10 rounded-full border border-primary/20 text-primary text-xs font-medium">
                             @{dt.nickname}
                           </span>
                         </div>
                       )}
 
                       {/* Badge DT */}
-                      <div className="inline-flex items-center px-4 py-1.5 bg-gradient-to-r from-gray-700/60 to-gray-700/40 rounded-full border border-gray-600/40 mb-5 shadow-inner">
+                      <div className="inline-flex items-center px-4 py-1 bg-gray-700/50 rounded-full border border-gray-600 mb-5">
                         <Crown size={14} className="text-primary mr-2" />
                         <span className="text-gray-300 text-xs font-bold tracking-wide">DIRECTOR TÉCNICO</span>
                       </div>
 
                       {/* Club con mejor diseño */}
-                      <div className="flex items-center justify-center mb-4 p-4 bg-gradient-to-br from-gray-700/40 to-gray-700/20 rounded-2xl border border-gray-600/30 group-hover:border-primary/40 group-hover:bg-gradient-to-br group-hover:from-gray-700/60 group-hover:to-gray-700/40 transition-all duration-500 shadow-lg group-hover:shadow-xl">
+                      <div className="flex items-center justify-center mb-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600">
                         <div className="flex items-center space-x-3 w-full">
-                          <div className="relative">
-                            <img
-                              src={clubInfo?.logo || '/default-club.svg'}
-                              alt={clubInfo?.name}
-                              className="w-10 h-10 rounded-xl shadow-lg border-2 border-gray-600/30 group-hover:border-primary/50 transition-all duration-500 group-hover:scale-110"
-                              loading="lazy"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/default-club.svg';
-                              }}
-                            />
-                            <div className="absolute inset-0 rounded-xl bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                          </div>
+                          <img
+                            src={clubInfo?.logo || '/default-club.svg'}
+                            alt={clubInfo?.name}
+                            className="w-10 h-10 rounded-lg border-2 border-gray-600 object-cover"
+                            loading="lazy"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/default-club.svg';
+                            }}
+                          />
                           <Link
                             to={`/liga-master/club/${clubInfo?.name.toLowerCase().replace(/\s+/g, '-')}`}
-                            className="flex-1 font-bold text-primary text-sm group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-secondary transition-all duration-500 truncate hover:underline cursor-pointer"
+                            className="flex-1 font-bold text-primary text-sm hover:text-primary/80 transition-colors truncate"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {clubInfo?.name || 'Sin club'}
@@ -422,43 +400,41 @@ const DtCommunity = () => {
                         </div>
                       </div>
 
-                      {/* País con mejor diseño */}
-                      <div className="flex items-center justify-center p-3.5 bg-gradient-to-br from-gray-700/30 to-gray-700/15 rounded-xl border border-gray-600/20 group-hover:border-gray-500/40 group-hover:bg-gradient-to-br group-hover:from-gray-700/50 group-hover:to-gray-700/30 transition-all duration-500 shadow-md">
-                        <div className="relative">
-                          <img
-                            src={getFlagPath(dt.bandera)}
-                            alt={dt.pais}
-                            className="h-7 w-auto rounded-lg mr-3 shadow-lg border-2 border-gray-600/30 group-hover:border-gray-500/50 transition-all duration-500 group-hover:scale-110"
-                            loading="lazy"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = '/default-club.svg';
-                            }}
-                          />
-                        </div>
-                        <span className="text-gray-300 text-sm font-semibold group-hover:text-white transition-colors duration-300">
+                      {/* País */}
+                      <div className="flex items-center justify-center p-3 bg-gray-700/30 rounded-lg border border-gray-600">
+                        <img
+                          src={getFlagPath(dt.bandera)}
+                          alt={dt.pais}
+                          className="h-6 w-auto rounded mr-3 border border-gray-600"
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/default-club.svg';
+                          }}
+                        />
+                        <span className="text-gray-300 text-sm font-medium">
                           {dt.pais}
                         </span>
                       </div>
                     </div>
 
-                    {/* Acciones contextuales mejoradas */}
-                    <div className="mt-6 opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-y-4 group-hover:translate-y-0 relative z-10">
+                    {/* Acciones */}
+                    <div className="mt-6">
                       <div className="flex justify-center gap-3">
                         <Link
                           to={`/liga-master/club/${clubInfo?.name.toLowerCase().replace(/\s+/g, '-')}/plantilla`}
-                          className="flex-1 bg-gradient-to-r from-primary/25 to-primary/15 hover:from-primary/35 hover:to-primary/25 text-primary px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 border border-primary/30 hover:border-primary/50 shadow-lg hover:shadow-primary/30 flex items-center justify-center group/btn"
+                          className="flex-1 bg-primary/10 hover:bg-primary/20 text-primary px-3 py-2 rounded-lg text-xs font-medium transition-colors border border-primary/20 flex items-center justify-center"
                           title="Ver plantilla"
                         >
-                          <Users size={14} className="mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
+                          <Users size={14} className="mr-2" />
                           Plantilla
                         </Link>
                         <Link
                           to={`/liga-master/club/${clubInfo?.name.toLowerCase().replace(/\s+/g, '-')}/finanzas`}
-                          className="flex-1 bg-gradient-to-r from-secondary/25 to-secondary/15 hover:from-secondary/35 hover:to-secondary/25 text-secondary px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 border border-secondary/30 hover:border-secondary/50 shadow-lg hover:shadow-secondary/30 flex items-center justify-center group/btn"
+                          className="flex-1 bg-secondary/10 hover:bg-secondary/20 text-secondary px-3 py-2 rounded-lg text-xs font-medium transition-colors border border-secondary/20 flex items-center justify-center"
                           title="Ver finanzas"
                         >
-                          <Briefcase size={14} className="mr-2 group-hover/btn:scale-110 transition-transform duration-300" />
+                          <Briefcase size={14} className="mr-2" />
                           Finanzas
                         </Link>
                       </div>
@@ -485,7 +461,7 @@ const DtCommunity = () => {
                         setPerPage(Number(e.target.value));
                         pagination.set(1);
                       }}
-                      className="px-3 py-2 bg-gray-700/60 border border-gray-600/60 rounded-lg text-white text-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:border-primary focus:outline-none"
                     >
                       <option value={12}>12 por página</option>
                       <option value={24}>24 por página</option>
@@ -496,7 +472,7 @@ const DtCommunity = () => {
                     <button
                       onClick={pagination.prev}
                       disabled={pagination.page === 1}
-                      className="px-4 py-2 bg-dark-light border border-gray-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-dark-lighter transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors flex items-center gap-2"
                     >
                       <ChevronLeft size={18} />
                       <span className="hidden sm:inline">Anterior</span>
@@ -535,7 +511,7 @@ const DtCommunity = () => {
                     <button
                       onClick={pagination.next}
                       disabled={pagination.page === pagination.totalPages}
-                      className="px-4 py-2 bg-dark-light border border-gray-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-dark-lighter transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors flex items-center gap-2"
                     >
                       <span className="hidden sm:inline">Siguiente</span>
                       <ChevronRight size={18} />

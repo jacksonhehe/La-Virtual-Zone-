@@ -1,13 +1,20 @@
 import { Comment } from '../types';
 import { config } from '../lib/config';
-import { getSupabaseClient } from '../lib/supabase';
+import { getSupabaseClient, getSupabaseAdminClient } from '../lib/supabase';
 
 const KEY = 'virtual_zone_comments';
 const TABLE_NAME = 'blog_comments';
 
-const safeSupabase = () => {
+const safeSupabase = (requireAdmin = false) => {
   if (!config.useSupabase) return null;
   try {
+    if (requireAdmin) {
+      if (!config.supabase.serviceRoleKey) {
+        console.warn('CommentService: admin operations require VITE_SUPABASE_SERVICE_ROLE_KEY');
+        return null;
+      }
+      return getSupabaseAdminClient();
+    }
     return getSupabaseClient();
   } catch (error) {
     console.warn('CommentService: Supabase unavailable', error);
@@ -23,7 +30,8 @@ const rowToComment = (row: any): Comment => ({
   content: row.content,
   date: row.date,
   likes: Number(row.likes ?? 0),
-  replies: row.replies || []
+  replies: row.replies || [],
+  likedBy: Array.isArray(row.liked_by) ? row.liked_by : []
 });
 
 const commentToRow = (comment: Comment) => ({
@@ -34,7 +42,8 @@ const commentToRow = (comment: Comment) => ({
   content: comment.content,
   date: comment.date,
   likes: comment.likes,
-  replies: comment.replies || []
+  replies: comment.replies || [],
+  liked_by: comment.likedBy || []
 });
 
 const loadLocalComments = (): Comment[] => {
@@ -65,7 +74,8 @@ const sampleComments = (): Comment[] => [
     authorAvatar: 'https://ui-avatars.com/api/?name=pixelmanager&background=10b981&color=fff&size=128',
     content: 'Gran artículo, muy buen análisis. Espero ver más contenido como este.',
     date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    likes: 3
+    likes: 3,
+    likedBy: []
   },
   {
     id: 'sample-comment-2',
@@ -74,7 +84,8 @@ const sampleComments = (): Comment[] => [
     authorAvatar: 'https://ui-avatars.com/api/?name=neonmanager&background=c026d3&color=fff&size=128',
     content: 'Interesante perspectiva, aunque no estoy de acuerdo con algunos puntos. En mi opinión, la presión alta puede ser riesgosa si no se ejecuta correctamente.',
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    likes: 1
+    likes: 1,
+    likedBy: []
   },
   {
     id: 'sample-comment-3',
@@ -83,7 +94,8 @@ const sampleComments = (): Comment[] => [
     authorAvatar: 'https://ui-avatars.com/api/?name=tacticmaster&background=059669&color=fff&size=128',
     content: 'Excelente análisis táctico. La presión alta es fundamental en el fútbol moderno. ¿Podrías hacer un artículo sobre transiciones defensivas?',
     date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    likes: 5
+    likes: 5,
+    likedBy: []
   },
   {
     id: 'sample-comment-4',
@@ -92,7 +104,8 @@ const sampleComments = (): Comment[] => [
     authorAvatar: 'https://ui-avatars.com/api/?name=futbolfan&background=dc2626&color=fff&size=128',
     content: 'Totalmente de acuerdo. En La Virtual Zone hemos visto cómo equipos con buena presión alta dominan los partidos.',
     date: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-    likes: 2
+    likes: 2,
+    likedBy: []
   }
 ];
 
@@ -104,10 +117,12 @@ const insertCommentSupabase = async (comment: Comment): Promise<Comment | null> 
     .from(TABLE_NAME)
     .insert(commentToRow(comment))
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
-    console.error('CommentService: insert error', error);
+    if (error.code !== 'PGRST116') {
+      console.error('CommentService: insert error', error);
+    }
     return null;
   }
 
@@ -120,13 +135,13 @@ const updateCommentSupabase = async (comment: Comment): Promise<Comment | null> 
 
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .update(commentToRow(comment))
-    .eq('id', comment.id)
-    .select()
-    .single();
+    .upsert(commentToRow(comment), { onConflict: 'id', ignoreDuplicates: false, returning: 'representation' })
+    .maybeSingle();
 
   if (error) {
-    console.error('CommentService: update error', error);
+    if (error.code !== 'PGRST116') {
+      console.error('CommentService: update error', error);
+    }
     return null;
   }
 
@@ -134,7 +149,7 @@ const updateCommentSupabase = async (comment: Comment): Promise<Comment | null> 
 };
 
 const deleteCommentSupabase = async (commentId: string): Promise<void> => {
-  const supabase = safeSupabase();
+  const supabase = safeSupabase(true);
   if (!supabase) return;
 
   const { error } = await supabase
@@ -212,7 +227,8 @@ export const addComment = async (
     content: content.trim(),
     date: now.toISOString(),
     likes: 0,
-    replies: []
+    replies: [],
+    likedBy: []
   };
 
   const supabaseResult = await insertCommentSupabase(comment);
@@ -222,17 +238,28 @@ export const addComment = async (
   return savedComment;
 };
 
-export const updateCommentLikes = async (commentId: string, likes: number): Promise<Comment | null> => {
+export const likeComment = async (commentId: string, userId: string): Promise<Comment | null> => {
   const comments = await listAllComments();
   const index = comments.findIndex(c => c.id === commentId);
   if (index === -1) return null;
 
-  const comment = { ...comments[index], likes };
-  const supabaseResult = await updateCommentSupabase(comment);
-  const updated = supabaseResult || comment;
-  comments[index] = updated;
+  const comment = comments[index];
+  const likedBy = Array.isArray(comment.likedBy) ? comment.likedBy : [];
+  if (likedBy.includes(userId)) {
+    return comment;
+  }
+
+  const updatedComment: Comment = {
+    ...comment,
+    likes: comment.likes + 1,
+    likedBy: [...likedBy, userId]
+  };
+
+  const supabaseResult = await updateCommentSupabase(updatedComment);
+  const saved = supabaseResult || updatedComment;
+  comments[index] = saved;
   persistLocalComments(comments);
-  return updated;
+  return saved;
 };
 
 export const deleteComment = async (commentId: string): Promise<void> => {
@@ -240,6 +267,51 @@ export const deleteComment = async (commentId: string): Promise<void> => {
   const filtered = comments.filter(c => c.id !== commentId);
   persistLocalComments(filtered);
   await deleteCommentSupabase(commentId);
+};
+
+interface AddReplyOptions {
+  avatarUrl?: string;
+}
+
+export const addReplyToComment = async (
+  commentId: string,
+  author: string,
+  content: string,
+  options: AddReplyOptions = {}
+): Promise<Comment | null> => {
+  const comments = await listAllComments();
+  const parentIndex = comments.findIndex(c => c.id === commentId);
+  if (parentIndex === -1) return null;
+
+  const parent = comments[parentIndex];
+  const now = new Date();
+  const trimmedAuthor = author?.trim() || 'Usuario An��nimo';
+  const avatarUrl = options.avatarUrl && options.avatarUrl.trim()
+    ? options.avatarUrl.trim()
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(trimmedAuthor)}&background=111827&color=fff&size=128`;
+
+  const reply: Comment = {
+    id: `reply-${now.getTime()}-${Math.random().toString(36).slice(2, 9)}`,
+    postId: parent.postId,
+    author: trimmedAuthor,
+    authorAvatar: avatarUrl,
+    content: content.trim(),
+    date: now.toISOString(),
+    likes: 0,
+    replies: [],
+    likedBy: []
+  };
+
+  const updatedParent: Comment = {
+    ...parent,
+    replies: [...(parent.replies || []), reply]
+  };
+
+  const supabaseResult = await updateCommentSupabase(updatedParent);
+  const savedParent = supabaseResult || updatedParent;
+  comments[parentIndex] = savedParent;
+  persistLocalComments(comments);
+  return savedParent;
 };
 
 export const listAllComments = async (): Promise<Comment[]> => {
@@ -259,7 +331,7 @@ export const listAllComments = async (): Promise<Comment[]> => {
 
 export const clearAllComments = async (): Promise<void> => {
   localStorage.removeItem(KEY);
-  const supabase = safeSupabase();
+  const supabase = safeSupabase(true);
   if (!supabase) return;
   const { error } = await supabase
     .from(TABLE_NAME)

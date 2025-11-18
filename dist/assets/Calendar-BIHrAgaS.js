@@ -1,1 +1,0 @@
-import{j as e}from"./index-DTVNIeXw.js";const a=()=>e.jsxs("div",{children:[e.jsx("h2",{className:"text-2xl font-bold mb-6",children:"Calendario"}),e.jsx("div",{className:"bg-dark-light rounded-lg p-6 border border-gray-800 text-gray-300",children:"Próximamente: vista de calendario para fixtures, eventos y fechas clave."})]});export{a as default};

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS blog_comments (
   content TEXT NOT NULL CHECK (char_length(content) BETWEEN 5 AND 2000),
   date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   likes INTEGER NOT NULL DEFAULT 0 CHECK (likes >= 0),
+  liked_by JSONB NOT NULL DEFAULT '[]'::jsonb,
   replies JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -51,6 +52,12 @@ CREATE POLICY "Admins can update blog comments"
   ON blog_comments FOR UPDATE
   USING (auth.role() = 'service_role')
   WITH CHECK (auth.role() = 'service_role');
+
+-- Actualizar likes/respuestas desde frontend p��blico (anon/authenticated)
+CREATE POLICY "Public interactions on blog comments"
+  ON blog_comments FOR UPDATE
+  USING (auth.role() IN ('anon', 'authenticated'))
+  WITH CHECK (auth.role() IN ('anon', 'authenticated'));
 
 -- Eliminaciones igual de restringidas.
 CREATE POLICY "Admins can delete blog comments"
