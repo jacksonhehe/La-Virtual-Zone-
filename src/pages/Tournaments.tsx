@@ -17,10 +17,10 @@ const Tournaments = () => {
   
   return (
     <div>
-      <PageHeader 
-        title="Torneos" 
+      <PageHeader
+        title="Torneos"
         subtitle="Participa en torneos abiertos, sigue los torneos en curso y revisa los resultados de torneos anteriores."
-        image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"
+        image="./Torneos-background.jpg"
       />
       
       <div className="container mx-auto px-4 py-8">

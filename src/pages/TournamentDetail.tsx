@@ -1,7 +1,7 @@
 ﻿import  { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
-import { Trophy, Calendar, Users, ChevronLeft, FileText, Image, ArrowRight, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { Trophy, Calendar, Users, ChevronLeft, FileText, Image, ArrowRight, CheckCircle, AlertCircle, Loader, Star } from 'lucide-react';
 import { useDataStore } from '../store/dataStore';
 import { useAuthStore } from '../store/authStore';
 import { formatDate } from '../utils/format';

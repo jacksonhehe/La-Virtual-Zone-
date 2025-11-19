@@ -81,7 +81,7 @@ const HeroSection = () => {
               </div>
               <div>
                 <h3 className="font-bold">Comunidad Activa</h3>
-                <p className="text-gray-400">Más de 10 clubes por temporada</p>
+                <p className="text-gray-400">Más de 40 clubes por temporada</p>
               </div>
             </div>
           </div>

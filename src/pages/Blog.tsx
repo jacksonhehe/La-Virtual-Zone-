@@ -38,10 +38,10 @@ const Blog = () => {
   
   return (
     <div>
-      <PageHeader 
-        title="Blog" 
+      <PageHeader
+        title="Blog"
         subtitle="Noticias, análisis, entrevistas y todo el contenido editorial sobre La Virtual Zone."
-        image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwZ2FtaW5nJTIwZGFyayUyMHRoZW1lfGVufDB8fHx8MTc0NzA3MTE4MHww&ixlib=rb-4.1.0"
+        image="./Blog-background.jpg"
       />
       
       <div className="container mx-auto px-4 py-8">
