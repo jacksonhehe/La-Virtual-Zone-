@@ -1,7 +1,6 @@
-import  { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-
-    import Layout from './components/layout/Layout';
+import AppLayout from './components/layout/AppLayout';
 import LoadingScreen from './components/common/LoadingScreen';
 import AuthErrorBanner from './components/auth/AuthErrorBanner';
 import AccountStatusRedirect from './components/auth/AccountStatusRedirect';
@@ -71,7 +70,7 @@ function App() {
       <AuthErrorBanner />
       <AccountStatusRedirect />
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="cuenta-suspendida" element={<AccountStatus />} />
