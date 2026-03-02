@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import AppLayout from './components/layout/AppLayout';
+import AppLayout from './components/Layout/AppLayout';
 import LoadingScreen from './components/common/LoadingScreen';
 import AuthErrorBanner from './components/auth/AuthErrorBanner';
 import AccountStatusRedirect from './components/auth/AccountStatusRedirect';
