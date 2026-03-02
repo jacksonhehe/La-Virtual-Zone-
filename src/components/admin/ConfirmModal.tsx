@@ -7,6 +7,8 @@ interface ConfirmModalProps {
   description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  loadingLabel?: string;
+  isLoading?: boolean;
   tone?: 'danger' | 'primary';
   onConfirm: () => void;
   onCancel: () => void;
@@ -18,6 +20,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   description,
   confirmLabel = 'Confirmar',
   cancelLabel = 'Cancelar',
+  loadingLabel,
+  isLoading = false,
   tone = 'primary',
   onConfirm,
   onCancel
@@ -30,13 +34,14 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70" onClick={onCancel}></div>
+      <div className="absolute inset-0 bg-black/70" onClick={isLoading ? undefined : onCancel}></div>
 
       <div className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
         <button
           onClick={onCancel}
           className="absolute top-4 right-4 text-gray-400 hover:text-white"
           aria-label="Cerrar"
+          disabled={isLoading}
         >
           <X size={20} />
         </button>
@@ -52,9 +57,11 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </div>
 
         <div className="flex justify-end space-x-2 pt-2">
-          <button className="btn-outline" onClick={onCancel}>{cancelLabel}</button>
-          <button className={confirmBtnClass} onClick={onConfirm}>
-            {confirmLabel}
+          <button className="btn-outline disabled:opacity-60 disabled:cursor-not-allowed" onClick={onCancel} disabled={isLoading}>
+            {cancelLabel}
+          </button>
+          <button className={`${confirmBtnClass} disabled:opacity-70 disabled:cursor-not-allowed`} onClick={onConfirm} disabled={isLoading}>
+            {isLoading ? (loadingLabel ?? confirmLabel) : confirmLabel}
           </button>
         </div>
       </div>
@@ -63,4 +70,5 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 };
 
 export default ConfirmModal;
+
 

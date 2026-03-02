@@ -4,7 +4,6 @@ import { createMarketSlice, type MarketSlice } from './slices/marketSlice';
 import { createMediaSlice, type MediaSlice } from './slices/mediaSlice';
 import { createStandingsSlice, type StandingsSlice } from './slices/standingsSlice';
 import { createFaqsSlice, type FaqsSlice } from './slices/faqsSlice';
-// Tienda eliminada: slice de tienda removido
 type DataState = BaseSlice & MarketSlice & MediaSlice & StandingsSlice & FaqsSlice;
 
 export const useDataStore = create<DataState>()((...a) => ({
@@ -26,6 +25,13 @@ export const useDataStore = create<DataState>()((...a) => ({
     // Make store available globally for debugging functions
     if (typeof window !== 'undefined') {
       (window as any).dataStore = store;
+
+      // Agregar función de debug para recalcular standings manualmente
+      (window as any).recalculateStandings = async () => {
+        const { recalculateAndUpdateStandings } = await import('../utils/standingsHelpers');
+        await recalculateAndUpdateStandings('tournament1');
+        console.log('Standings recalculated manually');
+      };
     }
   } catch (error) {
     console.error('Error initializing data store:', error);

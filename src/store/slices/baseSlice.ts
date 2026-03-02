@@ -1,4 +1,4 @@
-﻿import type { StateCreator } from 'zustand';
+import type { StateCreator } from 'zustand';
 import { tournaments, clubs as seedClubs, players as seedPlayers } from '../../data/mockData';
 import { listPlayers, regeneratePlayers as regeneratePlayersFromService, clearAllCache as clearAllCacheFromService, savePlayers, initializePlayers } from '../../utils/playerService';
 import { listPosts, initializePosts, clearPosts } from '../../utils/postService';
@@ -106,16 +106,48 @@ export const createBaseSlice: StateCreator<BaseSlice, [], [], BaseSlice> = (set,
 
       console.log(`dataStore - Loaded ${clubsFromStorage.length} clubs, ${playersFromStorage.length} players, ${tournamentsFromStorage.length} tournaments and ${postsFromSupabase.length} posts`);
 
+      const finalClubs = clubsFromStorage.length > 0 ? clubsFromStorage : seedClubs as Club[];
+      const finalPlayers = playersFromStorage.length > 0 ? playersFromStorage : seedPlayers as Player[];
+      const finalTournaments = tournamentsFromStorage; // Always use what's loaded from IndexedDB (includes seed data if empty)
+
       // Always update state with loaded data or fallbacks
       set({
-        clubs: clubsFromStorage.length > 0 ? clubsFromStorage : seedClubs as Club[],
-        players: playersFromStorage.length > 0 ? playersFromStorage : seedPlayers as Player[],
-        tournaments: tournamentsFromStorage, // Always use what's loaded from IndexedDB (includes seed data if empty)
+        clubs: finalClubs,
+        players: finalPlayers,
+        tournaments: finalTournaments,
         posts: postsFromSupabase.length > 0 ? postsFromSupabase : seedPosts,
         isDataLoaded: true
       });
 
-      console.log(`dataStore - State updated. Tournaments: ${tournamentsFromStorage.length}, Posts: ${postsFromSupabase.length}`);
+      console.log(`dataStore - State updated. Tournaments: ${finalTournaments.length}, Posts: ${postsFromSupabase.length}`);
+
+      // After data is loaded, recalculate standings (Liga Master auto-detect)
+      try {
+        console.log('dataStore - Recalculating standings from existing matches (Liga Master)...');
+        const { recalculateAndUpdateStandings } = await import('../../utils/standingsHelpers');
+        // Detectar automáticamente el torneo de Liga Master y recalcular
+        const normalize = (value: string) => String(value || '').trim().toLowerCase();
+        const ligaMasterTournament =
+          finalTournaments.find((t) => normalize(t.name).includes('liga master')) ||
+          finalTournaments.find((t) => t.id === 'tournament1') ||
+          finalTournaments.find((t) => t.type === 'league');
+        await recalculateAndUpdateStandings(ligaMasterTournament?.id);
+        console.log('dataStore - Standings recalculated successfully');
+      } catch (standingsError) {
+        console.error('dataStore - Error recalculating standings:', standingsError);
+        // Don't fail initialization if standings calculation fails
+      }
+
+      // Keep player goals and assists in sync with match scorers.
+      try {
+        console.log('dataStore - Recalculating player goals/assists from matches...');
+        const { recalculateAndUpdatePlayerGoals } = await import('../../utils/playerStatsHelpers');
+        await recalculateAndUpdatePlayerGoals();
+        console.log('dataStore - Player goals/assists recalculated successfully');
+      } catch (playerGoalsError) {
+        console.error('dataStore - Error recalculating player goals/assists:', playerGoalsError);
+      }
+
     } catch (error) {
       console.error('dataStore - Error initializing data from service:', error);
       // Fallback to seed data
@@ -308,12 +340,15 @@ export const createBaseSlice: StateCreator<BaseSlice, [], [], BaseSlice> = (set,
     const currentTournaments = get().tournaments; // Use current state, not imported seed data
 
     // Update Liga Master teams to match current clubs (only if it exists in current tournaments)
+    // NO generar partidos automáticamente - deben crearse manualmente desde el panel admin
     const updatedTournaments = currentTournaments.map(tournament => {
       if (tournament.id === 'tournament1') { // Liga Master
         return {
           ...tournament,
           teams: currentClubNames,
-          matches: generateMatches(currentClubNames, tournament.id, false)
+          // No generar matches automáticamente - los partidos deben crearse desde el panel admin
+          // y se guardan en la tabla independiente de partidos, no en tournament.matches
+          matches: [] // Mantener array vacío - los partidos se cargan desde la tabla independiente
         };
       }
       return tournament;

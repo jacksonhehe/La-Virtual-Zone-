@@ -1,6 +1,7 @@
 import  { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout/Layout';
+
+    import Layout from './components/layout/Layout';
 import LoadingScreen from './components/common/LoadingScreen';
 import AuthErrorBanner from './components/auth/AuthErrorBanner';
 import AccountStatusRedirect from './components/auth/AccountStatusRedirect';
@@ -8,18 +9,19 @@ import { useAuthStore } from './store/authStore';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const RecoverPassword = lazy(() => import('./pages/RecoverPassword'));
+const Login = lazy(() => import('./pages/auth/Login'));
+const Register = lazy(() => import('./pages/auth/Register'));
+const RecoverPassword = lazy(() => import('./pages/auth/RecoverPassword'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
 const UserPanel = lazy(() => import('./pages/UserPanel'));
-const LigaMaster = lazy(() => import('./pages/LigaMaster'));
-const Market = lazy(() => import('./pages/Market'));
-const Tournaments = lazy(() => import('./pages/Tournaments'));
-const TournamentDetail = lazy(() => import('./pages/TournamentDetail'));
-const Blog = lazy(() => import('./pages/Blog'));
-const BlogPost = lazy(() => import('./pages/BlogPost'));
+const LigaMaster = lazy(() => import('./pages/liga-master/LigaMaster'));
+const Market = lazy(() => import('./pages/liga-master/Market'));
+const Tournaments = lazy(() => import('./pages/tournaments/Tournaments'));
+const TournamentDetail = lazy(() => import('./pages/tournaments/TournamentDetail'));
+const Blog = lazy(() => import('./pages/blog/Blog'));
+const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
 const Gallery = lazy(() => import('./pages/Gallery'));
-const Help = lazy(() => import('./pages/Help'));
+const Help = lazy(() => import('./pages/legal/Help'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const AdminTournaments = lazy(() => import('./pages/admin/Tournaments'));
@@ -32,23 +34,25 @@ const AdminMarket = lazy(() => import('./pages/admin/Market'));
 const AdminStats = lazy(() => import('./pages/admin/Stats'));
 const AdminCalendar = lazy(() => import('./pages/admin/Calendar'));
 // TODO: add other admin sections lazily as they are split
-const UserProfile = lazy(() => import('./pages/UserProfile'));
+const UserProfile = lazy(() => import('./pages/users/UserProfile'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const ClubProfile = lazy(() => import('./pages/ClubProfile'));
-const ClubSquad = lazy(() => import('./pages/ClubSquad'));
-const ClubFinances = lazy(() => import('./pages/ClubFinances'));
-const ClubPalmares = lazy(() => import('./pages/ClubPalmares'));
-const HallOfFame = lazy(() => import('./pages/HallOfFame'));
-const Rankings = lazy(() => import('./pages/Rankings'));
-const Fixtures = lazy(() => import('./pages/Fixtures'));
-const MarketTables = lazy(() => import('./pages/MarketTables'));
-const Zones = lazy(() => import('./pages/Zones'));
-const Users = lazy(() => import('./pages/Users'));
-const DtCommunity = lazy(() => import('./pages/DtCommunity'));
-const Terms = lazy(() => import('./pages/Terms'));
-const Privacy = lazy(() => import('./pages/Privacy'));
-const AccountStatus = lazy(() => import('./pages/AccountStatus'));
-const Reglamento = lazy(() => import('./pages/Reglamento'));
+const ClubProfile = lazy(() => import('./pages/liga-master/ClubProfile'));
+const ClubSquad = lazy(() => import('./pages/liga-master/ClubSquad'));
+const ClubFinances = lazy(() => import('./pages/liga-master/ClubFinances'));
+const ClubPalmares = lazy(() => import('./pages/liga-master/ClubPalmares'));
+const HallOfFame = lazy(() => import('./pages/liga-master/HallOfFame'));
+const Rankings = lazy(() => import('./pages/liga-master/Rankings'));
+const Fixtures = lazy(() => import('./pages/liga-master/Fixtures'));
+const MarketTables = lazy(() => import('./pages/liga-master/MarketTables'));
+const Zones = lazy(() => import('./pages/liga-master/Zones'));
+const Users = lazy(() => import('./pages/users/Users'));
+const DtCommunity = lazy(() => import('./pages/liga-master/DtCommunity'));
+const Prode = lazy(() => import('./pages/liga-master/Prode'));
+const CopaLVZ = lazy(() => import('./pages/liga-master/CopaLVZ'));
+const Terms = lazy(() => import('./pages/legal/Terms'));
+const Privacy = lazy(() => import('./pages/legal/Privacy'));
+const AccountStatus = lazy(() => import('./pages/auth/AccountStatus'));
+const Reglamento = lazy(() => import('./pages/liga-master/Reglamento'));
 
 function App() {
   const { isLoading, initializeAuth } = useAuthStore();
@@ -73,6 +77,7 @@ function App() {
           <Route path="cuenta-suspendida" element={<AccountStatus />} />
           <Route path="registro" element={<Register />} />
           <Route path="recuperar-password" element={<RecoverPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
           <Route path="usuario" element={<UserPanel />} />
           
           {/* Liga Master routes */}
@@ -90,6 +95,8 @@ function App() {
             <Route path="fixture" element={<Fixtures />} />
             <Route path="zonas" element={<Zones />} />
             <Route path="comunidad-dt" element={<DtCommunity />} />
+            <Route path="prode" element={<Prode />} />
+            <Route path="copa-lvz" element={<CopaLVZ />} />
           </Route>
           
           {/* Tournaments routes */}

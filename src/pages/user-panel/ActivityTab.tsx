@@ -1,5 +1,5 @@
 import { Activity, Award, ShoppingCart, Trophy, Users } from 'lucide-react';
-import { panelSurfaceClass } from './helpers';
+import { panelItemClass, panelSurfaceClass } from './helpers';
 
 const ActivityTab = () => (
   <div className="space-y-6">
@@ -13,7 +13,7 @@ const ActivityTab = () => (
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Trophy size={20} className="text-green-400" />
             <div className="text-right">
@@ -23,7 +23,7 @@ const ActivityTab = () => (
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Award size={20} className="text-blue-400" />
             <div className="text-right">
@@ -33,7 +33,7 @@ const ActivityTab = () => (
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <ShoppingCart size={20} className="text-purple-400" />
             <div className="text-right">
@@ -54,7 +54,7 @@ const ActivityTab = () => (
         </div>
       </div>
       <div className="space-y-3">
-        <div className="flex items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+        <div className={`${panelItemClass} flex items-center`}>
           <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-4 border border-blue-500/30">
             <Users size={16} className="text-blue-400" />
           </div>

@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
-import { Edit, Plus, Trash, Calendar, Filter, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Edit, Plus, Trash, Calendar, Filter, Search, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import { formatDate } from '../../utils/format';
 import { listTournaments, updateMatch, deleteMatch, deleteAllMatches } from '../../utils/tournamentService';
 import { listMatches } from '../../utils/matchService';
@@ -7,108 +7,186 @@ import { Tournament, Match } from '../../types';
 import NewMatchModal from '../../components/admin/NewMatchModal';
 import EditMatchModal from '../../components/admin/EditMatchModal';
 import ConfirmModal from '../../components/admin/ConfirmModal';
+import AdminPageHeader from '../../components/admin/AdminPageHeader';
+import AdminStatusBadge from '../../components/admin/AdminStatusBadge';
 import { usePagination } from '../../hooks/usePagination';
+import { getCupStageLabel, getCupStageShortLabel, getCupMatchPlaceholders, isCupTournament } from '../../utils/matchStages';
+import MatchScore from '../../components/common/MatchScore';
+
+type ToastType = 'success' | 'error' | 'info';
+
+type MatchWithTournament = Match & {
+  tournamentName: string;
+  tournamentLogo: string;
+  tournamentType?: Tournament['type'];
+};
+
+const isCupPlaceholderLabel = (value?: string) => {
+  const normalized = String(value || '').trim().toLowerCase();
+  return normalized.startsWith('ganador ') || normalized.startsWith('perdedor ');
+};
+
+const Toast = ({ type, message, onClose }: { type: ToastType; message: string; onClose: () => void }) => {
+  const tones: Record<ToastType, string> = {
+    success: 'border-emerald-400/70 bg-emerald-950/95 text-emerald-100',
+    error: 'border-red-400/70 bg-red-950/95 text-red-100',
+    info: 'border-cyan-400/70 bg-cyan-950/95 text-cyan-100'
+  };
+  const labels: Record<ToastType, string> = { success: 'Listo', error: 'Error', info: 'Info' };
+
+  return (
+    <div className={`fixed top-4 right-4 z-50 max-w-sm border rounded-lg px-4 py-3 shadow-2xl backdrop-blur-sm ${tones[type]}`}>
+      <div className="text-xs uppercase tracking-wide mb-1 opacity-80">{labels[type]}</div>
+      <div className="text-sm whitespace-pre-line">{message}</div>
+      <button className="mt-2 text-xs text-gray-300 hover:text-white" onClick={onClose}>
+        Cerrar
+      </button>
+    </div>
+  );
+};
 
 const AdminMatches = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [allMatches, setAllMatches] = useState<(Match & { tournamentName: string; tournamentLogo: string })[]>([]);
-  const [filteredMatches, setFilteredMatches] = useState<(Match & { tournamentName: string; tournamentLogo: string })[]>([]);
+  const [allMatches, setAllMatches] = useState<MatchWithTournament[]>([]);
   const [showNewMatch, setShowNewMatch] = useState(false);
-  const [editingMatch, setEditingMatch] = useState<(Match & { tournamentName: string; tournamentLogo: string }) | null>(null);
-  const [deleteMatchTarget, setDeleteMatchTarget] = useState<(Match & { tournamentName: string; tournamentLogo: string }) | null>(null);
+  const [editingMatch, setEditingMatch] = useState<MatchWithTournament | null>(null);
+  const [deleteMatchTarget, setDeleteMatchTarget] = useState<MatchWithTournament | null>(null);
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [selectedTournament, setSelectedTournament] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [perPage, setPerPage] = useState(50);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeletingMatch, setIsDeletingMatch] = useState(false);
+  const [isDeletingAllMatches, setIsDeletingAllMatches] = useState(false);
+  const [toast, setToast] = useState<null | { type: ToastType; text: string }>(null);
 
-  // Cargar torneos y partidos
   useEffect(() => {
-    let isMounted = true;
-    
-    const loadData = async () => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const attachTournamentInfo = (loadedMatches: Match[], loadedTournaments: Tournament[]): MatchWithTournament[] => {
+    const matchesWithTournamentInfo: MatchWithTournament[] = loadedMatches.map(match => {
+      const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
+      return {
+        ...match,
+        tournamentName: tournament?.name || 'Torneo no encontrado',
+        tournamentLogo: tournament?.logo || '',
+        tournamentType: tournament?.type
+      };
+    });
+
+    return matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  };
+
+  const reloadMatchesData = async () => {
+    const [loadedTournaments, loadedMatches] = await Promise.all([listTournaments(), listMatches()]);
+    setTournaments(loadedTournaments);
+    setAllMatches(attachTournamentInfo(loadedMatches, loadedTournaments));
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const load = async () => {
+      setIsLoading(true);
       try {
-        // Cargar torneos y partidos en paralelo
-        const [loadedTournaments, loadedMatches] = await Promise.all([
-          listTournaments(),
-          listMatches() // Usar la tabla independiente de partidos (sincronización bidireccional)
-        ]);
-        
-        if (!isMounted) return;
-        
+        const [loadedTournaments, loadedMatches] = await Promise.all([listTournaments(), listMatches()]);
+        if (!mounted) return;
         setTournaments(loadedTournaments);
-
-        // Combinar partidos con información de torneos
-        const matchesWithTournamentInfo: (Match & { tournamentName: string; tournamentLogo: string })[] = [];
-        loadedMatches.forEach(match => {
-          const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
-          if (tournament) {
-            matchesWithTournamentInfo.push({
-              ...match,
-              tournamentName: tournament.name,
-              tournamentLogo: tournament.logo
-            });
-          } else {
-            // Si el torneo no se encuentra, aún mostrar el partido
-            matchesWithTournamentInfo.push({
-              ...match,
-              tournamentName: 'Torneo no encontrado',
-              tournamentLogo: ''
-            });
-          }
-        });
-
-        // Ordenar por fecha (más recientes primero)
-        matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        setAllMatches(matchesWithTournamentInfo);
-        setFilteredMatches(matchesWithTournamentInfo);
+        setAllMatches(attachTournamentInfo(loadedMatches, loadedTournaments));
       } catch (error) {
-        console.error('Error cargando partidos:', error);
+        console.error('Error loading matches:', error);
+        if (mounted) {
+          setToast({ type: 'error', text: 'No se pudieron cargar los partidos.' });
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    loadData();
-    
+    load();
     return () => {
-      isMounted = false;
+      mounted = false;
     };
-  }, []); // Solo ejecutar una vez al montar el componente
+  }, []);
 
-  // Aplicar filtros
-  useEffect(() => {
+  const selectedTournamentIsCup = useMemo(
+    () => (selectedTournament ? tournaments.find(t => t.id === selectedTournament)?.type === 'cup' : false),
+    [selectedTournament, tournaments]
+  );
+
+  const filteredMatches = useMemo(() => {
     let filtered = [...allMatches];
 
-    // Filtro por torneo
     if (selectedTournament) {
       filtered = filtered.filter(m => m.tournamentId === selectedTournament);
     }
 
-    // Filtro por estado
     if (selectedStatus) {
       filtered = filtered.filter(m => m.status === selectedStatus);
     }
 
-    // Filtro por búsqueda (equipos o torneo)
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(m =>
-        m.homeTeam.toLowerCase().includes(query) ||
-        m.awayTeam.toLowerCase().includes(query) ||
-        m.tournamentName.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        m =>
+          m.homeTeam.toLowerCase().includes(query) ||
+          m.awayTeam.toLowerCase().includes(query) ||
+          m.tournamentName.toLowerCase().includes(query)
       );
     }
 
-    setFilteredMatches(filtered);
-  }, [allMatches, selectedTournament, selectedStatus, searchQuery]);
+    if (selectedTournamentIsCup) {
+      filtered = [...filtered].sort((a, b) => {
+        const r = (a.round ?? 0) - (b.round ?? 0);
+        if (r !== 0) return r;
+        const slotA = a.bracketSlot ?? 0;
+        const slotB = b.bracketSlot ?? 0;
+        return slotA - slotB;
+      });
+    }
 
-  // Paginación
+    return filtered;
+  }, [allMatches, selectedTournament, selectedStatus, searchQuery, selectedTournamentIsCup, tournaments]);
+
   const pagination = usePagination({
     items: filteredMatches,
-    perPage: perPage,
+    perPage,
     initialPage: 1
   });
 
-  // Resetear paginación cuando cambian los filtros
+  /** Para partidos de copa sin bracketSlot (creados antes): inferir slot por orden dentro de la fase. */
+  const cupSlotByMatchId = useMemo(() => {
+    const map = new Map<string, number>();
+    const byTournamentRound = new Map<string, MatchWithTournament[]>();
+    for (const m of filteredMatches) {
+      if (!isCupTournament(m.tournamentType, m.tournamentName)) continue;
+      const key = `${m.tournamentId}-${m.round ?? 0}`;
+      if (!byTournamentRound.has(key)) byTournamentRound.set(key, []);
+      byTournamentRound.get(key)!.push(m);
+    }
+    byTournamentRound.forEach((matches) => {
+      const sorted = [...matches].sort((a, b) => {
+        const sa = a.bracketSlot ?? 999;
+        const sb = b.bracketSlot ?? 999;
+        if (sa !== sb) return sa - sb;
+        return a.id.localeCompare(b.id);
+      });
+      sorted.forEach((m, idx) => {
+        if (m.bracketSlot === undefined) map.set(m.id, idx);
+      });
+    });
+    return map;
+  }, [filteredMatches]);
+
+  const getEffectiveCupSlot = (match: MatchWithTournament) =>
+    match.bracketSlot ?? cupSlotByMatchId.get(match.id) ?? 0;
+
   const lastFilterKey = useRef(`${selectedTournament}-${selectedStatus}-${searchQuery}`);
   useEffect(() => {
     const currentFilterKey = `${selectedTournament}-${selectedStatus}-${searchQuery}`;
@@ -119,51 +197,33 @@ const AdminMatches = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTournament, selectedStatus, searchQuery]);
 
-  const handleCreateMatch = async (data: { date: string; homeTeam: string; awayTeam: string; tournamentId?: string }) => {
+  const handleCreateMatch = async (data: { date: string; homeTeam: string; awayTeam: string; tournamentId?: string; round?: number }) => {
     try {
-      // Necesitamos el tournamentId, lo obtendremos del parámetro, del seleccionado o del primer torneo disponible
       const tournamentId = data.tournamentId || selectedTournament || tournaments[0]?.id;
       if (!tournamentId) {
-        alert('No hay torneos disponibles. Crea un torneo primero.');
+        setToast({ type: 'error', text: 'No hay torneos disponibles. Crea un torneo primero.' });
         return;
       }
 
       const tournament = tournaments.find(t => t.id === tournamentId);
       if (!tournament) {
-        alert('Torneo no encontrado');
+        setToast({ type: 'error', text: 'Torneo no encontrado.' });
         return;
       }
 
-      // Usar la función addMatch del tournamentService
       const { addMatch } = await import('../../utils/tournamentService');
-      await addMatch(tournamentId, { date: data.date, homeTeam: data.homeTeam, awayTeam: data.awayTeam });
-
-      // Recargar datos usando la tabla independiente de partidos
-      const [loadedTournaments, loadedMatches] = await Promise.all([
-        listTournaments(),
-        listMatches()
-      ]);
-      setTournaments(loadedTournaments);
-
-      const matchesWithTournamentInfo: (Match & { tournamentName: string; tournamentLogo: string })[] = [];
-      loadedMatches.forEach(match => {
-        const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
-        if (tournament) {
-          matchesWithTournamentInfo.push({
-            ...match,
-            tournamentName: tournament.name,
-            tournamentLogo: tournament.logo
-          });
-        }
+      await addMatch(tournamentId, {
+        date: data.date,
+        homeTeam: data.homeTeam,
+        awayTeam: data.awayTeam,
+        round: Math.max(1, data.round || 1)
       });
-
-      matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      setAllMatches(matchesWithTournamentInfo);
-      setFilteredMatches(matchesWithTournamentInfo);
+      await reloadMatchesData();
       setShowNewMatch(false);
+      setToast({ type: 'success', text: 'Partido creado correctamente.' });
     } catch (error) {
-      console.error('Error creando partido:', error);
-      alert('Error al crear el partido. Por favor, intenta de nuevo.');
+      console.error('Error creating match:', error);
+      setToast({ type: 'error', text: 'Error al crear el partido.' });
     }
   };
 
@@ -171,69 +231,65 @@ const AdminMatches = () => {
     try {
       await updateMatch(tournamentId, matchId, data);
 
-      // Recargar datos usando la tabla independiente de partidos
-      const [loadedTournaments, loadedMatches] = await Promise.all([
-        listTournaments(),
-        listMatches()
-      ]);
-      setTournaments(loadedTournaments);
+      const { recalculateAndUpdatePlayerGoals } = await import('../../utils/playerStatsHelpers');
+      await recalculateAndUpdatePlayerGoals();
 
-      const matchesWithTournamentInfo: (Match & { tournamentName: string; tournamentLogo: string })[] = [];
-      loadedMatches.forEach(match => {
-        const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
-        if (tournament) {
-          matchesWithTournamentInfo.push({
-            ...match,
-            tournamentName: tournament.name,
-            tournamentLogo: tournament.logo
-          });
-        }
-      });
+      if (data.status === 'finished' && data.homeScore !== undefined && data.awayScore !== undefined) {
+        const { recalculateAndUpdateStandings } = await import('../../utils/standingsHelpers');
+        await recalculateAndUpdateStandings(tournamentId);
+      }
 
-      matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      setAllMatches(matchesWithTournamentInfo);
-      setFilteredMatches(matchesWithTournamentInfo);
+      await reloadMatchesData();
       setEditingMatch(null);
+      setToast({ type: 'success', text: 'Partido actualizado.' });
     } catch (error) {
-      console.error('Error actualizando partido:', error);
-      alert('Error al actualizar el partido. Por favor, intenta de nuevo.');
+      console.error('Error updating match:', error);
+      setToast({ type: 'error', text: 'Error al actualizar el partido.' });
     }
   };
 
   const handleDeleteMatch = async (matchId: string, tournamentId: string) => {
+    if (isDeletingMatch) return;
+    setIsDeletingMatch(true);
     try {
       await deleteMatch(tournamentId, matchId);
-
-      // Recargar datos usando la tabla independiente de partidos
-      const [loadedTournaments, loadedMatches] = await Promise.all([
-        listTournaments(),
-        listMatches()
-      ]);
-      setTournaments(loadedTournaments);
-
-      const matchesWithTournamentInfo: (Match & { tournamentName: string; tournamentLogo: string })[] = [];
-      loadedMatches.forEach(match => {
-        const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
-        if (tournament) {
-          matchesWithTournamentInfo.push({
-            ...match,
-            tournamentName: tournament.name,
-            tournamentLogo: tournament.logo
-          });
-        }
-      });
-
-      matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      setAllMatches(matchesWithTournamentInfo);
-      setFilteredMatches(matchesWithTournamentInfo);
+      const { recalculateAndUpdatePlayerGoals } = await import('../../utils/playerStatsHelpers');
+      await recalculateAndUpdatePlayerGoals();
+      await reloadMatchesData();
       setDeleteMatchTarget(null);
+      setToast({ type: 'success', text: 'Partido eliminado.' });
     } catch (error) {
-      console.error('Error eliminando partido:', error);
-      alert('Error al eliminar el partido. Por favor, intenta de nuevo.');
+      console.error('Error deleting match:', error);
+      setToast({ type: 'error', text: 'Error al eliminar el partido.' });
+    } finally {
+      setIsDeletingMatch(false);
     }
   };
 
-  // Obtener todos los equipos únicos de todos los torneos
+  const handleDeleteAllMatches = async () => {
+    if (isDeletingAllMatches) return;
+    setIsDeletingAllMatches(true);
+    try {
+      const deletedCount = await deleteAllMatches();
+      const { recalculateAndUpdatePlayerGoals } = await import('../../utils/playerStatsHelpers');
+      await recalculateAndUpdatePlayerGoals();
+      await reloadMatchesData();
+      setShowDeleteAllConfirm(false);
+      setToast({ type: 'success', text: `Se eliminaron ${deletedCount} partidos exitosamente.` });
+    } catch (error) {
+      console.error('Error deleting all matches:', error);
+      setShowDeleteAllConfirm(false);
+      setToast({ type: 'error', text: 'Error al eliminar todos los partidos.' });
+      try {
+        await reloadMatchesData();
+      } catch (reloadError) {
+        console.error('Error reloading matches after delete-all failure:', reloadError);
+      }
+    } finally {
+      setIsDeletingAllMatches(false);
+    }
+  };
+
   const allTeams = useMemo(() => {
     const teamsSet = new Set<string>();
     tournaments.forEach(t => {
@@ -242,35 +298,19 @@ const AdminMatches = () => {
     return Array.from(teamsSet).sort();
   }, [tournaments]);
 
-  const getStatusBadge = (status: string) => {
-    const styles = {
-      scheduled: 'bg-gray-700 text-gray-300',
-      live: 'bg-red-600 text-white animate-pulse',
-      finished: 'bg-green-700 text-white'
-    };
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || styles.scheduled}`}>
-        {status === 'scheduled' ? 'Programado' : status === 'live' ? 'En vivo' : 'Finalizado'}
-      </span>
-    );
-  };
-
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-2xl font-bold">Gestión de Partidos</h2>
-          <p className="text-gray-400 text-sm mt-1">Administra todos los partidos de los torneos</p>
-        </div>
-        <div className="flex gap-2">
+      {toast && <Toast type={toast.type} message={toast.text} onClose={() => setToast(null)} />}
+
+      <AdminPageHeader
+        title="Gestion de Partidos"
+        subtitle="Administra todos los partidos de los torneos."
+        actions={
+          <>
           {allMatches.length > 0 && (
             <button
               className="btn-outline flex items-center text-red-400 border-red-400/30 hover:bg-red-400/10"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log('Botón eliminar todos clickeado, total de partidos:', allMatches.length);
-                setShowDeleteAllConfirm(true);
-              }}
+              onClick={() => setShowDeleteAllConfirm(true)}
             >
               <Trash size={16} className="mr-2" />
               Eliminar todos ({allMatches.length})
@@ -280,7 +320,7 @@ const AdminMatches = () => {
             className="btn-primary flex items-center"
             onClick={() => {
               if (tournaments.length === 0) {
-                alert('No hay torneos disponibles. Crea un torneo primero.');
+                setToast({ type: 'error', text: 'No hay torneos disponibles. Crea un torneo primero.' });
                 return;
               }
               setShowNewMatch(true);
@@ -289,11 +329,11 @@ const AdminMatches = () => {
             <Plus size={16} className="mr-2" />
             Nuevo partido
           </button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      {/* Filtros */}
-      <div className="bg-dark-light rounded-lg border border-gray-800 p-4 mb-6">
+      <div className="card p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -302,27 +342,21 @@ const AdminMatches = () => {
               placeholder="Buscar por equipos o torneo..."
               className="input pl-10 w-full"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
           <div>
-            <select
-              className="input w-full"
-              value={selectedTournament}
-              onChange={(e) => setSelectedTournament(e.target.value)}
-            >
+            <select className="input w-full" value={selectedTournament} onChange={e => setSelectedTournament(e.target.value)}>
               <option value="">Todos los torneos</option>
               {tournaments.map(t => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
               ))}
             </select>
           </div>
           <div>
-            <select
-              className="input w-full"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
+            <select className="input w-full" value={selectedStatus} onChange={e => setSelectedStatus(e.target.value)}>
               <option value="">Todos los estados</option>
               <option value="scheduled">Programado</option>
               <option value="live">En vivo</option>
@@ -347,37 +381,29 @@ const AdminMatches = () => {
         </div>
       </div>
 
-      {/* Estadísticas rápidas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
+        <div className="card p-4">
           <p className="text-gray-400 text-sm mb-1">Total de partidos</p>
           <h3 className="text-2xl font-bold text-white">{filteredMatches.length}</h3>
           {filteredMatches.length !== allMatches.length && (
             <p className="text-xs text-gray-500 mt-1">de {allMatches.length} totales</p>
           )}
         </div>
-        <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
+        <div className="card p-4">
           <p className="text-gray-400 text-sm mb-1">Programados</p>
-          <h3 className="text-2xl font-bold text-yellow-400">
-            {filteredMatches.filter(m => m.status === 'scheduled').length}
-          </h3>
+          <h3 className="text-2xl font-bold text-yellow-400">{filteredMatches.filter(m => m.status === 'scheduled').length}</h3>
         </div>
-        <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
+        <div className="card p-4">
           <p className="text-gray-400 text-sm mb-1">En vivo</p>
-          <h3 className="text-2xl font-bold text-red-400">
-            {filteredMatches.filter(m => m.status === 'live').length}
-          </h3>
+          <h3 className="text-2xl font-bold text-red-400">{filteredMatches.filter(m => m.status === 'live').length}</h3>
         </div>
-        <div className="bg-dark-light rounded-lg border border-gray-800 p-4">
+        <div className="card p-4">
           <p className="text-gray-400 text-sm mb-1">Finalizados</p>
-          <h3 className="text-2xl font-bold text-green-400">
-            {filteredMatches.filter(m => m.status === 'finished').length}
-          </h3>
+          <h3 className="text-2xl font-bold text-green-400">{filteredMatches.filter(m => m.status === 'finished').length}</h3>
         </div>
       </div>
 
-      {/* Tabla de partidos */}
-      <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -387,13 +413,19 @@ const AdminMatches = () => {
                 <th className="px-4 py-3 text-left">Local</th>
                 <th className="px-4 py-3 text-center">Resultado</th>
                 <th className="px-4 py-3 text-left">Visitante</th>
-                <th className="px-4 py-3 text-center">Ronda</th>
+                <th className="px-4 py-3 text-center">Jornada/Fase</th>
                 <th className="px-4 py-3 text-center">Estado</th>
                 <th className="px-4 py-3 text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {pagination.items.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
+                    Cargando partidos...
+                  </td>
+                </tr>
+              ) : pagination.items.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
                     {allMatches.length === 0
@@ -402,11 +434,19 @@ const AdminMatches = () => {
                   </td>
                 </tr>
               ) : (
-                pagination.items.map((match) => (
+                pagination.items.map(match => (
                   <tr key={match.id} className="border-b border-gray-800 hover:bg-dark-lighter transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <img src={match.tournamentLogo} alt={match.tournamentName} className="w-6 h-6 rounded" />
+                        <img
+                          src={match.tournamentLogo || '/default.png'}
+                          alt={match.tournamentName}
+                          className="w-6 h-6 rounded object-cover"
+                          onError={e => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/default.png';
+                          }}
+                        />
                         <span className="font-medium text-sm">{match.tournamentName}</span>
                       </div>
                     </td>
@@ -416,11 +456,25 @@ const AdminMatches = () => {
                         <span>{formatDate(match.date)}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-medium">{match.homeTeam}</td>
+                    <td className="px-4 py-3 font-medium">
+                      {match.homeTeam
+                        ? isCupPlaceholderLabel(match.homeTeam)
+                          ? <span className="text-gray-400 italic">{match.homeTeam}</span>
+                          : match.homeTeam
+                        : (() => {
+                            const isCup = isCupTournament(match.tournamentType, match.tournamentName);
+                            if (isCup) {
+                              const slot = getEffectiveCupSlot(match);
+                              const placeholders = getCupMatchPlaceholders(Math.max(1, match.round ?? 1), slot);
+                              return placeholders ? <span className="text-gray-400 italic">{placeholders.home}</span> : 'Por definir';
+                            }
+                            return 'Por definir';
+                          })()}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       {match.status === 'finished' && match.homeScore !== undefined && match.awayScore !== undefined ? (
                         <span className="text-lg font-bold">
-                          {match.homeScore} - {match.awayScore}
+                          <MatchScore match={match} />
                         </span>
                       ) : match.status === 'live' ? (
                         <span className="text-red-400 font-bold animate-pulse">LIVE</span>
@@ -428,12 +482,37 @@ const AdminMatches = () => {
                         <span className="text-gray-500">-</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 font-medium">{match.awayTeam}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="px-2 py-1 bg-gray-700 rounded text-xs">R{match.round}</span>
+                    <td className="px-4 py-3 font-medium">
+                      {match.awayTeam
+                        ? isCupPlaceholderLabel(match.awayTeam)
+                          ? <span className="text-gray-400 italic">{match.awayTeam}</span>
+                          : match.awayTeam
+                        : (() => {
+                            const isCup = isCupTournament(match.tournamentType, match.tournamentName);
+                            if (isCup) {
+                              const slot = getEffectiveCupSlot(match);
+                              const placeholders = getCupMatchPlaceholders(Math.max(1, match.round ?? 1), slot);
+                              return placeholders ? <span className="text-gray-400 italic">{placeholders.away}</span> : 'Por definir';
+                            }
+                            return 'Por definir';
+                          })()}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      {getStatusBadge(match.status)}
+                      {isCupTournament(match.tournamentType, match.tournamentName) ? (
+                        <span className="px-2 py-1 bg-indigo-700/40 border border-indigo-500/30 rounded text-xs" title={getCupStageLabel(Math.max(1, match.round || 1))}>
+                          {getCupStageShortLabel(Math.max(1, match.round ?? 1))} · P{getEffectiveCupSlot(match) + 1}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 bg-gray-700 rounded text-xs">J{Math.max(1, match.round || 1)}</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <AdminStatusBadge
+                        label={match.status === 'scheduled' ? 'Programado' : match.status === 'live' ? 'En vivo' : 'Finalizado'}
+                        tone={match.status === 'scheduled' ? 'neutral' : match.status === 'live' ? 'danger' : 'success'}
+                        withDot
+                        pulseDot={match.status === 'live'}
+                      />
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
@@ -461,7 +540,6 @@ const AdminMatches = () => {
         </div>
       </div>
 
-      {/* Paginación */}
       {pagination.totalPages > 1 && (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 mb-6">
           <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -469,23 +547,21 @@ const AdminMatches = () => {
               Mostrando {((pagination.page - 1) * perPage) + 1} - {Math.min(pagination.page * perPage, pagination.total)} de {pagination.total} partidos
             </span>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            {/* Selector de items por página */}
             <select
               value={perPage}
-              onChange={(e) => {
+              onChange={e => {
                 setPerPage(Number(e.target.value));
                 pagination.set(1);
               }}
               className="px-3 py-2 bg-gray-700/60 border border-gray-600/60 rounded-lg text-white text-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value={25}>25 por página</option>
-              <option value={50}>50 por página</option>
-              <option value={100}>100 por página</option>
+              <option value={25}>25 por pagina</option>
+              <option value={50}>50 por pagina</option>
+              <option value={100}>100 por pagina</option>
             </select>
 
-            {/* Botones de navegación */}
             <button
               onClick={pagination.prev}
               disabled={pagination.page === 1}
@@ -495,7 +571,6 @@ const AdminMatches = () => {
               <span className="hidden sm:inline">Anterior</span>
             </button>
 
-            {/* Números de página */}
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                 let pageNum: number;
@@ -537,7 +612,6 @@ const AdminMatches = () => {
         </div>
       )}
 
-      {/* Modales */}
       {showNewMatch && (
         <NewMatchModal
           onClose={() => setShowNewMatch(false)}
@@ -552,109 +626,52 @@ const AdminMatches = () => {
         <EditMatchModal
           match={editingMatch}
           onClose={() => setEditingMatch(null)}
-          onSave={(data) => handleUpdateMatch(editingMatch.id, editingMatch.tournamentId, data)}
+          onSave={data => handleUpdateMatch(editingMatch.id, editingMatch.tournamentId, data)}
           teams={allTeams}
         />
       )}
 
-      {deleteMatchTarget && (
-        <ConfirmModal
-          open={!!deleteMatchTarget}
-          title="Eliminar partido"
-          description={`¿Estás seguro de que deseas eliminar el partido entre ${deleteMatchTarget.homeTeam} y ${deleteMatchTarget.awayTeam}? Esta acción no se puede deshacer.`}
-          confirmLabel="Eliminar"
-          cancelLabel="Cancelar"
-          tone="danger"
-          onConfirm={() => handleDeleteMatch(deleteMatchTarget.id, deleteMatchTarget.tournamentId)}
-          onCancel={() => setDeleteMatchTarget(null)}
-        />
-      )}
+      <ConfirmModal
+        open={!!deleteMatchTarget}
+        title="Eliminar partido"
+        description={
+          deleteMatchTarget
+            ? `Estas seguro de que deseas eliminar el partido entre ${deleteMatchTarget.homeTeam} y ${deleteMatchTarget.awayTeam}? Esta accion no se puede deshacer.`
+            : ''
+        }
+        confirmLabel="Eliminar"
+        loadingLabel="Eliminando..."
+        isLoading={isDeletingMatch}
+        cancelLabel="Cancelar"
+        tone="danger"
+        onConfirm={() => {
+          if (!deleteMatchTarget) return;
+          handleDeleteMatch(deleteMatchTarget.id, deleteMatchTarget.tournamentId);
+        }}
+        onCancel={() => setDeleteMatchTarget(null)}
+      />
 
       <ConfirmModal
         open={showDeleteAllConfirm}
         title="Eliminar todos los partidos"
-        description={`¿Estás seguro de que deseas eliminar TODOS los partidos (${allMatches.length} partidos)? Esta acción no se puede deshacer.`}
+        description={`Estas seguro de que deseas eliminar TODOS los partidos (${allMatches.length} partidos)? Esta accion no se puede deshacer.`}
         confirmLabel="Eliminar todos"
+        loadingLabel="Eliminando..."
+        isLoading={isDeletingAllMatches}
         cancelLabel="Cancelar"
         tone="danger"
-        onConfirm={async () => {
-            try {
-              console.log('Iniciando eliminación de todos los partidos...');
-              const deletedCount = await deleteAllMatches();
-              console.log(`Partidos eliminados: ${deletedCount}`);
-              
-              // Limpiar el estado local inmediatamente
-              setAllMatches([]);
-              setFilteredMatches([]);
-              setShowDeleteAllConfirm(false);
-              
-              // Recargar datos después de un breve delay para asegurar que la eliminación se completó
-              setTimeout(async () => {
-                try {
-              const [loadedTournaments, loadedMatches] = await Promise.all([
-                listTournaments(),
-                listMatches()
-              ]);
-              setTournaments(loadedTournaments);
-
-              const matchesWithTournamentInfo: (Match & { tournamentName: string; tournamentLogo: string })[] = [];
-              loadedMatches.forEach(match => {
-                const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
-                if (tournament) {
-                  matchesWithTournamentInfo.push({
-                    ...match,
-                    tournamentName: tournament.name,
-                    tournamentLogo: tournament.logo
-                  });
-                }
-              });
-
-              matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-              setAllMatches(matchesWithTournamentInfo);
-              setFilteredMatches(matchesWithTournamentInfo);
-                } catch (reloadError) {
-                  console.error('Error recargando partidos después de eliminar:', reloadError);
-                }
-              }, 500);
-              
-              alert(`✅ Se eliminaron ${deletedCount} partidos exitosamente.`);
-            } catch (error) {
-              console.error('Error eliminando todos los partidos:', error);
-              alert(`Error al eliminar los partidos: ${error instanceof Error ? error.message : 'Error desconocido'}`);
-              // Recargar datos incluso si hubo error para mostrar el estado actual
-              try {
-                const [loadedTournaments, loadedMatches] = await Promise.all([
-                  listTournaments(),
-                  listMatches()
-                ]);
-                setTournaments(loadedTournaments);
-                const matchesWithTournamentInfo: (Match & { tournamentName: string; tournamentLogo: string })[] = [];
-                loadedMatches.forEach(match => {
-                  const tournament = loadedTournaments.find(t => t.id === match.tournamentId);
-                  if (tournament) {
-                    matchesWithTournamentInfo.push({
-                      ...match,
-                      tournamentName: tournament.name,
-                      tournamentLogo: tournament.logo
-                    });
-                  }
-                });
-                matchesWithTournamentInfo.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                setAllMatches(matchesWithTournamentInfo);
-                setFilteredMatches(matchesWithTournamentInfo);
-              } catch (reloadError) {
-                console.error('Error recargando partidos:', reloadError);
-              }
-            }
-          }}
-          onCancel={() => {
-            console.log('Cancelando eliminación');
-            setShowDeleteAllConfirm(false);
-          }}
+        onConfirm={handleDeleteAllMatches}
+        onCancel={() => setShowDeleteAllConfirm(false)}
       />
+
+      {tournaments.length === 0 && (
+        <div className="mt-4 p-4 bg-gray-800 border border-yellow-500/40 rounded-lg text-yellow-200 text-sm flex items-start gap-2">
+          <AlertTriangle size={16} className="mt-0.5 text-yellow-400" />
+          <span>No hay torneos cargados. Crea un torneo para poder registrar partidos.</span>
+        </div>
+      )}
     </div>
   );
 };
 
 export default AdminMatches;
-

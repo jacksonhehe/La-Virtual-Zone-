@@ -17,6 +17,11 @@ const getTournaments = async (): Promise<Tournament[]> => {
     console.log(`🏆 getTournaments: Encontrados ${tournaments.length} torneos en IndexedDB`);
 
     if (tournaments.length === 0) {
+      const { config } = await import('../lib/config');
+      if (config.useSupabase) {
+        console.log('📝 IndexedDB sin torneos en modo Supabase; esperando sync remoto (sin seed local)');
+        return [];
+      }
       console.log('📝 La BD está vacía, inicializando con datos seed...');
       await dbService.putMany(TOURNAMENTS_STORE, seedTournaments);
       console.log(`✅ Inicializados ${seedTournaments.length} torneos desde datos seed`);
@@ -26,7 +31,16 @@ const getTournaments = async (): Promise<Tournament[]> => {
     return tournaments;
   } catch (error) {
     console.error('❌ Error crítico getting tournaments from IndexedDB:', error);
-    // Fallback to seed data
+    // Fallback in Supabase mode: avoid reviving local seed data.
+    try {
+      const { config } = await import('../lib/config');
+      if (config.useSupabase) {
+        console.error('🚨 Modo Supabase activo; retornando [] para evitar torneos fantasma');
+        return [];
+      }
+    } catch {
+      // ignore and fallback to seed below
+    }
     console.error('🚨 Usando datos seed como último recurso');
     return seedTournaments;
   }
@@ -34,7 +48,11 @@ const getTournaments = async (): Promise<Tournament[]> => {
 
 const saveTournaments = async (tournaments: Tournament[]): Promise<void> => {
   try {
-    await dbService.putMany(TOURNAMENTS_STORE, tournaments);
+    // Replace full store contents to avoid keeping stale/deleted tournaments.
+    await dbService.clear(TOURNAMENTS_STORE);
+    if (tournaments.length > 0) {
+      await dbService.putMany(TOURNAMENTS_STORE, tournaments);
+    }
     console.log(`💾 Saved ${tournaments.length} tournaments to IndexedDB`);
   } catch (error) {
     console.error('❌ Error saving tournaments to IndexedDB:', error);
@@ -100,7 +118,10 @@ const syncTournamentsFromSupabase = async (): Promise<void> => {
     }
 
     if (!supabaseTournaments || supabaseTournaments.length === 0) {
-      console.log('TournamentService: No tournaments found in Supabase');
+      console.log('TournamentService: No tournaments found in Supabase, clearing local tournaments');
+      await saveTournaments([]);
+      const { updateTournaments } = useDataStore.getState();
+      updateTournaments([]);
       return;
     }
 
@@ -123,31 +144,12 @@ const syncTournamentsFromSupabase = async (): Promise<void> => {
       description: st.description || ''
     }));
 
-    // Get current local tournaments
-    const currentLocalTournaments = await getTournaments();
-
-    // Merge: Supabase tournaments take precedence for existing ones, add new ones
-    const mergedTournaments = [...currentLocalTournaments];
-
-    localTournaments.forEach(supabaseTournament => {
-      const existingIndex = mergedTournaments.findIndex(t => t.id === supabaseTournament.id);
-      if (existingIndex !== -1) {
-        // Update existing tournament with Supabase data
-        mergedTournaments[existingIndex] = supabaseTournament;
-        console.log(`TournamentService: Updated tournament ${supabaseTournament.name} from Supabase`);
-      } else {
-        // Add new tournament from Supabase
-        mergedTournaments.push(supabaseTournament);
-        console.log(`TournamentService: Added new tournament ${supabaseTournament.name} from Supabase`);
-      }
-    });
-
-    // Save merged tournaments to IndexedDB
-    await saveTournaments(mergedTournaments);
+    // Supabase is the source of truth: fully replace local tournaments.
+    await saveTournaments(localTournaments);
 
     // Update store state
     const { updateTournaments } = useDataStore.getState();
-    updateTournaments(mergedTournaments);
+    updateTournaments(localTournaments);
 
     console.log(`TournamentService: Successfully synced ${localTournaments.length} tournaments from Supabase`);
 
@@ -279,41 +281,46 @@ export const finishTournament = async (id: string): Promise<void> => {
 };
 
 export const deleteTournament = async (id: string): Promise<void> => {
-  const tournaments = await getTournaments();
-  const remaining = tournaments.filter((t) => t.id !== id);
-  await saveTournaments(remaining);
+  const { config } = await import('../lib/config');
 
-  // Update store state
-  const { updateTournaments } = useDataStore.getState();
-  updateTournaments(remaining);
-
-  // Auto-sync deletion to Supabase if enabled
-  try {
-    const { config } = await import('../lib/config');
-
-    if (!config.useSupabase) {
-      console.log('TournamentService: Supabase sync disabled, skipping deletion...');
-      return;
-    }
-
+  // Con Supabase habilitado, borrar primero remoto para evitar reapariciones al recargar.
+  if (config.useSupabase) {
     const { getSupabaseClient } = await import('../lib/supabase');
     const supabase = getSupabaseClient();
 
-    console.log('TournamentService: Deleting tournament from Supabase:', id);
+    console.log('TournamentService: Deleting related matches from Supabase:', id);
+    const { error: matchesError } = await supabase
+      .from('matches')
+      .delete()
+      .eq('tournament_id', id);
 
-    const { error } = await supabase
+    if (matchesError) {
+      throw new Error(`No se pudieron eliminar los partidos del torneo en Supabase: ${matchesError.message}`);
+    }
+
+    console.log('TournamentService: Deleting tournament from Supabase:', id);
+    const { error: tournamentError } = await supabase
       .from('tournaments')
       .delete()
       .eq('id', id);
 
-    if (error) {
-      console.error('TournamentService: Error deleting tournament from Supabase:', error);
-    } else {
-      console.log('TournamentService: Tournament deleted from Supabase successfully:', id);
+    if (tournamentError) {
+      throw new Error(`No se pudo eliminar el torneo en Supabase: ${tournamentError.message}`);
     }
-  } catch (error) {
-    console.error('TournamentService: Failed to delete tournament from Supabase:', error);
   }
+
+  // Luego reflejar cambios en local.
+  const deletedMatches = await deleteMatchesByTournament(id);
+  if (deletedMatches > 0) {
+    console.log(`TournamentService: Deleted ${deletedMatches} matches related to tournament ${id}`);
+  }
+
+  const tournaments = await getTournaments();
+  const remaining = tournaments.filter((t) => t.id !== id);
+  await saveTournaments(remaining);
+
+  const { updateTournaments } = useDataStore.getState();
+  updateTournaments(remaining);
 };
 
 export const addMatch = async (tournamentId: string, data: { date: string; homeTeam: string; awayTeam: string; round?: number }): Promise<Match> => {
@@ -338,6 +345,137 @@ export const addMatch = async (tournamentId: string, data: { date: string; homeT
   // Solo sincronizar el torneo si es necesario
 
   return match;
+};
+
+const CUP_ROUND_BY_TEAM_COUNT: Record<number, number> = {
+  2: 7,
+  4: 5,
+  8: 4,
+  16: 3,
+  32: 2,
+};
+
+type CupStageToGenerate = {
+  round: number;
+  count: number;
+  seeded: boolean;
+};
+
+const getCupGenerationStages = (teamCount: number): CupStageToGenerate[] => {
+  if (teamCount === 48) {
+    return [
+      { round: 1, count: 16, seeded: true },
+      { round: 2, count: 16, seeded: false },
+      { round: 3, count: 8, seeded: false },
+      { round: 4, count: 4, seeded: false },
+      { round: 5, count: 2, seeded: false },
+      { round: 6, count: 1, seeded: false },
+      { round: 7, count: 1, seeded: false },
+    ];
+  }
+
+  const firstRound = CUP_ROUND_BY_TEAM_COUNT[teamCount];
+  if (!firstRound) return [];
+
+  const eliminationOrder = [2, 3, 4, 5, 7];
+  const stages: CupStageToGenerate[] = [];
+  let matchCount = teamCount / 2;
+  let seeded = true;
+
+  eliminationOrder
+    .filter((round) => round >= firstRound)
+    .forEach((round) => {
+      stages.push({ round, count: matchCount, seeded });
+      seeded = false;
+      if (matchCount > 1) matchCount = Math.max(1, Math.floor(matchCount / 2));
+    });
+
+  if (stages.some((stage) => stage.round === 5)) {
+    const finalIndex = stages.findIndex((stage) => stage.round === 7);
+    if (finalIndex >= 0) {
+      stages.splice(finalIndex, 0, { round: 6, count: 1, seeded: false });
+    }
+  }
+
+  return stages;
+};
+
+export const generateCupBracket = async (tournamentId: string): Promise<number> => {
+  const tournaments = await getTournaments();
+  const tournament = tournaments.find((item) => item.id === tournamentId);
+
+  if (!tournament) {
+    throw new Error(`Tournament with id ${tournamentId} not found`);
+  }
+  if (tournament.type !== 'cup') {
+    throw new Error('Solo se pueden generar llaves automaticas en torneos tipo copa.');
+  }
+  if (!tournament.teams || tournament.teams.length < 2) {
+    throw new Error('La copa necesita al menos 2 equipos para generar llaves.');
+  }
+
+  const validTeams = (tournament.teams || [])
+    .map((team) => String(team || '').trim())
+    .filter((team) => {
+      const normalized = team.toLowerCase();
+      return normalized !== '' && normalized !== 'libre' && normalized !== 'free';
+    });
+
+  const teamCount = validTeams.length;
+  const stages = getCupGenerationStages(teamCount);
+  if (stages.length === 0) {
+    throw new Error('La copa debe tener 2, 4, 8, 16, 32 o 48 equipos para generar llaves automaticas.');
+  }
+
+  const existingMatches = await getMatchesByTournament(tournamentId);
+  if (existingMatches.length > 0) {
+    throw new Error(`La copa ya tiene ${existingMatches.length} partido(s). Eliminalos primero para regenerar las llaves.`);
+  }
+
+  const start = new Date(tournament.startDate).getTime();
+  const end = new Date(tournament.endDate).getTime();
+  const totalDays = Math.max(1, Math.floor((end - start) / (1000 * 60 * 60 * 24)));
+  const daysBetweenStages = Math.max(1, Math.floor(totalDays / Math.max(1, stages.length - 1)));
+
+  let createdCount = 0;
+  const hasPreliminaryWithByes = teamCount === 48;
+  const byeTeams = hasPreliminaryWithByes ? validTeams.slice(0, 16) : [];
+  const preliminaryTeams = hasPreliminaryWithByes ? validTeams.slice(16) : [];
+
+  for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
+    const stage = stages[stageIndex];
+    const stageDate = new Date(start + stageIndex * daysBetweenStages * 24 * 60 * 60 * 1000).toISOString();
+
+    for (let matchIndex = 0; matchIndex < stage.count; matchIndex += 1) {
+      let homeTeam = stage.seeded ? validTeams[matchIndex * 2] || '' : '';
+      let awayTeam = stage.seeded ? validTeams[matchIndex * 2 + 1] || '' : '';
+
+      // Formato especial para 48 equipos:
+      // - Fase 1: juegan 32 equipos (16 partidos)
+      // - 16 equipos tienen bye directo a 16avos
+      // - En 16avos se cruza "equipo con bye" vs "Ganador Fase 1 #N"
+      if (hasPreliminaryWithByes && stage.round === 1) {
+        homeTeam = preliminaryTeams[matchIndex * 2] || '';
+        awayTeam = preliminaryTeams[matchIndex * 2 + 1] || '';
+      } else if (hasPreliminaryWithByes && stage.round === 2) {
+        homeTeam = byeTeams[matchIndex] || '';
+        awayTeam = `Ganador Fase 1 #${matchIndex + 1}`;
+      }
+
+      await createMatch({
+        tournamentId: tournament.id,
+        round: stage.round,
+        date: stageDate,
+        homeTeam,
+        awayTeam,
+        status: 'scheduled',
+        bracketSlot: matchIndex,
+      });
+      createdCount += 1;
+    }
+  }
+
+  return createdCount;
 };
 
 export const generateRoundRobin = async (tournamentId: string): Promise<number> => {

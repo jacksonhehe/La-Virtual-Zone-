@@ -1,4 +1,4 @@
-﻿import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useDataStore } from '../store/dataStore';
@@ -26,7 +26,7 @@ const UserPanel = () => {
     changePassword,
     downloadUserData
   } = useAuthStore();
-  const { clubs } = useDataStore();
+  const { clubs, players, standings } = useDataStore();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -46,7 +46,6 @@ const UserPanel = () => {
   const [profileForm, setProfileForm] = useState(() => ({
     bio: (user as any)?.bio || '',
     location: (user as any)?.location || '',
-    website: (user as any)?.website || '',
     favoriteTeam: (user as any)?.favoriteTeam || '',
     favoritePosition: (user as any)?.favoritePosition || ''
   }));
@@ -57,6 +56,8 @@ const UserPanel = () => {
     confirmPassword: ''
   });
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const openFilePicker = () => fileInputRef.current?.click();
@@ -72,7 +73,6 @@ const UserPanel = () => {
       setProfileForm({
         bio: (user as any).bio || '',
         location: (user as any).location || '',
-        website: (user as any).website || '',
         favoriteTeam: (user as any).favoriteTeam || '',
         favoritePosition: (user as any).favoritePosition || ''
       });
@@ -102,10 +102,13 @@ const UserPanel = () => {
   const roles = getUserRoles(user);
   const mainRoleLabel = getMainRoleLabel(roles);
 
+  const hasAssignedClub = Boolean((user as any).clubId || (user as any).club);
+  const canAccessClubTab = hasRole('dt') || hasAssignedClub;
+
   const userClub =
-    hasRole('dt') && (user as any).clubId
+    (user as any).clubId
       ? clubs.find((club) => club.id === (user as any).clubId)
-      : hasRole('dt') && (user as any).club
+      : (user as any).club
       ? clubs.find((club) => club.name === (user as any).club)
       : null;
 
@@ -200,16 +203,10 @@ const UserPanel = () => {
   const handleProfileSave = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (profileForm.website && !profileForm.website.match(/^https?:\/\/.+/)) {
-      setProfileError('La URL del sitio web debe comenzar con http:// o https://');
-      return;
-    }
-
     try {
       await updateUser({
         bio: profileForm.bio,
         location: profileForm.location,
-        website: profileForm.website,
         favoriteTeam: profileForm.favoriteTeam,
         favoritePosition: profileForm.favoritePosition
       } as any);
@@ -222,6 +219,7 @@ const UserPanel = () => {
 
   const handlePasswordChange = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setPasswordSuccess(null);
 
     if (!passwordForm.currentPassword || !passwordForm.newPassword) {
       setPasswordError('Todos los campos son requeridos');
@@ -239,12 +237,21 @@ const UserPanel = () => {
     }
 
     try {
+      setIsChangingPassword(true);
+      setPasswordError(null);
       await changePassword(passwordForm.currentPassword, passwordForm.newPassword);
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setPasswordError(null);
+      setPasswordSuccess('Contraseña actualizada correctamente.');
     } catch (error: any) {
       setPasswordError(error?.message || 'Error al cambiar la contraseña');
+    } finally {
+      setIsChangingPassword(false);
     }
+  };
+
+  const clearPasswordFeedback = () => {
+    if (passwordError) setPasswordError(null);
+    if (passwordSuccess) setPasswordSuccess(null);
   };
 
   return (
@@ -260,6 +267,7 @@ const UserPanel = () => {
                 roles={roles}
                 mainRoleLabel={mainRoleLabel}
                 hasRole={hasRole as any}
+                canAccessClubTab={canAccessClubTab}
                 userClub={userClub}
                 activeTab={activeTab}
                 onSelectTab={navigateToTab as any}
@@ -283,24 +291,7 @@ const UserPanel = () => {
                     </span>
                   </div>
 
-                  {/* User Status Indicator */}
-                  <div className="flex items-center space-x-2 text-xs">
-                    <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span className="text-gray-400">En línea</span>
-                    </div>
-                    <span className="text-gray-600">•</span>
-                    <span className="text-gray-400">
-                      Último acceso: {(user as any)?.lastLogin ?
-                        new Date((user as any).lastLogin).toLocaleDateString('es-ES', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        }) : 'Nunca'
-                      }
-                    </span>
-                  </div>
+                  
                 </div>
 
                 {activeTab === 'profile' && (
@@ -313,7 +304,17 @@ const UserPanel = () => {
                   />
                 )}
 
-                {activeTab === 'club' && hasRole('dt') && <ClubTab userClub={userClub} />}
+                {activeTab === 'club' && canAccessClubTab && (
+                  <ClubTab userClub={userClub} players={players} standings={standings} />
+                )}
+
+                {activeTab === 'club' && !canAccessClubTab && (
+                  <div className="bg-yellow-500/10 rounded-lg p-6 border border-yellow-500/30">
+                    <p className="text-yellow-300 text-sm font-medium">
+                      No tienes un club asignado. Contacta al staff para vincular tu cuenta a un club.
+                    </p>
+                  </div>
+                )}
 
                 {activeTab === 'activity' && <ActivityTab />}
 
@@ -331,6 +332,9 @@ const UserPanel = () => {
                     passwordForm={passwordForm}
                     setPasswordForm={setPasswordForm}
                     passwordError={passwordError}
+                    passwordSuccess={passwordSuccess}
+                    isChangingPassword={isChangingPassword}
+                    clearPasswordFeedback={clearPasswordFeedback}
                     handlePasswordChange={handlePasswordChange}
                     downloadUserData={downloadUserData}
                     setShowDeleteConfirm={setShowDeleteConfirm}

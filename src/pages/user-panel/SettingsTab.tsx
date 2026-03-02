@@ -1,6 +1,6 @@
-import { Camera, Download, Settings, Shield, Trash2, User } from 'lucide-react';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { Camera, Download, Eye, EyeOff, Loader2, Settings, Shield, Trash2, User } from 'lucide-react';
 import { panelSurfaceClass } from './helpers';
-import { FormEvent } from 'react';
 
 interface PasswordForm {
   currentPassword: string;
@@ -19,6 +19,9 @@ interface SettingsTabProps {
   passwordForm: PasswordForm;
   setPasswordForm: React.Dispatch<React.SetStateAction<PasswordForm>>;
   passwordError: string | null;
+  passwordSuccess: string | null;
+  isChangingPassword: boolean;
+  clearPasswordFeedback: () => void;
   handlePasswordChange: (event: FormEvent<HTMLFormElement>) => Promise<void> | void;
   downloadUserData: () => Promise<void> | void;
   setShowDeleteConfirm: (show: boolean) => void;
@@ -35,19 +38,35 @@ const SettingsTab = ({
   passwordForm,
   setPasswordForm,
   passwordError,
+  passwordSuccess,
+  isChangingPassword,
+  clearPasswordFeedback,
   handlePasswordChange,
   downloadUserData,
   setShowDeleteConfirm
-}: SettingsTabProps) => (
-  <div className="space-y-6">
+}: SettingsTabProps) => {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handlePasswordInputChange =
+    (field: keyof PasswordForm) => (event: ChangeEvent<HTMLInputElement>) => {
+      clearPasswordFeedback();
+      const value = event.target.value;
+      setPasswordForm((prev) => ({ ...prev, [field]: value }));
+    };
+
+  return (
+    <div className="space-y-6">
     <div className={`${panelSurfaceClass} p-6`}>
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4">
         <Settings size={24} className="text-primary" />
         <div>
           <h2 className="text-2xl font-bold text-white">Configuración</h2>
           <p className="text-gray-400 text-sm">Ajustes de cuenta, seguridad y datos personales.</p>
         </div>
       </div>
+    </div>
 
     <div className={`${panelSurfaceClass} p-6`}>
       <div className="flex items-center mb-6 gap-3">
@@ -85,11 +104,12 @@ const SettingsTab = ({
             <Camera size={12} className="text-white" />
           </button>
         </div>
+
         <div className="flex-1">
           <button
             type="button"
             onClick={openFilePicker}
-            className="bg-primary hover:bg-primary-light text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+            className="btn-primary text-sm"
           >
             Cambiar Avatar
           </button>
@@ -98,14 +118,14 @@ const SettingsTab = ({
               <button
                 type="button"
                 onClick={handleImageUpload}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors"
+                className="btn-primary text-sm"
               >
                 Guardar
               </button>
               <button
                 type="button"
                 onClick={clearImageSelection}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors"
+                className="btn-secondary text-sm"
               >
                 Cancelar
               </button>
@@ -126,6 +146,12 @@ const SettingsTab = ({
       </div>
 
       <form onSubmit={handlePasswordChange} className="space-y-4">
+        {passwordSuccess && (
+          <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+            <p className="text-green-400 text-sm">{passwordSuccess}</p>
+          </div>
+        )}
+
         {passwordError && (
           <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
             <p className="text-red-400 text-sm">{passwordError}</p>
@@ -134,45 +160,86 @@ const SettingsTab = ({
 
         <div>
           <label className="block text-sm font-semibold text-gray-300 mb-2">Contraseña actual</label>
-          <input
-            type="password"
-            value={passwordForm.currentPassword}
-            onChange={(e) => setPasswordForm((prev) => ({ ...prev, currentPassword: e.target.value }))}
-            className="w-full px-4 py-3 bg-dark border-2 border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all text-sm"
-            placeholder="Ingresa tu contraseña actual"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showCurrentPassword ? 'text' : 'password'}
+              value={passwordForm.currentPassword}
+              onChange={handlePasswordInputChange('currentPassword')}
+              className="input w-full pr-11"
+              placeholder="Ingresa tu contraseña actual"
+              required
+              disabled={isChangingPassword}
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrentPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+              aria-label={showCurrentPassword ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'}
+            >
+              {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-gray-300 mb-2">Nueva contraseña</label>
-          <input
-            type="password"
-            value={passwordForm.newPassword}
-            onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
-            className="w-full px-4 py-3 bg-dark border-2 border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all text-sm"
-            placeholder="Mínimo 6 caracteres"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showNewPassword ? 'text' : 'password'}
+              value={passwordForm.newPassword}
+              onChange={handlePasswordInputChange('newPassword')}
+              className="input w-full pr-11"
+              placeholder="Mínimo 6 caracteres"
+              required
+              disabled={isChangingPassword}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+              aria-label={showNewPassword ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'}
+            >
+              {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-gray-300 mb-2">Confirmar nueva contraseña</label>
-          <input
-            type="password"
-            value={passwordForm.confirmPassword}
-            onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-            className="w-full px-4 py-3 bg-dark border-2 border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all text-sm"
-            placeholder="Repite la nueva contraseña"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={passwordForm.confirmPassword}
+              onChange={handlePasswordInputChange('confirmPassword')}
+              className="input w-full pr-11"
+              placeholder="Repite la nueva contraseña"
+              required
+              disabled={isChangingPassword}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+              aria-label={showConfirmPassword ? 'Ocultar confirmación de contraseña' : 'Mostrar confirmación de contraseña'}
+            >
+              {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-primary hover:bg-primary-light text-white px-4 py-3 rounded-lg font-medium text-sm transition-colors"
+          className="btn-primary w-full text-sm"
+          disabled={isChangingPassword}
         >
-          Cambiar contraseña
+          {isChangingPassword ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 size={14} className="animate-spin" />
+              Actualizando...
+            </span>
+          ) : (
+            'Cambiar contraseña'
+          )}
         </button>
       </form>
     </div>
@@ -185,7 +252,6 @@ const SettingsTab = ({
           <p className="text-gray-400 text-sm">Descarga tus datos o elimina tu cuenta.</p>
         </div>
       </div>
-      </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700">
@@ -196,7 +262,7 @@ const SettingsTab = ({
           <button
             type="button"
             onClick={downloadUserData}
-            className="bg-secondary hover:bg-secondary-light text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center"
+            className="btn-secondary text-sm"
           >
             <Download size={14} className="mr-2" />
             Descargar
@@ -220,6 +286,8 @@ const SettingsTab = ({
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default SettingsTab;
+

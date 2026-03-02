@@ -31,7 +31,11 @@ const getMatches = async (): Promise<Match[]> => {
  */
 const saveMatches = async (matches: Match[]): Promise<void> => {
   try {
-    await dbService.putMany(MATCHES_STORE, matches);
+    // Replace full store contents to avoid keeping stale/deleted matches.
+    await dbService.clear(MATCHES_STORE);
+    if (matches.length > 0) {
+      await dbService.putMany(MATCHES_STORE, matches);
+    }
     console.log(`💾 Saved ${matches.length} matches to IndexedDB`);
   } catch (error) {
     console.error('❌ Error saving matches to IndexedDB:', error);
@@ -86,8 +90,8 @@ const syncMatchesFromSupabase = async (): Promise<void> => {
     }
 
     if (!supabaseMatches || supabaseMatches.length === 0) {
-      console.log('MatchService: No matches found in Supabase');
-      isSyncing = false;
+      console.log('MatchService: No matches found in Supabase, clearing local matches');
+      await saveMatches([]);
       return;
     }
 
@@ -105,30 +109,20 @@ const syncMatchesFromSupabase = async (): Promise<void> => {
       awayScore: sm.away_score,
       status: sm.status,
       scorers: sm.scorers || [],
-      highlights: sm.highlights || []
+      cards: sm.cards || [],
+      highlights: sm.highlights || [],
+      youtubeVideoId: sm.youtube_video_id || undefined,
+      playerOfTheMatch: sm.player_of_the_match || undefined,
+      matchStats: sm.match_stats || undefined,
+      decidedBy: sm.decided_by || undefined,
+      qualifiedTeam: sm.qualified_team || undefined,
+      penaltyHomeScore: sm.penalty_home_score ?? undefined,
+      penaltyAwayScore: sm.penalty_away_score ?? undefined
     }));
 
-    // Get current local matches
-    const currentLocalMatches = await getMatches();
-
-    // Merge: Supabase matches take precedence for existing ones, add new ones
-    const mergedMatches = [...currentLocalMatches];
-
-    localMatches.forEach(supabaseMatch => {
-      const existingIndex = mergedMatches.findIndex(m => m.id === supabaseMatch.id);
-      if (existingIndex !== -1) {
-        // Update existing match with Supabase data
-        mergedMatches[existingIndex] = supabaseMatch;
-      } else {
-        // Add new match from Supabase
-        mergedMatches.push(supabaseMatch);
-      }
-    });
-
-    // Save merged matches to IndexedDB
-    await saveMatches(mergedMatches);
-
-    console.log(`MatchService: Successfully synced ${mergedMatches.length} matches from Supabase`);
+    // Supabase is the source of truth: fully replace local store.
+    await saveMatches(localMatches);
+    console.log(`MatchService: Successfully synced ${localMatches.length} matches from Supabase`);
 
   } catch (error) {
     console.error('MatchService: Failed to sync matches from Supabase:', error);
@@ -154,6 +148,12 @@ const syncMatchToSupabase = async (match: Match): Promise<void> => {
     const { getSupabaseClient } = await import('../lib/supabase');
     const supabase = getSupabaseClient();
 
+    // Prevent persisting inconsistent final results.
+    if (match.status === 'finished' && (match.homeScore == null || match.awayScore == null)) {
+      console.error('MatchService: Refusing to sync finished match with incomplete score:', match.id);
+      return;
+    }
+
     // Map match to Supabase format (camelCase -> snake_case)
     const supabaseMatch = {
       id: match.id,
@@ -162,11 +162,19 @@ const syncMatchToSupabase = async (match: Match): Promise<void> => {
       date: match.date,
       home_team: match.homeTeam,
       away_team: match.awayTeam,
-      home_score: match.homeScore || null,
-      away_score: match.awayScore || null,
+      home_score: match.homeScore ?? null,
+      away_score: match.awayScore ?? null,
       status: match.status || 'scheduled',
       scorers: match.scorers || [],
+      cards: match.cards || [],
       highlights: match.highlights || [],
+      youtube_video_id: match.youtubeVideoId || null,
+      player_of_the_match: match.playerOfTheMatch || null,
+      match_stats: match.matchStats || null,
+      decided_by: match.decidedBy || null,
+      qualified_team: match.qualifiedTeam || null,
+      penalty_home_score: match.penaltyHomeScore ?? null,
+      penalty_away_score: match.penaltyAwayScore ?? null,
       updated_at: new Date().toISOString()
     };
 
@@ -269,6 +277,7 @@ export const createMatch = async (data: {
   homeTeam: string;
   awayTeam: string;
   status?: 'scheduled' | 'live' | 'finished';
+  bracketSlot?: number;
 }): Promise<Match> => {
   const matches = await getMatches();
   const id = `match-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -280,7 +289,8 @@ export const createMatch = async (data: {
     date: new Date(data.date).toISOString(),
     homeTeam: data.homeTeam,
     awayTeam: data.awayTeam,
-    status: data.status || 'scheduled'
+    status: data.status || 'scheduled',
+    ...(data.bracketSlot !== undefined && { bracketSlot: data.bracketSlot })
   };
 
   const updatedMatches = [...matches, match];
@@ -483,5 +493,3 @@ export const forceSyncMatchesFromSupabase = async (): Promise<void> => {
   await syncMatchesFromSupabase();
   console.log('✅ Sincronización completada');
 };
-
-

@@ -1262,7 +1262,126 @@ export const mediaItems: any[] = [
 ];
 
 export const posts: any[] = [
-  // Publicaciones
+  {
+    id: 'post-001',
+    title: 'Comienza la nueva temporada de Liga Master',
+    slug: 'comienza-nueva-temporada-liga-master',
+    excerpt: 'La competencia arranca con calendario renovado, nuevas normas y mas partidos clave desde la primera fecha.',
+    image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-20T10:00:00.000Z',
+    author: 'Redaccion LVZ',
+    category: 'Noticias',
+    tags: ['liga-master', 'temporada', 'calendario'],
+    content: '<p>La nueva temporada de Liga Master ya esta en marcha con un formato mas competitivo y mayor cantidad de cruces directos.</p><p>La organizacion confirmo ajustes en el calendario para mejorar la regularidad del torneo y evitar jornadas superpuestas. Los DT ya comenzaron a preparar planteles y estrategias para el debut.</p><p>Durante las primeras semanas habra seguimiento especial de rendimiento y reportes semanales para toda la comunidad.</p>'
+  },
+  {
+    id: 'post-002',
+    title: 'Mercado abierto: movimiento intenso en los clubes',
+    slug: 'mercado-abierto-movimiento-intenso-clubes',
+    excerpt: 'Se registraron ofertas altas en las primeras 48 horas y varios clubes negocian refuerzos en posiciones clave.',
+    image: 'https://images.unsplash.com/photo-1508098682722-e99c643e7485?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-19T14:30:00.000Z',
+    author: 'Area de Mercado',
+    category: 'Fichajes',
+    tags: ['mercado', 'fichajes', 'clubes'],
+    content: '<p>El mercado de pases abrio con actividad alta y conversaciones avanzadas entre varios clubes de la zona alta y media de la tabla.</p><p>La prioridad general esta en reforzar defensa central, mediocampo de recuperacion y extremos con buen uno contra uno.</p><p>Se espera que las operaciones mas importantes se definan antes del cierre parcial de esta semana.</p>'
+  },
+  {
+    id: 'post-003',
+    title: 'Analisis tactico: presion alta y transiciones rapidas',
+    slug: 'analisis-tactico-presion-alta-transiciones-rapidas',
+    excerpt: 'Los equipos que mejor iniciaron la fecha comparten patrones de recuperacion alta y ataque vertical.',
+    image: 'https://images.unsplash.com/photo-1518604666860-9ed391f76460?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-18T18:10:00.000Z',
+    author: 'Mesa Tactica',
+    category: 'Analisis',
+    tags: ['analisis', 'tactica', 'partidos'],
+    content: '<p>La primera lectura de la jornada muestra un patron claro: recuperar en campo rival y finalizar en pocos toques.</p><p>Los bloques medios pasivos sufrieron cuando no ajustaron la distancia entre lineas, sobre todo en los minutos finales.</p><p>La tendencia sugiere que los DT con mejor gestion de cambios sostendran ventaja en las siguientes fechas.</p>'
+  },
+  {
+    id: 'post-004',
+    title: 'Top 5 goles de la semana en la comunidad LVZ',
+    slug: 'top-5-goles-semana-comunidad-lvz',
+    excerpt: 'Repasamos las mejores definiciones: volea, tiro libre al angulo y un gol de mitad de cancha.',
+    image: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-17T21:00:00.000Z',
+    author: 'Comunidad LVZ',
+    category: 'Comunidad',
+    tags: ['goles', 'resumen', 'comunidad'],
+    content: '<p>La comunidad voto los mejores goles de la semana y el resultado dejo jugadas de altisimo nivel tecnico.</p><p>El ranking incluye una volea de primera, un tiro libre sin carrera y una definicion desde mitad de cancha que sorprendio a todos.</p><p>La proxima seleccion se abrira con clips enviados por usuarios durante toda la fecha.</p>'
+  },
+  {
+    id: 'post-005',
+    title: 'Guia rapida del PRODE para nuevos DT',
+    slug: 'guia-rapida-prode-nuevos-dt',
+    excerpt: 'Resumen de mercados, limites de apuesta y recomendaciones para gestionar mejor el presupuesto.',
+    image: 'https://images.unsplash.com/photo-1459865264687-595d652de67e?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-16T09:45:00.000Z',
+    author: 'Equipo PRODE',
+    category: 'Noticias',
+    tags: ['prode', 'dt', 'guia'],
+    content: '<p>El PRODE ofrece mercados de resultado final, goles totales y primer gol, cada uno con cuotas diferentes segun riesgo.</p><p>La recomendacion principal para nuevos DT es definir un limite de stake fijo por jornada y evitar sobreexposicion en un solo partido.</p><p>Tambien es clave revisar horarios de cierre para no perder selecciones por inicio de encuentro.</p>'
+  },
+  {
+    id: 'post-006',
+    title: 'Entrevista: el lider del torneo explica su metodo',
+    slug: 'entrevista-lider-torneo-explica-metodo',
+    excerpt: 'Planificacion semanal, analisis de rivales y disciplina competitiva en la charla con el actual puntero.',
+    image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-15T13:20:00.000Z',
+    author: 'Prensa LVZ',
+    category: 'Comunidad',
+    tags: ['entrevista', 'lider', 'metodo'],
+    content: '<p>En una entrevista extensa, el puntero del campeonato detallo su rutina de preparacion entre fechas.</p><p>El enfoque combina sesiones de analisis de rivales, practica de escenarios puntuales y revision de rendimiento por linea.</p><p>Segun su experiencia, la constancia en decisiones simples pesa mas que los cambios radicales de una jornada a otra.</p>'
+  },
+  {
+    id: 'post-007',
+    title: 'Reporte medico: bajas sensibles para la fecha 6',
+    slug: 'reporte-medico-bajas-sensibles-fecha-6',
+    excerpt: 'Varios equipos llegan con ausencias importantes y deberan ajustar esquema para mantener competitividad.',
+    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-14T17:40:00.000Z',
+    author: 'Departamento Deportivo',
+    category: 'Noticias',
+    tags: ['reporte', 'bajas', 'fecha-6'],
+    content: '<p>La antesala de la fecha 6 tiene novedades medicas que afectan la preparacion de varios planteles.</p><p>Las principales bajas estan concentradas en laterales y mediocampistas de equilibrio, posiciones clave para sostener estructura.</p><p>Los cuerpos tecnicos evaluan alternativas con rotacion y cambios de sistema para compensar ausencias.</p>'
+  },
+  {
+    id: 'post-008',
+    title: 'Radar joven: tres talentos que piden pista',
+    slug: 'radar-joven-tres-talentos-piden-pista',
+    excerpt: 'Seguimiento a promesas que ganaron minutos y ya generan impacto en el rendimiento de sus clubes.',
+    image: 'https://images.unsplash.com/photo-1522778526097-ce0a22ceb253?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-13T11:15:00.000Z',
+    author: 'Scouting LVZ',
+    category: 'Analisis',
+    tags: ['talentos', 'juveniles', 'scouting'],
+    content: '<p>El informe de scouting semanal destaca tres perfiles sub-23 con crecimiento sostenido en minutos y productividad.</p><p>Los datos muestran mejora en duelos ganados, progresiones con balon y participacion en secuencias de gol.</p><p>Si mantienen el nivel, podrian convertirse en piezas de mercado durante el proximo tramo de competencia.</p>'
+  },
+  {
+    id: 'post-009',
+    title: 'Humor de viernes: memes de la ultima jornada',
+    slug: 'humor-viernes-memes-ultima-jornada',
+    excerpt: 'Compilado de reacciones de la comunidad tras una fecha con resultados inesperados y finales dramaticos.',
+    image: 'https://images.unsplash.com/photo-1486286701208-1d58e9338013?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-12T20:30:00.000Z',
+    author: 'Comunidad LVZ',
+    category: 'Humor',
+    tags: ['humor', 'memes', 'jornada'],
+    content: '<p>La fecha dejo muchos momentos virales y la comunidad respondio con creatividad total en redes internas.</p><p>Entre plantillas tacticas imposibles y festejos exagerados, el resumen de memes se convirtio en el contenido mas compartido de la semana.</p><p>El proximo especial incluira votacion abierta para elegir el meme ganador del mes.</p>'
+  },
+  {
+    id: 'post-010',
+    title: 'Calendario confirmado para las proximas tres fechas',
+    slug: 'calendario-confirmado-proximas-tres-fechas',
+    excerpt: 'La organizacion publico horarios oficiales y recomendaciones para coordinar partidos sin conflictos.',
+    image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1400&q=80',
+    date: '2026-02-11T08:00:00.000Z',
+    author: 'Organizacion LVZ',
+    category: 'Noticias',
+    tags: ['calendario', 'fechas', 'organizacion'],
+    content: '<p>Se publico el cronograma oficial de las proximas tres fechas con ventanas horarias definidas por zona.</p><p>La administracion pidio confirmar disponibilidad con anticipacion para reducir reprogramaciones de ultimo momento.</p><p>Tambien se incorporaron recordatorios automaticos para facilitar coordinacion entre DT rivales.</p>'
+  }
 ];
 
 export const offers: any[] = [

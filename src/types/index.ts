@@ -226,6 +226,16 @@ export interface TopScorer {
 }
 
 // Match types
+export interface MatchStats {
+  possession: { home: number; away: number };
+  shotsTotal: { home: number; away: number };
+  shotsOnTarget: { home: number; away: number };
+  passes: { home: number; away: number };
+  tackles: { home: number; away: number };
+  corners: { home: number; away: number };
+  fouls: { home: number; away: number };
+}
+
 export interface Match {
   id: string;
   tournamentId: string;
@@ -236,8 +246,18 @@ export interface Match {
   homeScore?: number;
   awayScore?: number;
   status: 'scheduled' | 'live' | 'finished';
+  /** En copas: índice del partido dentro de la fase (0-based). Sirve para ordenar y mostrar "Partido N" y "Ganador fase #N". */
+  bracketSlot?: number;
   scorers?: Scorer[];
+  cards?: Card[];
   highlights?: string[];
+  youtubeVideoId?: string;
+  playerOfTheMatch?: string;
+  matchStats?: MatchStats;
+  decidedBy?: 'penalties';
+  qualifiedTeam?: 'home' | 'away';
+  penaltyHomeScore?: number;
+  penaltyAwayScore?: number;
 }
 
 export interface Scorer {
@@ -245,6 +265,17 @@ export interface Scorer {
   playerName: string;
   clubId: string;
   minute: number;
+  assistPlayerId?: string;
+  assistPlayerName?: string;
+  ownGoal?: boolean;
+}
+
+export interface Card {
+  playerId: string;
+  playerName: string;
+  clubId: string;
+  minute: number;
+  type: 'yellow' | 'red';
 }
 
 // Transfer types

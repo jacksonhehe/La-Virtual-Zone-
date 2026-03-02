@@ -1,10 +1,15 @@
-import { AlertTriangle, Award, Clipboard, Trophy, Users } from 'lucide-react';
+import { AlertTriangle, Award, Trophy, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Club, Player, Standing } from '../../types';
+import { panelItemClass, panelSurfaceClass } from './helpers';
 
 interface ClubTabProps {
-  userClub: any;
+  userClub: Club | null;
+  players: Player[];
+  standings: Standing[];
 }
 
-const ClubTab = ({ userClub }: ClubTabProps) => {
+const ClubTab = ({ userClub, players, standings }: ClubTabProps) => {
   if (!userClub) {
     return (
       <div className="bg-yellow-500/10 rounded-lg p-6 border border-yellow-500/30">
@@ -12,27 +17,30 @@ const ClubTab = ({ userClub }: ClubTabProps) => {
           <AlertTriangle size={24} className="text-yellow-400" />
           <div>
             <h2 className="text-xl font-bold text-yellow-400">Club no encontrado</h2>
-            <p className="text-gray-400 text-sm">No se pudo cargar la información de tu club.</p>
+            <p className="text-gray-400 text-sm">No se pudo cargar la informacion de tu club.</p>
           </div>
         </div>
         <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-4">
           <p className="text-yellow-300 text-sm font-medium mb-2">Posibles causas:</p>
           <ul className="text-gray-300 text-sm space-y-1 list-disc list-inside">
-            <li>No estás asociado a ningún club</li>
+            <li>No estas asociado a ningun club</li>
             <li>Problema con los datos del club</li>
             <li>El club fue eliminado o renombrado</li>
           </ul>
-          <p className="text-gray-400 text-sm mt-3">
-            Contacta al staff si crees que es un error.
-          </p>
+          <p className="text-gray-400 text-sm mt-3">Contacta al staff si crees que es un error.</p>
         </div>
       </div>
     );
   }
 
+  const clubSlug = encodeURIComponent(userClub.name.toLowerCase().replace(/\s+/g, '-'));
+  const squadSize = players.filter((player) => player.clubId === userClub.id).length;
+  const standing = standings.find((entry) => entry.clubId === userClub.id);
+  const standingPosition = (standing as any)?.position || (standing ? standings.indexOf(standing) + 1 : 'N/A');
+
   return (
     <div className="space-y-6">
-      <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+      <div className={`${panelSurfaceClass} p-6`}>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <img
             src={userClub.logo || '/default-club.svg'}
@@ -50,55 +58,51 @@ const ClubTab = ({ userClub }: ClubTabProps) => {
                 DT
               </span>
             </div>
-            <p className="text-gray-400 text-sm mb-4">
-              Fundado en {userClub.foundedYear || 'Año desconocido'}
-            </p>
+            <p className="text-gray-400 text-sm mb-4">Fundado en {userClub.foundedYear || 'Anio desconocido'}</p>
             <div className="flex gap-3">
-              <a
-                href={`/liga-master/club/${encodeURIComponent(userClub.name.toLowerCase().replace(/\s+/g, '-'))}`}
-                className="bg-secondary hover:bg-secondary-light text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+              <Link
+                to={`/liga-master/club/${clubSlug}`}
+                className="btn-secondary text-sm"
               >
                 Ver Perfil
-              </a>
-              <a
-                href={`/liga-master/club/${encodeURIComponent(userClub.name.toLowerCase().replace(/\s+/g, '-'))}/plantilla`}
-                className="border border-primary/50 text-primary hover:bg-primary/10 px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+              </Link>
+              <Link
+                to={`/liga-master/club/${clubSlug}/plantilla`}
+                className="btn-outline text-sm"
               >
                 Plantilla
-              </a>
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Trophy size={20} className="text-primary" />
             <div className="text-right">
-              <div className="text-xl font-bold text-primary">
-                €{(((userClub as any).budget || 0) / 1000000).toFixed(1)}M
-              </div>
+              <div className="text-xl font-bold text-primary">EUR {(((userClub as any).budget || 0) / 1000000).toFixed(1)}M</div>
               <div className="text-xs text-gray-400 uppercase">Presupuesto</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Award size={20} className="text-secondary" />
             <div className="text-right">
-              <div className="text-xl font-bold text-secondary">{(userClub as any).season?.position || 'N/A'}</div>
-              <div className="text-xs text-gray-400 uppercase">Posición</div>
+              <div className="text-xl font-bold text-secondary">{standingPosition}</div>
+              <div className="text-xs text-gray-400 uppercase">Posicion</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Users size={20} className="text-green-400" />
             <div className="text-right">
-              <div className="text-xl font-bold text-green-400">{(userClub as any).players?.length || 0}</div>
+              <div className="text-xl font-bold text-green-400">{squadSize}</div>
               <div className="text-xs text-gray-400 uppercase">Jugadores</div>
             </div>
           </div>
@@ -109,3 +113,5 @@ const ClubTab = ({ userClub }: ClubTabProps) => {
 };
 
 export default ClubTab;
+
+

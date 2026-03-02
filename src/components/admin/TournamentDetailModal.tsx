@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Tournament, Match } from '../../types';
 import { formatDate } from '../../utils/format';
+import MatchScore from '../common/MatchScore';
 
 interface TournamentDetailModalProps {
   tournament: Tournament;
@@ -8,7 +10,28 @@ interface TournamentDetailModalProps {
 }
 
 const TournamentDetailModal = ({ tournament, onClose }: TournamentDetailModalProps) => {
-  const matches: Match[] = tournament.matches || [];
+  const [matches, setMatches] = useState<Match[]>([]);
+  const normalizeTeamRef = (value: string | undefined) => String(value || '').trim().toLowerCase();
+  const visibleTeams = (tournament.teams || []).filter((team) => {
+    const normalized = normalizeTeamRef(team);
+    return normalized && normalized !== 'libre' && normalized !== 'free';
+  });
+  
+  // Cargar partidos desde la tabla independiente en lugar de tournament.matches
+  useEffect(() => {
+    const loadMatches = async () => {
+      try {
+        const { getMatchesByTournament } = await import('../../utils/matchService');
+        const tournamentMatches = await getMatchesByTournament(tournament.id);
+        setMatches(tournamentMatches);
+      } catch (error) {
+        console.error('Error loading matches:', error);
+        setMatches([]);
+      }
+    };
+    
+    loadMatches();
+  }, [tournament.id]);
   const hasMatches = matches.length > 0;
 
   return (
@@ -29,14 +52,14 @@ const TournamentDetailModal = ({ tournament, onClose }: TournamentDetailModalPro
               <div>Tipo: <span className="text-gray-400">{tournament.type === 'league' ? 'Liga' : tournament.type === 'cup' ? 'Copa' : 'Amistoso'}</span></div>
               <div>Fechas: <span className="text-gray-400">{formatDate(tournament.startDate)} — {formatDate(tournament.endDate)}</span></div>
               <div>Estado: <span className="text-gray-400">{tournament.status === 'active' ? 'Activo' : tournament.status === 'upcoming' ? 'Próximo' : 'Finalizado'}</span></div>
-              <div>Rondas: <span className="text-gray-400">{tournament.rounds}</span></div>
+              <div>Jornadas: <span className="text-gray-400">{tournament.rounds}</span></div>
               {tournament.description && <div>Descripción: <span className="text-gray-400">{tournament.description}</span></div>}
             </div>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Equipos ({tournament.teams.length})</h4>
+            <h4 className="font-semibold mb-2">Equipos ({visibleTeams.length})</h4>
             <div className="text-sm text-gray-300 grid grid-cols-2 gap-1 max-h-40 overflow-auto p-2 bg-dark rounded">
-              {tournament.teams.map((team) => (
+              {visibleTeams.map((team) => (
                 <div key={team} className="truncate" title={team}>{team}</div>
               ))}
             </div>
@@ -65,7 +88,7 @@ const TournamentDetailModal = ({ tournament, onClose }: TournamentDetailModalPro
                       <td className="px-3 py-2">{formatDate(m.date)}</td>
                       <td className="px-3 py-2 text-center">{m.homeTeam}</td>
                       <td className="px-3 py-2 text-center">{m.awayTeam}</td>
-                      <td className="px-3 py-2 text-center">{m.homeScore !== undefined && m.awayScore !== undefined ? `${m.homeScore}-${m.awayScore}` : '-'}</td>
+                      <td className="px-3 py-2 text-center">{m.homeScore !== undefined && m.awayScore !== undefined ? <MatchScore match={m} /> : '-'}</td>
                       <td className="px-3 py-2 text-center">{m.status === 'scheduled' ? 'Programado' : m.status === 'live' ? 'En juego' : 'Finalizado'}</td>
                     </tr>
                   ))}
@@ -80,3 +103,4 @@ const TournamentDetailModal = ({ tournament, onClose }: TournamentDetailModalPro
 };
 
 export default TournamentDetailModal;
+

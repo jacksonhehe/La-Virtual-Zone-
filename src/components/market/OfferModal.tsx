@@ -17,6 +17,7 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
   const [offerAmount, setOfferAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showPlayerStats, setShowPlayerStats] = useState<boolean>(false);
   const [realismInfo, setRealismInfo] = useState<{
     level: 'ridiculous' | 'low' | 'fair' | 'high' | 'excessive';
@@ -84,6 +85,7 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setError(null);
     
     // Validate user is logged in and is a DT
@@ -126,23 +128,28 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
       return;
     }
     
-    // Make offer
-    const result = await makeOffer({
-      playerId: player.id,
-      playerName: player.name,
-      fromClub: playerClub.name,
-      toClub: userClub.name,
-      amount: offerAmount,
-      userId: user.id
-    });
-    
-    if (result) {
-      setError(result);
-    } else {
-      setSuccess(true);
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+    setIsSubmitting(true);
+    try {
+      // Make offer
+      const result = await makeOffer({
+        playerId: player.id,
+        playerName: player.name,
+        fromClub: playerClub.name,
+        toClub: userClub.name,
+        amount: offerAmount,
+        userId: user.id
+      });
+      
+      if (result) {
+        setError(result);
+      } else {
+        setSuccess(true);
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
@@ -323,9 +330,9 @@ const OfferModal = ({ player, onClose }: OfferModalProps) => {
                   e.stopPropagation();
                 }}
                 className="btn-primary"
-                disabled={!user || !isDT || !userClub}
+                disabled={!user || !isDT || !userClub || isSubmitting}
               >
-                {playerIsFreeAgent ? 'Fichar Jugador' : 'Enviar Oferta'}
+                {isSubmitting ? 'Procesando...' : playerIsFreeAgent ? 'Fichar Jugador' : 'Enviar Oferta'}
               </button>
             </div>
           </form>

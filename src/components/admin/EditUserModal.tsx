@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, UserCog, Mail, User, Shield, CheckCircle, AlertTriangle, Ban, Clock } from 'lucide-react';
+import { X, UserCog, Mail, User, Shield, AlertTriangle, Clock, Ban } from 'lucide-react';
 import { listUsers } from '../../utils/authService';
 
 type Role = 'user' | 'dt' | 'admin';
@@ -9,24 +9,30 @@ interface EditUserModalProps {
   user: { id: string; username: string; email: string; role: Role; roles?: Role[]; status: Status; suspendedUntil?: string; suspendedReason?: string; banReason?: string };
   existingUsers?: Array<{ id: string; username: string; email: string }>;
   onClose: () => void;
-  onSave: (data: { username: string; email: string; role: Role; roles: Role[]; status: Status; suspendedUntil?: string; suspendedReason?: string; banReason?: string }) => void;
+  onSave: (data: { username: string; email: string; role: Role; roles: Role[]; status: Status; suspendedUntil?: string | null; suspendedReason?: string | null; banReason?: string | null }) => Promise<void> | void;
 }
 
 const EditUserModal = ({ user, onClose, onSave, existingUsers }: EditUserModalProps) => {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [roles, setRoles] = useState<Role[]>(Array.isArray((user as any).roles) && (user as any).roles.length ? (user as any).roles as Role[] : [user.role]);
+  const [status, setStatus] = useState<Status>(user.status);
+  const [suspendedUntil, setSuspendedUntil] = useState<string>(user.suspendedUntil ? new Date(user.suspendedUntil).toISOString().slice(0, 10) : '');
+  const [suspendedReason, setSuspendedReason] = useState<string>(user.suspendedReason || '');
+  const [banReason, setBanReason] = useState<string>(user.banReason || '');
   const [error, setError] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [status, setStatus] = useState<Status>(user.status);
-  const toYMD = (iso?: string) => (iso ? new Date(iso).toISOString().slice(0, 10) : '');
-  const [suspendedUntil, setSuspendedUntil] = useState<string>(toYMD(user.suspendedUntil));
-  const [suspendedReason, setSuspendedReason] = useState<string>(user.suspendedReason || '');
-  const [banReason, setBanReason] = useState<string>(user.banReason || '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const toggleRole = (role: Role) => {
+    setRoles(prev => (prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setError(null);
     setUsernameError(null);
     setEmailError(null);
@@ -41,19 +47,17 @@ const EditUserModal = ({ user, onClose, onSave, existingUsers }: EditUserModalPr
     }
     if (u.length < 3) {
       setError('El usuario debe tener al menos 3 caracteres');
-      setUsernameError('Mínimo 3 caracteres');
+      setUsernameError('Minimo 3 caracteres');
       return;
     }
-    const usernameOk = /^[a-zA-Z0-9_-]+$/.test(u);
-    if (!usernameOk) {
-      setError('El usuario solo puede contener letras, números, guion (-) y guion bajo (_)');
+    if (!/^[a-zA-Z0-9_-]+$/.test(u)) {
+      setError('El usuario solo puede contener letras, numeros, - y _');
       setUsernameError('Caracteres no permitidos');
       return;
     }
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
-    if (!emailOk) {
-      setError('Ingresa un correo válido');
-      setEmailError('Correo inválido');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)) {
+      setError('Ingresa un correo valido');
+      setEmailError('Correo invalido');
       return;
     }
 
@@ -66,125 +70,120 @@ const EditUserModal = ({ user, onClose, onSave, existingUsers }: EditUserModalPr
       return;
     }
     if (existing.some(x => x.id !== user.id && x.email.toLowerCase() === mLower)) {
-      setError('El correo ya está registrado');
+      setError('El correo ya esta registrado');
       setEmailError('Ya registrado');
       return;
     }
 
     const primary: Role = roles.includes('admin') ? 'admin' : roles.includes('dt') ? 'dt' : 'user';
-    const payload: {
-      username: string;
-      email: string;
-      role: Role;
-      roles: Role[];
-      status: Status;
-      suspendedUntil: string | null;
-      suspendedReason: string | null;
-      banReason: string | null;
-    } = {
+    const payload = {
       username: u,
       email: m,
       role: primary,
       roles,
       status,
-      suspendedUntil: null,
-      suspendedReason: null,
-      banReason: null
+      suspendedUntil: null as string | null,
+      suspendedReason: null as string | null,
+      banReason: null as string | null
     };
+
     if (status === 'suspended') {
       payload.suspendedUntil = suspendedUntil ? new Date(suspendedUntil).toISOString() : null;
       payload.suspendedReason = suspendedReason ? suspendedReason : null;
-      payload.banReason = null;
     } else if (status === 'banned') {
       payload.banReason = banReason ? banReason : null;
     }
-    onSave(payload);
+
+    setIsSubmitting(true);
+    try {
+      await onSave(payload);
+      onClose();
+    } catch (err: any) {
+      setError(err?.message || 'Error guardando usuario');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="absolute inset-0 bg-black/80" onClick={onClose}></div>
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-700/50 flex flex-col max-h-[90vh]">
-        {/* Header con gradiente azul */}
-        <div className="relative bg-gradient-to-r from-blue-600/20 via-blue-500/10 to-transparent p-6 border-b border-gray-700/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <UserCog size={24} className="text-blue-400" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white">Editar Usuario</h3>
-                <p className="text-sm text-gray-400">Modifica la información del usuario</p>
-              </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75">
+      <div className="absolute inset-0" onClick={() => (!isSubmitting ? onClose() : null)}></div>
+      <div className="relative bg-dark-light rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden border border-gray-700 flex flex-col">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900">
+          <div className="flex items-center gap-3">
+            <UserCog size={20} className="text-primary" />
+            <div>
+              <h3 className="text-xl font-bold text-white">Editar usuario</h3>
+              <p className="text-sm text-gray-400">Modifica la informacion del usuario</p>
             </div>
-            <button 
-              onClick={onClose} 
-              className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
-            >
-              <X size={24} />
-            </button>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-white rounded-md hover:bg-gray-800"
+            aria-label="Cerrar"
+            disabled={isSubmitting}
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-          <div className="p-6 pb-4">
-            <form id="edit-user-form" onSubmit={handleSubmit} className="space-y-6">
-            {/* Mensajes de error mejorados */}
-            {error && (
-              <div className="p-4 bg-gradient-to-r from-red-500/20 to-red-600/10 border-l-4 border-red-500 rounded-lg shadow-lg">
-                <div className="flex items-start">
-                  <AlertTriangle size={20} className="text-red-400 mr-3 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h5 className="text-red-400 font-semibold mb-1">Error de validación</h5>
-                    <p className="text-red-300 text-sm">{error}</p>
-                  </div>
+        <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-gray-900">
+          {error && (
+            <div className="p-4 bg-gray-800 border border-red-500/50 rounded-lg">
+              <div className="flex items-start">
+                <AlertTriangle size={18} className="text-red-400 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h5 className="text-red-300 font-semibold mb-1">Error de validacion</h5>
+                  <p className="text-red-200 text-sm">{error}</p>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Card de Información de cuenta */}
-            <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-5 border border-gray-700/50">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
               <div className="flex items-center space-x-2 mb-4">
-                <User size={18} className="text-blue-400" />
-                <h4 className="text-lg font-semibold text-white">Información de Cuenta</h4>
+                <User size={18} className="text-primary" />
+                <h4 className="text-lg font-semibold text-white">Informacion de cuenta</h4>
               </div>
-              
               <div className="space-y-4">
                 <div>
                   <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                    <User size={16} className="mr-2 text-gray-400" />
-                    Nombre de Usuario
+                    <User size={14} className="mr-2 text-gray-400" />
+                    Nombre de usuario
                   </label>
                   <input
                     type="text"
                     className={`input w-full ${usernameError ? 'border-red-500 focus:ring-red-500' : ''}`}
                     value={username}
-                    onChange={(e) => { setUsername(e.target.value); if (usernameError) setUsernameError(null); if (error) setError(null); }}
+                    onChange={e => { setUsername(e.target.value); setUsernameError(null); setError(null); }}
+                    disabled={isSubmitting}
                     placeholder="ej: jugador123"
                   />
                   {usernameError && (
-                    <p className="mt-1.5 text-xs text-red-400 flex items-center">
+                    <p className="mt-1 text-xs text-red-400 flex items-center">
                       <AlertTriangle size={12} className="mr-1" />
                       {usernameError}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-gray-500">Mínimo 3 caracteres, solo letras, números, - y _</p>
+                  <p className="mt-1 text-xs text-gray-500">Minimo 3 caracteres, letras, numeros, - y _</p>
                 </div>
 
                 <div>
                   <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                    <Mail size={16} className="mr-2 text-gray-400" />
-                    Correo Electrónico
+                    <Mail size={14} className="mr-2 text-gray-400" />
+                    Correo electronico
                   </label>
                   <input
                     type="email"
                     className={`input w-full ${emailError ? 'border-red-500 focus:ring-red-500' : ''}`}
                     value={email}
-                    onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(null); if (error) setError(null); }}
+                    onChange={e => { setEmail(e.target.value); setEmailError(null); setError(null); }}
+                    disabled={isSubmitting}
                     placeholder="usuario@ejemplo.com"
                   />
                   {emailError && (
-                    <p className="mt-1.5 text-xs text-red-400 flex items-center">
+                    <p className="mt-1 text-xs text-red-400 flex items-center">
                       <AlertTriangle size={12} className="mr-1" />
                       {emailError}
                     </p>
@@ -193,51 +192,25 @@ const EditUserModal = ({ user, onClose, onSave, existingUsers }: EditUserModalPr
               </div>
             </div>
 
-            {/* Card de Roles */}
-            <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-5 border border-gray-700/50">
+            <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
               <div className="flex items-center space-x-2 mb-4">
-                <Shield size={18} className="text-blue-400" />
-                <h4 className="text-lg font-semibold text-white">Permisos y Roles</h4>
+                <Shield size={18} className="text-primary" />
+                <h4 className="text-lg font-semibold text-white">Roles y permisos</h4>
               </div>
-              
-              <div className="space-y-3">
-                {(['user','dt','admin'] as Role[]).map((r) => (
-                  <label 
-                    key={r} 
-                    className={`flex items-center p-3 rounded-lg border transition-all cursor-pointer ${
-                      roles.includes(r)
-                        ? 'bg-blue-500/10 border-blue-500/50 hover:bg-blue-500/20'
-                        : 'bg-gray-700/30 border-gray-600/50 hover:bg-gray-700/50'
-                    }`}
-                  >
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {(['user', 'dt', 'admin'] as Role[]).map(role => (
+                  <label key={role} className="flex items-center space-x-3 p-3 bg-gray-800/60 rounded-lg border border-gray-700">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-blue-500 bg-gray-600 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 mr-3"
-                      checked={roles.includes(r)}
-                      onChange={(e) => {
-                        setRoles((prev) => {
-                          if (e.target.checked) return Array.from(new Set([...prev, r]));
-                          return prev.filter(x => x !== r);
-                        });
-                      }}
+                      checked={roles.includes(role)}
+                      onChange={() => toggleRole(role)}
+                      disabled={isSubmitting}
+                      className="w-4 h-4 text-primary bg-gray-700 border-gray-600 rounded focus:ring-primary focus:ring-2"
                     />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">
-                          {r === 'admin' ? 'Administrador' : r === 'dt' ? 'Director Técnico' : 'Usuario'}
-                        </span>
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
-                          r === 'admin' ? 'bg-purple-500/20 text-purple-300' :
-                          r === 'dt' ? 'bg-blue-500/20 text-blue-300' :
-                          'bg-gray-500/20 text-gray-300'
-                        }`}>
-                          {r.toUpperCase()}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {r === 'admin' ? 'Control total del sistema' : 
-                         r === 'dt' ? 'Gestión de equipos y jugadores' : 
-                         'Acceso básico a la plataforma'}
+                    <div>
+                      <p className="text-sm font-medium capitalize">{role}</p>
+                      <p className="text-xs text-gray-500">
+                        {role === 'admin' ? 'Acceso total' : role === 'dt' ? 'Rol entrenador' : 'Rol basico'}
                       </p>
                     </div>
                   </label>
@@ -245,109 +218,96 @@ const EditUserModal = ({ user, onClose, onSave, existingUsers }: EditUserModalPr
               </div>
             </div>
 
-            {/* Card de Estado */}
-            <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-5 border border-gray-700/50">
+            <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
               <div className="flex items-center space-x-2 mb-4">
-                <CheckCircle size={18} className="text-blue-400" />
-                <h4 className="text-lg font-semibold text-white">Estado de la Cuenta</h4>
+                <Clock size={18} className="text-primary" />
+                <h4 className="text-lg font-semibold text-white">Estado</h4>
               </div>
-              
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                  Estado del Usuario
-                </label>
-                <select 
-                  className="input w-full"
-                  value={status} 
-                  onChange={(e) => setStatus(e.target.value as Status)}
-                >
-                  <option value="active">Activo</option>
-                  <option value="suspended">Suspendido</option>
-                  <option value="banned">Baneado</option>
-                </select>
-              </div>
-
-              {/* Campos condicionales para suspensión */}
-              {status === 'suspended' && (
-                <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg space-y-4">
-                  <div className="flex items-center text-yellow-400 mb-2">
-                    <Clock size={16} className="mr-2" />
-                    <span className="font-medium text-sm">Detalles de Suspensión</span>
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                      Suspendido hasta
-                    </label>
-                    <input
-                      type="date"
-                      className="input w-full"
-                      value={suspendedUntil}
-                      onChange={(e) => setSuspendedUntil(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                      Motivo de suspensión
-                    </label>
-                    <input
-                      type="text"
-                      className="input w-full"
-                      value={suspendedReason}
-                      onChange={(e) => setSuspendedReason(e.target.value)}
-                      placeholder="Opcional: ej. Violación de términos"
-                    />
-                  </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Estado de la cuenta</label>
+                  <select
+                    className="input w-full"
+                    value={status}
+                    onChange={e => setStatus(e.target.value as Status)}
+                    disabled={isSubmitting}
+                  >
+                    <option value="active">Activa</option>
+                    <option value="suspended">Suspendida</option>
+                    <option value="banned">Baneada</option>
+                  </select>
                 </div>
-              )}
 
-              {/* Campos condicionales para baneo */}
-              {status === 'banned' && (
-                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg space-y-4">
-                  <div className="flex items-center text-red-400 mb-2">
-                    <Ban size={16} className="mr-2" />
-                    <span className="font-medium text-sm">Detalles de Baneo</span>
+                {status === 'suspended' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Hasta (YYYY-MM-DD)</label>
+                      <input
+                        type="date"
+                        className="input w-full"
+                        value={suspendedUntil}
+                        onChange={e => setSuspendedUntil(e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Motivo</label>
+                      <input
+                        type="text"
+                        className="input w-full"
+                        value={suspendedReason}
+                        onChange={e => setSuspendedReason(e.target.value)}
+                        disabled={isSubmitting}
+                        placeholder="Motivo de la suspension"
+                      />
+                    </div>
                   </div>
+                )}
+
+                {status === 'banned' && (
                   <div>
-                    <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                      Motivo de ban
+                    <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+                      <Ban size={14} className="text-red-400" />
+                      Motivo del ban
                     </label>
                     <input
                       type="text"
                       className="input w-full"
                       value={banReason}
-                      onChange={(e) => setBanReason(e.target.value)}
-                      placeholder="Opcional: ej. Conducta inapropiada"
+                      onChange={e => setBanReason(e.target.value)}
+                      disabled={isSubmitting}
+                      placeholder="Motivo del ban permanente"
                     />
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-            </form>
-          </div>
-        </div>
 
-        {/* Footer fijo */}
-        <div className="flex-shrink-0 border-t border-gray-700/50 bg-gray-900/50">
-          <div className="p-6">
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
               <button
                 type="button"
-                className="flex-1 btn-outline hover:bg-gray-700 transition-all"
+                className="btn-outline flex-1 sm:flex-none"
                 onClick={onClose}
+                disabled={isSubmitting}
               >
-                <X size={16} className="mr-2" />
                 Cancelar
               </button>
               <button
                 type="submit"
-                form="edit-user-form"
-                className="flex-1 btn-primary bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/20 transition-all"
+                className="btn-primary flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
               >
-                <CheckCircle size={16} className="mr-2" />
-                Guardar Cambios
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Guardando...
+                  </span>
+                ) : (
+                  'Guardar cambios'
+                )}
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -355,3 +315,4 @@ const EditUserModal = ({ user, onClose, onSave, existingUsers }: EditUserModalPr
 };
 
 export default EditUserModal;
+

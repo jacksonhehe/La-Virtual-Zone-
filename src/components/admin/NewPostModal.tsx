@@ -424,3 +424,4 @@ const NewPostModal = ({ onClose, onCreate }: NewPostModalProps) => {
 
 export default NewPostModal;
 
+

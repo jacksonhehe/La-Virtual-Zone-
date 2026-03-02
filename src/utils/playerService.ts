@@ -269,6 +269,7 @@ export const createPlayer = async (data: {
   overall: number;
   clubId?: string;
   transferValue?: number;
+  salary?: number;
   nationality: string;
   dorsal: number;
   image?: string;
@@ -289,6 +290,7 @@ export const createPlayer = async (data: {
   const image = data.image
     ? data.image // Accept any image URL or base64 data
     : '/default.png'; // Usar imagen por defecto para todos los jugadores
+  const salary = data.salary ?? calculateSalaryByRating(data.overall);
 
   const player: Player = {
     id,
@@ -307,7 +309,7 @@ export const createPlayer = async (data: {
     playingStyles: data.playingStyles,
     contract: {
       expires: new Date(new Date().setFullYear(new Date().getFullYear() + 3)).toISOString(),
-      salary: calculateSalaryByRating(data.overall),
+      salary,
     },
     form: data.attributes?.form || 3,
     goals: 0,
@@ -450,6 +452,12 @@ export const updatePlayer = async (player: Player): Promise<Player> => {
       dorsal: player.dorsal ?? existingPlayer.dorsal ?? 1,
       height: player.height ?? existingPlayer.height,
       weight: player.weight ?? existingPlayer.weight,
+      contract: {
+        ...(existingPlayer.contract || {}),
+        ...(player.contract || {}),
+        salary: player.contract?.salary ?? (player as any).salary ?? existingPlayer.contract?.salary ?? 0,
+        expires: player.contract?.expires ?? existingPlayer.contract?.expires ?? new Date(new Date().setFullYear(new Date().getFullYear() + 3)).toISOString()
+      }
     };
 
     const updated = players.map(p => (p.id === player.id ? updatedPlayer : p));
@@ -771,7 +779,33 @@ export const togglePlayerTransferListing = async (playerId: string): Promise<Pla
   updatedPlayers[playerIndex] = updatedPlayer;
 
   await savePlayers(updatedPlayers);
-  await syncPlayerToSupabase(updatedPlayer);
+
+  // Persist transfer flag explicitly with UPDATE (not UPSERT) to avoid silent
+  // mismatches when the row already exists and policies reject upsert semantics.
+  try {
+    const { config } = await import('../lib/config');
+    if (config.useSupabase) {
+      const { getSupabaseAdminClient, getSupabaseClient } = await import('../lib/supabase');
+      const supabase = config.supabase.serviceRoleKey ? getSupabaseAdminClient() : getSupabaseClient();
+      const { error } = await supabase
+        .from('players')
+        .update({
+          transfer_listed: updatedPlayer.transferListed,
+          transfer_value: updatedPlayer.transferValue ?? updatedPlayer.marketValue ?? 0,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', updatedPlayer.id);
+
+      if (error) {
+        throw error;
+      }
+    }
+  } catch (error) {
+    // Bubble up so caller can revert optimistic UI/state update.
+    console.error('PlayerService: Failed to persist transfer listing in Supabase:', error);
+    throw error;
+  }
+
   return updatedPlayer;
 };
 

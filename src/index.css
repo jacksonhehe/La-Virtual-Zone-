@@ -93,6 +93,8 @@
   --primary: #7f39fb;
   --primary-light: #9f65fd;
   --primary-dark: #5f2cb8;
+  --secondary: #22d3ee;
+  --secondary-light: #67e8f9;
   --neon-red: #ff003c;
   --neon-blue: #00b3ff;
   --neon-green: #00ff8f;
@@ -101,6 +103,16 @@
 
 body {
   @apply bg-gray-900 text-white font-sans;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
 }
 
 @layer components {
@@ -283,6 +295,33 @@ body {
 
   .scrollbar-track-gray-800 {
     scrollbar-color: #1f2937 #374151;
+  }
+
+  .table-scroll {
+    position: relative;
+  }
+
+  .table-scroll::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 42px;
+    pointer-events: none;
+    background: linear-gradient(270deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0));
+  }
+
+  @media (max-width: 400px) {
+    .card,
+    .table-scroll {
+      border-radius: 14px;
+    }
+
+    .tight-safe {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 
 }

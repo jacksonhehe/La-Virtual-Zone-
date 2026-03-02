@@ -254,6 +254,30 @@ export function calculateSalaryByRating(rating: number): number {
   return salaryTable[rating] || salaryTable[72];
 }
 
+// Funcion para calcular precio instantaneo de liberacion segun tabla de mercado
+export function calculateReleasePriceByRating(rating: number): number {
+  const releaseValueTable: Record<number, number> = {
+    72: 8_000_000, 73: 8_000_000, 74: 8_000_000, 75: 8_000_000,
+    76: 12_000_000, 77: 14_000_000, 78: 18_000_000, 79: 21_000_000,
+    80: 22_000_000, 81: 26_000_000, 82: 30_000_000, 83: 38_000_000,
+    84: 42_000_000, 85: 52_000_000, 86: 63_000_000, 87: 84_000_000,
+    88: 112_000_000, 89: 146_000_000, 90: 178_000_000, 91: 207_000_000,
+    92: 276_000_000, 93: 341_000_000, 94: 434_000_000, 95: 878_000_000,
+    96: 897_000_000, 97: 987_000_000, 98: 1_048_000_000, 99: 1_323_000_000,
+    100: 1_564_000_000, 101: 2_086_000_000
+  };
+
+  if (rating < 72) {
+    return releaseValueTable[72];
+  }
+
+  if (rating > 101) {
+    return releaseValueTable[101];
+  }
+
+  return releaseValueTable[rating] || releaseValueTable[72];
+}
+
 // Función para ajustar salarios de todos los jugadores según tabla de mercado
 export async function adjustAllPlayerSalaries(): Promise<{ updated: number; totalCost: number }> {
   const { players, updatePlayers } = useDataStore.getState() as any;

@@ -35,6 +35,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
   const [overall, setOverall] = useState<number | ''>('');
   const [clubId, setClubId] = useState<string>('');
   const [value, setValue] = useState<number | ''>('');
+  const [salary, setSalary] = useState<number | ''>('');
   const [nationality, setNationality] = useState('Argentina');
   const [dorsal, setDorsal] = useState<number | ''>('');
   const [image, setImage] = useState('');
@@ -130,8 +131,9 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     const n = name.trim();
@@ -139,40 +141,50 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     const a = typeof age === 'string' ? parseInt(age || '0', 10) : age;
     const ovr = typeof overall === 'string' ? parseInt(overall || '0', 10) : overall;
     const val = typeof value === 'string' ? parseInt(value || '0', 10) : value;
+    const sal = typeof salary === 'string' ? parseInt(salary || '0', 10) : salary;
     const d = typeof dorsal === 'string' ? parseInt(dorsal || '1', 10) : dorsal;
     const injury = typeof injuryResistance === 'string' ? parseInt(injuryResistance || '2', 10) : injuryResistance;
     const h = typeof height === 'string' ? parseInt(height || '0', 10) : height;
     const w = typeof weight === 'string' ? parseInt(weight || '0', 10) : weight;
 
-    if (!a || a < 12 || a > 60) { setError('Edad inválida (12-60)'); return; }
-    if (!ovr || ovr < 1 || ovr > 99) { setError('Media inválida (1-99)'); return; }
-    if (!d || d < 1 || d > 99) { setError('Dorsal inválido (1-99)'); return; }
-    if (val !== undefined && val !== '' && (isNaN(val as number) || (val as number) < 0)) { setError('Valor inválido'); return; }
-    if (injury < 1 || injury > 3) { setError('Resistencia a lesiones inválida (1-3)'); return; }
-    if (h !== '' && h !== 0 && (isNaN(h as number) || (h as number) < 50 || (h as number) > 250)) { setError('Altura inválida (50-250 cm)'); return; }
-    if (w !== '' && w !== 0 && (isNaN(w as number) || (w as number) < 30 || (w as number) > 200)) { setError('Peso inválido (30-200 kg)'); return; }
+    if (!a || a < 12 || a > 60) { setError('Edad invalida (12-60)'); return; }
+    if (!ovr || ovr < 1 || ovr > 99) { setError('Media invalida (1-99)'); return; }
+    if (!d || d < 1 || d > 99) { setError('Dorsal invalido (1-99)'); return; }
+    if (val !== undefined && val !== '' && (isNaN(val as number) || (val as number) < 0)) { setError('Valor invalido'); return; }
+    if (sal !== undefined && sal !== '' && (isNaN(sal as number) || (sal as number) < 0)) { setError('Salario invalido'); return; }
+    if (injury < 1 || injury > 3) { setError('Resistencia a lesiones invalida (1-3)'); return; }
+    if (h !== '' && h !== 0 && (isNaN(h as number) || (h as number) < 50 || (h as number) > 250)) { setError('Altura invalida (50-250 cm)'); return; }
+    if (w !== '' && w !== 0 && (isNaN(w as number) || (w as number) < 30 || (w as number) > 200)) { setError('Peso invalido (30-200 kg)'); return; }
     if (image && !isValidImageSource(image)) {
-      setError('La foto debe ser una URL válida (http/https) o una imagen subida');
+      setError('La foto debe ser una URL valida (http/https) o una imagen subida');
       return;
     }
 
-    onCreate({
-      name: n,
-      age: a as number,
-      position,
-      overall: ovr as number,
-      clubId: clubId || undefined,
-      transferValue: val as number,
-      nationality,
-      dorsal: d as number,
-      image: image || undefined,
-      attributes,
-      skills,
-      playingStyles,
-      injuryResistance: injury as number,
-      height: h !== '' && h !== 0 ? h as number : undefined,
-      weight: w !== '' && w !== 0 ? w as number : undefined
-    });
+    setIsSubmitting(true);
+    try {
+      await Promise.resolve(
+        onCreate({
+          name: n,
+          age: a as number,
+          position,
+          overall: ovr as number,
+          clubId: clubId || undefined,
+          transferValue: val as number,
+          salary: sal as number,
+          nationality,
+          dorsal: d as number,
+          image: image || undefined,
+          attributes,
+          skills,
+          playingStyles,
+          injuryResistance: injury as number,
+          height: h !== '' && h !== 0 ? (h as number) : undefined,
+          weight: w !== '' && w !== 0 ? (w as number) : undefined
+        })
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateAttribute = (key: keyof PlayerAttributes, value: number) => {
@@ -187,7 +199,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     setPlayingStyles(prev => ({ ...prev, [key]: value }));
   };
 
-  // Función para determinar el color del slider según el valor
+  // Funcion para determinar el color del slider segun el valor
   const getSliderColor = (value: number) => {
     if (value >= 40 && value <= 74) return 'red';
     if (value >= 75 && value <= 84) return 'yellow';
@@ -196,7 +208,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     return 'red'; // default
   };
 
-  // Función para obtener la clase de color de texto según el valor
+  // Funcion para obtener la clase de color de texto segun el valor
   const getSliderTextColor = (value: number) => {
     const color = getSliderColor(value);
     switch (color) {
@@ -208,7 +220,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     }
   };
 
-  // Traducciones de habilidades y estilos de juego al español
+  // Traducciones de habilidades y estilos de juego al espanol
   const skillTranslations: Record<string, string> = {
     scissorKick: 'Tijera',
     doubleTouch: 'Doble toque',
@@ -216,17 +228,17 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     marseilleTurn: 'Marsellesa',
     rainbow: 'Sombrerito',
     chopTurn: 'Cortada',
-    cutBehindAndTurn: 'Amago por detrás y giro',
+    cutBehindAndTurn: 'Amago por detras y giro',
     scotchMove: 'Rebote interior',
-    stepOnSkillControl: 'Pisar el balón',
+    stepOnSkillControl: 'Pisar el balon',
     heading: 'Cabeceador',
-    longRangeDrive: 'Cañonero',
+    longRangeDrive: 'Canonero',
     chipShotControl: 'Sombrero',
     longRanger: 'Tiro de larga distancia',
     knuckleShot: 'Tiro con empeine',
     dippingShot: 'Disparo descendente',
     risingShot: 'Disparo ascendente',
-    acrobaticFinishing: 'Finalización acrobática',
+    acrobaticFinishing: 'Finalizacion acrobatica',
     heelTrick: 'Taconazo',
     firstTimeShot: 'Remate primer toque',
     oneTouchPass: 'Pase al primer toque',
@@ -237,8 +249,8 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     rabona: 'Rabona',
     noLookPass: 'Pase sin mirar',
     lowLoftedPass: 'Pase bombeado bajo',
-    giantKill: 'Patadón en corto',
-    longThrow: 'Patadón en largo',
+    giantKill: 'Patadon en corto',
+    longThrow: 'Patadon en largo',
     longThrow2: 'Saque largo de banda',
     gkLongThrow: 'Saque de meta largo',
     penaltySpecialist: 'Especialista en penales',
@@ -247,18 +259,18 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     manMarking: 'Marcar hombre',
     trackBack: 'Delantero atrasado',
     interception: 'Interceptor',
-    acrobaticClear: 'Despeje acrobático',
-    captaincy: 'Capitanía',
-    superSub: 'Súper refuerzo',
-    comPlayingStyles: 'Espíritu de lucha',
+    acrobaticClear: 'Despeje acrobatico',
+    captaincy: 'Capitania',
+    superSub: 'Super refuerzo',
+    comPlayingStyles: 'Espiritu de lucha',
     // Estilos de juego
     goalPoacher: 'Cazagoles',
-    dummyRunner: 'Señuelo',
-    foxInTheBox: 'Hombre de área',
+    dummyRunner: 'Senuelo',
+    foxInTheBox: 'Hombre de area',
     targetMan: 'Referente',
     classicNo10: 'Creador de jugadas',
-    prolificWinger: 'Extremo prolífico',
-    roamingFlank: 'Extremo móvil',
+    prolificWinger: 'Extremo prolifico',
+    roamingFlank: 'Extremo movil',
     crossSpecialist: 'Especialista en centros',
     holePlayer: 'Jugador de huecos',
     boxToBox: 'Omnipresente',
@@ -268,79 +280,56 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     offensiveFullback: 'Lateral ofensivo',
     fullbackFinisher: 'Lateral finalizador',
     defensiveFullback: 'Lateral defensivo',
-    buildUp: 'Creación',
+    buildUp: 'Creacion',
     extraFrontman: 'Atacante extra',
     offensiveGoalkeeper: 'Portero ofensivo',
     defensiveGoalkeeper: 'Portero defensivo'
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="absolute inset-0 bg-black/80" onClick={onClose}></div>
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl w-full max-w-7xl max-h-[92vh] overflow-hidden border border-gray-700/50">
-        {/* Header con gradiente */}
-        <div className="relative bg-gradient-to-r from-primary/20 via-primary/10 to-transparent p-6 border-b border-gray-700/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary/20 rounded-lg">
-                <User size={24} className="text-primary" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white">Nuevo Jugador</h3>
-                <p className="text-sm text-gray-400">Completa la información del jugador</p>
-              </div>
-            </div>
-            <button 
-              onClick={onClose} 
-              className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
-            >
-              <X size={24} />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/75" onClick={onClose}></div>
+      <div className="relative bg-dark-light rounded-xl shadow-xl w-full max-w-6xl max-h-[92vh] overflow-hidden border border-gray-700">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900">
+          <div>
+            <h3 className="text-xl font-bold text-white">Jugador</h3>
+            <p className="text-sm text-gray-400">Completa la informacion del jugador</p>
           </div>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-white rounded-md hover:bg-gray-800" aria-label="Cerrar">
+            <X size={20} />
+          </button>
         </div>
 
-        {/* Tabs mejoradas */}
-        <div className="flex bg-gray-900/50 border-b border-gray-700/50">
+        <div className="flex bg-gray-900 border-b border-gray-800">
           {[
-            { id: 'basic', label: 'Información Básica', icon: User, count: null },
+            { id: 'basic', label: 'Informacion basica', icon: User, count: null },
             { id: 'attributes', label: 'Atributos', icon: BarChart, count: 29 },
             { id: 'skills', label: 'Habilidades', icon: Zap, count: 39 },
-            { id: 'styles', label: 'Estilos de Juego', icon: Target, count: 21 }
+            { id: 'styles', label: 'Estilos de juego', icon: Target, count: 21 }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 px-6 py-4 text-sm font-medium transition-all relative group ${
-                activeTab === tab.id
-                  ? 'text-primary bg-primary/10'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+              className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
+                activeTab === tab.id ? 'text-white border-b-2 border-primary' : 'text-gray-400 hover:text-white'
               }`}
             >
               <div className="flex items-center justify-center space-x-2">
-                <tab.icon size={18} className={activeTab === tab.id ? 'text-primary' : 'text-gray-500 group-hover:text-gray-300'} />
+                <tab.icon size={16} className={activeTab === tab.id ? 'text-primary' : 'text-gray-500'} />
                 <span className="hidden sm:inline">{tab.label}</span>
-                {tab.count && (
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                    activeTab === tab.id ? 'bg-primary/20 text-primary' : 'bg-gray-700 text-gray-400'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
+                {tab.count && <span className="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">{tab.count}</span>}
               </div>
-              {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
-              )}
             </button>
           ))}
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(92vh-220px)] bg-gradient-to-b from-gray-900/50 to-transparent">
+        <div className="p-5 overflow-y-auto max-h-[calc(92vh-210px)] bg-gray-900">
           {error && (
             <div className="mb-6 p-4 bg-gradient-to-r from-red-500/20 to-red-600/10 border-l-4 border-red-500 rounded-lg shadow-lg animate-shake">
               <div className="flex items-start">
                 <AlertTriangle size={20} className="text-red-400 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h5 className="text-red-400 font-semibold mb-1">Error de validación</h5>
+                  <h5 className="text-red-400 font-semibold mb-1">Error de validacion</h5>
                   <p className="text-red-300 text-sm">{error}</p>
                 </div>
               </div>
@@ -351,15 +340,14 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
             {activeTab === 'basic' && (
               <div className="space-y-6">
                 {/* Card de Foto del Jugador */}
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50">
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
                   <div className="flex items-center space-x-2 mb-4">
-                    <Camera size={20} className="text-primary" />
-                    <h4 className="text-lg font-semibold text-white">Foto del Jugador</h4>
+                    <Camera size={18} className="text-primary" />
+                    <h4 className="text-lg font-semibold text-white">Foto del jugador</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Vista previa de la imagen */}
                     <div className="flex flex-col items-center">
-                      <div className="relative w-40 h-40 rounded-2xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 border-2 border-gray-600 shadow-lg">
+                      <div className="relative w-40 h-40 rounded-lg overflow-hidden bg-gray-800 border border-gray-700">
                         {imagePreview ? (
                           <img
                             src={imagePreview}
@@ -373,15 +361,15 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center bg-primary/10">
-                            <Camera size={32} className="text-primary mb-2" />
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800">
+                            <Camera size={28} className="text-primary mb-2" />
                             <span className="text-xs text-gray-400">Sin imagen</span>
                           </div>
                         )}
                         {imagePreview && (
                           <button 
                             type="button"
-                            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 rounded-full p-1.5 shadow-lg transition-colors" 
+                            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 rounded-full p-1 shadow-lg transition-colors" 
                             onClick={clearImageSelection}
                           >
                             <X size={14} className="text-white" />
@@ -390,7 +378,6 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                       </div>
                     </div>
 
-                    {/* Controles de carga */}
                     <div className="space-y-3">
                       <div className="relative">
                         <input
@@ -400,18 +387,15 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           id="player-image-upload"
                         />
-                        <label
-                          htmlFor="player-image-upload"
-                          className="btn-outline w-full flex items-center justify-center cursor-pointer hover:bg-primary/10 hover:border-primary/50"
-                        >
+                        <label htmlFor="player-image-upload" className="btn-outline w-full flex items-center justify-center cursor-pointer">
                           <Camera size={16} className="mr-2" />
                           {selectedImage ? 'Cambiar imagen' : 'Seleccionar imagen'}
                         </label>
                       </div>
 
                       {imageError && (
-                        <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex items-start">
-                          <AlertTriangle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
+                        <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded p-3 flex items-start">
+                          <AlertTriangle size={14} className="mr-2 mt-0.5 flex-shrink-0" />
                           <span>{imageError}</span>
                         </div>
                       )}
@@ -423,8 +407,8 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                             <span className="text-primary truncate">{selectedImage.name}</span>
                           </div>
                           <div className="text-sm text-gray-300">
-                            <span className="font-medium mr-2">Tamaño:</span>
-                            {(selectedImage.size / 1024 / 1024).toFixed(2)} MB
+                            <span className="font-medium mr-2">Tamano:</span>
+                            {(selectedImage.size / 1024 / 1024).toFixed(2)} MB <span className="text-gray-400 ml-1">(limite sugerido 2MB)</span>
                           </div>
                           <button
                             type="button"
@@ -462,11 +446,10 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                   </div>
                 </div>
 
-                {/* Card de Información Personal */}
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50">
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
                   <div className="flex items-center space-x-2 mb-4">
                     <User size={20} className="text-primary" />
-                    <h4 className="text-lg font-semibold text-white">Información Personal</h4>
+                    <h4 className="text-lg font-semibold text-white">Informacion personal</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -529,11 +512,10 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                   </div>
                 </div>
 
-                {/* Card de Características Físicas */}
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50">
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
                   <div className="flex items-center space-x-2 mb-4">
                     <Activity size={20} className="text-primary" />
-                    <h4 className="text-lg font-semibold text-white">Características Físicas</h4>
+                    <h4 className="text-lg font-semibold text-white">Caracteristicas fisicas</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -570,8 +552,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                   </div>
                 </div>
 
-                {/* Card de Datos Deportivos */}
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50">
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
                   <div className="flex items-center space-x-2 mb-4">
                     <Award size={20} className="text-primary" />
                     <h4 className="text-lg font-semibold text-white">Datos Deportivos</h4>
@@ -580,7 +561,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
                         <Target size={16} className="mr-2 text-gray-400" />
-                        Posición
+                        Posicion
                       </label>
                       <select
                         className="input w-full"
@@ -623,28 +604,42 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                       </select>
                     </div>
 
-                    <div>
-                      <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
-                        <DollarSign size={16} className="mr-2 text-gray-400" />
-                        Valor de Mercado (€)
-                      </label>
-                      <input
-                        type="number"
-                        className="input w-full"
-                        value={value}
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
+                    <DollarSign size={16} className="mr-2 text-gray-400" />
+                    Valor de Mercado (EUR)
+                  </label>
+                  <input
+                    type="number"
+                    className="input w-full"
+                    value={value}
                         onChange={e => setValue(e.target.value === '' ? '' : Number(e.target.value))}
                         min={0}
-                        placeholder="5000000"
-                      />
-                    </div>
-                  </div>
+                    placeholder="5000000"
+                  />
                 </div>
 
-                {/* Card de Resistencia */}
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50">
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
+                    <DollarSign size={16} className="mr-2 text-gray-400" />
+                    Salario anual (EUR)
+                  </label>
+                  <input
+                    type="number"
+                    className="input w-full"
+                    value={salary}
+                    onChange={e => setSalary(e.target.value === '' ? '' : Number(e.target.value))}
+                    min={0}
+                    placeholder="1200000"
+                  />
+                </div>
+              </div>
+            </div>
+
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
                   <div className="flex items-center space-x-2 mb-4">
                     <Heart size={20} className="text-primary" />
-                    <h4 className="text-lg font-semibold text-white">Resistencia Física</h4>
+                    <h4 className="text-lg font-semibold text-white">Resistencia fisica</h4>
                   </div>
                   <div>
                     <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
@@ -656,9 +651,9 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                       value={injuryResistance}
                       onChange={e => setInjuryResistance(e.target.value === '' ? 2 : Number(e.target.value))}
                     >
-                      <option value={1}>🔴 Baja (1) - Propenso a lesiones frecuentes</option>
-                      <option value={2}>🟡 Media (2) - Resistencia normal</option>
-                      <option value={3}>🟢 Alta (3) - Muy resistente a lesiones</option>
+                      <option value={1}> Baja (1) - Propenso a lesiones frecuentes</option>
+                      <option value={2}> Media (2) - Resistencia normal</option>
+                      <option value={3}> Alta (3) - Muy resistente a lesiones</option>
                     </select>
                   </div>
                 </div>
@@ -666,67 +661,71 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
             )}
 
             {activeTab === 'attributes' && (
-              <div className="space-y-6">
-                {/* Atributos de Campo */}
-                <div>
-                  <h4 className="text-lg font-semibold mb-4 text-primary">Atributos de Campo (26)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[
-                      { key: 'offensiveAwareness', label: 'Actitud ofensiva', icon: TrendingUp },
-                      { key: 'ballControl', label: 'Control de balón', icon: Target },
-                      { key: 'dribbling', label: 'Drible', icon: RotateCcw },
-                      { key: 'tightPossession', label: 'Posesión del balón', icon: Hand },
-                      { key: 'lowPass', label: 'Pase al ras', icon: Triangle },
-                      { key: 'loftedPass', label: 'Pase bombeado', icon: Circle },
-                      { key: 'finishing', label: 'Finalización', icon: Target },
-                      { key: 'heading', label: 'Cabeceador', icon: Square },
-                      { key: 'setPieceTaking', label: 'Balón parado', icon: Circle },
-                      { key: 'curl', label: 'Efecto', icon: Tornado },
-                      { key: 'speed', label: 'Velocidad', icon: Wind },
-                      { key: 'acceleration', label: 'Aceleración', icon: Rocket },
-                      { key: 'kickingPower', label: 'Potencia de tiro', icon: Zap },
-                      { key: 'jumping', label: 'Salto', icon: ArrowUp },
-                      { key: 'physicalContact', label: 'Contacto físico', icon: Dumbbell },
-                      { key: 'balance', label: 'Equilibrio', icon: Scale },
-                      { key: 'stamina', label: 'Resistencia', icon: Activity },
-                      { key: 'defensiveAwareness', label: 'Actitud defensiva', icon: Shield },
-                      { key: 'ballWinning', label: 'Recuperación de balón', icon: RotateCcw },
-                      { key: 'aggression', label: 'Agresividad', icon: AlertTriangle }
-                    ].map(attr => (
-                      <div key={attr.key} className="bg-gray-700/50 rounded-lg p-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">{attr.label}</span>
-                          <span className="text-xs text-gray-400"><attr.icon size={14} /></span>
-                        </div>
-                        <input
-                          type="range"
-                          min="40"
-                          max="99"
-                          value={attributes[attr.key as keyof PlayerAttributes] as number}
-                          onChange={e => updateAttribute(attr.key as keyof PlayerAttributes, Number(e.target.value))}
-                          className="w-full h-2 rounded-lg appearance-none cursor-pointer slider"
-                          style={{
-                            background: getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'red' ? '#ef4444' :
-                                       getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'yellow' ? '#eab308' :
-                                       getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'green' ? '#22c55e' :
-                                       getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'cyan' ? '#06b6d4' : '#374151',
-                            '--thumb-color': getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'red' ? '#ef4444' :
-                                           getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'yellow' ? '#eab308' :
-                                           getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'green' ? '#22c55e' :
-                                           getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'cyan' ? '#06b6d4' : '#ef4444'
-                          } as React.CSSProperties & { '--thumb-color': string }}
-                        />
-                        <div className="flex justify-between text-xs text-gray-400 mt-1">
-                          <span>40</span>
-                          <span className={`font-bold ${getSliderTextColor(attributes[attr.key as keyof PlayerAttributes] as number)}`}>
-                            {attributes[attr.key as keyof PlayerAttributes]}
-                          </span>
-                          <span>99</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            <div className="space-y-6">
+              {/* Atributos de Campo */}
+              <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-lg font-semibold text-white">Atributos de campo (26)</h4>
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { key: 'offensiveAwareness', label: 'Actitud ofensiva', icon: TrendingUp },
+                    { key: 'ballControl', label: 'Control de balon', icon: Target },
+                    { key: 'dribbling', label: 'Drible', icon: RotateCcw },
+                    { key: 'tightPossession', label: 'Posesion del balon', icon: Hand },
+                    { key: 'lowPass', label: 'Pase al ras', icon: Triangle },
+                    { key: 'loftedPass', label: 'Pase bombeado', icon: Circle },
+                    { key: 'finishing', label: 'Finalizacion', icon: Target },
+                    { key: 'heading', label: 'Cabeceador', icon: Square },
+                    { key: 'setPieceTaking', label: 'Balon parado', icon: Circle },
+                    { key: 'curl', label: 'Efecto', icon: Tornado },
+                    { key: 'speed', label: 'Velocidad', icon: Wind },
+                    { key: 'acceleration', label: 'Aceleracion', icon: Rocket },
+                    { key: 'kickingPower', label: 'Potencia de tiro', icon: Zap },
+                    { key: 'jumping', label: 'Salto', icon: ArrowUp },
+                    { key: 'physicalContact', label: 'Contacto fisico', icon: Dumbbell },
+                    { key: 'balance', label: 'Equilibrio', icon: Scale },
+                    { key: 'stamina', label: 'Resistencia', icon: Activity },
+                    { key: 'defensiveAwareness', label: 'Actitud defensiva', icon: Shield },
+                    { key: 'ballWinning', label: 'Recuperacion de balon', icon: RotateCcw },
+                    { key: 'aggression', label: 'Agresividad', icon: AlertTriangle }
+                  ].map(attr => (
+                    <div key={attr.key} className="bg-gray-800/60 rounded-lg p-3 border border-gray-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">{attr.label}</span>
+                        <span className="text-xs text-gray-400"><attr.icon size={14} /></span>
+                      </div>
+                      <input
+                        type="range"
+                        min="40"
+                        max="99"
+                        value={attributes[attr.key as keyof PlayerAttributes] as number}
+                        onChange={e => updateAttribute(attr.key as keyof PlayerAttributes, Number(e.target.value))}
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer slider"
+                        style={{
+                          background:
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'red' ? '#ef4444' :
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'yellow' ? '#eab308' :
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'green' ? '#22c55e' :
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'cyan' ? '#06b6d4' : '#374151',
+                          '--thumb-color':
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'red' ? '#ef4444' :
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'yellow' ? '#eab308' :
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'green' ? '#22c55e' :
+                            getSliderColor(attributes[attr.key as keyof PlayerAttributes] as number) === 'cyan' ? '#06b6d4' : '#ef4444'
+                        } as React.CSSProperties & { '--thumb-color': string }}
+                      />
+                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>40</span>
+                        <span className={`font-bold ${getSliderTextColor(attributes[attr.key as keyof PlayerAttributes] as number)}`}>
+                          {attributes[attr.key as keyof PlayerAttributes]}
+                        </span>
+                        <span>99</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
                 {/* Atributos de Portero */}
                 {position === 'PT' && (
@@ -792,7 +791,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                     </div>
 
                     <div className="bg-gray-700/50 rounded-lg p-3">
-                      <label className="block text-sm text-gray-400 mb-2">Precisión de Pie Malo</label>
+                      <label className="block text-sm text-gray-400 mb-2">Precision de Pie Malo</label>
                       <select
                         className="input w-full"
                         value={attributes.weakFootAccuracy}
@@ -819,7 +818,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
                         <option value={5}>Perfecta (5)</option>
                         <option value={6}>Sobresaliente (6)</option>
                         <option value={7}>Legendaria (7)</option>
-                        <option value={8}>Máxima (8)</option>
+                        <option value={8}>Maxima (8)</option>
                       </select>
                     </div>
                   </div>
@@ -873,18 +872,9 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
           </form>
         </div>
 
-        {/* Footer mejorado */}
-        <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 p-6 border-t border-gray-700/50">
+        <div className="bg-gray-900 p-5 border-t border-gray-800">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center space-x-2 text-sm text-gray-400">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <span>
-                {activeTab === 'basic' && 'Información Básica'}
-                {activeTab === 'attributes' && 'Atributos PES 2021'}
-                {activeTab === 'skills' && 'Habilidades de Jugador'}
-                {activeTab === 'styles' && 'Estilos de Juego'}
-              </span>
-            </div>
+            <div className="text-sm text-gray-400">{activeTab === 'basic' ? 'Informacion basica' : activeTab === 'attributes' ? 'Atributos' : activeTab === 'skills' ? 'Habilidades' : 'Estilos de juego'}</div>
             <div className="flex space-x-3 w-full sm:w-auto">
               <button 
                 type="button" 
@@ -896,11 +886,21 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
               </button>
               <button 
                 type="submit" 
-                className="flex-1 sm:flex-none btn-primary bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all" 
+                className="flex-1 sm:flex-none btn-primary disabled:opacity-50 disabled:cursor-not-allowed" 
                 onClick={handleSubmit}
+                disabled={isSubmitting}
               >
-                <User size={16} className="mr-2" />
-                Crear Jugador
+                {isSubmitting ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Guardando...
+                  </div>
+                ) : (
+                  <>
+                    <User size={16} className="mr-2" />
+                    Guardar jugador
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -911,3 +911,4 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
 };
 
 export default NewPlayerModal;
+

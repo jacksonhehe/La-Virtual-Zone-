@@ -24,9 +24,12 @@ const Gallery = () => {
   const { user } = useAuthStore();
   const [showUpload, setShowUpload] = useState(false);
   const [form, setForm] = useState(() => ({ ...initialFormState }));
-  const [localImage, setLocalImage] = useState<{ name: string; dataUrl: string } | null>(null);
+  const [localImage, setLocalImage] = useState<{ name: string; dataUrl: string; fileSize?: number; mimeType?: string } | null>(null);
   const [localImageError, setLocalImageError] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [localThumbnail, setLocalThumbnail] = useState<{ name: string; dataUrl: string; fileSize?: number; mimeType?: string } | null>(null);
+  const [localThumbnailError, setLocalThumbnailError] = useState('');
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const fallback = [
     {
       id: 'f1',
@@ -34,7 +37,7 @@ const Gallery = () => {
       title: 'Final de la Liga Master 2024',
       description: 'Rayo Digital FC vs Atlético Pixelado',
       category: 'Torneos',
-      image: 'https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixlib=rb-4.1.0',
+      image: '/Galeria-banner.jpg',
       uploader: 'admin',
       uploadDate: '2024-12-15'
     }
@@ -54,6 +57,8 @@ const Gallery = () => {
     setForm({ ...initialFormState });
     setLocalImage(null);
     setLocalImageError('');
+    setLocalThumbnail(null);
+    setLocalThumbnailError('');
   };
 
   const closeUploadModal = () => {
@@ -66,6 +71,80 @@ const Gallery = () => {
     if (value !== 'image') {
       setLocalImage(null);
       setLocalImageError('');
+    }
+  };
+
+  const handleLocalThumbnailChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const input = event.target;
+    if (!file) {
+      setLocalThumbnail(null);
+      setLocalThumbnailError('');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setLocalThumbnail(null);
+      setLocalThumbnailError('Solo se permiten archivos de imagen para la miniatura.');
+      input.value = '';
+      return;
+    }
+
+    // Validar tamaño máximo (10MB para imágenes)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      setLocalThumbnail(null);
+      setLocalThumbnailError('La imagen de miniatura no puede ser mayor a 10MB.');
+      input.value = '';
+      return;
+    }
+
+    setUploadingThumbnail(true);
+    setLocalThumbnailError('');
+
+    try {
+      let imageUrl: string;
+      let fileSize: number = file.size;
+      let mimeType: string = file.type;
+
+      if (isStorageAvailable()) {
+        // Subir a Supabase Storage
+        const result = await uploadMediaToSupabase(file, 'gallery');
+        imageUrl = result.url;
+        fileSize = result.fileSize;
+        mimeType = result.mimeType;
+        console.log('Miniatura subida a Supabase Storage:', result.url);
+      } else {
+        // Usar base64 local
+        const reader = new FileReader();
+        imageUrl = await new Promise((resolve, reject) => {
+          reader.onloadend = () => {
+            const result = typeof reader.result === 'string' ? reader.result : '';
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error('No se pudo leer la imagen'));
+            }
+          };
+          reader.onerror = () => reject(new Error('Error al leer la imagen'));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      setLocalThumbnail({
+        name: file.name,
+        dataUrl: imageUrl,
+        fileSize,
+        mimeType
+      });
+
+    } catch (error) {
+      console.error('Error procesando miniatura:', error);
+      setLocalThumbnail(null);
+      setLocalThumbnailError(error instanceof Error ? error.message : 'Error al procesar la miniatura.');
+    } finally {
+      setUploadingThumbnail(false);
+      input.value = '';
     }
   };
 
@@ -110,7 +189,7 @@ const Gallery = () => {
         imageUrl = result.url;
         fileSize = result.fileSize;
         mimeType = result.mimeType;
-        console.log(`✅ ${isVideo ? 'Video' : 'Imagen'} subida a Supabase Storage:`, result.url);
+        console.log(`Archivo ${isVideo ? 'de video' : 'de imagen'} subido a Supabase Storage:`, result.url);
       } else {
         // Usar base64 local
         const reader = new FileReader();
@@ -150,7 +229,7 @@ const Gallery = () => {
       <PageHeader
         title="Galería"
         subtitle="Colección de imágenes, videos y contenido multimedia de La Virtual Zone."
-        image="https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?ixlib=rb-4.1.0"
+        image="/Galeria-banner.jpg"
       />
 
       <div className="container mx-auto px-4 py-8">
@@ -248,40 +327,39 @@ const Gallery = () => {
         )}
 
         {showUpload && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-scaleIn">
-            <div className="absolute inset-0 bg-black/80" onClick={closeUploadModal}></div>
-            <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-700/50">
-              {/* Header con gradiente */}
-              <div className="relative bg-gradient-to-r from-primary/20 via-primary/10 to-transparent p-6 border-b border-gray-700/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-primary/20 rounded-lg">
-                      <Plus size={24} className="text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">Subir contenido</h3>
-                      <p className="text-sm text-gray-400">Agrega una imagen o video a la galería</p>
-                    </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/75" onClick={closeUploadModal}></div>
+            <div className="relative bg-dark-light rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden border border-gray-700 flex flex-col">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 bg-gray-900">
+                <div className="flex items-center gap-3">
+                  <Plus size={20} className="text-primary" />
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Subir contenido</h3>
+                    <p className="text-sm text-gray-400">Agrega una imagen o video a la galería</p>
                   </div>
-                  <button
-                    onClick={closeUploadModal}
-                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
-                    aria-label="Cerrar"
-                  >
-                    <X size={24} />
-                  </button>
                 </div>
+                <button
+                  onClick={closeUploadModal}
+                  className="p-2 text-gray-400 hover:text-white rounded-md hover:bg-gray-800"
+                  aria-label="Cerrar"
+                >
+                  <X size={20} />
+                </button>
               </div>
 
-              <div className="p-6">
-                <div className="space-y-3">
+              <div className="flex-1 overflow-y-auto p-6 bg-gray-900 space-y-6">
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700 space-y-4">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Image size={18} className="text-primary" />
+                    <h4 className="text-lg font-semibold text-white">Datos del contenido</h4>
+                  </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Título</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Título</label>
                     <input className="input w-full" value={form.title} onChange={e=>setForm({...form,title:e.target.value})} />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Tipo</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
                       <select className="input w-full" value={form.type} onChange={e=>handleTypeChange(e.target.value as 'image'|'video'|'clip')}>
                         <option value="image">Imagen</option>
                         <option value="video">Video</option>
@@ -289,12 +367,12 @@ const Gallery = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Categoría</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Categoría</label>
                       <input className="input w-full" value={form.category} onChange={e=>setForm({...form,category:e.target.value})} placeholder="Torneos, Club, etc." />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">URL del contenido</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">URL del contenido</label>
                     <input
                       className="input w-full disabled:opacity-50 disabled:cursor-not-allowed"
                       value={form.url}
@@ -308,11 +386,17 @@ const Gallery = () => {
                       <p className="text-xs text-gray-500 mt-1">Pega un enlace o elige una imagen de tu equipo.</p>
                     )}
                   </div>
-                  {(form.type === 'image' || form.type === 'video' || form.type === 'clip') && (
-                    <div>
-                      <label className="block text-sm text-gray-400 mb-2 font-medium">
+                </div>
+
+                {(form.type === 'image' || form.type === 'video' || form.type === 'clip') && (
+                  <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Upload size={18} className="text-primary" />
+                      <h4 className="text-lg font-semibold text-white">
                         Archivo multimedia {config.useSupabase ? '(se subirá a la nube)' : '(se guardará localmente)'}
-                      </label>
+                      </h4>
+                    </div>
+                    <div>
                       <div className="relative">
                         <input
                           type="file"
@@ -389,7 +473,7 @@ const Gallery = () => {
                                 </p>
                                 {config.useSupabase && (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400">
-                                    ☁️ En la nube
+                                    En la nube
                                   </span>
                                 )}
                               </div>
@@ -410,47 +494,166 @@ const Gallery = () => {
                         </div>
                       )}
                     </div>
-                  )}
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">URL de miniatura (opcional)</label>
-                    <input className="input w-full" value={form.thumbnailUrl} onChange={e=>setForm({...form,thumbnailUrl:e.target.value})} placeholder="https://..." />
                   </div>
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">Descripción (opcional)</label>
-                    <textarea
-                      className="input w-full resize-none"
-                      rows={3}
-                      value={form.description}
-                      onChange={e=>setForm({...form,description:e.target.value})}
-                      placeholder="Describe brevemente el contenido..."
-                    />
+                )}
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Image size={18} className="text-primary" />
+                    <h4 className="text-lg font-semibold text-white">
+                      Miniatura (opcional) {config.useSupabase ? '(se subirá a la nube)' : '(se guardará localmente)'}
+                    </h4>
                   </div>
+                  <div className="space-y-3">
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLocalThumbnailChange}
+                          className="hidden"
+                          id="thumbnail-upload"
+                          disabled={uploadingThumbnail}
+                        />
+                        <label
+                          htmlFor="thumbnail-upload"
+                          className={`flex items-center justify-center w-full p-4 border-2 border-dashed rounded-lg transition-all cursor-pointer group ${
+                            uploadingThumbnail
+                              ? 'border-yellow-500 bg-yellow-500/10 cursor-not-allowed'
+                              : 'border-gray-600 hover:border-primary hover:bg-primary/5'
+                          }`}
+                        >
+                          <div className="flex flex-col items-center space-y-2">
+                            <div className={`p-3 rounded-full transition-all ${
+                              uploadingThumbnail
+                                ? 'bg-yellow-500/20'
+                                : 'bg-primary/10 group-hover:bg-primary/20'
+                            }`}>
+                              {uploadingThumbnail ? (
+                                <Upload size={20} className="text-yellow-500 animate-pulse" />
+                              ) : (
+                                <Image size={20} className="text-primary" />
+                              )}
+                            </div>
+                            <div className="text-center">
+                              <p className={`text-sm font-medium transition-colors ${
+                                uploadingThumbnail
+                                  ? 'text-yellow-400'
+                                  : 'text-gray-300 group-hover:text-white'
+                              }`}>
+                                {uploadingThumbnail
+                                  ? 'Subiendo miniatura...'
+                                  : localThumbnail
+                                    ? 'Cambiar miniatura'
+                                    : 'Subir imagen de miniatura'
+                                }
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {uploadingThumbnail
+                                  ? 'Procesando archivo...'
+                                  : 'PNG, JPG, GIF hasta 10MB'
+                                }
+                              </p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                      {localThumbnailError && (
+                        <div className="flex items-center gap-2 p-2 bg-red-500/10 border border-red-500/20 rounded-lg">
+                          <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
+                          <p className="text-xs text-red-400">{localThumbnailError}</p>
+                        </div>
+                      )}
+                      {localThumbnail && !uploadingThumbnail && (
+                        <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={localThumbnail.dataUrl}
+                              alt="Vista previa miniatura"
+                              className="w-16 h-16 object-cover rounded-lg border border-gray-600"
+                            />
+                            <div className="flex-1">
+                              <p className="font-medium text-gray-200 text-sm">{localThumbnail.name}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <p className="text-xs text-gray-400">
+                                  {localThumbnail.fileSize ? `${(localThumbnail.fileSize / 1024 / 1024).toFixed(2)} MB` : 'Tamaño desconocido'}
+                                </p>
+                                {config.useSupabase && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400">
+                                    En la nube
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all"
+                              onClick={() => {
+                                setLocalThumbnail(null);
+                                setLocalThumbnailError('');
+                              }}
+                              title="Quitar miniatura"
+                              disabled={uploadingThumbnail}
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-gray-700"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-2 bg-gray-800 text-gray-400">o</span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">URL de miniatura (opcional)</label>
+                        <input
+                          className="input w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                          value={form.thumbnailUrl}
+                          onChange={e=>setForm({...form,thumbnailUrl:e.target.value})}
+                          placeholder="https://..."
+                          disabled={!!localThumbnail}
+                        />
+                        {localThumbnail ? (
+                          <p className="text-xs text-gray-500 mt-1">Se usará la imagen subida como miniatura.</p>
+                        ) : (
+                          <p className="text-xs text-gray-500 mt-1">Pega un enlace de imagen para la miniatura.</p>
+                        )}
+                      </div>
+                    </div>
+                </div>
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Descripción (opcional)</label>
+                  <textarea
+                    className="input w-full resize-none"
+                    rows={3}
+                    value={form.description}
+                    onChange={e=>setForm({...form,description:e.target.value})}
+                    placeholder="Describe brevemente el contenido..."
+                  />
                 </div>
               </div>
 
-              {/* Footer mejorado */}
-              <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 p-6 border-t border-gray-700/50">
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                  <div className="flex items-center space-x-2 text-sm text-gray-400">
-                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                    <span>Completa los campos requeridos para subir</span>
-                  </div>
-                  <div className="flex space-x-3 w-full sm:w-auto">
+              <div className="flex-shrink-0 bg-gray-900 p-5 border-t border-gray-800">
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm text-gray-400 order-2 sm:order-1">Completa los campos requeridos para subir</p>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:justify-end order-1 sm:order-2">
                     <button
                       type="button"
-                      className="flex-1 sm:flex-none btn-outline hover:bg-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full sm:w-auto btn-outline hover:bg-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={closeUploadModal}
-                      disabled={mediaLoading || uploadingImage}
+                      disabled={mediaLoading || uploadingImage || uploadingThumbnail}
                     >
                       <X size={16} className="mr-2" />
                       Cancelar
                     </button>
                     <button
-                      className="flex-1 sm:flex-none btn-primary bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full sm:w-auto btn-primary disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       onClick={async () => {
                         const title = form.title.trim();
                         const url = (localImage?.dataUrl || form.url.trim());
-                        if (!title || !url || mediaLoading || uploadingImage) return;
+                        if (!title || !url || mediaLoading || uploadingImage || uploadingThumbnail) return;
 
                         try {
                           const item: any = {
@@ -458,7 +661,7 @@ const Gallery = () => {
                             title,
                             type: form.type,
                             url,
-                            thumbnailUrl: localImage?.dataUrl || form.thumbnailUrl.trim() || url,
+                            thumbnailUrl: localThumbnail?.dataUrl || form.thumbnailUrl.trim() || localImage?.dataUrl || url,
                             uploadDate: new Date().toISOString(),
                             uploader: user?.username || 'anon',
                             category: form.category || 'General',
@@ -476,13 +679,13 @@ const Gallery = () => {
                           // El error ya se maneja en el slice
                         }
                       }}
-                      disabled={mediaLoading || uploadingImage || !form.title.trim() || (!localImage?.dataUrl && !form.url.trim())}
+                      disabled={mediaLoading || uploadingImage || uploadingThumbnail || !form.title.trim() || (!localImage?.dataUrl && !form.url.trim())}
                     >
                       {mediaLoading ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                           Subiendo...
-                        </>
+                        </div>
                       ) : (
                         <>
                           <Plus size={16} className="mr-2" />
@@ -502,3 +705,9 @@ const Gallery = () => {
 };
 
 export default Gallery;
+
+
+
+
+
+

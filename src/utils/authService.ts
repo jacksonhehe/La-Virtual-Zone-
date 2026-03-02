@@ -1,6 +1,7 @@
 ﻿import  { User } from '../types';
 import { supabase, getSupabaseClient, getSupabaseAdminClient } from '../lib/supabase';
 import { config } from '../lib/config';
+import { createClient } from '@supabase/supabase-js';
 
 // Legacy localStorage keys (for backward compatibility)
 const USERS_KEY = 'virtual_zone_users';
@@ -1039,9 +1040,14 @@ export const createSupabaseUser = async (data: CreateUserPayload): Promise<User>
   if (!newUser) {
     throw new Error('No se pudo crear el usuario en Supabase');
   }
+  const createdAuthUser: any = (newUser as any)?.user ?? newUser;
+  const createdUserId: string | undefined = createdAuthUser?.id;
+  if (!createdUserId) {
+    throw new Error('Supabase devolvio un usuario sin id al crear la cuenta.');
+  }
 
   const profilePayload: any = {
-    id: newUser.id,
+    id: createdUserId,
     username: data.username,
     email: data.email,
     role: data.role,
@@ -1056,19 +1062,59 @@ export const createSupabaseUser = async (data: CreateUserPayload): Promise<User>
     profilePayload.club_id = data.clubId;
   }
 
-  const { error: upsertError } = await client
+  // Primero intentamos leer el perfil por si un trigger ya lo creó.
+  const { data: existingProfile, error: existingProfileError } = await client
     .from('profiles')
-    .upsert(profilePayload, { onConflict: 'id' });
+    .select('*')
+    .eq('id', createdUserId)
+    .maybeSingle();
 
-  if (upsertError) {
-    console.error('❌ Error upserting Supabase profile:', upsertError);
-    throw upsertError;
+  if (existingProfileError) {
+    console.error('❌ Error checking existing Supabase profile:', existingProfileError);
+    throw existingProfileError;
+  }
+
+  if (!existingProfile) {
+    const { error: upsertError } = await client
+      .from('profiles')
+      .upsert(profilePayload, { onConflict: 'id' });
+
+    if (upsertError) {
+      console.error('❌ Error upserting Supabase profile:', upsertError);
+      const msg = String(upsertError.message || '').toLowerCase();
+      if (msg.includes('row-level security') || msg.includes('rls')) {
+        throw new Error(
+          'El usuario de Auth fue creado, pero RLS bloqueó crear su perfil en "profiles". Ajusta la policy INSERT de profiles para service_role o usa scripts/rls_profiles.sql.'
+        );
+      }
+      throw upsertError;
+    }
+  } else {
+    // Si ya existe perfil, intentamos actualizar campos clave sin romper el flujo si RLS lo bloquea.
+    const { error: updateError } = await client
+      .from('profiles')
+      .update({
+        username: data.username,
+        email: data.email,
+        role: data.role,
+        status: data.status || 'active',
+        ...(data.clubId ? { club_id: data.clubId } : {})
+      })
+      .eq('id', createdUserId);
+
+    if (updateError) {
+      const msg = String(updateError.message || '').toLowerCase();
+      if (!(msg.includes('row-level security') || msg.includes('rls'))) {
+        console.error('❌ Error updating existing Supabase profile:', updateError);
+        throw updateError;
+      }
+    }
   }
 
   const { data: profile, error: profileError } = await client
     .from('profiles')
     .select('*')
-    .eq('id', newUser.id)
+    .eq('id', createdUserId)
     .single();
 
   if (profileError) {
@@ -1340,7 +1386,21 @@ export const changePassword = async (currentPassword: string, newPassword: strin
       throw new Error('No se pudo obtener el correo del usuario actual');
     }
 
-    const { error: verifyError } = await client.auth.signInWithPassword({
+    if (!config.supabase.url || !config.supabase.anonKey) {
+      throw new Error('Falta configuración de Supabase para verificar la contraseña actual');
+    }
+
+    // Use a temporary client so credential checks do not mutate the active session.
+    const verifyClient = createClient(config.supabase.url, config.supabase.anonKey, {
+      auth: {
+        storageKey: 'virtual_zone_password_verify_temp',
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false
+      }
+    });
+
+    const { error: verifyError } = await verifyClient.auth.signInWithPassword({
       email,
       password: currentPassword
     });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, TrendingUp, Mail, Briefcase, BarChart } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
@@ -48,7 +48,7 @@ const OfferCard = ({
   getClubLogo: (clubName: string) => string;
   onShowPlayerStats: (player: any) => void;
 }) => (
-  <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl overflow-hidden hover:border-gray-600/70 transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/20 backdrop-blur-sm">
+  <div className="bg-dark-light border border-gray-700 rounded-xl overflow-hidden hover:border-gray-600 transition-colors">
           <div className="p-5 cursor-pointer group" onClick={() => toggleOfferDetails(offer.id)}>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
@@ -93,7 +93,7 @@ const OfferCard = ({
           </div>
 
           {expandedOffers[offer.id] && (
-            <div className="px-6 pb-6 pt-4 border-t border-gray-700/70 bg-gradient-to-b from-gray-800/20 to-transparent">
+            <div className="px-6 pb-6 pt-4 border-t border-gray-700 bg-dark-light/40">
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Club vendedor</p>
@@ -132,13 +132,13 @@ const OfferCard = ({
                 const showOriginalAmount = counterAmountValue !== null && counterAmountValue !== offer.amount;
 
                 return (
-                  <div className="mb-6 bg-gradient-to-r from-gray-800/40 to-gray-900/40 rounded-xl p-4 border border-gray-700/50">
+                  <div className="mb-6 bg-dark-light rounded-xl p-4 border border-gray-700">
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-sm font-semibold text-gray-300">
                         {amountLabel}
                       </p>
                       {badgeText && (
-                        <span className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-purple-600/20 text-purple-400 text-xs rounded-full font-medium border border-purple-500/30">
+                        <span className="px-3 py-1 bg-purple-500/15 text-purple-300 text-xs rounded-full font-medium border border-purple-500/30">
                           {badgeText}
                         </span>
                       )}
@@ -165,7 +165,7 @@ const OfferCard = ({
                 e.stopPropagation();
                 onShowPlayerStats(offer);
               }}
-              className="w-full bg-gradient-to-r from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 hover:to-blue-600/20 border border-blue-500/30 hover:border-blue-400/50 text-blue-400 hover:text-blue-300 px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/10"
+              className="w-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 hover:border-blue-400/50 text-blue-300 hover:text-blue-200 px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center transition-colors"
             >
               <BarChart size={16} className="mr-2" />
               Ver estadísticas del jugador
@@ -181,7 +181,7 @@ const OfferCard = ({
                 {!showCounterOfferInput[offer.id] ? (
                   <button
                     onClick={() => setShowCounterOfferInput(prev => ({ ...prev, [offer.id]: true }))}
-                    className="w-full bg-gradient-to-r from-purple-500/10 to-purple-600/10 hover:from-purple-500/20 hover:to-purple-600/20 border border-purple-500/30 hover:border-purple-400/50 text-purple-400 hover:text-purple-300 px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/10"
+                    className="w-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 hover:border-purple-400/50 text-purple-300 hover:text-purple-200 px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center transition-colors"
                   >
                     <TrendingUp size={16} className="mr-2" />
                     Hacer Contraoferta
@@ -215,7 +215,7 @@ const OfferCard = ({
                     <div className="flex space-x-3">
                       <button
                         onClick={() => handleCounterOffer(offer.id)}
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/20"
+                        className="flex-1 bg-purple-600 hover:bg-purple-500 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-colors"
                       >
                         Enviar
                       </button>
@@ -240,15 +240,15 @@ const OfferCard = ({
               <div className="flex space-x-3">
                 <button
                   onClick={() => handleRespondToCounterOffer(offer.id, true)}
-                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-green-500/20"
+                  className="flex-1 bg-green-600 hover:bg-green-500 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-colors"
                 >
-                  ✓ Aceptar Contraoferta
+                  Aceptar contraoferta
                 </button>
                 <button
                   onClick={() => handleRespondToCounterOffer(offer.id, false)}
-                  className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-red-500/20"
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-colors"
                 >
-                  ✕ Rechazar
+                  Rechazar
                 </button>
               </div>
             )}
@@ -257,15 +257,15 @@ const OfferCard = ({
               <div className="flex space-x-3">
                 <button
                   onClick={() => handleOfferAction(offer.id, 'accept')}
-                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-green-500/20"
+                  className="flex-1 bg-green-600 hover:bg-green-500 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-colors"
                 >
-                  ✓ Aceptar
+                  Aceptar
                 </button>
                 <button
                   onClick={() => handleOfferAction(offer.id, 'reject')}
-                  className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-red-500/20"
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-colors"
                 >
-                  ✕ Rechazar
+                  Rechazar
                 </button>
               </div>
             )}
@@ -275,7 +275,7 @@ const OfferCard = ({
 
         {/* Show "Pending" status for buyers - only for pending offers, not counter-offers */}
         {isBuyerOfOffer(offer) && !canRespondToOffer(offer) && offer.status === 'pending' && (
-          <div className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-lg p-4">
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
               <div>
@@ -288,7 +288,7 @@ const OfferCard = ({
 
         {/* Show counter-offer status for sellers who made the counter-offer */}
         {!isBuyerOfOffer(offer) && offer.status === 'counter-offer' && !canRespondToOffer(offer) && (
-          <div className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-lg p-4">
+          <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
               <div>
@@ -301,7 +301,7 @@ const OfferCard = ({
 
         <>
           {offer.status === 'accepted' && (
-            <div className="bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20 rounded-lg p-4">
+            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-green-400 font-medium text-sm">
@@ -322,7 +322,7 @@ const OfferCard = ({
           )}
 
           {offer.status === 'rejected' && (
-            <div className="bg-gradient-to-r from-red-500/10 to-red-600/10 border border-red-500/20 rounded-lg p-4">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 <span className="text-red-400 font-medium text-sm">
@@ -336,7 +336,7 @@ const OfferCard = ({
           )}
 
           {offer.status === 'counter-offer' && (
-            <div className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-lg p-4">
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                 <div className="flex-1">
@@ -495,13 +495,13 @@ const OffersPanel = () => {
     }
 
     if (action === 'accept') {
-      console.log(`🔄 Iniciando aceptación de oferta: ${offerId}`);
+      console.log(`Iniciando aceptación de oferta: ${offerId}`);
       const result = await processTransfer(offerId);
       if (result) {
-        console.error(`❌ Error en transferencia: ${result}`);
+        console.error(`Error en transferencia: ${result}`);
         setError(result);
       } else {
-        console.log(`✅ Transferencia completada exitosamente`);
+        console.log('Transferencia completada exitosamente');
         setSuccess('¡Transferencia completada con éxito!');
       }
     } else {
@@ -665,19 +665,19 @@ const OffersPanel = () => {
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
           {/* Mis Ofertas (empty state) */}
-          <div className="bg-gradient-to-br from-green-500/5 to-green-600/10 rounded-xl border border-green-500/20 p-6 shadow-lg">
+          <div className="bg-dark-light rounded-xl border border-gray-700 p-6">
             <div className="flex items-center mb-6">
-              <div className="w-1 h-8 bg-gradient-to-b from-green-400 to-green-600 rounded-full mr-3 shadow-sm"></div>
+              <div className="w-1 h-8 bg-green-500 rounded-full mr-3"></div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-green-400 mb-1">Mis Ofertas</h3>
                 <p className="text-green-300/70 text-sm">Ofertas que has hecho por jugadores</p>
               </div>
-              <span className="ml-auto bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium border border-green-500/30">
+              <span className="ml-auto bg-green-500/15 text-green-300 px-3 py-1 rounded-full text-sm font-medium border border-green-500/30">
                 0
               </span>
             </div>
-            <div className="text-center py-16 text-gray-400 bg-gradient-to-br from-green-500/5 to-green-600/5 rounded-xl border-2 border-dashed border-green-500/30">
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center border border-green-500/20">
+            <div className="text-center py-16 text-gray-400 bg-gray-800/20 rounded-xl border-2 border-dashed border-gray-700">
+              <div className="w-20 h-20 mx-auto mb-6 bg-green-500/10 rounded-full flex items-center justify-center border border-green-500/20">
                 <TrendingUp className="text-green-400" size={32} />
               </div>
                 <h4 className="font-semibold text-green-300 mb-2">No has hecho ninguna oferta aún</h4>
@@ -686,19 +686,19 @@ const OffersPanel = () => {
           </div>
 
           {/* Ofertas Recibidas (empty state) */}
-          <div className="bg-gradient-to-br from-blue-500/5 to-blue-600/10 rounded-xl border border-blue-500/20 p-6 shadow-lg">
+          <div className="bg-dark-light rounded-xl border border-gray-700 p-6">
             <div className="flex items-center mb-6">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full mr-3 shadow-sm"></div>
+              <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-blue-400 mb-1">Ofertas Recibidas</h3>
                 <p className="text-blue-300/70 text-sm">Ofertas por tus jugadores</p>
               </div>
-              <span className="ml-auto bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium border border-blue-500/30">
+              <span className="ml-auto bg-blue-500/15 text-blue-300 px-3 py-1 rounded-full text-sm font-medium border border-blue-500/30">
                 0
               </span>
             </div>
-            <div className="text-center py-16 text-gray-400 bg-gradient-to-br from-blue-500/5 to-blue-600/5 rounded-xl border-2 border-dashed border-blue-500/30">
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-full flex items-center justify-center border border-blue-500/20">
+            <div className="text-center py-16 text-gray-400 bg-gray-800/20 rounded-xl border-2 border-dashed border-gray-700">
+              <div className="w-20 h-20 mx-auto mb-6 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/20">
                 <Mail className="text-blue-400" size={32} />
               </div>
                 <h4 className="font-semibold text-blue-300 mb-2">No has recibido ninguna oferta</h4>
@@ -713,7 +713,7 @@ const OffersPanel = () => {
   return (
     <div className="space-y-8">
       {!marketStatus && (
-        <div className="p-5 bg-gradient-to-r from-red-500/10 to-red-600/10 border border-red-500/20 text-red-400 rounded-xl backdrop-blur-sm">
+        <div className="p-5 bg-red-500/10 border border-red-500/20 text-red-300 rounded-xl">
           <div className="flex items-center space-x-3">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
             <span className="font-medium">El mercado de fichajes está cerrado. No puedes aceptar ni rechazar ofertas.</span>
@@ -721,7 +721,7 @@ const OffersPanel = () => {
         </div>
       )}
       {success && (
-        <div className="p-5 bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20 text-green-400 rounded-xl backdrop-blur-sm transition-all duration-300">
+        <div className="p-5 bg-green-500/10 border border-green-500/20 text-green-300 rounded-xl transition-colors">
           <div className="flex items-center space-x-3">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             <span className="font-medium">{success}</span>
@@ -729,7 +729,7 @@ const OffersPanel = () => {
         </div>
       )}
       {error && (
-        <div className="p-5 bg-gradient-to-r from-red-500/10 to-red-600/10 border border-red-500/20 text-red-400 rounded-xl backdrop-blur-sm transition-all duration-300">
+        <div className="p-5 bg-red-500/10 border border-red-500/20 text-red-300 rounded-xl transition-all duration-300">
           <div className="flex items-center space-x-3">
             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
             <span className="font-medium">{error}</span>
@@ -755,14 +755,14 @@ const OffersPanel = () => {
       {/* Offers sections side by side */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Mis Ofertas (as buyer) */}
-        <div className="bg-gradient-to-br from-green-500/8 to-green-600/12 rounded-2xl border border-green-500/25 p-7 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm">
+        <div className="bg-dark-light rounded-2xl border border-gray-700 p-7 transition-colors">
           <div className="flex items-center mb-7">
-            <div className="w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full mr-4 shadow-lg"></div>
+            <div className="w-2 h-10 bg-green-500 rounded-full mr-4"></div>
             <div className="flex-1">
               <h3 className="text-xl font-bold text-green-400 mb-1">Mis Ofertas</h3>
               <p className="text-green-300/80 text-sm font-medium">Ofertas que has hecho por jugadores</p>
             </div>
-            <span className="ml-auto bg-gradient-to-r from-green-500/20 to-green-600/20 text-green-400 px-4 py-2 rounded-full text-sm font-semibold border border-green-500/30 shadow-sm">
+            <span className="ml-auto bg-green-500/15 text-green-300 px-4 py-2 rounded-full text-sm font-semibold border border-green-500/30">
               {myOffersAsBuyer.length}
             </span>
           </div>
@@ -802,14 +802,14 @@ const OffersPanel = () => {
         </div>
 
         {/* Ofertas Recibidas (as seller) */}
-        <div className="bg-gradient-to-br from-blue-500/8 to-blue-600/12 rounded-2xl border border-blue-500/25 p-7 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm">
+        <div className="bg-dark-light rounded-2xl border border-gray-700 p-7 transition-colors">
           <div className="flex items-center mb-7">
-            <div className="w-2 h-10 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full mr-4 shadow-lg"></div>
+            <div className="w-2 h-10 bg-blue-500 rounded-full mr-4"></div>
             <div className="flex-1">
               <h3 className="text-xl font-bold text-blue-400 mb-1">Ofertas Recibidas</h3>
               <p className="text-blue-300/80 text-sm font-medium">Ofertas por tus jugadores</p>
             </div>
-            <span className="ml-auto bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-400 px-4 py-2 rounded-full text-sm font-semibold border border-blue-500/30 shadow-sm">
+            <span className="ml-auto bg-blue-500/15 text-blue-300 px-4 py-2 rounded-full text-sm font-semibold border border-blue-500/30">
               {myOffersAsSeller.length}
             </span>
           </div>
@@ -864,3 +864,4 @@ const OffersPanel = () => {
 };
 
 export default OffersPanel;
+

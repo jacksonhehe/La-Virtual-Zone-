@@ -322,7 +322,11 @@ export type Database = {
           away_score?: number
           status: 'scheduled' | 'live' | 'finished'
           scorers?: any[]
+          cards?: any[]
           highlights?: string[]
+          youtube_video_id?: string
+          player_of_the_match?: string
+          match_stats?: any
           created_at: string
           updated_at: string
         }
@@ -337,7 +341,11 @@ export type Database = {
           away_score?: number
           status?: 'scheduled' | 'live' | 'finished'
           scorers?: any[]
+          cards?: any[]
           highlights?: string[]
+          youtube_video_id?: string
+          player_of_the_match?: string
+          match_stats?: any
           created_at?: string
           updated_at?: string
         }
@@ -352,7 +360,11 @@ export type Database = {
           away_score?: number
           status?: 'scheduled' | 'live' | 'finished'
           scorers?: any[]
+          cards?: any[]
           highlights?: string[]
+          youtube_video_id?: string
+          player_of_the_match?: string
+          match_stats?: any
           created_at?: string
           updated_at?: string
         }

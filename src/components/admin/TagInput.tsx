@@ -114,3 +114,4 @@ const TagInput = ({ tags, onChange, placeholder = "Agregar etiqueta...", maxTags
 };
 
 export default TagInput;
+

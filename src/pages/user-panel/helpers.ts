@@ -20,4 +20,6 @@ export const getMainRoleLabel = (roles: string[]): string => {
 };
 
 export const panelSurfaceClass =
-  'bg-gradient-to-br from-gray-900 to-gray-850 rounded-xl border border-gray-800/60 shadow-lg';
+  'card rounded-xl border-gray-700/80 bg-gray-800/70 shadow-lg backdrop-blur-sm';
+
+export const panelItemClass = 'bg-gray-800/50 rounded-lg p-4 border border-gray-700';

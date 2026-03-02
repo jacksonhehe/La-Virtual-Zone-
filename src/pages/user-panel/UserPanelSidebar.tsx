@@ -6,6 +6,7 @@ interface UserPanelSidebarProps {
   roles: string[];
   mainRoleLabel: string;
   hasRole: (role: string) => boolean;
+  canAccessClubTab: boolean;
   userClub: any;
   activeTab: string;
   onSelectTab: (tab: string) => void;
@@ -27,6 +28,7 @@ const UserPanelSidebar = ({
   roles,
   mainRoleLabel,
   hasRole,
+  canAccessClubTab,
   userClub,
   activeTab,
   onSelectTab,
@@ -34,7 +36,7 @@ const UserPanelSidebar = ({
   logout,
   imagePreview
 }: UserPanelSidebarProps) => {
-  const visibleTabs = tabs.filter((tab) => (tab.key === 'club' ? hasRole('dt') : true));
+  const visibleTabs = tabs.filter((tab) => (tab.key === 'club' ? canAccessClubTab : true));
 
   return (
     <aside className="lg:w-80 shrink-0 space-y-6">
@@ -71,7 +73,7 @@ const UserPanelSidebar = ({
             ))}
           </div>
 
-          {hasRole('dt') && userClub && (
+          {canAccessClubTab && userClub && (
             <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
               <div className="flex items-center justify-center gap-3">
                 <img

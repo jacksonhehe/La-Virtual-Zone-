@@ -6,6 +6,7 @@ export const ROUTES = {
   usuario: '/usuario',
   usuarios: '/usuarios',
   ligaMaster: '/liga-master',
+  copaLvz: '/liga-master/copa-lvz',
   zonas: '/liga-master/zonas',
   blog: '/blog',
   galeria: '/galeria',

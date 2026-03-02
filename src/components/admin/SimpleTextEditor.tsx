@@ -134,3 +134,4 @@ const SimpleTextEditor = ({
 };
 
 export default SimpleTextEditor;
+

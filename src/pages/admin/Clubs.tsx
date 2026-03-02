@@ -8,6 +8,7 @@ import { config } from '../../lib/config';
 import NewClubModal from '../../components/admin/NewClubModal';
 import EditClubModal from '../../components/admin/EditClubModal';
 import ConfirmDeleteModal from '../../components/admin/ConfirmDeleteModal';
+import AdminPageHeader from '../../components/admin/AdminPageHeader';
 import { fetchUsers as fetchUsersAsync, updateUser, updateSupabaseUser } from '../../utils/authService';
 
 type RoleType = 'user' | 'dt' | 'admin';
@@ -63,6 +64,8 @@ const AdminClubs = () => {
   const { refreshClubs, updateClub, removeClub, clubs, isDataLoaded } = useDataStore();
   const [usersState, setUsersState] = useState<any[]>([]);
   const [dtUsers, setDtUsers] = useState<{ id: string; username: string; clubId?: string | null }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchAllUsers = useCallback(async () => {
     return await fetchUsersAsync();
@@ -79,7 +82,9 @@ const AdminClubs = () => {
             : u.role
               ? [u.role]
               : [];
-          return roles.includes('dt');
+          const isDT = roles.includes('dt');
+          const isAdmin = roles.includes('admin');
+          return isDT && !isAdmin;
         })
         .map((u: any) => ({
           id: u.id,
@@ -137,6 +142,7 @@ const AdminClubs = () => {
         index === self.findIndex((c) => c.id === club.id)
       );
       setClubsState(uniqueClubs as any);
+      setIsLoading(false);
     }
   }, [clubs, isDataLoaded]);
 
@@ -149,9 +155,12 @@ const AdminClubs = () => {
           if (supaClubs.length > 0) {
             try { await (useDataStore.getState().updateClubs?.(supaClubs as any) ?? Promise.resolve()); } catch {}
             setClubsState(supaClubs as any);
+            setIsLoading(false);
           }
         } catch (e) {
           console.error('Error cargando clubes desde Supabase:', e);
+          setLoadError('No se pudieron cargar los clubes. Intenta nuevamente.');
+          setIsLoading(false);
         }
       }
     };
@@ -163,6 +172,21 @@ const AdminClubs = () => {
       setShowNewClub(true);
     }
   }, [searchParams]);
+
+  const handleRefreshClubs = async () => {
+    setIsLoading(true);
+    setLoadError(null);
+    try {
+      await refreshClubs();
+      const updated = await listClubs();
+      setClubsState(updated as any);
+    } catch (error) {
+      console.error('Error actualizando clubes:', error);
+      setLoadError('No se pudieron cargar los clubes. Intenta nuevamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCreateClub = async (data: {
     name: string;
@@ -179,6 +203,7 @@ const AdminClubs = () => {
     fanBase?: number;
   }) => {
     try {
+      setLoadError(null);
       // Encontrar el usuario DT para obtener su username
       const selectedUser = data.managerUserId ? usersState.find(u => u.id === data.managerUserId) : null;
       const managerName = selectedUser ? selectedUser.username : '';
@@ -206,6 +231,7 @@ const AdminClubs = () => {
       setShowNewClub(false);
     } catch (error) {
       console.error('Error creando club:', error);
+      setLoadError('No se pudo crear el club.');
     }
   };
   const handleSaveClub = async (data: {
@@ -225,6 +251,7 @@ const AdminClubs = () => {
     if (!editingClub) return;
 
     try {
+      setLoadError(null);
       // Encontrar el usuario DT para obtener su username
       const selectedUser = data.managerUserId ? usersState.find(u => u.id === data.managerUserId) : null;
       const managerName = selectedUser ? selectedUser.username : editingClub.manager;
@@ -279,10 +306,12 @@ const AdminClubs = () => {
       setEditingClub(null);
     } catch (error) {
       console.error('Error guardando club:', error);
+      setLoadError('No se pudo guardar el club.');
     }
   };
   const handleDeleteClubInner = async (id: string) => {
     try {
+      setLoadError(null);
       // Encontrar el DT asignado a este club antes de eliminarlo
       const dtUser = usersState.find(u => u.clubId === id);
 
@@ -308,74 +337,8 @@ const AdminClubs = () => {
       await refreshDtUsers();
     } catch (error) {
       console.error('Error eliminando club:', error);
+      setLoadError('No se pudo eliminar el club.');
     }
-  };
-
-  const handleRefreshClubs = () => {
-    console.log('🔄 Refrescando clubes desde datos seed...');
-    if (typeof window !== 'undefined' && (window as any).refreshClubsFromSeed) {
-      (window as any).refreshClubsFromSeed();
-    }
-
-    // Sincronizar asignaciones de DT después del refresh
-    setTimeout(async () => {
-      try {
-        const updatedClubs = await listClubs();
-        const allUsers = await fetchAllUsers();
-
-        // PRIMERO: Limpiar todas las asignaciones de DTs para evitar duplicados
-        const dtCandidates = allUsers.filter((u: any) =>
-          u.role === 'dt' || (Array.isArray(u.roles) && u.roles.includes('dt'))
-        );
-
-        console.log('🔄 Limpiando asignaciones previas de DTs...');
-        for (const user of dtCandidates) {
-          if (user.clubId || user.club) {
-            await updateDtAssignment(user, null);
-            console.log(`🔄 Limpiado: ${user.username} removido de ${user.club || 'su club'}`);
-          }
-        }
-
-        // SEGUNDO: Asignar DTs según los datos de los clubes
-        console.log('🔄 Asignando DTs según clubes...');
-        const assignedDTs = new Set<string>(); // Para evitar asignaciones duplicadas
-
-        for (const club of updatedClubs) {
-          if (club.manager && !assignedDTs.has(club.manager)) {
-            const dtUser = allUsers.find((u: any) =>
-              u.username === club.manager &&
-              (u.role === 'dt' || (Array.isArray(u.roles) && u.roles.includes('dt')))
-            );
-
-            if (dtUser && !dtUser.clubId) {
-              await updateDtAssignment(dtUser, { id: club.id, name: club.name });
-              assignedDTs.add(club.manager);
-              console.log(`🔄 Asignado: ${dtUser.username} -> ${club.name}`);
-            }
-          }
-        }
-
-        // Para clubes sin DT asignado, limpiar el manager
-        for (const club of updatedClubs) {
-          if (club.manager && !assignedDTs.has(club.manager)) {
-            await saveClub({
-              ...club,
-              manager: ''
-            });
-            console.log(`🔄 Club limpiado: ${club.name} sin manager válido`);
-          }
-        }
-
-        console.log('✅ Sincronización de asignaciones DT completada');
-        await refreshDtUsers();
-      } catch (error) {
-        console.error('Error sincronizando asignaciones:', error);
-      }
-
-      refreshClubs();
-      const updatedClubs = await listClubs();
-      setClubsState(updatedClubs);
-    }, 1000);
   };
 
   const handleUnassignAllDTs = async () => {
@@ -443,12 +406,21 @@ const AdminClubs = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold">Gestión de Clubes</h2>
-          <span className="text-sm text-gray-400">({clubsState.length} clubes)</span>
-        </div>
-        <div className="flex gap-2">
+      <AdminPageHeader
+        title="Gestion de Clubes"
+        subtitle="Controla presupuesto, DT y configuracion de cada club."
+        badge={`(${clubsState.length} clubes)`}
+        actions={
+          <>
+          <button
+            className="btn-outline flex items-center"
+            onClick={handleRefreshClubs}
+            disabled={isLoading}
+            title="Refrescar clubes"
+          >
+            <RefreshCw size={16} className={`mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </button>
           {config.useSupabase && (
             <button
               className="btn-outline flex items-center text-sky-400 border-sky-400 hover:text-sky-300 hover:border-sky-300"
@@ -468,14 +440,6 @@ const AdminClubs = () => {
             </button>
           )}
           <button
-            className="btn-outline flex items-center text-sm"
-            onClick={handleRefreshClubs}
-            title="Refrescar desde datos seed"
-          >
-            <RefreshCw size={16} className="mr-2" />
-            Refrescar
-          </button>
-          <button
             className="btn-outline flex items-center text-sm text-red-400 hover:text-red-300 border-red-400 hover:border-red-300"
             onClick={handleUnassignAllDTs}
             title="Desasignar a todos los DTs de sus clubes actuales"
@@ -487,12 +451,14 @@ const AdminClubs = () => {
             <Plus size={16} className="mr-2" />
             Nuevo club
           </button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      <div className="bg-dark-light rounded-lg border border-gray-800 overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">            <thead>
+          <table className="w-full">
+            <thead>
               <tr className="bg-dark-lighter text-xs uppercase text-gray-400 border-b border-gray-800">
                 <th className="px-4 py-3 text-left">Club</th>
                 <th className="px-4 py-3 text-center">Año</th>
@@ -501,27 +467,37 @@ const AdminClubs = () => {
                 <th className="px-4 py-3 text-center">Estilo</th>
                 <th className="px-4 py-3 text-center">Acciones</th>
               </tr>
-            </thead><tbody>
-              {!Array.isArray(clubsState) || clubsState.length === 0 ? (
+            </thead>
+            <tbody>
+              {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
-                    {Array.isArray(clubsState) ? 'No hay clubes.' : 'Cargando clubes...'}
+                  <td colSpan={6} className="px-4 py-6 text-center text-gray-400">Cargando clubes...</td>
+                </tr>
+              ) : loadError ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-6 text-center">
+                    <div className="text-gray-300 mb-3">{loadError}</div>
+                    <button className="btn-outline" onClick={handleRefreshClubs}>Reintentar</button>
                   </td>
+                </tr>
+              ) : !Array.isArray(clubsState) || clubsState.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-6 text-center text-gray-400">No hay clubes.</td>
                 </tr>
               ) : clubsState.map((club: any) => (
                 <tr key={`${club.id}-${club.budget}`} className="border-b border-gray-800 hover:bg-dark-lighter">
                   <td className="px-4 py-3">
                     <div className="flex items-center">
-                      <div className="w-8 h-8 rounded overflow-hidden mr-3">
-                        <img src={club.logo} alt={club.name} />
+                      <div className="w-8 h-8 rounded overflow-hidden mr-3 bg-gray-800">
+                        <img src={club.logo} alt={club.name} className="w-full h-full object-cover" />
                       </div>
                       <span className="font-medium">{club.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center">{club.foundedYear}</td>
-                  <td className="px-4 py-3 text-center">{formatCurrency(club.budget)}</td>
-                  <td className="px-4 py-3 text-center">{club.manager}</td>
-                  <td className="px-4 py-3 text-center">{club.playStyle}</td>
+                  <td className="px-4 py-3 text-center">{club.foundedYear || '-'}</td>
+                  <td className="px-4 py-3 text-center">{formatCurrency(club.budget || 0)}</td>
+                  <td className="px-4 py-3 text-center">{club.manager || 'Sin asignar'}</td>
+                  <td className="px-4 py-3 text-center">{club.playStyle || 'N/D'}</td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-2">
                       <button className="p-1 text-gray-400 hover:text-primary" onClick={() => setEditingClub(club)}>
@@ -534,7 +510,8 @@ const AdminClubs = () => {
                   </td>
                 </tr>
               ))}
-            </tbody></table>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -558,3 +535,4 @@ const AdminClubs = () => {
 };
 
 export default AdminClubs;
+

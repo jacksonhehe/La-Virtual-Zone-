@@ -1,5 +1,6 @@
 import { Award, Calendar, Settings, Shield, Trophy, User, Users, Mail } from 'lucide-react';
-import { panelSurfaceClass } from './helpers';
+import { Link } from 'react-router-dom';
+import { panelItemClass, panelSurfaceClass } from './helpers';
 
 interface ProfileTabProps {
   user: any;
@@ -21,7 +22,7 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Award size={20} className="text-yellow-400" />
             <div className="text-right">
@@ -31,7 +32,7 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Shield size={20} className="text-primary" />
             <div className="text-right">
@@ -41,7 +42,7 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <Calendar size={20} className="text-secondary" />
             <div className="text-right">
@@ -71,7 +72,7 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <User size={16} className="text-primary mr-2" />
@@ -81,7 +82,7 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <div className={panelItemClass}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Mail size={16} className="text-secondary mr-2" />
@@ -112,7 +113,7 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
       {achievements.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {achievements.slice(0, 6).map((achievement: any, index: number) => (
-            <div key={achievement || index} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+            <div key={achievement || index} className={panelItemClass}>
               <div className="flex items-center gap-3">
                 <Award size={20} className="text-primary" />
                 <div>
@@ -155,12 +156,12 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
           Gestiona un club, realiza fichajes y compite en la Liga Master.
         </p>
         <div className="flex gap-3">
-          <button className="bg-primary hover:bg-primary-light text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+          <button type="button" className="btn-primary text-sm">
             Solicitar participación
           </button>
-          <a href="/liga-master" className="border border-primary/50 text-primary hover:bg-primary/10 px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+          <Link to="/liga-master" className="btn-outline text-sm">
             Ver Liga Master
-          </a>
+          </Link>
         </div>
       </div>
     )}
@@ -177,18 +178,16 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
         Personaliza tu biografía, equipo favorito y más para conectar con la comunidad.
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
-        <a
-          href={`/usuarios/${user.username}`}
-          className="flex-1 bg-secondary hover:bg-secondary-light text-white px-4 py-3 rounded-lg font-medium text-sm text-center transition-colors"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to={`/usuarios/${user.username}`}
+          className="btn-secondary flex-1 py-3 text-sm"
         >
           Ver mi perfil público
-        </a>
+        </Link>
         <button
           type="button"
           onClick={onOpenCustomization}
-          className="flex-1 border border-primary/50 text-primary hover:bg-primary/10 px-4 py-3 rounded-lg font-medium text-sm transition-colors"
+          className="btn-outline flex-1 py-3 text-sm"
         >
           Personalizar perfil
         </button>
@@ -198,3 +197,8 @@ const ProfileTab = ({ user, achievements, mainRoleLabel, hasRole, onOpenCustomiz
 );
 
 export default ProfileTab;
+
+
+
+
+

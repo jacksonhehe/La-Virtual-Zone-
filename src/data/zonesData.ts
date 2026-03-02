@@ -1,4 +1,4 @@
-﻿import { clubs, leagueStandings } from './mockData';
+﻿import type { Club, Standing } from '../types';
 
 // Interface para datos de equipo en zona
 export interface ZoneTeamData {
@@ -21,15 +21,19 @@ export interface ZoneStanding extends ZoneTeamData {
   position?: number;
 }
 
-// Datos base de equipos distribuidos en 4 zonas (Liga A, B, C, D) segÃºn orden especÃ­fico
-const buildZonesData = (): Record<string, ZoneTeamData[]> => {
+// Datos base de equipos distribuidos en 4 zonas (Liga A, B, C, D) según orden específico
+// Ahora recibe clubs y standings como parámetros para usar datos actualizados
+export const buildZonesData = (
+  clubs: Club[],
+  standings: Standing[] = []
+): Record<string, ZoneTeamData[]> => {
   const zones: Record<string, ZoneTeamData[]> = { A: [], B: [], C: [], D: [] };
 
   // Map standings by clubId for quick lookup
   const standingByClubId = new Map<string, {
     played: number; won: number; drawn: number; lost: number; goalsFor: number; goalsAgainst: number;
   }>();
-  (leagueStandings || []).forEach(s => {
+  (standings || []).forEach(s => {
     standingByClubId.set(s.clubId, {
       played: s.played,
       won: s.won,
@@ -203,7 +207,14 @@ const buildZonesData = (): Record<string, ZoneTeamData[]> => {
   return zones;
 };
 
-export const zonesData: Record<string, ZoneTeamData[]> = buildZonesData();
+// Función helper para obtener zonesData con datos actualizados
+// Mantiene compatibilidad con código existente pero permite pasar datos actualizados
+export const getZonesData = (clubs: Club[], standings: Standing[] = []): Record<string, ZoneTeamData[]> => {
+  return buildZonesData(clubs, standings);
+};
+
+// Exportar zonesData vacío por defecto (se actualizará dinámicamente en el componente)
+export const zonesData: Record<string, ZoneTeamData[]> = { A: [], B: [], C: [], D: [] };
 
 // FunciÃ³n para calcular standings de una zona
 export function calculateZoneStandings(zoneData: ZoneTeamData[]): (ZoneStanding & { position: number })[] {
@@ -253,12 +264,16 @@ export function getZoneName(zoneKey: string): string {
   return zoneNames[zoneKey] || zoneKey;
 }
 
-// FunciÃ³n para obtener standings calculados de todas las zonas
-export function getAllZoneStandings(): Record<string, (ZoneStanding & { position: number })[]> {
+// Función para obtener standings calculados de todas las zonas
+// Ahora acepta zonesData como parámetro para usar datos actualizados
+export function getAllZoneStandings(
+  zonesDataParam?: Record<string, ZoneTeamData[]>
+): Record<string, (ZoneStanding & { position: number })[]> {
+  const dataToUse = zonesDataParam || zonesData;
   const result: Record<string, (ZoneStanding & { position: number })[]> = {};
 
-  Object.keys(zonesData).forEach(zoneKey => {
-    result[zoneKey] = calculateZoneStandings(zonesData[zoneKey]);
+  Object.keys(dataToUse).forEach(zoneKey => {
+    result[zoneKey] = calculateZoneStandings(dataToUse[zoneKey]);
   });
 
   return result;
