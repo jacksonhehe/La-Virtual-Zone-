@@ -36,6 +36,81 @@ import {
 import { getZonesData, calculateZoneStandings, getZoneName } from '../../data/zonesData';
 import { createFallbackStandings } from '../../utils/standingsHelpers';
 
+const DTDashboardSkeleton = () => (
+  <div className="space-y-8">
+    <div
+      className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl animate-fade-up"
+      style={{ animationDelay: '40ms' }}
+    >
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col lg:flex-row gap-6 lg:items-center">
+          <div className="flex items-center gap-4 flex-1 animate-pulse">
+            <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gray-700/40 border border-gray-600/30" />
+            <div className="space-y-3 flex-1">
+              <div className="h-4 w-44 rounded-full bg-gray-700/45" />
+              <div className="h-8 w-64 max-w-full rounded-lg bg-gray-700/50" />
+              <div className="h-4 w-52 rounded-full bg-gray-700/45" />
+              <div className="flex flex-wrap gap-2">
+                <div className="h-6 w-28 rounded-full bg-gray-700/45" />
+                <div className="h-6 w-24 rounded-full bg-gray-700/45" />
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 flex-1">
+            {[...Array(4)].map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-3 space-y-2 animate-pulse"
+                style={{ animationDelay: `${120 + idx * 80}ms` }}
+              >
+                <div className="h-3 w-16 rounded-full bg-gray-700/45" />
+                <div className="h-6 w-12 rounded-lg bg-gray-700/50" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 backdrop-blur-sm animate-fade-up"
+      style={{ animationDelay: '140ms' }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="h-5 w-48 rounded-full bg-gray-700/45" />
+        <div className="h-4 w-24 rounded-full bg-gray-700/45" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-3">
+          {[...Array(4)].map((_, idx) => (
+            <div
+              key={idx}
+              className="h-16 rounded-xl border border-gray-700/40 bg-gray-800/30 animate-pulse"
+              style={{ animationDelay: `${200 + idx * 70}ms` }}
+            />
+          ))}
+        </div>
+        <div className="rounded-xl border border-gray-700/40 bg-gray-800/30 p-4 space-y-3 animate-pulse" style={{ animationDelay: '280ms' }}>
+          <div className="h-4 w-32 rounded-full bg-gray-700/45" />
+          {[...Array(5)].map((_, idx) => (
+            <div key={idx} className="h-8 rounded-lg bg-gray-700/35" />
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 animate-fade-up" style={{ animationDelay: '240ms' }}>
+      {[...Array(6)].map((_, idx) => (
+        <div
+          key={idx}
+          className="h-36 rounded-2xl border border-gray-700/40 bg-gray-800/35 animate-pulse"
+          style={{ animationDelay: `${280 + idx * 70}ms` }}
+        />
+      ))}
+    </div>
+  </div>
+);
+
 const LigaMaster = () => {
   const { clubs, tournaments, players, standings, marketStatus, offers, isDataLoaded } = useDataStore();
   const { user, hasRole } = useAuthStore();
@@ -240,9 +315,11 @@ const LigaMaster = () => {
     return (
       <div className="min-h-screen bg-dark">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
-          <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl">
+          <div className="mb-4 px-1">
             <p className="text-sm text-gray-300">Cargando dashboard del DT...</p>
+            <p className="text-xs text-gray-500 mt-1">Preparando club, fixtures y resumen de rendimiento.</p>
           </div>
+          <DTDashboardSkeleton />
         </div>
       </div>
     );

@@ -564,7 +564,7 @@ const Prode = () => {
         image="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1600&q=80"
       />
 
-      <div className="container mx-auto px-4 py-8 space-y-6">
+      <div className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
         <div className="flex justify-end">
           <button
             type="button"

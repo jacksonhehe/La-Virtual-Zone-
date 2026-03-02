@@ -284,7 +284,15 @@ const UserProfile = () => {
   const isDt =
     user.role === 'dt' ||
     (Array.isArray((user as any).roles) && (user as any).roles.includes('dt'));
+  const headerRole = isAdmin ? 'admin' : isDt ? 'dt' : 'user';
   const roleLabelForHeader = isAdmin ? 'Administrador' : isDt ? 'Director Tecnico' : 'Usuario';
+  const rolesForBadges = (
+    Array.isArray((user as any).roles) && (user as any).roles.length
+      ? (user as any).roles
+      : [user.role]
+  )
+    .filter((r: string) => r !== headerRole)
+    .filter((r: string, index: number, arr: string[]) => arr.indexOf(r) === index);
   const totalMatches = (user.stats?.wins || 0) + (user.stats?.draws || 0) + (user.stats?.losses || 0);
   const winRate = totalMatches > 0 ? ((user.stats?.wins || 0) / totalMatches * 100).toFixed(1) : '0.0';
   const followingCount =
@@ -322,20 +330,14 @@ const UserProfile = () => {
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {(() => {
-                      const roles =
-                        Array.isArray((user as any).roles) && (user as any).roles.length
-                          ? (user as any).roles
-                          : [user.role];
-                      return roles.map((r: string) => (
-                        <span
-                          key={r}
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border ${getRoleBadgeClass(r)}`}
-                        >
-                          {getRoleLabel(r)}
-                        </span>
-                      ));
-                    })()}
+                    {rolesForBadges.map((r: string) => (
+                      <span
+                        key={r}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border ${getRoleBadgeClass(r)}`}
+                      >
+                        {getRoleLabel(r)}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
@@ -671,4 +673,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-
