@@ -143,6 +143,7 @@ const createClubsBackup = (clubs: Club[]): void => {
         name: club.name,
         budget: club.budget,
         manager: club.manager,
+        captainPlayerId: club.captainPlayerId,
         playStyle: club.playStyle,
         primaryColor: club.primaryColor,
         secondaryColor: club.secondaryColor,
@@ -224,6 +225,7 @@ export const mergeClubsPreservingCustom = (existing: Club[], seeds: Club[]): Clu
       // Preserve admin customizations when present
       logo: match.logo || seed.logo,
       manager: match.manager ?? seed.manager,
+      captainPlayerId: match.captainPlayerId ?? seed.captainPlayerId,
       budget: typeof match.budget === 'number' ? match.budget : seed.budget,
       playStyle: match.playStyle || seed.playStyle,
       primaryColor: match.primaryColor || seed.primaryColor,
@@ -261,6 +263,7 @@ export const createClub = async (data: Partial<Club> & { name: string; logo?: st
     stadium: data.stadium ?? '',
     budget: data.budget ?? 0,
     manager: data.manager ?? '',
+    captainPlayerId: data.captainPlayerId,
     playStyle: data.playStyle ?? 'Equilibrado',
     primaryColor: data.primaryColor ?? '#ffffff',
     secondaryColor: data.secondaryColor ?? '#000000',
@@ -295,24 +298,34 @@ const syncClubToSupabase = async (club: Club): Promise<void> => {
 
     console.log('ClubService: Syncing club to Supabase:', club.id);
 
-    const { error } = await supabase
-      .from('clubs')
-      .upsert({
-        id: club.id,
-        name: club.name,
-        logo: club.logo,
-        foundedYear: club.foundedYear,
-        stadium: club.stadium,
-        budget: club.budget,
-        manager: club.manager,
-        playStyle: club.playStyle,
-        primaryColor: club.primaryColor,
-        secondaryColor: club.secondaryColor,
-        description: club.description,
-        reputation: club.reputation,
-        fanBase: club.fanBase,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+    const basePayload = {
+      id: club.id,
+      name: club.name,
+      logo: club.logo,
+      foundedYear: club.foundedYear,
+      stadium: club.stadium,
+      budget: club.budget,
+      manager: club.manager,
+      playStyle: club.playStyle,
+      primaryColor: club.primaryColor,
+      secondaryColor: club.secondaryColor,
+      description: club.description,
+      reputation: club.reputation,
+      fanBase: club.fanBase,
+      updated_at: new Date().toISOString()
+    } as any;
+
+    const withCaptainPayload = { ...basePayload, captainPlayerId: club.captainPlayerId ?? null };
+
+    let error: any = null;
+    const withCaptain = await supabase.from('clubs').upsert(withCaptainPayload, { onConflict: 'id' });
+    error = withCaptain.error;
+
+    // Backward compatibility: if Supabase table does not have captainPlayerId yet.
+    if (error) {
+      const fallback = await supabase.from('clubs').upsert(basePayload, { onConflict: 'id' });
+      error = fallback.error;
+    }
 
     if (error) {
       console.error('ClubService: Error syncing club to Supabase:', error);
@@ -444,6 +457,7 @@ export const fetchClubsFromSupabase = async (): Promise<Club[]> => {
       stadium: r.stadium ?? '',
       budget: r.budget ?? 0,
       manager: r.manager ?? '',
+      captainPlayerId: r.captainplayerid ?? r.captainPlayerId ?? undefined,
       playStyle: r.playstyle ?? r.playStyle ?? 'Equilibrado',
       primaryColor: r.primarycolor ?? r.primaryColor ?? '#ffffff',
       secondaryColor: r.secondarycolor ?? r.secondaryColor ?? '#000000',

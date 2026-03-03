@@ -64,8 +64,6 @@ const ClubTab = ({ userClub, players, standings }: ClubTabProps) => {
     return Number.isFinite(contractExpiry) && contractExpiry >= now && contractExpiry <= now + ninetyDaysInMs;
   });
 
-  const hasCaptain = squadPlayers.some((player) => player.skills?.captaincy === true);
-
   const status =
     squadSize === 0
       ? 'Sin plantilla'
@@ -95,15 +93,6 @@ const ClubTab = ({ userClub, players, standings }: ClubTabProps) => {
           cta: 'Revisar plantilla'
         }
       : null,
-    !hasCaptain
-      ? {
-          id: 'captain',
-          title: 'No hay capitan definido',
-          description: 'Asigna un lider para estabilizar el vestuario.',
-          to: `/liga-master/club/${clubSlug}/plantilla`,
-          cta: 'Definir capitan'
-        }
-      : null
   ].filter(Boolean) as Array<{ id: string; title: string; description: string; to: string; cta: string }>;
 
   return (

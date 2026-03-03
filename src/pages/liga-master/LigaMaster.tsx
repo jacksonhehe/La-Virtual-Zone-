@@ -283,9 +283,17 @@ const LigaMaster = () => {
     ? currentStandings.find(s => s.clubId === userClub.id)
     : null;
 
-  // Get captain (first player with captain property or highest rated player)
-  const captain = userClub 
-    ? players.filter(p => p.clubId === userClub.id).sort((a, b) => b.overall - a.overall)[0]
+  // Prefer captain configured by admin at club level. Fallback to highest-rated player.
+  const captain = userClub
+    ? (() => {
+        const squad = players.filter((p) => p.clubId === userClub.id);
+        if (!squad.length) return null;
+        if (userClub.captainPlayerId) {
+          const configuredCaptain = squad.find((p) => p.id === userClub.captainPlayerId);
+          if (configuredCaptain) return configuredCaptain;
+        }
+        return squad.slice().sort((a, b) => b.overall - a.overall)[0];
+      })()
     : null;
   
   const liveClubMatches = userClub

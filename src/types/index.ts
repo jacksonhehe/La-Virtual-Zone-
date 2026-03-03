@@ -38,6 +38,7 @@ export interface Club {
   stadium: string;
   budget: number;
   manager: string;
+  captainPlayerId?: string;
   playStyle: string;
   primaryColor: string;
   secondaryColor: string;

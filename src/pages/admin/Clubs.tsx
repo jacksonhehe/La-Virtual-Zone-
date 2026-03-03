@@ -61,7 +61,7 @@ const AdminClubs = () => {
   const [editingClub, setEditingClub] = useState<any | null>(null);
   const [deleteClubTarget, setDeleteClubTarget] = useState<any | null>(null);
   const [searchParams] = useSearchParams();
-  const { refreshClubs, updateClub, removeClub, clubs, isDataLoaded } = useDataStore();
+  const { refreshClubs, updateClub, removeClub, clubs, players, isDataLoaded } = useDataStore();
   const [usersState, setUsersState] = useState<any[]>([]);
   const [dtUsers, setDtUsers] = useState<{ id: string; username: string; clubId?: string | null }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -238,6 +238,7 @@ const AdminClubs = () => {
     name: string;
     logo: string;
     managerUserId?: string;
+    captainPlayerId?: string;
     budget: number;
     playStyle: string;
     foundedYear?: number;
@@ -267,6 +268,7 @@ const AdminClubs = () => {
         budget: data.budget,
         playStyle: data.playStyle,
         manager: managerName, // Usar el username del DT
+        captainPlayerId: data.captainPlayerId ?? editingClub.captainPlayerId,
         foundedYear: data.foundedYear ?? editingClub.foundedYear ?? new Date().getFullYear(),
         stadium: data.stadium ?? editingClub.stadium ?? '',
         primaryColor: data.primaryColor ?? editingClub.primaryColor ?? '#ffffff',
@@ -523,6 +525,7 @@ const AdminClubs = () => {
           club={editingClub}
           currentDtId={usersState.find((u: any) => u.clubId === editingClub.id)?.id}
           dtUsers={dtUsers}
+          players={(players || []).map((p: any) => ({ id: p.id, name: p.name, clubId: p.clubId }))}
           onClose={() => setEditingClub(null)}
           onSave={handleSaveClub}
         />

@@ -17,14 +17,17 @@ interface EditClubModalProps {
     description?: string;
     reputation?: number;
     fanBase?: number;
+    captainPlayerId?: string;
   };
   currentDtId?: string;
   dtUsers: { id: string; username: string; clubId?: string }[];
+  players: { id: string; name: string; clubId: string }[];
   onClose: () => void;
   onSave: (data: {
     name: string;
     logo: string;
     managerUserId?: string;
+    captainPlayerId?: string;
     budget: number;
     playStyle: string;
     foundedYear?: number;
@@ -37,10 +40,11 @@ interface EditClubModalProps {
   }) => Promise<void> | void;
 }
 
-const EditClubModal = ({ club, onClose, onSave, currentDtId, dtUsers }: EditClubModalProps) => {
+const EditClubModal = ({ club, onClose, onSave, currentDtId, dtUsers, players }: EditClubModalProps) => {
   const [name, setName] = useState(club.name);
   const [logo, setLogo] = useState(club.logo || '');
   const [managerUserId, setManagerUserId] = useState<string>(currentDtId || '');
+  const [captainPlayerId, setCaptainPlayerId] = useState<string>(club.captainPlayerId || '');
   const [budget, setBudget] = useState<number | ''>(club.budget ?? 0);
   const [playStyle, setPlayStyle] = useState(club.playStyle || 'Equilibrado');
   const [foundedYear, setFoundedYear] = useState<number | ''>(club.foundedYear ?? new Date().getFullYear());
@@ -56,6 +60,7 @@ const EditClubModal = ({ club, onClose, onSave, currentDtId, dtUsers }: EditClub
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const clubPlayers = players.filter((player) => player.clubId === club.id);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -122,6 +127,7 @@ const EditClubModal = ({ club, onClose, onSave, currentDtId, dtUsers }: EditClub
         name: n,
         logo: logo || '',
         managerUserId: managerUserId || undefined,
+        captainPlayerId: captainPlayerId || undefined,
         budget: b as number,
         playStyle,
         foundedYear: fy as number,
@@ -294,6 +300,25 @@ const EditClubModal = ({ club, onClose, onSave, currentDtId, dtUsers }: EditClub
                       {dtUsers.map(dt => (
                         <option key={dt.id} value={dt.id} disabled={dt.clubId && dt.clubId !== club.id}>
                           {dt.username}{dt.clubId && dt.clubId !== club.id ? ' (ocupado)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-300 mb-2">
+                      <Shield size={14} className="mr-2 text-gray-400" />
+                      Capitan del equipo
+                    </label>
+                    <select
+                      className="input w-full"
+                      value={captainPlayerId}
+                      onChange={e => setCaptainPlayerId(e.target.value)}
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Sin asignar</option>
+                      {clubPlayers.map(player => (
+                        <option key={player.id} value={player.id}>
+                          {player.name}
                         </option>
                       ))}
                     </select>
