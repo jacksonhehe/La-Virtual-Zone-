@@ -221,8 +221,8 @@ const Users = () => {
               const isDT = hasDTRole(user);
 
               return (
-                <div key={user.id} className="group card overflow-hidden hover:border-primary/50 transition-colors">
-                  <div className="h-16 bg-gradient-to-r from-dark-light via-gray-700 to-dark-light group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors"></div>
+                <div key={user.id} className="group card backdrop-blur-none overflow-hidden hover:border-primary/50 transition-colors">
+                  <div className="h-16 bg-gray-800 transition-colors"></div>
                   <div className="px-6 pb-6 -mt-10">
                     <div className="text-center mb-4">
                     <Link to={`/usuarios/${user.username}`}>
