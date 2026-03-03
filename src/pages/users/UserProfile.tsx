@@ -71,7 +71,7 @@ const normalizeRoles = (rawRoles: unknown, fallbackRole?: string): string[] => {
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
   const { user: currentUser } = useAuthStore();
-  const { clubs: storeClubs } = useDataStore();
+  const { clubs: storeClubs, standings } = useDataStore();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showMessageModal, setShowMessageModal] = useState(false);
@@ -293,8 +293,24 @@ const UserProfile = () => {
   )
     .filter((r: string) => r !== headerRole)
     .filter((r: string, index: number, arr: string[]) => arr.indexOf(r) === index);
-  const totalMatches = (user.stats?.wins || 0) + (user.stats?.draws || 0) + (user.stats?.losses || 0);
-  const winRate = totalMatches > 0 ? ((user.stats?.wins || 0) / totalMatches * 100).toFixed(1) : '0.0';
+  const standingEntry = club
+    ? standings.find((entry) => entry.clubId === club.id || normalizeText(entry.clubName) === normalizeText(club.name))
+    : null;
+  const performanceStats = isDt && standingEntry
+    ? {
+        wins: standingEntry.won || 0,
+        draws: standingEntry.drawn || 0,
+        losses: standingEntry.lost || 0,
+        titles: Array.isArray((club as any)?.titles) ? (club as any).titles.length : (user.stats?.titles || 0),
+      }
+    : {
+        wins: user.stats?.wins || 0,
+        draws: user.stats?.draws || 0,
+        losses: user.stats?.losses || 0,
+        titles: user.stats?.titles || 0,
+      };
+  const totalMatches = performanceStats.wins + performanceStats.draws + performanceStats.losses;
+  const winRate = totalMatches > 0 ? ((performanceStats.wins / totalMatches) * 100).toFixed(1) : '0.0';
   const followingCount =
     typeof user.following === 'number'
       ? user.following
@@ -409,7 +425,7 @@ const UserProfile = () => {
                 </div>
                 <div className="rounded-xl border border-gray-700 bg-gray-800/40 p-3">
                   <p className="text-[11px] uppercase tracking-wide text-gray-400">Titulos</p>
-                  <p className="text-xl font-bold text-yellow-400">{user.stats?.titles || 0}</p>
+                  <p className="text-xl font-bold text-yellow-400">{performanceStats.titles}</p>
                 </div>
                 <div className="rounded-xl border border-gray-700 bg-gray-800/40 p-3">
                   <p className="text-[11px] uppercase tracking-wide text-gray-400">Desde</p>
@@ -509,7 +525,7 @@ const UserProfile = () => {
             </section>
 
             <section className="lg:col-span-2 space-y-6">
-              {isDt && user.stats && (
+              {isDt && (
                 <div className="bg-gray-800/55 rounded-xl p-6 border border-gray-700/80">
                   <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center">
@@ -525,19 +541,19 @@ const UserProfile = () => {
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                     <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-3 text-center">
-                      <p className="text-2xl font-bold text-green-400">{user.stats.wins || 0}</p>
+                      <p className="text-2xl font-bold text-green-400">{performanceStats.wins}</p>
                       <p className="text-[11px] uppercase text-gray-400">Victorias</p>
                     </div>
                     <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-3 text-center">
-                      <p className="text-2xl font-bold text-gray-300">{user.stats.draws || 0}</p>
+                      <p className="text-2xl font-bold text-gray-300">{performanceStats.draws}</p>
                       <p className="text-[11px] uppercase text-gray-400">Empates</p>
                     </div>
                     <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-3 text-center">
-                      <p className="text-2xl font-bold text-red-400">{user.stats.losses || 0}</p>
+                      <p className="text-2xl font-bold text-red-400">{performanceStats.losses}</p>
                       <p className="text-[11px] uppercase text-gray-400">Derrotas</p>
                     </div>
                     <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-3 text-center">
-                      <p className="text-2xl font-bold text-yellow-400">{user.stats.titles || 0}</p>
+                      <p className="text-2xl font-bold text-yellow-400">{performanceStats.titles}</p>
                       <p className="text-[11px] uppercase text-gray-400">Titulos</p>
                     </div>
                   </div>
