@@ -297,6 +297,31 @@ textarea:focus-visible {
     scrollbar-color: #1f2937 #374151;
   }
 
+  /* Admin sidebar scrollbar */
+  .admin-sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #42536f #1b2434;
+  }
+
+  .admin-sidebar-scroll::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .admin-sidebar-scroll::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #1b2434 0%, #182132 100%);
+    border-radius: 999px;
+  }
+
+  .admin-sidebar-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #4b5d7c 0%, #3a4a63 100%);
+    border-radius: 999px;
+    border: 2px solid #1b2434;
+  }
+
+  .admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #5f769c 0%, #4b5d7c 100%);
+  }
+
   .table-scroll {
     position: relative;
   }

@@ -111,25 +111,25 @@ const AdminLayout = () => {
             ))}
           </div>
         ))}
-
-        <div className="border-t border-gray-800/60 my-2 pt-2">
-          <button
-            onClick={() => {
-              navigate('/');
-              onNavigate?.();
-            }}
-            className={`w-full flex items-center rounded-md text-gray-400 hover:bg-dark-lighter ${
-              compactNav ? 'justify-center p-2' : 'justify-start p-3'
-            }`}
-            title="Volver al sitio"
-          >
-            <ArrowLeft size={16} className={compactNav ? '' : 'mr-2'} />
-            {!compactNav && <span>Volver al sitio</span>}
-          </button>
-        </div>
       </nav>
     );
   };
+
+  const renderBackButton = (onNavigate?: () => void) => (
+    <button
+      onClick={() => {
+        navigate('/');
+        onNavigate?.();
+      }}
+      className={`w-full flex items-center rounded-md text-gray-400 hover:bg-dark-lighter ${
+        compactNav ? 'justify-center p-2' : 'justify-start p-3'
+      }`}
+      title="Volver al sitio"
+    >
+      <ArrowLeft size={16} className={compactNav ? '' : 'mr-2'} />
+      {!compactNav && <span>Volver al sitio</span>}
+    </button>
+  );
 
   if (!isAuthenticated || !hasRole('admin')) {
     return null;
@@ -157,6 +157,7 @@ const AdminLayout = () => {
         {isMobileNavOpen && (
           <div className="border-t border-gray-800/60 bg-dark-light">
             {renderNav(() => setIsMobileNavOpen(false))}
+            <div className="border-t border-gray-800/60 px-2 py-2">{renderBackButton(() => setIsMobileNavOpen(false))}</div>
           </div>
         )}
       </div>
@@ -165,7 +166,7 @@ const AdminLayout = () => {
         <div
           className={`hidden md:flex ${compactNav ? 'md:w-16' : 'md:w-64'} bg-dark-light border-r border-gray-800/60 md:sticky md:top-0 md:h-screen transition-all duration-200`}
         >
-          <div className="w-full">
+          <div className="w-full h-full flex flex-col">
             <div className="p-4 border-b border-gray-800/60 space-y-3">
               <div className={compactNav ? 'flex items-center justify-center' : 'flex items-center justify-between'}>
                 {compactNav ? (
@@ -199,7 +200,8 @@ const AdminLayout = () => {
               </div>
             </div>
 
-            {renderNav()}
+            <div className="flex-1 overflow-y-auto admin-sidebar-scroll">{renderNav()}</div>
+            <div className="border-t border-gray-800/60 p-2">{renderBackButton()}</div>
           </div>
         </div>
 

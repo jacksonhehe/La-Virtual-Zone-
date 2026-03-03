@@ -570,13 +570,11 @@ Jugadores: ${currentPlayers}/${expectedPlayers} ${currentPlayers === expectedPla
           label="Clubes activos"
           value={clubs.length || '-'}
           accent={clubs.length === 40 ? 'text-green-500' : 'text-yellow-500'}
-          helper="Esperado: 40 clubes"
         />
         <Card
           label="Jugadores"
           value={players.length || '-'}
           accent={players.length === 920 ? 'text-green-500' : 'text-yellow-500'}
-          helper="Esperado: 920 jugadores"
         />
         <Card label="Torneos" value={tournaments.length || '-'} />
         <Card label="Transferencias" value={transfers.length || '-'} />
@@ -709,4 +707,3 @@ Jugadores: ${currentPlayers}/${expectedPlayers} ${currentPlayers === expectedPla
 };
 
 export default AdminDashboard;
-
