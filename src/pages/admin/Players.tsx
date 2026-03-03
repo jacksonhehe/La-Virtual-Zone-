@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Edit, Plus, Trash, Search, Filter, X, Users, DollarSign, Database } from 'lucide-react';
+import { Edit, Plus, Trash, Search, Filter, X, Users, DollarSign, Database, AlertTriangle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import {
   createPlayer,
@@ -18,6 +18,7 @@ import { useDataStore } from '../../store/dataStore';
 import { usePagination } from '../../hooks/usePagination';
 import { getTranslatedPosition, getClubDisplayName } from '../../utils/helpers';
 import { config } from '../../lib/config';
+import type { PlayerAttributes, PlayerSkills, PlayingStyles } from '../../types';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -39,10 +40,11 @@ const Toast = ({ type, message, onClose }: { type: ToastType; message: string; o
   );
 };
 
-const SummaryBadge = ({ label, value }: { label: string; value: string }) => (
+const SummaryBadge = ({ label, value, helper }: { label: string; value: string; helper?: string }) => (
   <div className="px-3 py-2 rounded border border-gray-700 bg-gray-900 text-sm text-gray-300">
     <div className="text-xs text-gray-500">{label}</div>
     <div className="font-semibold text-white">{value}</div>
+    {helper && <div className="text-[11px] text-gray-500 mt-0.5">{helper}</div>}
   </div>
 );
 
@@ -52,6 +54,57 @@ const ActionCard = ({ title, children }: { title: string; children: React.ReactN
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{children}</div>
   </div>
 );
+
+const DEFAULT_PLAYER_ATTRIBUTES: PlayerAttributes = {
+  offensiveAwareness: 70, ballControl: 70, dribbling: 70, tightPossession: 70,
+  lowPass: 70, loftedPass: 70, finishing: 70, heading: 70, setPieceTaking: 70,
+  curl: 70, speed: 70, acceleration: 70, kickingPower: 70, jumping: 70,
+  physicalContact: 70, balance: 70, stamina: 70, defensiveAwareness: 70,
+  ballWinning: 70, aggression: 70, goalkeeping: 70, catching: 70, reflexes: 70,
+  coverage: 70, gkHandling: 70, weakFootUsage: 2, weakFootAccuracy: 2, form: 3,
+  pace: 70, shooting: 70, passing: 70, defending: 70, physical: 70
+};
+
+const ATTRIBUTE_KEYS = Object.keys(DEFAULT_PLAYER_ATTRIBUTES) as Array<keyof PlayerAttributes>;
+const DEFAULT_PLAYER_SKILLS: PlayerSkills = {
+  scissorKick: false, doubleTouch: false, flipFlap: false, marseilleTurn: false,
+  rainbow: false, chopTurn: false, cutBehindAndTurn: false, scotchMove: false,
+  stepOnSkillControl: false, heading: false, longRangeDrive: false, chipShotControl: false,
+  longRanger: false, knuckleShot: false, dippingShot: false, risingShot: false,
+  acrobaticFinishing: false, heelTrick: false, firstTimeShot: false, oneTouchPass: false,
+  throughPassing: false, weightedPass: false, pinpointCrossing: false, outsideCurler: false,
+  rabona: false, noLookPass: false, lowLoftedPass: false, giantKill: false,
+  longThrow: false, longThrow2: false, gkLongThrow: false, penaltySpecialist: false,
+  gkPenaltySaver: false, fightingSpirit: false, manMarking: false, trackBack: false,
+  interception: false, acrobaticClear: false, captaincy: false, superSub: false,
+  comPlayingStyles: false
+};
+const DEFAULT_PLAYING_STYLES: PlayingStyles = {
+  goalPoacher: false, dummyRunner: false, foxInTheBox: false, targetMan: false,
+  classicNo10: false, prolificWinger: false, roamingFlank: false, crossSpecialist: false,
+  holePlayer: false, boxToBox: false, theDestroyer: false, orchestrator: false,
+  anchor: false, offensiveFullback: false, fullbackFinisher: false, defensiveFullback: false,
+  buildUp: false, extraFrontman: false, offensiveGoalkeeper: false, defensiveGoalkeeper: false
+};
+
+const parseNumberCell = (value: unknown, fallback: number): number => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const parsed = Number(value.trim());
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return fallback;
+};
+
+const parseBooleanCell = (value: unknown): boolean => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return ['si', 'sí', 'yes', 'true', '1'].includes(normalized);
+  }
+  return false;
+};
 
 const AdminPlayers = () => {
   const { players, clubs, updatePlayers, refreshPlayers } = useDataStore();
@@ -316,6 +369,10 @@ const AdminPlayers = () => {
   const handleDownloadTemplate = () => {
     try {
       const wb = XLSX.utils.book_new();
+      const sampleAttributes = ATTRIBUTE_KEYS.reduce((acc, key) => {
+        acc[key] = DEFAULT_PLAYER_ATTRIBUTES[key];
+        return acc;
+      }, {} as Record<string, number>);
       const sample = [
         {
           id: 'player-001',
@@ -326,7 +383,8 @@ const AdminPlayers = () => {
           clubId: 'libre',
           transferValue: 10000000,
           salary: 500000,
-          transferListed: 'No'
+          transferListed: 'No',
+          ...sampleAttributes
         }
       ];
       const ws = XLSX.utils.json_to_sheet(sample);
@@ -340,10 +398,18 @@ const AdminPlayers = () => {
         { campo: 'clubId', detalle: 'ID de club o "libre"' },
         { campo: 'transferValue', detalle: 'Valor de mercado (entero)' },
         { campo: 'salary', detalle: 'Salario anual (entero)' },
-        { campo: 'transferListed', detalle: 'Si/No' }
+        { campo: 'transferListed', detalle: 'Si/No' },
+        { campo: 'attributes', detalle: 'Incluye columnas de stats en la misma hoja (ej: offensiveAwareness, ballControl, dribbling, ...).' }
       ];
       const ws2 = XLSX.utils.json_to_sheet(instructions);
       XLSX.utils.book_append_sheet(wb, ws2, 'Instrucciones');
+      const ws3 = XLSX.utils.json_to_sheet(
+        ATTRIBUTE_KEYS.map((key) => ({
+          atributo: key,
+          valor_default: DEFAULT_PLAYER_ATTRIBUTES[key]
+        }))
+      );
+      XLSX.utils.book_append_sheet(wb, ws3, 'Atributos');
       XLSX.writeFile(wb, 'plantilla_jugadores.xlsx');
       setToast({ type: 'success', text: 'Plantilla Excel descargada.' });
     } catch (error) {
@@ -365,7 +431,11 @@ const AdminPlayers = () => {
         clubId: p.clubId,
         transferValue: p.transferValue || 0,
         salary: getPlayerSalary(p),
-        transferListed: p.transferListed ? 'Si' : 'No'
+        transferListed: p.transferListed ? 'Si' : 'No',
+        ...ATTRIBUTE_KEYS.reduce((acc, key) => {
+          acc[key] = parseNumberCell((p as any).attributes?.[key], DEFAULT_PLAYER_ATTRIBUTES[key]);
+          return acc;
+        }, {} as Record<string, number>)
       }));
       const wsBasic = XLSX.utils.json_to_sheet(basic);
       XLSX.utils.book_append_sheet(wb, wsBasic, 'Jugadores');
@@ -396,12 +466,17 @@ const AdminPlayers = () => {
           id: r.id || r.ID || r.Id,
           name: r.name || r.Nombre,
           position: r.position || r.Posicion || r.posicion,
-          overall: Number(r.overall ?? r.Media ?? 0),
-          age: Number(r.age ?? r.Edad ?? 0),
+          overall: parseNumberCell(r.overall ?? r.Media, 70),
+          age: parseNumberCell(r.age ?? r.Edad, 25),
+          nationality: r.nationality || r.Nationality || r.Nacionalidad || 'Argentina',
           clubId: r.clubId || r.Club || 'libre',
-          transferValue: Number(r.transferValue ?? r.Valor ?? 0),
-          salary: Number(r.salary ?? r.Salario ?? 0) || 0,
-          transferListed: (r.transferListed || r.Transferible || '').toString().toLowerCase() === 'si'
+          transferValue: parseNumberCell(r.transferValue ?? r.Valor, 0),
+          salary: parseNumberCell(r.salary ?? r.Salario, 0),
+          transferListed: parseBooleanCell(r.transferListed ?? r.Transferible ?? false),
+          attributes: ATTRIBUTE_KEYS.reduce((acc, key) => {
+            acc[key] = parseNumberCell(r[key], DEFAULT_PLAYER_ATTRIBUTES[key]);
+            return acc;
+          }, {} as PlayerAttributes)
         }))
         .filter(p => p.id && p.name);
       if (mapped.length === 0) {
@@ -411,6 +486,17 @@ const AdminPlayers = () => {
       }
       const mappedWithContract = mapped.map(p => ({
         ...p,
+        potential: Math.min(99, (p.overall || 70) + 3),
+        image: '/default.png',
+        skills: { ...DEFAULT_PLAYER_SKILLS },
+        playingStyles: { ...DEFAULT_PLAYING_STYLES },
+        form: p.attributes?.form ?? 3,
+        goals: 0,
+        assists: 0,
+        appearances: 0,
+        matches: 0,
+        dorsal: 1,
+        injuryResistance: 2,
         contract: {
           ...(p as any).contract,
           salary: p.salary || (p as any).contract?.salary || 0,
@@ -522,7 +608,25 @@ const AdminPlayers = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <SummaryBadge label="Jugadores" value={players.length.toString()} />
         <SummaryBadge label="Clubes" value={clubs.length.toString()} />
-        <SummaryBadge label="Filtrados" value={filtered.length.toString()} />
+        <SummaryBadge
+          label={hasActiveFilters ? 'Filtrados' : 'Visibles'}
+          value={filtered.length.toString()}
+          helper={hasActiveFilters ? `de ${players.length} totales` : 'Sin filtros activos'}
+        />
+      </div>
+
+      <div className="card p-4 max-w-2xl">
+        <div className="text-sm font-semibold text-white mb-2">Buscar jugador</div>
+        <div className="bg-dark rounded-md border border-gray-800 p-3 flex items-center gap-2">
+          <Search size={16} className="text-gray-400" />
+          <input
+            type="text"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            placeholder="Buscar jugador por nombre..."
+            className="flex-1 bg-transparent outline-none text-sm"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -531,19 +635,15 @@ const AdminPlayers = () => {
             <Plus size={16} className="mr-2" />
             Crear jugador
           </button>
-          <button
-            className="btn-outline justify-center text-green-400 border-green-500 hover:text-green-300"
-            onClick={handleUpdateAllToTransferListed}
-            disabled={busyAction === 'transfer-all'}
-          >
+          <button className="btn-outline justify-center text-gray-200 border-gray-600 hover:text-white hover:border-gray-500" onClick={handleUpdateAllToTransferListed} disabled={busyAction === 'transfer-all'}>
             <Users size={16} className="mr-2" />
             Marcar transferibles
           </button>
-          <button className="btn-outline justify-center text-emerald-400 border-emerald-500 hover:text-emerald-300" onClick={() => setShowSalaryConfirm(true)}>
+          <button className="btn-outline justify-center text-gray-200 border-gray-600 hover:text-white hover:border-gray-500" onClick={() => setShowSalaryConfirm(true)}>
             <DollarSign size={16} className="mr-2" />
             Ajustar salarios
           </button>
-          <button className="btn-outline justify-center text-cyan-400 border-cyan-500 hover:text-cyan-300" onClick={() => setShowMarketValueConfirm(true)}>
+          <button className="btn-outline justify-center text-gray-200 border-gray-600 hover:text-white hover:border-gray-500" onClick={() => setShowMarketValueConfirm(true)}>
             <DollarSign size={16} className="mr-2" />
             Ajustar valores
           </button>
@@ -551,24 +651,24 @@ const AdminPlayers = () => {
 
         <ActionCard title="Sincronizacion">
           <button
-            className={`btn-outline justify-center text-orange-400 border-orange-500 hover:text-orange-300 ${busyAction === 'replace-supabase' ? 'opacity-60 cursor-not-allowed' : ''}`}
+            className={`btn-outline justify-center text-red-300 border-red-500 hover:text-red-200 hover:border-red-400 ${busyAction === 'replace-supabase' ? 'opacity-60 cursor-not-allowed' : ''}`}
             onClick={handleReplaceSupabasePlayers}
             disabled={busyAction === 'replace-supabase'}
           >
-            <Database size={16} className="mr-2" />
-            Sync Supabase (reemplazar)
+            <AlertTriangle size={16} className="mr-2" />
+            Reemplazar Supabase
           </button>
-          <div className="text-xs text-gray-400 col-span-2">Reemplaza todos los jugadores en Supabase con el lote actual. Usa con cuidado.</div>
+          <div className="text-xs text-red-300/90 col-span-2">Elimina todos los jugadores remotos y sube el lote actual. Accion irreversible.</div>
         </ActionCard>
 
         <ActionCard title="Importar / Exportar">
-          <button className="btn-outline justify-center text-blue-300 border-blue-400 hover:text-blue-200" onClick={handleDownloadTemplate}>
+          <button className="btn-outline justify-center text-gray-200 border-gray-600 hover:text-white hover:border-gray-500" onClick={handleDownloadTemplate}>
             Plantilla Excel
           </button>
-          <button className="btn-outline justify-center text-purple-300 border-purple-400 hover:text-purple-200" onClick={handleExportPlayers} disabled={busyAction === 'export'}>
+          <button className="btn-outline justify-center text-gray-200 border-gray-600 hover:text-white hover:border-gray-500" onClick={handleExportPlayers} disabled={busyAction === 'export'}>
             Exportar Excel
           </button>
-          <button className="btn-outline justify-center text-cyan-300 border-cyan-400 hover:text-cyan-200" onClick={onImportClick} disabled={busyAction === 'import'}>
+          <button className="btn-outline justify-center text-gray-200 border-gray-600 hover:text-white hover:border-gray-500" onClick={onImportClick} disabled={busyAction === 'import'}>
             Importar Excel
           </button>
           <input
@@ -581,19 +681,6 @@ const AdminPlayers = () => {
               if (f) handleImportPlayers(f);
             }}
           />
-        </ActionCard>
-
-        <ActionCard title="Buscar jugador">
-          <div className="col-span-2 bg-dark rounded-md border border-gray-800 p-3 flex items-center gap-2">
-            <Search size={16} className="text-gray-400" />
-            <input
-              type="text"
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              placeholder="Buscar jugador por nombre..."
-              className="flex-1 bg-transparent outline-none text-sm"
-            />
-          </div>
         </ActionCard>
       </div>
 
