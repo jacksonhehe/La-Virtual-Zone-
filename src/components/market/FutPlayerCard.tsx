@@ -110,9 +110,9 @@ const FutPlayerCard: React.FC<Props> = ({ player, club, value, disabled, isOwnPl
     const group = getPositionGroup(position);
 
     switch(group) {
-      case 'goalkeeper': return 'from-green-400 to-emerald-300';
+      case 'goalkeeper': return 'from-yellow-400 to-amber-300';
       case 'defender': return 'from-blue-400 to-cyan-300';
-      case 'midfielder': return 'from-purple-400 to-fuchsia-300';
+      case 'midfielder': return 'from-green-400 to-emerald-300';
       case 'attacker': return 'from-red-400 to-pink-300';
       default: return 'from-gray-400 to-slate-300';
     }
