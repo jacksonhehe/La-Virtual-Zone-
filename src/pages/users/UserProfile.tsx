@@ -497,7 +497,7 @@ const UserProfile = () => {
                     <img
                       src={club.logo}
                       alt={club.name}
-                      className="w-12 h-12 rounded-full mr-3 border border-gray-600 object-cover"
+                      className="w-12 h-12 rounded-lg mr-3 border border-gray-600 object-cover"
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-white truncate">{club.name}</h4>

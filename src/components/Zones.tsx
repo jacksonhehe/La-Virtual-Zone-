@@ -207,7 +207,7 @@ const Zones = ({ className = '' }: ZonesProps) => {
                   <th className="p-4 text-center">GF</th>
                   <th className="p-4 text-center">GC</th>
                   <th className="p-4 text-center">DG</th>
-                  <th className="p-4 text-center bg-primary/80">Racha</th>
+                  <th className="p-4 text-center">Racha</th>
                 </tr>
               </thead>
               <tbody>
@@ -241,7 +241,7 @@ const Zones = ({ className = '' }: ZonesProps) => {
                         {team.dg > 0 ? '+' : ''}
                         {team.dg}
                       </td>
-                      <td className="p-4 text-center bg-slate-900/45 border-l border-slate-700/50">
+                      <td className="p-4 text-center">
                         <div className="inline-flex items-center justify-end gap-1.5 w-full">
                           {streak.map((result, idx) => (
                             <span
