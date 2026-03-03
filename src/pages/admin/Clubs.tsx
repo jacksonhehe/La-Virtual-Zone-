@@ -146,26 +146,37 @@ const AdminClubs = () => {
     }
   }, [clubs, isDataLoaded]);
 
-  // En modo Supabase: cargar clubes desde Supabase si no hay en memoria
+  // En modo Supabase: cargar clubes desde Supabase en la carga inicial.
   useEffect(() => {
+    let cancelled = false;
+
     const loadFromSupabase = async () => {
-      if (config.useSupabase && isDataLoaded && (clubs?.length ?? 0) === 0) {
+      if (config.useSupabase && isDataLoaded) {
+        setIsLoading(true);
         try {
           const supaClubs = await fetchClubsFromSupabase();
-          if (supaClubs.length > 0) {
-            try { await (useDataStore.getState().updateClubs?.(supaClubs as any) ?? Promise.resolve()); } catch {}
-            setClubsState(supaClubs as any);
-            setIsLoading(false);
-          }
+          if (cancelled) return;
+          try { await (useDataStore.getState().updateClubs?.(supaClubs as any) ?? Promise.resolve()); } catch {}
+          setClubsState(supaClubs as any);
+          setLoadError(null);
         } catch (e) {
+          if (cancelled) return;
           console.error('Error cargando clubes desde Supabase:', e);
-          setLoadError('No se pudieron cargar los clubes. Intenta nuevamente.');
-          setIsLoading(false);
+          // Mantener datos locales del store cuando falle la carga remota.
+          const localClubCount = useDataStore.getState().clubs?.length ?? 0;
+          setLoadError(localClubCount > 0 ? null : 'No se pudieron cargar los clubes. Intenta nuevamente.');
+        } finally {
+          if (!cancelled) setIsLoading(false);
         }
       }
     };
+
     loadFromSupabase();
-  }, [isDataLoaded, clubs?.length]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isDataLoaded]);
 
   useEffect(() => {
     if (searchParams.get('new') === '1') {
