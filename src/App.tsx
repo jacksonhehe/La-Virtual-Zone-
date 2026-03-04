@@ -48,6 +48,7 @@ const Users = lazy(() => import('./pages/users/Users'));
 const DtCommunity = lazy(() => import('./pages/liga-master/DtCommunity'));
 const Prode = lazy(() => import('./pages/liga-master/Prode'));
 const CopaLVZ = lazy(() => import('./pages/liga-master/CopaLVZ'));
+const PlayerTraining = lazy(() => import('./pages/liga-master/PlayerTraining'));
 const Terms = lazy(() => import('./pages/legal/Terms'));
 const Privacy = lazy(() => import('./pages/legal/Privacy'));
 const AccountStatus = lazy(() => import('./pages/auth/AccountStatus'));
@@ -96,6 +97,7 @@ function App() {
             <Route path="comunidad-dt" element={<DtCommunity />} />
             <Route path="prode" element={<Prode />} />
             <Route path="copa-lvz" element={<CopaLVZ />} />
+            <Route path="entrenamiento" element={<PlayerTraining />} />
           </Route>
           
           {/* Tournaments routes */}

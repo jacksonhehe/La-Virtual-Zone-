@@ -419,7 +419,7 @@ const ClubSquad = () => {
                     <td className="px-4 py-3 text-center">{player.dorsal}</td>
                     <td className="px-4 py-3 text-center">{player.age}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getOverallColor(player.overall)}`}>
+                      <span className={`inline-flex min-w-[34px] justify-center px-2 py-1 rounded-md text-xs font-black shadow ${getOverallColor(player.overall)}`}>
                         {player.overall}
                       </span>
                     </td>
@@ -499,7 +499,7 @@ const ClubSquad = () => {
                             <Eye size={14} />
                           </button>
                         </div>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${getOverallColor(player.overall)}`}>
+                        <span className={`inline-flex min-w-[34px] justify-center px-2 py-1 rounded-md text-xs font-black shadow ${getOverallColor(player.overall)}`}>
                           {player.overall}
                         </span>
                       </div>
@@ -542,7 +542,7 @@ const ClubSquad = () => {
                             <Eye size={14} />
                           </button>
                         </div>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${getOverallColor(player.overall)}`}>
+                        <span className={`inline-flex min-w-[34px] justify-center px-2 py-1 rounded-md text-xs font-black shadow ${getOverallColor(player.overall)}`}>
                           {player.overall}
                         </span>
                       </div>
@@ -585,7 +585,7 @@ const ClubSquad = () => {
                             <Eye size={14} />
                           </button>
                         </div>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${getOverallColor(player.overall)}`}>
+                        <span className={`inline-flex min-w-[34px] justify-center px-2 py-1 rounded-md text-xs font-black shadow ${getOverallColor(player.overall)}`}>
                           {player.overall}
                         </span>
                       </div>
@@ -628,7 +628,7 @@ const ClubSquad = () => {
                             <Eye size={14} />
                           </button>
                         </div>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${getOverallColor(player.overall)}`}>
+                        <span className={`inline-flex min-w-[34px] justify-center px-2 py-1 rounded-md text-xs font-black shadow ${getOverallColor(player.overall)}`}>
                           {player.overall}
                         </span>
                       </div>
@@ -707,10 +707,9 @@ const ClubSquad = () => {
 
 // Helper functions
 const getOverallColor = (overall: number) => {
-  if (overall >= 85) return 'bg-green-500/20 text-green-500';
-  if (overall >= 80) return 'bg-blue-500/20 text-blue-400';
-  if (overall >= 75) return 'bg-yellow-500/20 text-yellow-500';
-  return 'bg-gray-500/20 text-gray-400';
+  if (overall <= 84) return 'bg-yellow-400/90 text-slate-900 shadow-yellow-400/20';
+  if (overall <= 95) return 'bg-emerald-400/90 text-slate-900 shadow-emerald-400/20';
+  return 'bg-cyan-300/90 text-slate-900 shadow-cyan-300/20';
 };
 
 export default ClubSquad;

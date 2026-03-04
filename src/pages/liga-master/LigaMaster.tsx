@@ -732,6 +732,25 @@ const LigaMaster = () => {
             </Link>
 
             <Link
+              to="/liga-master/entrenamiento"
+              className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3 text-gray-300">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-400/40 flex items-center justify-center">
+                    <Sparkles size={18} className="text-emerald-300" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Entrenamiento</p>
+                    <p className="text-xs text-gray-400">Mejora stats con presupuesto</p>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
+              </div>
+              <p className="text-sm text-gray-400">Entrena atributos, estilos y tarjetas del plantel.</p>
+            </Link>
+
+            <Link
               to="/liga-master/tablas-mercado"
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
             >
@@ -769,6 +788,9 @@ const LigaMaster = () => {
               <p className="text-sm text-gray-400">Canales de coordinacion y avisos para DTs.</p>
             </Link>
 
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/palmares`}
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
@@ -791,9 +813,7 @@ const LigaMaster = () => {
                   : 'Sin titulos registrados'}
               </p>
             </Link>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               to="/liga-master/zonas"
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
