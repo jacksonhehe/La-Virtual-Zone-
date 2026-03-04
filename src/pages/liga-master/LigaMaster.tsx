@@ -392,6 +392,12 @@ const LigaMaster = () => {
                     <div className="flex flex-wrap gap-3 text-xs text-gray-400">
                       <span className="px-3 py-1 rounded-full bg-gray-800/30 border border-gray-700/50">Formacion: {currentFormation}</span>
                       <span className="px-3 py-1 rounded-full bg-gray-800/30 border border-gray-700/50">{wins}V {draws}E {losses}D</span>
+                      <Link
+                        to="/liga-master/reglamento"
+                        className="px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors"
+                      >
+                        Reglamento
+                      </Link>
                     </div>
                   </div>
                 </div>
