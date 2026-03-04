@@ -190,8 +190,8 @@ const Navbar = () => {
     });
   }, [notificationsOpen, isAuthenticated, dismissedStorageKey, myOffersAsBuyer, myOffersAsSeller, dismissedNotifications]);
   
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
     setIsOpen(false);
     setUserMenuOpen(false);

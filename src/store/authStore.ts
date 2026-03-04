@@ -1,4 +1,4 @@
-import  { create } from 'zustand';
+﻿import  { create } from 'zustand';
 import { User } from '../types';
 import {
   login as authLogin,
@@ -9,7 +9,7 @@ import {
   changePassword as authChangePassword,
   downloadUserData,
   resetPassword as authResetPassword,
-  getSupabaseCurrentUser,
+  getSupabaseProfileById,
   normalizeSupabaseProfile,
   getAccountStatusError,
   AccountBlockStatus
@@ -87,7 +87,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     login: async (username, password) => {
       try {
-        console.log('🔐 AuthStore: Attempting login');
+        console.log('ðŸ” AuthStore: Attempting login');
         set({ isLoading: true, authError: null, accountBlock: null });
 
         const user = await authLogin(username, password);
@@ -100,10 +100,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
           accountBlock: null
         });
 
-        console.log('✅ AuthStore: Login successful for:', user.username);
+        console.log('âœ… AuthStore: Login successful for:', user.username);
         return user;
       } catch (error) {
-        console.error("❌ AuthStore: Login failed:", error);
+        console.error("âŒ AuthStore: Login failed:", error);
         const isStatusBlock =
           typeof error === 'object' &&
           error !== null &&
@@ -132,7 +132,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     register: async (email, username, password) => {
       try {
-        console.log('📝 AuthStore: Attempting registration');
+        console.log('ðŸ“ AuthStore: Attempting registration');
         set({ isLoading: true });
 
         const user = await authRegister(email, username, password);
@@ -143,10 +143,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
           isLoading: false
         });
 
-        console.log('✅ AuthStore: Registration successful for:', user.username);
+        console.log('âœ… AuthStore: Registration successful for:', user.username);
         return user;
       } catch (error) {
-        console.error("❌ AuthStore: Registration failed:", error);
+        console.error("âŒ AuthStore: Registration failed:", error);
         set({ isLoading: false });
         throw error;
       }
@@ -154,38 +154,41 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     resetPassword: async (email) => {
       try {
-        console.log('🔐 AuthStore: Attempting password reset');
+        console.log('ðŸ” AuthStore: Attempting password reset');
         set({ isLoading: true });
 
         await authResetPassword(email);
 
-        console.log('✅ AuthStore: Password reset email sent successfully');
+        console.log('âœ… AuthStore: Password reset email sent successfully');
         set({ isLoading: false });
       } catch (error) {
-        console.error("❌ AuthStore: Password reset failed:", error);
+        console.error("âŒ AuthStore: Password reset failed:", error);
         set({ isLoading: false });
         throw error;
       }
     },
 
     logout: async () => {
-      try {
-        console.log('🚪 AuthStore: Attempting logout');
-        set({ isLoading: true });
-
-        await authLogout();
-
+      const clearLocalAuthState = () => {
+        localStorage.removeItem('virtual_zone_current_user');
         set({
           user: null,
           isAuthenticated: false,
           isLoading: false
         });
+      };
 
-        console.log('✅ AuthStore: Logout successful');
+      try {
+        console.log('AuthStore: Attempting logout');
+        set({ isLoading: true });
+
+        await authLogout();
+        clearLocalAuthState();
+
+        console.log('AuthStore: Logout successful');
       } catch (error) {
-        console.error("❌ AuthStore: Logout failed:", error);
-        set({ isLoading: false });
-        throw error;
+        console.warn('AuthStore: Logout failed in provider, clearing local session anyway:', error);
+        clearLocalAuthState();
       }
     },
 
@@ -203,7 +206,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
             });
           }
         } catch (error) {
-          console.warn('⚠️ AuthStore: No stored session available while updating user');
+          console.warn('âš ï¸ AuthStore: No stored session available while updating user');
         }
       }
       if (!currentUser) {
@@ -211,7 +214,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
       }
 
       try {
-        console.log('📝 AuthStore: Updating user profile');
+        console.log('ðŸ“ AuthStore: Updating user profile');
         set({ isLoading: true });
 
         const updatedUser = await authUpdateUser(userData);
@@ -221,10 +224,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
           isLoading: false
         });
 
-        console.log('✅ AuthStore: User profile updated');
+        console.log('âœ… AuthStore: User profile updated');
         return updatedUser;
       } catch (error) {
-        console.error('❌ AuthStore: Failed to update user:', error);
+        console.error('âŒ AuthStore: Failed to update user:', error);
         set({ isLoading: false });
         throw error;
       }
@@ -277,7 +280,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     initializeAuth: async () => {
       try {
-        console.log('🔄 AuthStore: Initializing authentication');
+        console.log('ðŸ”„ AuthStore: Initializing authentication');
 
         const enforceAccountStatus = async (
           candidate: User | null,
@@ -292,7 +295,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
             try {
               await supabase.auth.signOut();
             } catch (signOutError) {
-              console.warn('⚠️ AuthStore: Failed to sign out after blocked status', signOutError);
+              console.warn('âš ï¸ AuthStore: Failed to sign out after blocked status', signOutError);
             }
           }
 
@@ -314,12 +317,12 @@ export const useAuthStore = create<AuthState>((set, get) => {
             // Set up Supabase auth listener
             const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(
               async (event, session) => {
-                console.log('🔄 AuthStore: Auth state changed:', event, !!session);
+                console.log('ðŸ”„ AuthStore: Auth state changed:', event, !!session);
 
                 // Prevent multiple simultaneous auth processing
                 const state = get();
                 if (state.isProcessingAuth) {
-                  console.log('🔄 AuthStore: Auth processing already in progress, skipping...');
+                  console.log('ðŸ”„ AuthStore: Auth processing already in progress, skipping...');
                   return;
                 }
 
@@ -327,20 +330,23 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
                 try {
                   if (session?.user) {
-                  console.log('🔄 AuthStore: User authenticated, getting profile...');
+                  console.log('ðŸ”„ AuthStore: User authenticated, getting profile...');
                   try {
                 // Get user profile from Supabase with timeout
-                const profilePromise = getSupabaseCurrentUser();
+                const profilePromise = getSupabaseProfileById(
+                  session.user.id,
+                  session.user.user_metadata?.roles
+                );
                 const timeoutPromise = new Promise((_, reject) =>
                   setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
                 );
 
                     let user = await Promise.race([profilePromise, timeoutPromise]).catch(error => {
-                      console.warn('⚠️ AuthStore: Profile fetch timeout, checking localStorage');
+                      console.warn('âš ï¸ AuthStore: Profile fetch timeout, checking localStorage');
                       return null;
                     });
 
-                    console.log('🔄 AuthStore: Profile result:', user ? 'found' : 'not found');
+                    console.log('ðŸ”„ AuthStore: Profile result:', user ? 'found' : 'not found');
 
                     // If no user from Supabase, try localStorage
                     if (!user) {
@@ -349,10 +355,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
                         try {
                           const rawLocalUser = JSON.parse(stored);
                           const localUser = normalizeSupabaseProfile(rawLocalUser);
-                          console.log('🔄 AuthStore: Using localStorage fallback for auth change:', localUser.username);
+                          console.log('ðŸ”„ AuthStore: Using localStorage fallback for auth change:', localUser.username);
                           user = localUser;
                         } catch (e) {
-                          console.warn('⚠️ AuthStore: Could not parse localStorage user for auth change');
+                          console.warn('âš ï¸ AuthStore: Could not parse localStorage user for auth change');
                         }
                       }
                     }
@@ -368,18 +374,18 @@ export const useAuthStore = create<AuthState>((set, get) => {
                         isLoading: false,
                         accountBlock: null
                       });
-                      console.log('✅ AuthStore: User session restored:', user.username, 'Role:', user.role, 'Club:', user.clubId);
+                      console.log('âœ… AuthStore: User session restored:', user.username, 'Role:', user.role, 'Club:', user.clubId);
                   } else {
                     // Check if we already have a valid user in state before creating basic user
                     const currentState = get();
                     if (currentState.user && currentState.user.id === session.user.id) {
-                      console.log('🔄 AuthStore: Keeping existing user during auth state change:', currentState.user.username);
+                      console.log('ðŸ”„ AuthStore: Keeping existing user during auth state change:', currentState.user.username);
                       set({
                         isAuthenticated: true,
                         isLoading: false
                       });
                     } else {
-                      console.warn('⚠️ AuthStore: Using basic user (all fallbacks failed)');
+                      console.warn('âš ï¸ AuthStore: Using basic user (all fallbacks failed)');
                       // Create a basic user object with admin privileges if it's the admin user
                       const isAdminUser = session.user.email === 'admin@lavirtualzone.com';
                       const basicUser = {
@@ -387,7 +393,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                         username: session.user.email?.split('@')[0] || 'user',
                         email: session.user.email || '',
                         role: isAdminUser ? 'admin' : 'user',
-                        roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin también tiene rol DT
+                        roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin tambiÃ©n tiene rol DT
                         status: 'active'
                       };
 
@@ -396,11 +402,11 @@ export const useAuthStore = create<AuthState>((set, get) => {
                         isAuthenticated: true,
                         isLoading: false
                       });
-                      console.log(`✅ AuthStore: Basic ${isAdminUser ? 'admin' : 'user'} created:`, basicUser.username);
+                      console.log(`âœ… AuthStore: Basic ${isAdminUser ? 'admin' : 'user'} created:`, basicUser.username);
                     }
                   }
                   } catch (error) {
-                    console.error('❌ AuthStore: Error restoring session:', error);
+                    console.error('âŒ AuthStore: Error restoring session:', error);
                           // Create fallback user with admin privileges if it's the admin
                           const isAdminUser = session.user.email === 'admin@lavirtualzone.com';
                           const fallbackUser = {
@@ -408,7 +414,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                             username: session.user.email?.split('@')[0] || 'user',
                             email: session.user.email || '',
                             role: isAdminUser ? 'admin' : 'user',
-                            roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin también tiene rol DT
+                            roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin tambiÃ©n tiene rol DT
                             status: 'active'
                           };
 
@@ -417,7 +423,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                       isAuthenticated: true,
                       isLoading: false
                     });
-                    console.log(`✅ AuthStore: Fallback ${isAdminUser ? 'admin' : 'user'} created:`, fallbackUser.username);
+                    console.log(`âœ… AuthStore: Fallback ${isAdminUser ? 'admin' : 'user'} created:`, fallbackUser.username);
                   }
                   } else {
                     set({
@@ -425,7 +431,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                       isAuthenticated: false,
                       isLoading: false
                     });
-                    console.log('✅ AuthStore: User logged out');
+                    console.log('âœ… AuthStore: User logged out');
                   }
                 } finally {
                   set({ isProcessingAuth: false });
@@ -436,20 +442,23 @@ export const useAuthStore = create<AuthState>((set, get) => {
             // Check initial session
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session?.user) {
-              console.log('🔄 AuthStore: Initial session found, loading profile...');
+              console.log('ðŸ”„ AuthStore: Initial session found, loading profile...');
               try {
                 // Get user profile with timeout
-                const profilePromise = getSupabaseCurrentUser();
+                const profilePromise = getSupabaseProfileById(
+                  session.user.id,
+                  session.user.user_metadata?.roles
+                );
                 const timeoutPromise = new Promise((_, reject) =>
                   setTimeout(() => reject(new Error('Initial profile fetch timeout')), 8000)
                 );
 
                 let user = await Promise.race([profilePromise, timeoutPromise]).catch(error => {
-                  console.warn('⚠️ AuthStore: Initial profile fetch timeout, trying localStorage fallback');
+                  console.warn('âš ï¸ AuthStore: Initial profile fetch timeout, trying localStorage fallback');
                   return null;
                 });
 
-                console.log('🔄 AuthStore: Initial profile result:', user ? 'found' : 'not found');
+                console.log('ðŸ”„ AuthStore: Initial profile result:', user ? 'found' : 'not found');
 
                 // If Supabase failed, try to load from localStorage as fallback
                 if (!user) {
@@ -458,10 +467,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
                     try {
                       const rawLocalUser = JSON.parse(stored);
                       const localUser = normalizeSupabaseProfile(rawLocalUser);
-                      console.log('🔄 AuthStore: Using localStorage fallback for user:', localUser.username);
+                      console.log('ðŸ”„ AuthStore: Using localStorage fallback for user:', localUser.username);
                       user = localUser;
                     } catch (e) {
-                      console.warn('⚠️ AuthStore: Could not parse localStorage user');
+                      console.warn('âš ï¸ AuthStore: Could not parse localStorage user');
                     }
                   }
                 }
@@ -473,10 +482,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
                     try {
                       const rawParsedUser = JSON.parse(storedUser);
                       const parsedUser = normalizeSupabaseProfile(rawParsedUser);
-                      console.log('🔄 AuthStore: Emergency localStorage load for user:', parsedUser.username);
+                      console.log('ðŸ”„ AuthStore: Emergency localStorage load for user:', parsedUser.username);
                       user = parsedUser;
                     } catch (e) {
-                      console.warn('⚠️ AuthStore: Emergency localStorage load failed');
+                      console.warn('âš ï¸ AuthStore: Emergency localStorage load failed');
                     }
                   }
                 }
@@ -492,7 +501,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                     isLoading: false,
                     accountBlock: null
                   });
-                  console.log('✅ AuthStore: Initial user loaded:', user.username, 'Role:', user.role, 'Club:', user.clubId);
+                  console.log('âœ… AuthStore: Initial user loaded:', user.username, 'Role:', user.role, 'Club:', user.clubId);
                 } else {
                         // Create basic user for initial session with admin privileges if it's admin
                         const isAdminUser = session.user.email === 'admin@lavirtualzone.com';
@@ -501,7 +510,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                           username: session.user.email?.split('@')[0] || 'user',
                           email: session.user.email || '',
                           role: isAdminUser ? 'admin' : 'user',
-                          roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin también tiene rol DT
+                          roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin tambiÃ©n tiene rol DT
                           status: 'active'
                         };
 
@@ -510,10 +519,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
                     isAuthenticated: true,
                     isLoading: false
                   });
-                  console.log(`✅ AuthStore: Initial basic ${isAdminUser ? 'admin' : 'user'} created:`, basicUser.username);
+                  console.log(`âœ… AuthStore: Initial basic ${isAdminUser ? 'admin' : 'user'} created:`, basicUser.username);
                 }
               } catch (error) {
-                console.error('❌ AuthStore: Error loading initial profile:', error);
+                console.error('âŒ AuthStore: Error loading initial profile:', error);
                       // Create fallback for initial session with admin privileges if it's admin
                       const isAdminUser = session.user.email === 'admin@lavirtualzone.com';
                       const fallbackUser = {
@@ -521,7 +530,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
                         username: session.user.email?.split('@')[0] || 'user',
                         email: session.user.email || '',
                         role: isAdminUser ? 'admin' : 'user',
-                        roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin también tiene rol DT
+                        roles: isAdminUser ? ['admin', 'dt'] : ['user'], // Admin tambiÃ©n tiene rol DT
                         status: 'active'
                       };
 
@@ -530,16 +539,16 @@ export const useAuthStore = create<AuthState>((set, get) => {
                   isAuthenticated: true,
                   isLoading: false
                 });
-                console.log(`✅ AuthStore: Initial fallback ${isAdminUser ? 'admin' : 'user'} created:`, fallbackUser.username);
+                console.log(`âœ… AuthStore: Initial fallback ${isAdminUser ? 'admin' : 'user'} created:`, fallbackUser.username);
               }
             } else {
-              console.log('🔄 AuthStore: No initial session found');
+              console.log('ðŸ”„ AuthStore: No initial session found');
               set({ isLoading: false });
             }
           } catch (error) {
-            console.error('❌ AuthStore: Failed to initialize Supabase auth:', error);
+            console.error('âŒ AuthStore: Failed to initialize Supabase auth:', error);
             // Fallback to legacy mode
-            console.log('🔄 AuthStore: Falling back to legacy authentication');
+            console.log('ðŸ”„ AuthStore: Falling back to legacy authentication');
             const user = authGetCurrentUser();
             if (await enforceAccountStatus(user, { signOut: true })) {
               return;
@@ -553,7 +562,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
           }
         } else {
           // Fallback to legacy localStorage
-          console.log('🔄 AuthStore: Using legacy localStorage auth');
+          console.log('ðŸ”„ AuthStore: Using legacy localStorage auth');
           const user = authGetCurrentUser();
           if (await enforceAccountStatus(user)) {
             return;
@@ -566,7 +575,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
           });
         }
       } catch (error) {
-        console.error('❌ AuthStore: Error initializing auth:', error);
+        console.error('âŒ AuthStore: Error initializing auth:', error);
         set({
           user: null,
           isAuthenticated: false,
@@ -577,3 +586,4 @@ export const useAuthStore = create<AuthState>((set, get) => {
   };
 });
  
+

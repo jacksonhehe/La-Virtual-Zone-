@@ -339,9 +339,25 @@ export const supabaseLogout = async (): Promise<void> => {
   try {
     console.log('🚪 Attempting Supabase logout');
 
-    const { error } = await getSupabaseClient().auth.signOut();
+    const client = getSupabaseClient();
+    const { data: { session } } = await client.auth.getSession();
+
+    // Idempotent logout: if there is no active session, just clear local state.
+    if (!session) {
+      localStorage.removeItem(CURRENT_USER_KEY);
+      console.log('ℹ️ Supabase logout skipped: no active session');
+      return;
+    }
+
+    const { error } = await client.auth.signOut({ scope: 'local' });
 
     if (error) {
+      const normalizedMessage = String(error.message || '').toLowerCase();
+      if (normalizedMessage.includes('auth session missing')) {
+        localStorage.removeItem(CURRENT_USER_KEY);
+        console.warn('⚠️ Supabase logout: session already missing, local session cleared');
+        return;
+      }
       console.error('❌ Supabase logout error:', error.message);
       throw new Error(error.message);
     }
@@ -359,6 +375,50 @@ export const supabaseLogout = async (): Promise<void> => {
 /**
  * Get current user from Supabase session
  */
+export const getSupabaseProfileById = async (
+  userId: string,
+  rawMetadataRoles?: unknown
+): Promise<User | null> => {
+  try {
+    if (!userId) return null;
+
+    const profilePromise = getSupabaseClient()
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Profile query timeout')), 10000)
+    );
+
+    const { data: profile, error: profileError } = await Promise.race([
+      profilePromise,
+      timeoutPromise
+    ]).catch((error) => {
+      console.warn('⚠️ getSupabaseProfileById: Profile query timeout, using fallback');
+      return { data: null, error: { message: error.message } };
+    });
+
+    if (profileError && profileError.message !== 'Profile query timeout') {
+      console.error('❌ getSupabaseProfileById: Error fetching profile:', profileError.message);
+      return null;
+    }
+
+    if (!profile) return null;
+
+    const metadataRoles = sanitizeRolesInput(rawMetadataRoles);
+    const profileWithRoles = metadataRoles ? { ...profile, roles: metadataRoles } : profile;
+    const normalizedProfile = normalizeSupabaseProfile(profileWithRoles);
+
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(normalizedProfile));
+    return normalizedProfile;
+  } catch (error) {
+    console.error('❌ getSupabaseProfileById: Unexpected error:', error);
+    return null;
+  }
+};
+
 export const getSupabaseCurrentUser = async (): Promise<User | null> => {
   try {
     const client = getSupabaseClient();
@@ -387,41 +447,7 @@ export const getSupabaseCurrentUser = async (): Promise<User | null> => {
       return null; // No session, let auth store handle fallback
     }
 
-    // Add reasonable timeout to prevent hanging (6 seconds)
-    const profilePromise = getSupabaseClient()
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
-
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Profile query timeout')), 6000)
-    );
-
-    const { data: profile, error: profileError } = await Promise.race([
-      profilePromise,
-      timeoutPromise
-    ]).catch(error => {
-      // Silent handling for network timeouts - let auth store handle fallback
-      console.warn('⚠️ getSupabaseCurrentUser: Profile query timeout, using fallback');
-      return { data: null, error: { message: error.message } };
-    });
-
-    if (profileError && profileError.message !== 'Profile query timeout') {
-      console.error('❌ getSupabaseCurrentUser: Error fetching profile:', profileError.message);
-      return null;
-    }
-
-    if (!profile) {
-      return null; // No profile found, let auth store handle fallback
-    }
-
-    const metadataRoles = sanitizeRolesInput(session.user.user_metadata?.roles);
-    const profileWithRoles = metadataRoles ? { ...profile, roles: metadataRoles } : profile;
-
-    const normalizedProfile = normalizeSupabaseProfile(profileWithRoles);
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(normalizedProfile));
-    return normalizedProfile;
+    return await getSupabaseProfileById(session.user.id, session.user.user_metadata?.roles);
   } catch (error) {
     console.error('❌ getSupabaseCurrentUser: Unexpected error:', error);
     return null;
