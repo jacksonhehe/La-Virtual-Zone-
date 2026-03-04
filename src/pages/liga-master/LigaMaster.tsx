@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import  { Link } from 'react-router-dom';
 import {
   Trophy,
@@ -186,7 +186,7 @@ const LigaMaster = () => {
     const parsedDate = new Date(match.date);
     if (Number.isNaN(parsedDate.getTime())) return false;
 
-    // Si la fecha no trae hora (YYYY-MM-DD), la comparamos por día para incluir "hoy".
+    // Si la fecha no trae hora (YYYY-MM-DD), la comparamos por dia para incluir "hoy".
     const hasExplicitTime = typeof match.date === 'string' && match.date.includes('T');
     if (!hasExplicitTime) {
       const todayStart = new Date();
@@ -308,7 +308,7 @@ const LigaMaster = () => {
         .sort((a, b) => getMatchTimestamp(a) - getMatchTimestamp(b))
     : [];
 
-  // Prioridad: partido en vivo; si no, próximo programado.
+  // Prioridad: partido en vivo; si no, proximo programado.
   const nextMatch = liveClubMatches[0] || scheduledClubMatches[0] || null;
 
   // Mock formation
@@ -349,7 +349,7 @@ const LigaMaster = () => {
     const points = userTeamStanding?.points || 0;
     const goalDifference = (userTeamStanding?.goalsFor || 0) - (userTeamStanding?.goalsAgainst || 0);
 
-    // "Fixture cercano" solo muestra cruces próximos (no en vivo).
+    // "Fixture cercano" solo muestra cruces proximos (no en vivo).
     const upcomingMatches = scheduledClubMatches.slice(0, 4);
 
     const tablePreview = userZoneStandings.slice(0, 5);
@@ -893,8 +893,8 @@ const LigaMaster = () => {
   return (
     <div>
       <PageHeader 
-        title="Liga Master 2025" 
-        subtitle="La competiciÃ³n principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 10 equipos participantes."
+        title="Liga Master 2025"
+        subtitle="La competicion principal de La Virtual Zone. Liga regular con enfrentamientos ida y vuelta entre los 10 equipos participantes."
         image="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHw2fHxlc3BvcnRzJTIwZ2FtaW5nJTIwdG91cm5hbWVudCUyMGRhcmslMjBuZW9ufGVufDB8fHx8MTc0NzE3MzUxNHww&ixlib=rb-4.1.0"
       />
       <div className="container mx-auto px-4 py-8">
@@ -921,12 +921,11 @@ const LigaMaster = () => {
             value={ligaMasterMatches.filter(m => m.status === "finished").length}
             icon={<Calendar size={24} className="text-primary" />}
             trend="up"
-            trendValue="+3 Ãºltima semana"
+            trendValue="+3 ultima semana"
           />
         </div>
 
-        {!isLoggedIn && (
-          <div className="space-y-6 mb-8">
+        <div className="space-y-6 mb-8">
             <section className="rounded-2xl border border-gray-700/50 bg-gray-800/50 p-6 md:p-8">
               <div className="max-w-3xl">
                 <p className="text-xs uppercase tracking-wide text-primary mb-2">Liga oficial</p>
@@ -936,24 +935,28 @@ const LigaMaster = () => {
                   mercado de fichajes y tabla en vivo.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Link
-                    to="/registro"
-                    className="bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold transition-colors"
-                  >
-                    Crear cuenta DT
-                  </Link>
+                  {!isLoggedIn && (
+                    <Link
+                      to="/registro"
+                      className="bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold transition-colors"
+                    >
+                      Crear cuenta DT
+                    </Link>
+                  )}
                   <Link
                     to="/liga-master/reglamento"
                     className="border border-gray-600 text-gray-200 hover:bg-gray-700/40 px-5 py-2.5 rounded-lg font-semibold transition-colors"
                   >
                     Ver como funciona
                   </Link>
-                  <Link
-                    to="/login"
-                    className="text-primary hover:text-primary-light px-2 py-2.5 font-semibold"
-                  >
-                    Iniciar sesion
-                  </Link>
+                  {!isLoggedIn && (
+                    <Link
+                      to="/login"
+                      className="text-primary hover:text-primary-light px-2 py-2.5 font-semibold"
+                    >
+                      Iniciar sesion
+                    </Link>
+                  )}
                 </div>
               </div>
             </section>
@@ -976,57 +979,7 @@ const LigaMaster = () => {
               </article>
             </section>
           </div>
-        )}
 
-        {/* Quick access - solo para usuarios logeados */}
-        {isLoggedIn && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <Link
-              to="/liga-master/mercado"
-              className="bg-gray-800/50 rounded-lg p-6 border border-gray-700 hover:bg-gray-800 transition-colors"
-            >
-              <TrendingUp size={24} className="text-green-400 mb-4" />
-              <h3 className="text-lg font-bold text-white mb-2">Mercado de Fichajes</h3>
-              <p className="text-gray-400 text-sm mb-4">
-                Compra y vende jugadores para mejorar tu equipo.
-              </p>
-              <div className="text-primary flex items-center text-sm font-medium">
-                <span>Ir al mercado</span>
-                <ChevronRight size={16} className="ml-1" />
-              </div>
-            </Link>
-
-            <Link
-              to="/liga-master/fixture"
-              className="bg-gray-800/50 rounded-lg p-6 border border-gray-700 hover:bg-gray-800 transition-colors"
-            >
-              <Calendar size={24} className="text-blue-400 mb-4" />
-              <h3 className="text-lg font-bold text-white mb-2">Fixture y Resultados</h3>
-              <p className="text-gray-400 text-sm mb-4">
-                Consulta el calendario de partidos y resultados.
-              </p>
-              <div className="text-primary flex items-center text-sm font-medium">
-                <span>Ver fixture</span>
-                <ChevronRight size={16} className="ml-1" />
-              </div>
-            </Link>
-
-            <Link
-              to="/liga-master/rankings"
-              className="bg-gray-800/50 rounded-lg p-6 border border-gray-700 hover:bg-gray-800 transition-colors"
-            >
-              <Trophy size={24} className="text-yellow-400 mb-4" />
-              <h3 className="text-lg font-bold text-white mb-2">Rankings</h3>
-              <p className="text-gray-400 text-sm mb-4">
-                Clasificaciones y estadÃ­sticas de clubes y jugadores.
-              </p>
-              <div className="text-primary flex items-center text-sm font-medium">
-                <span>Ver rankings</span>
-                <ChevronRight size={16} className="ml-1" />
-              </div>
-            </Link>
-          </div>
-        )}
         
       </div>
     </div>

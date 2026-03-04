@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut, ChevronDown, Settings, Trophy, Shield, Bell } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
@@ -236,7 +236,7 @@ const Navbar = () => {
                 to="/galeria"
                 className="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Galería
+                Galeria
               </Link>
               
               <Link 
@@ -366,7 +366,7 @@ const Navbar = () => {
                       >
                         <div className="flex items-center">
                           <Settings size={16} className="mr-2" />
-                          <span>Configuración</span>
+                          <span>Configuracion</span>
                         </div>
                       </Link>
                       
@@ -376,7 +376,7 @@ const Navbar = () => {
                       >
                         <div className="flex items-center">
                           <LogOut size={16} className="mr-2" />
-                          <span>Cerrar Sesión</span>
+                          <span>Cerrar Sesion</span>
                         </div>
                       </button>
                     </div>
@@ -389,7 +389,7 @@ const Navbar = () => {
                   to="/login"
                   className="text-white bg-transparent hover:bg-gray-800 px-3 py-2 rounded-md text-sm"
                 >
-                  Iniciar Sesión
+                  Iniciar Sesion
                 </Link>
                 <Link
                   to="/registro"
@@ -448,7 +448,7 @@ const Navbar = () => {
               className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               onClick={() => setIsOpen(false)}
             >
-              Galería
+              Galeria
             </Link>
             <Link
               to="/ayuda"
@@ -484,7 +484,7 @@ const Navbar = () => {
                   onClick={handleLogout}
                   className="text-gray-300 hover:bg-gray-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium"
                 >
-                  Cerrar Sesión
+                  Cerrar Sesion
                 </button>
               </>
             )}
@@ -498,7 +498,7 @@ const Navbar = () => {
                   className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
                   onClick={() => setIsOpen(false)}
                 >
-                  Iniciar Sesión
+                  Iniciar Sesion
                 </Link>
                 
                 <Link
@@ -519,3 +519,4 @@ const Navbar = () => {
 
 export default Navbar;
  
+
