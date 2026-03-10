@@ -425,7 +425,12 @@ const LigaMaster = () => {
             </div>
           </div>
 
-          <div className="relative overflow-hidden bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-4 backdrop-blur-sm">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Mercado</h2>
+              <p className="text-xs text-gray-400">Estado y oportunidades</p>
+            </div>
+            <div className="relative overflow-hidden bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-4 backdrop-blur-sm">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(34,197,94,0.12),transparent_42%),radial-gradient(circle_at_15%_100%,rgba(148,163,184,0.08),transparent_48%)]" />
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-3 text-gray-200">
@@ -479,9 +484,15 @@ const LigaMaster = () => {
                 <ChevronRight size={14} />
               </Link>
             </div>
-          </div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Resumen del club</h2>
+              <p className="text-xs text-gray-400">Indicadores de temporada</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-3 backdrop-blur-sm hover:bg-gray-800 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-300">
@@ -526,9 +537,15 @@ const LigaMaster = () => {
                 <span className="px-2 py-1 rounded bg-gray-800/30 border border-gray-700/50">Capitan: {captain?.name || 'N/D'}</span>
               </div>
             </div>
-          </div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 gap-4">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Gestion del club</h2>
+              <p className="text-xs text-gray-400">Plantilla, presupuesto y desarrollo</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-3 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-300">
@@ -555,9 +572,15 @@ const LigaMaster = () => {
                 <ChevronRight size={14} />
               </Link>
             </div>
-          </div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Hoy</h2>
+              <p className="text-xs text-gray-400">Proximo reto del equipo</p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 md:p-6 space-y-3 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400 uppercase tracking-wide">
@@ -634,9 +657,15 @@ const LigaMaster = () => {
                 ))}
               </div>
             </div>
-          </div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Rendimiento y plantilla</h2>
+              <p className="text-xs text-gray-400">Tabla y jugadores clave</p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-3 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-white">{userZoneKey ? `Tabla ${getZoneName(userZoneKey)}` : 'Tabla Liga Master'}</p>
@@ -697,9 +726,15 @@ const LigaMaster = () => {
                 )}
               </div>
             </div>
-          </div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Accesos rapidos</h2>
+              <p className="text-xs text-gray-400">Acciones frecuentes del DT</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/plantilla`}
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
@@ -794,9 +829,15 @@ const LigaMaster = () => {
               <p className="text-sm text-gray-400">Canales de coordinacion y avisos para DTs.</p>
             </Link>
 
-          </div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Competencia y comunidad</h2>
+              <p className="text-xs text-gray-400">Seguimiento del ecosistema Liga Master</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/palmares`}
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
@@ -876,7 +917,8 @@ const LigaMaster = () => {
               </div>
               <p className="text-sm text-gray-400">Apuesta parte de tu presupuesto y suma premios por aciertos.</p>
             </Link>
-          </div>
+            </div>
+          </section>
         </div>
       </div>
     );

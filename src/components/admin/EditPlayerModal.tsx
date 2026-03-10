@@ -11,6 +11,13 @@ interface EditPlayerModalProps {
 }
 
 const positions = ['PT','DEC','LI','LD','MCD','MC','MO','MDI','MDD','EXI','EXD','CD','SD'];
+type PositionMasteryLevel = 'C' | 'B' | 'A';
+
+const buildDefaultPositionLevels = (naturalPosition: string): Record<string, PositionMasteryLevel> => {
+  const levels = Object.fromEntries(positions.map((positionCode) => [positionCode, 'C'])) as Record<string, PositionMasteryLevel>;
+  levels[naturalPosition] = 'A';
+  return levels;
+};
 
 const defaultAttributes: PlayerAttributes = {
   offensiveAwareness: 70, ballControl: 70, dribbling: 70, tightPossession: 70,
@@ -60,6 +67,11 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
   const [height, setHeight] = useState<number | ''>(player.height === undefined || player.height === null ? '' : player.height);
   const [weight, setWeight] = useState<number | ''>(player.weight === undefined || player.weight === null ? '' : player.weight);
   const [transferListed, setTransferListed] = useState(player.transferListed ?? false);
+  const [naturalPosition, setNaturalPosition] = useState<string>(player.contract?.naturalPosition || player.position || 'CD');
+  const [positionLevels, setPositionLevels] = useState<Record<string, PositionMasteryLevel>>({
+    ...buildDefaultPositionLevels(player.contract?.naturalPosition || player.position || 'CD'),
+    ...((player.contract?.positionLevels || {}) as Record<string, PositionMasteryLevel>)
+  });
 
   // Handle image file selection
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,7 +129,7 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
   // Estilos de juego
   const [playingStyles, setPlayingStyles] = useState<PlayingStyles>({ ...defaultPlayingStyles, ...(player.playingStyles || {}) });
 
-  const [activeTab, setActiveTab] = useState<'basic' | 'attributes' | 'skills' | 'styles'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'positions' | 'attributes' | 'skills' | 'styles'>('basic');
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -140,6 +152,12 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
     setHeight(player.height === undefined || player.height === null ? '' : player.height);
     setWeight(player.weight === undefined || player.weight === null ? '' : player.weight);
     setTransferListed(player.transferListed ?? false);
+    const incomingNaturalPosition = player.contract?.naturalPosition || player.position || 'CD';
+    setNaturalPosition(incomingNaturalPosition);
+    setPositionLevels({
+      ...buildDefaultPositionLevels(incomingNaturalPosition),
+      ...((player.contract?.positionLevels || {}) as Record<string, PositionMasteryLevel>)
+    });
     setAttributes({ ...defaultAttributes, ...(player.attributes || {}) });
     setSkills({ ...defaultSkills, ...(player.skills || {}) });
     setPlayingStyles({ ...defaultPlayingStyles, ...(player.playingStyles || {}) });
@@ -178,6 +196,11 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
       setError('La foto debe ser una URL valida (http/https) o una imagen subida');
       return;
     }
+    const normalizedPositionLevels: Record<string, PositionMasteryLevel> = {
+      ...buildDefaultPositionLevels(naturalPosition),
+      ...positionLevels,
+      [naturalPosition]: 'A'
+    };
 
     setIsSubmitting(true);
     try {
@@ -191,6 +214,12 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
           clubId: clubId || '',
           transferValue: val as number,
           salary: sal as number,
+          contract: {
+            ...(player.contract || {}),
+            salary: sal as number,
+            naturalPosition,
+            positionLevels: normalizedPositionLevels
+          },
           nationality,
           dorsal: d as number,
           image: image || '',
@@ -286,7 +315,7 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
     comPlayingStyles: 'Espiritu de lucha',
     // Estilos de juego
     goalPoacher: 'Cazagoles',
-    dummyRunner: 'Senuelo',
+    dummyRunner: 'Señuelo',
     foxInTheBox: 'Hombre de area',
     targetMan: 'Referente',
     classicNo10: 'Creador de jugadas',
@@ -324,6 +353,7 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
         <div className="flex bg-gray-900 border-b border-gray-800">
           {[
             { id: 'basic', label: 'Informacion basica', icon: User, count: null },
+            { id: 'positions', label: 'Posiciones aptas', icon: MapPin, count: 13 },
             { id: 'attributes', label: 'Atributos', icon: BarChart, count: 29 },
             { id: 'skills', label: 'Habilidades', icon: Zap, count: 39 },
             { id: 'styles', label: 'Estilos de juego', icon: Target, count: 20 }
@@ -697,6 +727,63 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
               </div>
             )}
 
+            {activeTab === 'positions' && (
+              <div className="space-y-6">
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <MapPin size={20} className="text-primary" />
+                    <h4 className="text-lg font-semibold text-white">Posicion natural</h4>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-3">Esta posicion define el rol principal del jugador.</p>
+                  <select
+                    className="input w-full md:w-72"
+                    value={naturalPosition}
+                    onChange={(e) => {
+                      const nextNatural = e.target.value;
+                      setNaturalPosition(nextNatural);
+                      setPositionLevels((prev) => ({ ...prev, [nextNatural]: 'A' }));
+                    }}
+                  >
+                    {positions.map((positionCode) => (
+                      <option key={positionCode} value={positionCode}>{positionCode}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="bg-gray-900/80 rounded-lg p-5 border border-gray-700">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Target size={20} className="text-primary" />
+                    <h4 className="text-lg font-semibold text-white">Posiciones aptas</h4>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-4">Configura manualmente el nivel de dominio por posicion.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {positions.map((positionCode) => (
+                      <div key={positionCode} className="rounded-lg border border-gray-700 bg-gray-800/60 p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-cyan-300 font-bold text-xl">{positionCode}</span>
+                          {naturalPosition === positionCode && (
+                            <span className="text-xs px-2 py-0.5 rounded bg-cyan-400/20 text-cyan-300 border border-cyan-400/40">Natural</span>
+                          )}
+                        </div>
+                        <select
+                          className="input w-full"
+                          value={positionLevels[positionCode] || 'C'}
+                          onChange={(e) => {
+                            const nextLevel = e.target.value as PositionMasteryLevel;
+                            setPositionLevels((prev) => ({ ...prev, [positionCode]: nextLevel }));
+                          }}
+                        >
+                          <option value="C">Nivel C</option>
+                          <option value="B">Nivel B</option>
+                          <option value="A">Nivel A</option>
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {activeTab === 'attributes' && (
             <div className="space-y-6">
               {/* Atributos de Campo */}
@@ -911,7 +998,17 @@ const EditPlayerModal = ({ player, clubs, onClose, onSave }: EditPlayerModalProp
 
         <div className="bg-gray-900 p-5 border-t border-gray-800">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-400">{activeTab === 'basic' ? 'Informacion basica' : activeTab === 'attributes' ? 'Atributos' : activeTab === 'skills' ? 'Habilidades' : 'Estilos de juego'}</div>
+            <div className="text-sm text-gray-400">
+              {activeTab === 'basic'
+                ? 'Informacion basica'
+                : activeTab === 'positions'
+                  ? 'Posiciones aptas'
+                  : activeTab === 'attributes'
+                    ? 'Atributos'
+                    : activeTab === 'skills'
+                      ? 'Habilidades'
+                      : 'Estilos de juego'}
+            </div>
             <div className="flex space-x-3 w-full sm:w-auto">
               <button 
                 type="button" 

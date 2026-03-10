@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Check, Sparkles } from 'lucide-react';
 import type { Player, PlayerAttributes, PlayerSkills, PlayingStyles } from '../../types';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 import { useAuthStore } from '../../store/authStore';
 import { useDataStore } from '../../store/dataStore';
 import { formatCurrency } from '../../utils/format';
@@ -93,36 +94,143 @@ const trainingPacks: TrainingPack[] = [
 ];
 
 const skillCards: Array<{ key: keyof PlayerSkills; title: string; desc: string }> = [
+  { key: 'scissorKick', title: 'Tijera', desc: 'Remate acrobatico en el area.' },
   { key: 'doubleTouch', title: 'Doble toque', desc: 'Control y quiebre rapido.' },
-  { key: 'marseilleTurn', title: 'Marsellesa', desc: 'Giro de 360 para escapar.' },
   { key: 'flipFlap', title: 'Gambeta', desc: 'Regate habil en velocidad.' },
+  { key: 'marseilleTurn', title: 'Marsellesa', desc: 'Giro de 360 para escapar.' },
   { key: 'rainbow', title: 'Sombrerito', desc: 'Eleva el balon sobre el rival.' },
+  { key: 'chopTurn', title: 'Cortada', desc: 'Cambia de direccion con recorte corto.' },
+  { key: 'cutBehindAndTurn', title: 'Amago por detras y giro', desc: 'Protege y gira para salir de la marca.' },
+  { key: 'scotchMove', title: 'Rebote interior', desc: 'Toque interno para desacomodar al rival.' },
+  { key: 'stepOnSkillControl', title: 'Pisar el balon', desc: 'Frena la jugada para ganar control.' },
+  { key: 'heading', title: 'Cabeceador', desc: 'Mejora definicion en juego aereo.' },
+  { key: 'longRangeDrive', title: 'Canonero', desc: 'Disparo potente desde media distancia.' },
+  { key: 'chipShotControl', title: 'Sombrero', desc: 'Define con vaselina en el mano a mano.' },
   { key: 'longRanger', title: 'Tiro larga distancia', desc: 'Remate potente desde lejos.' },
+  { key: 'knuckleShot', title: 'Tiro con empeine', desc: 'Disparo con trayectoria impredecible.' },
+  { key: 'dippingShot', title: 'Disparo descendente', desc: 'Remate que cae rapido al arco.' },
+  { key: 'risingShot', title: 'Disparo ascendente', desc: 'Remate fuerte que se eleva al final.' },
+  { key: 'acrobaticFinishing', title: 'Finalizacion acrobatica', desc: 'Remata balones dificiles en el area.' },
+  { key: 'heelTrick', title: 'Taconazo', desc: 'Pase o remate con el tacon.' },
   { key: 'firstTimeShot', title: 'Remate primer toque', desc: 'Define sin controlar.' },
   { key: 'oneTouchPass', title: 'Pase primer toque', desc: 'Pase rapido y limpio.' },
+  { key: 'throughPassing', title: 'Pase en profundidad', desc: 'Filtra balones entre lineas.' },
+  { key: 'weightedPass', title: 'Pase a profundidad', desc: 'Ajusta la fuerza para habilitar.' },
   { key: 'pinpointCrossing', title: 'Pase cruzado', desc: 'Centros precisos.' },
+  { key: 'outsideCurler', title: 'Centro con rosca', desc: 'Centra con efecto hacia el area.' },
+  { key: 'rabona', title: 'Rabona', desc: 'Ejecuta pases o remates de fantasia.' },
+  { key: 'noLookPass', title: 'Pase sin mirar', desc: 'Asiste sin orientar el cuerpo.' },
+  { key: 'lowLoftedPass', title: 'Pase bombeado bajo', desc: 'Pase elevado corto y tenso.' },
+  { key: 'giantKill', title: 'Patadon en corto', desc: 'Controla pelotas largas con seguridad.' },
+  { key: 'longThrow', title: 'Patadon en largo', desc: 'Envio largo para cambiar el juego.' },
+  { key: 'longThrow2', title: 'Saque largo de banda', desc: 'Lanza lateral al area rival.' },
+  { key: 'gkLongThrow', title: 'Saque de meta largo', desc: 'Portero con salida larga y precisa.' },
+  { key: 'penaltySpecialist', title: 'Especialista en penales', desc: 'Mayor efectividad desde los doce pasos.' },
+  { key: 'gkPenaltySaver', title: 'Parapenales', desc: 'Portero especialista en atajar penales.' },
+  { key: 'fightingSpirit', title: 'Malicia', desc: 'Compite fuerte en duelos cerrados.' },
   { key: 'interception', title: 'Interceptor', desc: 'Lee linea de pase rival.' },
   { key: 'manMarking', title: 'Marcar hombre', desc: 'Marcaje intenso en duelos.' },
+  { key: 'trackBack', title: 'Delantero atrasado', desc: 'Ayuda en la recuperacion desde arriba.' },
+  { key: 'acrobaticClear', title: 'Despeje acrobatico', desc: 'Rechaza balones dificiles en defensa.' },
   { key: 'captaincy', title: 'Capitania', desc: 'Liderazgo dentro del campo.' },
-  { key: 'superSub', title: 'Super refuerzo', desc: 'Rinde mas entrando del banco.' }
+  { key: 'superSub', title: 'Super refuerzo', desc: 'Rinde mas entrando del banco.' },
+  { key: 'comPlayingStyles', title: 'Espiritu de lucha', desc: 'Mantiene intensidad en momentos clave.' }
 ];
 
 const styleCards: Array<{ key: keyof PlayingStyles; title: string; desc: string }> = [
   { key: 'goalPoacher', title: 'Cazagoles', desc: 'Ataca el area constantemente.' },
-  { key: 'dummyRunner', title: 'Senuelo', desc: 'Arrastra marcas para habilitar.' },
+  { key: 'dummyRunner', title: 'Señuelo', desc: 'Arrastra marcas para habilitar.' },
   { key: 'foxInTheBox', title: 'Hombre de area', desc: 'Finalizador dentro del area.' },
   { key: 'targetMan', title: 'Referente', desc: 'Aguanta y descarga de espaldas.' },
+  { key: 'classicNo10', title: 'Creador de jugadas', desc: 'Conduce y organiza el ataque.' },
+  { key: 'prolificWinger', title: 'Extremo prolifico', desc: 'Juega en banda y recorta hacia adentro.' },
+  { key: 'roamingFlank', title: 'Extremo movil', desc: 'Se mueve de banda al centro para asociarse.' },
+  { key: 'crossSpecialist', title: 'Especialista en centros', desc: 'Busca la banda para meter centros precisos.' },
+  { key: 'holePlayer', title: 'Jugador de huecos', desc: 'Llega desde atras para atacar espacios.' },
   { key: 'boxToBox', title: 'Omnipresente', desc: 'Recorre todo el mediocampo.' },
   { key: 'theDestroyer', title: 'El destructor', desc: 'Presiona y recupera agresivo.' },
   { key: 'orchestrator', title: 'Organizador', desc: 'Marca ritmo del equipo.' },
+  { key: 'anchor', title: 'Medio escudo', desc: 'Mediocentro defensivo posicional.' },
   { key: 'offensiveFullback', title: 'Lateral ofensivo', desc: 'Se proyecta en ataque.' },
+  { key: 'fullbackFinisher', title: 'Lateral finalizador', desc: 'Ataca por zonas interiores para definir.' },
   { key: 'defensiveFullback', title: 'Lateral defensivo', desc: 'Prioriza cobertura atras.' },
-  { key: 'crossSpecialist', title: 'Especialista centros', desc: 'Centros tensos al area.' },
+  { key: 'buildUp', title: 'Creacion', desc: 'Defensa que inicia el juego desde atras.' },
+  { key: 'extraFrontman', title: 'Atacante extra', desc: 'Defensa que sube al ataque sorpresivamente.' },
   { key: 'offensiveGoalkeeper', title: 'Portero ofensivo', desc: 'Sale a cortar fuera del area.' },
   { key: 'defensiveGoalkeeper', title: 'Portero defensivo', desc: 'Se mantiene bajo palos.' }
 ];
 
 const positionCards = ['PT', 'DEC', 'LI', 'LD', 'MCD', 'MC', 'MO', 'MDI', 'MDD', 'EXI', 'EXD', 'CD', 'SD'];
+type PositionMasteryLevel = 'C' | 'B' | 'A';
+const POSITION_LEVEL_ORDER: PositionMasteryLevel[] = ['C', 'B', 'A'];
+const CHANGE_NATURAL_POSITION_COST = 18_000_000;
+
+const positionAptitudeMap: Record<string, { A: string[]; B: string[]; C: string[] }> = {
+  PT: { A: ['PT'], B: [], C: [] },
+  DEC: { A: ['DEC'], B: ['LI', 'LD', 'MCD'], C: ['MC'] },
+  LI: { A: ['LI'], B: ['LD', 'DEC', 'MDI'], C: ['MCD', 'MC'] },
+  LD: { A: ['LD'], B: ['LI', 'DEC', 'MDD'], C: ['MCD', 'MC'] },
+  MCD: { A: ['MCD'], B: ['MC', 'DEC'], C: ['MO', 'MDI', 'MDD', 'LI', 'LD'] },
+  MC: { A: ['MC'], B: ['MCD', 'MO', 'MDI', 'MDD'], C: ['DEC', 'CD', 'SD'] },
+  MO: { A: ['MO'], B: ['MC', 'MDI', 'MDD', 'SD'], C: ['MCD', 'CD', 'EXI', 'EXD'] },
+  MDI: { A: ['MDI'], B: ['MDD', 'MC', 'MO', 'LI', 'EXI'], C: ['MCD', 'LD', 'EXD', 'SD'] },
+  MDD: { A: ['MDD'], B: ['MDI', 'MC', 'MO', 'LD', 'EXD'], C: ['MCD', 'LI', 'EXI', 'SD'] },
+  EXI: { A: ['EXI'], B: ['EXD', 'SD', 'MDI', 'MO'], C: ['CD', 'MDD', 'MC'] },
+  EXD: { A: ['EXD'], B: ['EXI', 'SD', 'MDD', 'MO'], C: ['CD', 'MDI', 'MC'] },
+  CD: { A: ['CD'], B: ['SD', 'MO'], C: ['EXI', 'EXD', 'MC'] },
+  SD: { A: ['SD'], B: ['CD', 'MO', 'EXI', 'EXD'], C: ['MC', 'MDD', 'MDI'] }
+};
+
+const getDefaultPositionLevels = (naturalPosition: string): Partial<Record<string, PositionMasteryLevel>> => {
+  const fallback = positionAptitudeMap[naturalPosition] || positionAptitudeMap.MC;
+  const levels: Partial<Record<string, PositionMasteryLevel>> = {};
+  positionCards.forEach((position) => { levels[position] = 'C'; });
+  fallback.C.forEach((position) => { levels[position] = 'C'; });
+  fallback.B.forEach((position) => { levels[position] = 'B'; });
+  fallback.A.forEach((position) => { levels[position] = 'A'; });
+  return levels;
+};
+
+const getNaturalPosition = (player: Player): string => player.contract?.naturalPosition || player.position;
+
+const getPlayerPositionLevels = (player: Player): Partial<Record<string, PositionMasteryLevel>> => {
+  const naturalPosition = getNaturalPosition(player);
+  const defaultLevels = getDefaultPositionLevels(naturalPosition);
+  return {
+    ...defaultLevels,
+    ...(player.contract?.positionLevels || {}),
+    [naturalPosition]: 'A'
+  };
+};
+
+const getNextPositionLevel = (level: PositionMasteryLevel): PositionMasteryLevel | null => {
+  const index = POSITION_LEVEL_ORDER.indexOf(level);
+  if (index < 0 || index >= POSITION_LEVEL_ORDER.length - 1) return null;
+  return POSITION_LEVEL_ORDER[index + 1];
+};
+
+const levelBadgeClass = (level?: PositionMasteryLevel): string => {
+  if (level === 'A') return 'bg-cyan-300 text-slate-900';
+  if (level === 'B') return 'bg-lime-300 text-slate-900';
+  if (level === 'C') return 'bg-slate-500 text-white';
+  return 'bg-slate-700 text-slate-300';
+};
+
+const pitchPositions: Array<{ position: string; top: string; left: string }> = [
+  { position: 'CD', top: '12%', left: '50%' },
+  { position: 'SD', top: '21%', left: '50%' },
+  { position: 'EXI', top: '29%', left: '24%' },
+  { position: 'EXD', top: '29%', left: '76%' },
+  { position: 'MO', top: '43%', left: '50%' },
+  { position: 'MDI', top: '49%', left: '29%' },
+  { position: 'MDD', top: '49%', left: '71%' },
+  { position: 'MC', top: '56%', left: '50%' },
+  { position: 'MCD', top: '63%', left: '50%' },
+  { position: 'LI', top: '75%', left: '22%' },
+  { position: 'DEC', top: '75%', left: '50%' },
+  { position: 'LD', top: '75%', left: '78%' },
+  { position: 'PT', top: '90%', left: '50%' }
+];
 
 const clampStat = (value: number) => Math.max(40, Math.min(101, value));
 const clampOverall = (value: number) => Math.max(60, Math.min(101, value));
@@ -408,6 +516,22 @@ const PlayerTraining = () => {
   const [busyActionId, setBusyActionId] = useState<string>('');
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'error'; text: string } | null>(null);
   const [previewPackId, setPreviewPackId] = useState<string>(trainingPacks[0]?.id || '');
+  const [naturalTargetPosition, setNaturalTargetPosition] = useState<string>('');
+  const [confirmState, setConfirmState] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    confirmLabel: string;
+    loadingLabel: string;
+    run: null | (() => Promise<void>);
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    confirmLabel: 'Confirmar',
+    loadingLabel: 'Procesando...',
+    run: null
+  });
 
   const { user, hasRole } = useAuthStore();
   const { clubs, players, updatePlayers, updateClub } = useDataStore() as any;
@@ -435,6 +559,15 @@ const PlayerTraining = () => {
   }, [filteredPlayers, selectedPlayerId, squadPlayers]);
 
   const selectedStats = selectedPlayer?.attributes;
+  const selectedNaturalPosition = useMemo(() => (selectedPlayer ? getNaturalPosition(selectedPlayer) : ''), [selectedPlayer]);
+  const selectedPositionLevels = useMemo(
+    () => (selectedPlayer ? getPlayerPositionLevels(selectedPlayer) : {}),
+    [selectedPlayer]
+  );
+  const naturalPositionOptions = useMemo(() => {
+    if (!selectedPlayer) return [];
+    return positionCards;
+  }, [selectedPlayer]);
   const clubSlug = useMemo(() => userClub?.name?.toLowerCase().replace(/\s+/g, '-') || '', [userClub?.name]);
 
   const applyBudgetedPlayerUpdate = async (updatedPlayer: Player, cost: number) => {
@@ -538,19 +671,65 @@ const PlayerTraining = () => {
   };
 
   const handleTrainPosition = async (position: string) => {
-    if (!selectedPlayer || selectedPlayer.position === position) return;
+    if (!selectedPlayer) return;
+
+    const levels = getPlayerPositionLevels(selectedPlayer);
+    const currentLevel = levels[position];
+    if (!currentLevel) {
+      setFeedback({ type: 'error', text: `${position} no es apta para este jugador.` });
+      return;
+    }
+    const nextLevel = getNextPositionLevel(currentLevel);
+    if (!nextLevel) return;
+
     const actionId = `position-${position}`;
     setBusyActionId(actionId);
     setFeedback(null);
     try {
       const updatedPlayer: Player = {
         ...selectedPlayer,
-        position
+        contract: {
+          ...selectedPlayer.contract,
+          naturalPosition: getNaturalPosition(selectedPlayer),
+          positionLevels: {
+            ...levels,
+            [position]: nextLevel
+          }
+        }
       };
       await applyBudgetedPlayerUpdate(updatedPlayer, TRAINING_COST);
     } catch (error) {
       console.error('Error updating position:', error);
       setFeedback({ type: 'error', text: 'No se pudo entrenar la posicion.' });
+    } finally {
+      setBusyActionId('');
+    }
+  };
+
+  const handleChangeNaturalPosition = async (position: string) => {
+    if (!selectedPlayer) return;
+    if (position === selectedNaturalPosition) return;
+
+    const actionId = `natural-${position}`;
+    setBusyActionId(actionId);
+    setFeedback(null);
+    try {
+      const updatedPlayer: Player = {
+        ...selectedPlayer,
+        position,
+        contract: {
+          ...selectedPlayer.contract,
+          naturalPosition: position,
+          positionLevels: {
+            ...selectedPositionLevels,
+            [position]: 'A'
+          }
+        }
+      };
+      await applyBudgetedPlayerUpdate(updatedPlayer, CHANGE_NATURAL_POSITION_COST);
+    } catch (error) {
+      console.error('Error changing natural position:', error);
+      setFeedback({ type: 'error', text: 'No se pudo cambiar la posicion natural.' });
     } finally {
       setBusyActionId('');
     }
@@ -590,6 +769,39 @@ const PlayerTraining = () => {
   const previewAttributes = applyPackPreviewToAttributes(selectedStats, previewPack);
   const currentRadarAxes = buildRadarAxes(selectedStats);
   const previewRadarAxes = buildRadarAxes(previewAttributes);
+  const effectiveNaturalTarget = naturalTargetPosition || selectedNaturalPosition;
+
+  useEffect(() => {
+    setNaturalTargetPosition(selectedNaturalPosition);
+  }, [selectedNaturalPosition, selectedPlayer?.id]);
+
+  const openActionConfirm = (config: {
+    title: string;
+    description: string;
+    confirmLabel: string;
+    loadingLabel: string;
+    run: () => Promise<void>;
+  }) => {
+    setConfirmState({
+      open: true,
+      title: config.title,
+      description: config.description,
+      confirmLabel: config.confirmLabel,
+      loadingLabel: config.loadingLabel,
+      run: config.run
+    });
+  };
+
+  const closeConfirm = () => {
+    if (busyActionId) return;
+    setConfirmState((prev) => ({ ...prev, open: false, run: null }));
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmState.run) return;
+    await confirmState.run();
+    setConfirmState((prev) => ({ ...prev, open: false, run: null }));
+  };
 
   return (
     <div className="relative min-h-screen bg-dark overflow-hidden">
@@ -790,7 +1002,15 @@ const PlayerTraining = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleTrainPack(pack)}
+                        onClick={() =>
+                          openActionConfirm({
+                            title: `Confirmar entrenamiento: ${pack.title}`,
+                            description: `Se descontaran ${Math.round(TRAINING_COST / 1_000_000)}M del presupuesto.`,
+                            confirmLabel: `Entrenar (${Math.round(TRAINING_COST / 1_000_000)}M)`,
+                            loadingLabel: 'Entrenando...',
+                            run: () => handleTrainPack(pack)
+                          })
+                        }
                         disabled={busyActionId === `pack-${pack.id}`}
                         className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
                           busyActionId === `pack-${pack.id}`
@@ -818,7 +1038,15 @@ const PlayerTraining = () => {
                     <p className="text-xs text-slate-400 mt-1 mb-4">{skill.desc}</p>
                     <button
                       type="button"
-                      onClick={() => handleLearnSkill(skill.key)}
+                      onClick={() =>
+                        openActionConfirm({
+                          title: `Confirmar tarjeta: ${skill.title}`,
+                          description: `Esta accion cuesta ${Math.round(TRAINING_COST / 1_000_000)}M.`,
+                          confirmLabel: `Aprender (${Math.round(TRAINING_COST / 1_000_000)}M)`,
+                          loadingLabel: 'Aplicando...',
+                          run: () => handleLearnSkill(skill.key)
+                        })
+                      }
                       disabled={learned || busyActionId === actionId}
                       className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
                         learned
@@ -837,31 +1065,134 @@ const PlayerTraining = () => {
           )}
 
           {activeTab === 'positions' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-              {positionCards.map((position) => {
-                const isCurrent = selectedPlayer.position === position;
-                const actionId = `position-${position}`;
-                return (
-                  <article key={position} className="rounded-xl border border-slate-700 bg-slate-950/70 p-4">
-                    <h3 className="text-cyan-300 font-bold text-2xl">{position}</h3>
-                    <p className="text-xs text-slate-400 mt-1 mb-4">Entrenamiento especifico de posicion.</p>
-                    <button
-                      type="button"
-                      onClick={() => handleTrainPosition(position)}
-                      disabled={isCurrent || busyActionId === actionId}
-                      className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
-                        isCurrent
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/50'
+            <div className="space-y-3">
+              <article className="rounded-2xl border border-slate-700 bg-slate-950/80 p-4 text-center">
+                <h3 className="text-cyan-300 font-black text-2xl tracking-tight">Cambiar Posicion Natural</h3>
+                <p className="text-sm text-slate-300 mt-1">Modifica la posicion principal del jugador.</p>
+                <p className="text-base text-slate-200 mt-1">
+                  Actual:
+                  <span className="ml-2 inline-flex px-3 py-1 rounded-md bg-slate-800 border border-slate-600 text-cyan-300 font-black">
+                    {selectedNaturalPosition}
+                  </span>
+                </p>
+                <div className="mt-2 flex flex-col items-center gap-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">Nueva posicion</label>
+                  <select
+                    value={effectiveNaturalTarget}
+                    onChange={(event) => setNaturalTargetPosition(event.target.value)}
+                    className="min-w-[140px] rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-center text-lg font-semibold text-white"
+                  >
+                    {naturalPositionOptions.map((position) => (
+                      <option key={position} value={position}>
+                        {position}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                    type="button"
+                    onClick={() =>
+                      openActionConfirm({
+                        title: 'Confirmar cambio de posicion natural',
+                        description: `Se aplicara el cambio a ${effectiveNaturalTarget} por ${Math.round(CHANGE_NATURAL_POSITION_COST / 1_000_000)}M.`,
+                        confirmLabel: `Cambiar (${Math.round(CHANGE_NATURAL_POSITION_COST / 1_000_000)}M)`,
+                        loadingLabel: 'Cambiando...',
+                        run: () => handleChangeNaturalPosition(effectiveNaturalTarget)
+                      })
+                    }
+                  disabled={busyActionId === `natural-${effectiveNaturalTarget}` || selectedPlayer.position === effectiveNaturalTarget}
+                  className={`mt-3 w-full rounded-xl py-2.5 text-lg font-black transition-colors ${
+                    busyActionId === `natural-${effectiveNaturalTarget}` || selectedPlayer.position === effectiveNaturalTarget
+                      ? 'bg-slate-800 border-2 border-slate-500/80 text-slate-300 opacity-70 cursor-not-allowed'
+                      : 'bg-cyan-400 text-slate-900 hover:bg-cyan-300'
+                  }`}
+                >
+                  {selectedPlayer.position === effectiveNaturalTarget
+                    ? 'POSICION ACTUAL'
+                    : `CAMBIAR (${Math.round(CHANGE_NATURAL_POSITION_COST / 1_000_000)}M)`}
+                </button>
+              </article>
+
+              <div className="grid grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)] gap-4 items-start">
+              <aside className="rounded-xl border border-slate-700 bg-slate-950/70 p-3">
+                <p className="text-sm font-semibold text-cyan-300 mb-2">Mapa de posiciones</p>
+                <div className="relative h-[520px] rounded-xl border border-emerald-500/30 bg-gradient-to-b from-emerald-900/70 via-emerald-800/50 to-emerald-950/80 overflow-hidden">
+                  <div className="absolute inset-2 rounded-lg border border-emerald-300/25" />
+                  <div className="absolute inset-x-2 top-1/2 h-px -translate-y-1/2 bg-emerald-200/25" />
+                  <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/30" />
+                  <div className="absolute left-1/2 top-[2%] h-10 w-28 -translate-x-1/2 border border-emerald-200/30 rounded-sm" />
+                  <div className="absolute left-1/2 bottom-[2%] h-10 w-28 -translate-x-1/2 border border-emerald-200/30 rounded-sm" />
+
+                  {pitchPositions.map((slot) => {
+                    const level = selectedPositionLevels[slot.position];
+                    const isNatural = selectedNaturalPosition === slot.position;
+                    return (
+                      <span
+                        key={slot.position}
+                        className={`absolute -translate-x-1/2 -translate-y-1/2 px-2.5 py-1 rounded-md text-[11px] font-black tracking-wide shadow border ${
+                          isNatural
+                            ? 'bg-cyan-300 text-slate-900 border-cyan-200 shadow-cyan-500/40'
+                            : level
+                              ? `${levelBadgeClass(level)} border-transparent`
+                              : 'bg-slate-900/90 text-slate-400 border-slate-700'
+                        }`}
+                        style={{ top: slot.top, left: slot.left }}
+                      >
+                        {slot.position}
+                      </span>
+                    );
+                  })}
+                </div>
+                <p className="text-[11px] text-slate-400 mt-2">Natural: <span className="text-cyan-300 font-semibold">{selectedNaturalPosition}</span></p>
+              </aside>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
+                {positionCards.map((position) => {
+                  const currentLevel = selectedPositionLevels[position];
+                  const nextLevel = currentLevel ? getNextPositionLevel(currentLevel) : null;
+                  const actionId = `position-${position}`;
+                  return (
+                    <article key={position} className="rounded-xl border border-slate-700 bg-slate-950/70 p-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-cyan-300 font-bold text-2xl">{position}</h3>
+                        <span className={`px-2.5 py-1 rounded-md text-xs font-black ${levelBadgeClass(currentLevel)}`}>
+                          {currentLevel || 'NA'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1 mb-4">Aptitud entrenable en niveles C, B y A.</p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openActionConfirm({
+                            title: `Confirmar entrenamiento de posicion ${position}`,
+                            description: `Se intentara subir el nivel a ${nextLevel || 'A'} por ${Math.round(TRAINING_COST / 1_000_000)}M.`,
+                            confirmLabel: `Entrenar (${Math.round(TRAINING_COST / 1_000_000)}M)`,
+                            loadingLabel: 'Entrenando...',
+                            run: () => handleTrainPosition(position)
+                          })
+                        }
+                        disabled={!nextLevel || busyActionId === actionId}
+                        className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
+                          !nextLevel
+                            ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
+                            : busyActionId === actionId
+                              ? 'bg-slate-600 text-slate-200 cursor-wait'
+                              : 'bg-slate-700 text-white hover:bg-slate-600'
+                        }`}
+                      >
+                        {!nextLevel
+                          ? 'Dominado (A)'
                           : busyActionId === actionId
-                            ? 'bg-slate-600 text-slate-200 cursor-wait'
-                            : 'bg-slate-700 text-white hover:bg-slate-600'
-                      }`}
-                    >
-                      {isCurrent ? 'Posicion actual' : busyActionId === actionId ? 'Entrenando...' : `Entrenar (${Math.round(TRAINING_COST / 1_000_000)}M)`}
-                    </button>
-                  </article>
-                );
-              })}
+                            ? 'Entrenando...'
+                            : `Subir a ${nextLevel} (${Math.round(TRAINING_COST / 1_000_000)}M)`}
+                      </button>
+                    </article>
+                  );
+                })}
+                </div>
+              </div>
+            </div>
             </div>
           )}
 
@@ -876,7 +1207,15 @@ const PlayerTraining = () => {
                     <p className="text-xs text-slate-400 mt-1 mb-4">{style.desc}</p>
                     <button
                       type="button"
-                      onClick={() => handleLearnStyle(style.key)}
+                      onClick={() =>
+                        openActionConfirm({
+                          title: `Confirmar estilo: ${style.title}`,
+                          description: `Esta accion cuesta ${Math.round(TRAINING_COST / 1_000_000)}M.`,
+                          confirmLabel: `Aprender (${Math.round(TRAINING_COST / 1_000_000)}M)`,
+                          loadingLabel: 'Aplicando...',
+                          run: () => handleLearnStyle(style.key)
+                        })
+                      }
                       disabled={learned || busyActionId === actionId}
                       className={`w-full py-2 rounded-lg font-semibold text-sm transition-colors ${
                         learned
@@ -895,6 +1234,19 @@ const PlayerTraining = () => {
           )}
         </section>
       </div>
+
+      <ConfirmModal
+        open={confirmState.open}
+        title={confirmState.title}
+        description={confirmState.description}
+        confirmLabel={confirmState.confirmLabel}
+        loadingLabel={confirmState.loadingLabel}
+        isLoading={Boolean(busyActionId)}
+        cancelLabel="Cancelar"
+        tone="primary"
+        onConfirm={handleConfirmAction}
+        onCancel={closeConfirm}
+      />
     </div>
   );
 };

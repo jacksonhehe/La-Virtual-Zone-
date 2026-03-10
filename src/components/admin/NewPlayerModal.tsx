@@ -265,7 +265,7 @@ const NewPlayerModal = ({ clubs, onClose, onCreate }: NewPlayerModalProps) => {
     comPlayingStyles: 'Espiritu de lucha',
     // Estilos de juego
     goalPoacher: 'Cazagoles',
-    dummyRunner: 'Senuelo',
+    dummyRunner: 'Señuelo',
     foxInTheBox: 'Hombre de area',
     targetMan: 'Referente',
     classicNo10: 'Creador de jugadas',

@@ -129,6 +129,8 @@ export interface PlayerAttributes {
 export interface PlayerContract {
   expires: string;
   salary: number;
+  naturalPosition?: string;
+  positionLevels?: Partial<Record<string, 'C' | 'B' | 'A'>>;
 }
 
 // Habilidades de jugador (Player Skills) - 39 en total
