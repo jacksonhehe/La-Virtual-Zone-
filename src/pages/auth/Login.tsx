@@ -82,7 +82,7 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Nombre de usuario
+                  Correo electronico
                 </label>
                 <input
                   type="text"
@@ -142,3 +142,4 @@ const Login = () => {
 
 export default Login;
  
+
