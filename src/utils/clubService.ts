@@ -211,7 +211,40 @@ export const saveClubs = async (clubs: Club[]): Promise<void> => {
   }
 };
 
-export const listClubs = async (): Promise<Club[]> => await getClubs();
+export const listClubs = async (): Promise<Club[]> => {
+  const localClubs = await getClubs();
+
+  try {
+    const { config } = await import('../lib/config');
+    if (!config.useSupabase) return localClubs;
+
+    const remoteClubs = await fetchClubsFromSupabase();
+    if (!remoteClubs || remoteClubs.length === 0) return localClubs;
+
+    // Keep IndexedDB aligned with Supabase so first DT load shows current budgets.
+    const localById = new Map(localClubs.map((club) => [club.id, club] as const));
+    const hasDiff =
+      localClubs.length !== remoteClubs.length ||
+      remoteClubs.some((remote) => {
+        const local = localById.get(remote.id);
+        return (
+          !local ||
+          local.budget !== remote.budget ||
+          local.manager !== remote.manager ||
+          local.captainPlayerId !== remote.captainPlayerId
+        );
+      });
+
+    if (hasDiff) {
+      await saveClubs(remoteClubs);
+    }
+
+    return remoteClubs;
+  } catch (error) {
+    console.error('ClubService: listClubs fallback to local data:', error);
+    return localClubs;
+  }
+};
 // Merge helper: preserve customized fields (like logo) when reseeding
 export const mergeClubsPreservingCustom = (existing: Club[], seeds: Club[]): Club[] => {
   const byId = new Map(existing.map(c => [c.id, c] as const));
