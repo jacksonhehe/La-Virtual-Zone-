@@ -3,6 +3,7 @@ import { CreditCard, ChevronLeft, ArrowUp, ArrowDown, DollarSign, ShoppingBag, C
 import PageHeader from '../../components/common/PageHeader';
 import { useDataStore } from '../../store/dataStore';
 import { formatCurrency, formatDate } from '../../utils/format';
+import { getTranslatedPosition, getPositionColor } from '../../utils/helpers';
 
 const ClubFinances = () => {
   const { clubName } = useParams<{ clubName: string }>();
@@ -260,8 +261,16 @@ const ClubFinances = () => {
                             <span className="font-medium text-white">{player.name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-center text-gray-300">{player.position}</td>
-                        <td className="px-6 py-4 text-center text-gray-300">{player.overall}</td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getPositionColor(player.position)}`}>
+                            {getTranslatedPosition(player.position)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`inline-flex min-w-[34px] justify-center px-2 py-1 rounded-md text-xs font-black shadow ${getOverallColor(player.overall)}`}>
+                            {player.overall}
+                          </span>
+                        </td>
                         <td className="px-6 py-4 text-center font-bold text-white">{formatCurrency(salary)}</td>
                         <td className="px-6 py-4 text-center">
                           <span className={`text-sm font-bold px-2 py-1 rounded ${
@@ -350,6 +359,12 @@ const ClubFinances = () => {
       </div>
     </div>
   );
+};
+
+const getOverallColor = (overall: number) => {
+  if (overall <= 84) return 'bg-yellow-400/90 text-slate-900 shadow-yellow-400/20';
+  if (overall <= 95) return 'bg-emerald-400/90 text-slate-900 shadow-emerald-400/20';
+  return 'bg-cyan-300/90 text-slate-900 shadow-cyan-300/20';
 };
 
 export default ClubFinances;
