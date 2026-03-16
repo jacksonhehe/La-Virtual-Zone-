@@ -428,62 +428,71 @@ const LigaMaster = () => {
           <section className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-lg md:text-xl font-bold text-white">Mercado</h2>
-              <p className="text-xs text-gray-400">Estado y oportunidades</p>
+              <p className="text-xs text-gray-400">Estado y foco</p>
             </div>
-            <div className="relative overflow-hidden bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-4 backdrop-blur-sm">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(34,197,94,0.12),transparent_42%),radial-gradient(circle_at_15%_100%,rgba(148,163,184,0.08),transparent_48%)]" />
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center gap-3 text-gray-200">
-                <div className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/30 flex items-center justify-center">
-                  <BarChart4 size={17} className="text-green-300" />
+            <div className="relative overflow-hidden bg-gray-800/45 border border-gray-700/50 rounded-2xl p-4 space-y-3 backdrop-blur-sm">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(34,197,94,0.10),transparent_40%),radial-gradient(circle_at_15%_100%,rgba(148,163,184,0.06),transparent_46%)]" />
+
+              <div className="relative flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-center gap-3 text-gray-200">
+                  <div className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/30 flex items-center justify-center">
+                    <BarChart4 size={17} className="text-green-300" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Mercado de fichajes</p>
+                    <p className="text-xs text-gray-400">
+                      {pendingIncomingOffers > 0
+                        ? `Tienes ${pendingIncomingOffers} ${pendingIncomingOffers === 1 ? 'oferta pendiente' : 'ofertas pendientes'}.`
+                        : marketStatus
+                          ? 'Sin pendientes. Puedes explorar movimientos.'
+                          : 'Cerrado por ahora. Revisa valores oficiales.'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">Mercado de fichajes</p>
-                  <p className="text-xs text-gray-400">Movimientos y oportunidades del dia</p>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-3 py-1 rounded-full border ${marketStatus ? 'bg-green-500/10 border-green-500/40 text-green-300' : 'bg-red-500/10 border-red-500/40 text-red-300'}`}>
+                    {marketStatus ? 'Abierto' : 'Cerrado'}
+                  </span>
+                  {pendingIncomingOffers > 0 && (
+                    <span className="text-xs px-3 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-200">
+                      Prioridad
+                    </span>
+                  )}
                 </div>
               </div>
-              <span className={`text-xs px-3 py-1 rounded-full border ${marketStatus ? 'bg-green-500/10 border-green-500/40 text-green-300' : 'bg-red-500/10 border-red-500/40 text-red-300'}`}>
-                {marketStatus ? 'Abierto' : 'Cerrado'}
-              </span>
-            </div>
 
-            <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-              <div className="rounded-lg border border-gray-700/60 bg-gray-900/40 px-3 py-2">
-                <p className="text-gray-400">Ofertas activas</p>
-                <p className="text-white font-semibold text-sm">{totalActiveOffers}</p>
+              <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                <div className={`rounded-xl px-4 py-3 border ${pendingIncomingOffers > 0 ? 'border-amber-500/30 bg-amber-500/10' : 'border-gray-700/60 bg-gray-900/40'}`}>
+                  <p className={`uppercase tracking-wide text-[11px] ${pendingIncomingOffers > 0 ? 'text-amber-100/80' : 'text-gray-400'}`}>Por responder</p>
+                  <p className={`text-2xl font-bold mt-1 ${pendingIncomingOffers > 0 ? 'text-amber-200' : 'text-white'}`}>{pendingIncomingOffers}</p>
+                </div>
+                <div className="rounded-xl border border-gray-700/60 bg-gray-900/40 px-4 py-3">
+                  <p className="text-gray-400 uppercase tracking-wide text-[11px]">Activas</p>
+                  <p className="text-white text-2xl font-bold mt-1">{totalActiveOffers}</p>
+                </div>
+                <div className="rounded-xl border border-gray-700/60 bg-gray-900/40 px-4 py-3">
+                  <p className="text-gray-400 uppercase tracking-wide text-[11px]">Enviadas</p>
+                  <p className="text-white text-2xl font-bold mt-1">{pendingOutgoingOffers}</p>
+                </div>
               </div>
-              <div className="rounded-lg border border-gray-700/60 bg-gray-900/40 px-3 py-2">
-                <p className="text-gray-400">Por responder</p>
-                <p className="text-white font-semibold text-sm">{pendingIncomingOffers}</p>
-              </div>
-              <div className="rounded-lg border border-gray-700/60 bg-gray-900/40 px-3 py-2">
-                <p className="text-gray-400">Enviadas</p>
-                <p className="text-white font-semibold text-sm">{pendingOutgoingOffers}</p>
-              </div>
-            </div>
 
-            <p className="relative text-sm text-gray-300">
-              {marketStatus
-                ? 'Explora precios oficiales y responde ofertas antes de la proxima jornada.'
-                : 'El mercado esta cerrado temporalmente. Puedes revisar tablas y preparar objetivos.'}
-            </p>
-
-            <div className="relative flex flex-wrap gap-2">
-              <Link
-                to="/liga-master/mercado"
-                className={`inline-flex items-center gap-2 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors ${marketStatus ? 'bg-primary hover:bg-primary-light' : 'bg-gray-700 hover:bg-gray-600'}`}
-              >
-                Ir al mercado
-                <ChevronRight size={14} />
-              </Link>
-              <Link
-                to="/liga-master/tablas-mercado"
-                className="inline-flex items-center gap-2 text-gray-200 text-sm font-semibold border border-gray-700/60 bg-gray-900/40 px-4 py-2 rounded-lg hover:border-primary/40 hover:text-white transition-colors"
-              >
-                Tablas oficiales
-                <ChevronRight size={14} />
-              </Link>
-            </div>
+              <div className="relative flex flex-wrap gap-2 pt-1">
+                <Link
+                  to="/liga-master/mercado"
+                  className={`inline-flex items-center gap-2 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors ${marketStatus ? 'bg-primary hover:bg-primary-light' : 'bg-gray-700 hover:bg-gray-600'}`}
+                >
+                  Ir al mercado
+                  <ChevronRight size={14} />
+                </Link>
+                <Link
+                  to="/liga-master/tablas-mercado"
+                  className="inline-flex items-center gap-2 text-gray-200 text-sm font-semibold border border-gray-700/60 bg-gray-900/40 px-4 py-2 rounded-lg hover:border-primary/40 hover:text-white transition-colors"
+                >
+                  Tablas oficiales
+                  <ChevronRight size={14} />
+                </Link>
+              </div>
             </div>
           </section>
 
@@ -492,7 +501,7 @@ const LigaMaster = () => {
               <h2 className="text-lg md:text-xl font-bold text-white">Resumen del club</h2>
               <p className="text-xs text-gray-400">Indicadores de temporada</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-3 backdrop-blur-sm hover:bg-gray-800 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-300">
@@ -522,55 +531,6 @@ const LigaMaster = () => {
                 <span className="px-2 py-1 rounded bg-gray-800/30 border border-gray-700/50">{wins} victorias</span>
                 <span className="px-2 py-1 rounded bg-gray-800/30 border border-gray-700/50">{draws} empates</span>
               </div>
-            </div>
-
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-3 backdrop-blur-sm hover:bg-gray-800 transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-300">
-                  <Sparkles size={18} className="text-yellow-400" />
-                  <span className="text-sm font-semibold">Calidad del equipo</span>
-                </div>
-                <span className="text-lg font-bold text-white">{avgRating}</span>
-              </div>
-              <p className="text-sm text-gray-400">{squadSize} jugadores</p>
-              <div className="flex items-center gap-2 text-xs text-gray-400">
-                <span className="px-2 py-1 rounded bg-gray-800/30 border border-gray-700/50">Capitan: {captain?.name || 'N/D'}</span>
-              </div>
-            </div>
-            </div>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg md:text-xl font-bold text-white">Gestion del club</h2>
-              <p className="text-xs text-gray-400">Plantilla, presupuesto y desarrollo</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-            <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 space-y-3 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-300">
-                  <Briefcase size={18} className="text-primary" />
-                  <span className="text-sm font-semibold">Finanzas del club</span>
-                </div>
-                <span className="text-xs px-3 py-1 rounded-full bg-gray-800/30 border border-gray-700/50 text-gray-300">Control</span>
-              </div>
-              <div className="space-y-2 text-sm text-gray-300">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Presupuesto</span>
-                  <span className="font-semibold text-white">{formatCurrency(userClub.budget)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Plantilla</span>
-                  <span className="font-semibold text-white">{squadSize} jugadores</span>
-                </div>
-              </div>
-              <Link
-                to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/finanzas?from=dt-dashboard`}
-                className="inline-flex items-center gap-2 text-primary text-sm font-semibold hover:underline"
-              >
-                Ir a Mis Finanzas
-                <ChevronRight size={14} />
-              </Link>
             </div>
             </div>
           </section>
@@ -731,15 +691,15 @@ const LigaMaster = () => {
 
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg md:text-xl font-bold text-white">Accesos rapidos</h2>
-              <p className="text-xs text-gray-400">Acciones frecuentes del DT</p>
+              <h2 className="text-lg md:text-xl font-bold text-white">Accesos clave</h2>
+              <p className="text-xs text-gray-400">Lo importante del dia a dia</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link
               to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/plantilla`}
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3 text-gray-300">
                   <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
                     <Users size={18} className="text-primary" />
@@ -751,25 +711,9 @@ const LigaMaster = () => {
                 </div>
                 <span className="text-sm text-gray-400">{squadSize} jugadores</span>
               </div>
-              {captain && (
-                <div className="flex items-center gap-3 bg-gray-800/30 border border-gray-700/50 rounded-lg p-3 group-hover:border-primary/40 transition-colors">
-                  <img
-                    src={captain.image || '/default.png'}
-                    alt={captain.name}
-                    className="w-10 h-10 rounded-full object-cover border border-gray-700/50"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/default.png';
-                    }}
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Capitan</p>
-                    <p className="text-xs text-gray-400">
-                      {captain.name} - {captain.overall} OVR
-                    </p>
-                  </div>
-                </div>
-              )}
+              <p className="text-sm text-gray-400">
+                {captain ? `Capitan: ${captain.name} ${captain.overall ? `- ${captain.overall} OVR` : ''}` : 'Gestiona roles, tacticas y liderazgo del equipo.'}
+              </p>
             </Link>
 
             <Link
@@ -792,7 +736,7 @@ const LigaMaster = () => {
             </Link>
 
             <Link
-              to="/liga-master/tablas-mercado"
+              to="/liga-master/mercado"
               className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
             >
               <div className="flex items-center justify-between mb-2">
@@ -801,64 +745,13 @@ const LigaMaster = () => {
                     <BarChart4 size={18} className="text-emerald-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-white">Tablas de mercado</p>
-                    <p className="text-xs text-gray-400">Valores oficiales</p>
+                    <p className="font-semibold text-white">Mercado</p>
+                    <p className="text-xs text-gray-400">Compras y ventas</p>
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
               </div>
-              <p className="text-sm text-gray-400">Referencias actualizadas para compras y ventas.</p>
-            </Link>
-
-            <Link
-              to="/liga-master/comunidad-dt"
-              className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3 text-gray-300">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-400/40 flex items-center justify-center">
-                    <Users size={18} className="text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white">Comunidad DT</p>
-                    <p className="text-xs text-gray-400">Anuncios y soporte</p>
-                  </div>
-                </div>
-                <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
-              </div>
-              <p className="text-sm text-gray-400">Canales de coordinacion y avisos para DTs.</p>
-            </Link>
-
-            </div>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg md:text-xl font-bold text-white">Competencia y comunidad</h2>
-              <p className="text-xs text-gray-400">Seguimiento del ecosistema Liga Master</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link
-              to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/palmares`}
-              className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800 hover:border-primary/40 transition-all duration-200"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3 text-gray-300">
-                  <div className="w-10 h-10 rounded-full bg-yellow-500/10 border border-yellow-400/40 flex items-center justify-center">
-                    <Trophy size={18} className="text-yellow-400" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white">Palmares</p>
-                    <p className="text-xs text-gray-400">Historia del club</p>
-                  </div>
-                </div>
-                <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
-              </div>
-              <p className="text-sm text-gray-400">
-                {userClub.titles && userClub.titles.length > 0
-                  ? `${userClub.titles.length} ${userClub.titles.length === 1 ? 'titulo' : 'titulos'} del club`
-                  : 'Sin titulos registrados'}
-              </p>
+              <p className="text-sm text-gray-400">Responde ofertas y explora oportunidades activas.</p>
             </Link>
 
             <Link
@@ -871,13 +764,13 @@ const LigaMaster = () => {
                     <Shield size={18} className="text-cyan-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-white">Zonas</p>
-                    <p className="text-xs text-gray-400">4 ligas de competencia</p>
+                    <p className="font-semibold text-white">Tabla y zonas</p>
+                    <p className="text-xs text-gray-400">Posiciones y seguimiento</p>
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
               </div>
-              <p className="text-sm text-gray-400">Consulta las 4 ligas de competencia de la Liga Master.</p>
+              <p className="text-sm text-gray-400">Consulta la tabla de tu zona y la pelea por puestos.</p>
             </Link>
 
             <Link
@@ -917,6 +810,75 @@ const LigaMaster = () => {
               </div>
               <p className="text-sm text-gray-400">Apuesta parte de tu presupuesto y suma premios por aciertos.</p>
             </Link>
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-white">Mas herramientas</h2>
+              <p className="text-xs text-gray-400">Consultas y comunidad</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Link
+                to={`/liga-master/club/${userClub.name.toLowerCase().replace(/\s+/g, '-')}/palmares`}
+                className="group bg-gray-800/40 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800/70 hover:border-primary/40 transition-all duration-200"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3 text-gray-300">
+                    <div className="w-10 h-10 rounded-full bg-yellow-500/10 border border-yellow-400/40 flex items-center justify-center">
+                      <Trophy size={18} className="text-yellow-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white">Palmares</p>
+                      <p className="text-xs text-gray-400">Historia del club</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
+                </div>
+                <p className="text-sm text-gray-400">
+                  {userClub.titles && userClub.titles.length > 0
+                    ? `${userClub.titles.length} ${userClub.titles.length === 1 ? 'titulo' : 'titulos'} registrados`
+                    : 'Consulta los logros historicos del club'}
+                </p>
+              </Link>
+
+              <Link
+                to="/liga-master/comunidad-dt"
+                className="group bg-gray-800/40 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800/70 hover:border-primary/40 transition-all duration-200"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3 text-gray-300">
+                    <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-400/40 flex items-center justify-center">
+                      <Users size={18} className="text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white">Comunidad DT</p>
+                      <p className="text-xs text-gray-400">Anuncios y soporte</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
+                </div>
+                <p className="text-sm text-gray-400">Canales de coordinacion, avisos y espacio para DTs.</p>
+              </Link>
+
+              <Link
+                to="/liga-master/tablas-mercado"
+                className="group bg-gray-800/40 border border-gray-700/50 rounded-2xl p-5 hover:bg-gray-800/70 hover:border-primary/40 transition-all duration-200"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3 text-gray-300">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-400/40 flex items-center justify-center">
+                      <BarChart4 size={18} className="text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white">Tablas de mercado</p>
+                      <p className="text-xs text-gray-400">Valores oficiales</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={16} className="text-gray-500 group-hover:text-primary" />
+                </div>
+                <p className="text-sm text-gray-400">Revisa referencias actualizadas para compras y ventas.</p>
+              </Link>
             </div>
           </section>
         </div>

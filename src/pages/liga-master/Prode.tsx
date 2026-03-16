@@ -106,6 +106,12 @@ const MARKET_SECTIONS: Array<{
   },
 ];
 
+const DEFAULT_EXPANDED_SECTIONS: Record<MarketSectionKey, boolean> = {
+  match_result: true,
+  goals_35: false,
+  first_goal: false,
+};
+
 const normalize = (value: string | undefined) => String(value || '').trim().toLowerCase();
 const isPlaceholderTeam = (teamRef: string | undefined) => {
   const value = normalize(teamRef);
@@ -351,14 +357,14 @@ const Prode = () => {
 
   const isMarketExpanded = (matchId: string, key: MarketSectionKey) => {
     const token = getMarketToken(matchId, key);
-    if (!(token in expandedMarkets)) return true;
+    if (!(token in expandedMarkets)) return DEFAULT_EXPANDED_SECTIONS[key];
     return Boolean(expandedMarkets[token]);
   };
 
   const toggleMarketSection = (matchId: string, key: MarketSectionKey) => {
     const token = getMarketToken(matchId, key);
     setExpandedMarkets((prev) => {
-      const current = token in prev ? Boolean(prev[token]) : true;
+      const current = token in prev ? Boolean(prev[token]) : DEFAULT_EXPANDED_SECTIONS[key];
       return { ...prev, [token]: !current };
     });
   };
@@ -644,41 +650,45 @@ const Prode = () => {
               else submitHint = 'Listo para confirmar tu apuesta.';
 
               return (
-                <div key={match.id} className="rounded-xl border border-gray-700/80 bg-gray-800/55 p-4 space-y-3 hover:border-gray-500 transition-colors">
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex items-center gap-2.5 min-w-0">
+                <div key={match.id} className="rounded-2xl border border-gray-700/80 bg-gray-800/55 p-4 md:p-5 space-y-4 hover:border-gray-500 transition-colors">
+                  <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+                    <div className="space-y-2 min-w-0">
+                      <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <img
                             src={homeTeam.logo}
                             alt={homeTeam.name}
-                            className="w-9 h-9 rounded-md object-cover border border-gray-600"
+                            className="w-10 h-10 rounded-md object-cover border border-gray-600"
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = '/default-club.svg';
                             }}
                           />
-                          <span className="text-lg font-semibold text-white truncate">{homeTeam.name}</span>
+                          <span className="text-base md:text-lg font-semibold text-white truncate">{homeTeam.name}</span>
                         </div>
-                        <span className="text-xs font-bold uppercase tracking-wide text-gray-500">vs</span>
-                        <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500">vs</span>
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <img
                             src={awayTeam.logo}
                             alt={awayTeam.name}
-                            className="w-9 h-9 rounded-md object-cover border border-gray-600"
+                            className="w-10 h-10 rounded-md object-cover border border-gray-600"
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = '/default-club.svg';
                             }}
                           />
-                          <span className="text-lg font-semibold text-white truncate">{awayTeam.name}</span>
+                          <span className="text-base md:text-lg font-semibold text-white truncate">{awayTeam.name}</span>
                         </div>
                       </div>
-                      <div className="text-xs text-gray-400 flex flex-wrap items-center gap-2">
-                        <Calendar size={12} className="text-primary" />
-                        <span>{formatDate(match.date)} - {getMatchRoundLabel(match)}</span>
-                        <span className="text-gray-600">•</span>
-                        <span className="px-2 py-0.5 rounded-md border border-gray-600 bg-gray-800/75 text-gray-200">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-700 bg-gray-900/40 px-2.5 py-1 text-gray-300">
+                          <Calendar size={12} className="text-primary" />
+                          {formatDate(match.date)}
+                        </span>
+                        <span className="inline-flex items-center rounded-md border border-gray-700 bg-gray-900/40 px-2.5 py-1 text-gray-300">
+                          {getMatchRoundLabel(match)}
+                        </span>
+                        <span className="inline-flex items-center rounded-md border border-gray-700 bg-gray-900/40 px-2.5 py-1 text-gray-200">
                           {getMatchTournamentName(match)}
                         </span>
                       </div>
@@ -693,12 +703,18 @@ const Prode = () => {
                       Pendiente: {existingBet ? LABEL_BY_SELECTION[existingBet.selection] : 'Selección'} ({formatCurrency(existingBet?.stake || 0)})
                     </div>
                   ) : (
-                    <div className="space-y-3">
-                      <div className="space-y-2.5">
+                    <div className="space-y-4">
+                      <div className="rounded-xl border border-gray-700/70 bg-gray-900/20 p-3">
+                        <div className="flex items-center justify-between gap-3 mb-2">
+                          <h3 className="text-sm font-semibold text-white">Mercados</h3>
+                          <p className="text-[11px] text-gray-400">Elige una sola opcion por partido</p>
+                        </div>
+
+                        <div className="space-y-2.5">
                         {MARKET_SECTIONS.map((section) => {
                           const sectionExpanded = isMarketExpanded(match.id, section.key);
                           return (
-                            <section key={section.key} className="rounded-lg border border-gray-600/80 bg-gray-800/65 overflow-hidden">
+                            <section key={section.key} className="rounded-lg border border-gray-700/80 bg-gray-800/65 overflow-hidden">
                               <button
                                 type="button"
                                 onClick={() => toggleMarketSection(match.id, section.key)}
@@ -736,8 +752,9 @@ const Prode = () => {
                           );
                         })}
                       </div>
+                      </div>
 
-                      <div className="grid grid-cols-1 lg:grid-cols-[190px_1fr] gap-3 rounded-xl border border-gray-700/80 bg-gray-800/45 p-3.5">
+                      <div className="grid grid-cols-1 xl:grid-cols-[190px_1fr] gap-3 rounded-xl border border-gray-700/80 bg-gray-800/45 p-3.5">
                         <div className="space-y-2">
                           <label className="text-[11px] text-gray-400 uppercase tracking-wide">Monto</label>
                           <div className="flex items-center rounded-xl border border-primary/40 bg-primary/10 px-3 py-0.5">
@@ -765,28 +782,19 @@ const Prode = () => {
                           </div>
                         </div>
 
-                        <div className="space-y-2 lg:pt-6">
-                          <div className="rounded-lg border border-gray-500/80 bg-gray-700/55 px-3 py-2 text-xs">
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-gray-300">
-                              <span>
-                                Selección: <span className="font-semibold text-white">{pick ? LABEL_BY_SELECTION[pick] : 'Sin elegir'}</span>
-                              </span>
-                              <span className="hidden sm:inline text-gray-500">|</span>
-                              <span>
-                                Apuesta: <span className="font-semibold text-white">{formatCurrency(typedStake || 0)}</span>
-                              </span>
-                              {selectedOdds ? (
-                                <>
-                                  <span className="hidden sm:inline text-gray-500">|</span>
-                                  <span>
-                                    Cuota: <span className="font-semibold text-primary-light">x{selectedOdds.toFixed(1)}</span>
-                                  </span>
-                                  <span className="hidden sm:inline text-gray-500">|</span>
-                                  <span>
-                                    Cobro: <span className="font-semibold text-emerald-300">{formatCurrency(estimatedPayout)}</span>
-                                  </span>
-                                </>
-                              ) : null}
+                        <div className="space-y-3 xl:pt-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div className="rounded-lg border border-gray-500/60 bg-gray-700/45 px-3 py-2">
+                              <p className="text-[11px] uppercase tracking-wide text-gray-400">Seleccion</p>
+                              <p className="text-sm font-semibold text-white mt-1">{pick ? LABEL_BY_SELECTION[pick] : 'Sin elegir'}</p>
+                            </div>
+                            <div className="rounded-lg border border-gray-500/60 bg-gray-700/45 px-3 py-2">
+                              <p className="text-[11px] uppercase tracking-wide text-gray-400">Cuota</p>
+                              <p className="text-sm font-semibold text-primary-light mt-1">{selectedOdds ? `x${selectedOdds.toFixed(1)}` : '-'}</p>
+                            </div>
+                            <div className="rounded-lg border border-gray-500/60 bg-gray-700/45 px-3 py-2">
+                              <p className="text-[11px] uppercase tracking-wide text-gray-400">Cobro estimado</p>
+                              <p className="text-sm font-semibold text-emerald-300 mt-1">{formatCurrency(estimatedPayout)}</p>
                             </div>
                           </div>
 
@@ -796,7 +804,7 @@ const Prode = () => {
                             </p>
                           )}
 
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:pt-0.5">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <p className={`text-[11px] ${canSubmit ? 'text-emerald-300' : 'text-gray-500'}`}>
                               {submitHint}
                             </p>

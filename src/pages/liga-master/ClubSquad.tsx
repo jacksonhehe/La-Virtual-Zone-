@@ -1,5 +1,5 @@
 import  { useParams, Link } from 'react-router-dom';
-import { Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp, Eye, ShoppingCart, AlertTriangle } from 'lucide-react';
+import { Shield, ChevronLeft, Users, Database, ArrowDown, ArrowUp, Eye, ShoppingCart, AlertTriangle, Crown } from 'lucide-react';
 import PageHeader from '../../components/common/PageHeader';
 import PlayerStatsModal from '../../components/common/PlayerStatsModal';
 import { formatCurrency } from '../../utils/format';
@@ -132,6 +132,12 @@ const ClubSquad = () => {
       }
       return 0;
     });
+
+  const captain = clubPlayers.length
+    ? ((club as any).captainPlayerId
+        ? clubPlayers.find((player) => player.id === (club as any).captainPlayerId)
+        : undefined) || clubPlayers.reduce((best, current) => (current.overall > best.overall ? current : best), clubPlayers[0])
+    : null;
   
   // Toggle sort order
   const toggleSort = (field: string) => {
@@ -307,6 +313,31 @@ const ClubSquad = () => {
                 {Math.round(clubPlayers.reduce((sum, p) => sum + p.age, 0) / clubPlayers.length)}
               </p>
             </div>
+            {captain && (
+              <div className="bg-slate-800/50 rounded-xl p-6 backdrop-blur-sm hover:bg-slate-800 hover:border-slate-600 border border-slate-700/50 transition-all duration-200 hover:shadow-lg hover:scale-105 sm:col-span-2 md:col-span-4">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-amber-400/25 bg-amber-500/10">
+                      <Crown size={20} className="text-amber-300" />
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-sm font-medium">Capitan actual</p>
+                      <p className="text-lg font-bold text-white">{captain.name}</p>
+                      <p className="text-sm text-slate-400">
+                        {getTranslatedPosition(captain.position)} · {captain.overall} OVR · Dorsal {captain.dorsal}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => openPlayerStats(captain)}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-600 bg-slate-900/40 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900/60 hover:border-slate-500 transition-colors"
+                  >
+                    Ver capitan
+                    <Eye size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         
@@ -400,6 +431,12 @@ const ClubSquad = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{player.name}</span>
+                            {captain?.id === player.id && (
+                              <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-200">
+                                <Crown size={12} />
+                                Capitan
+                              </span>
+                            )}
                             <button
                               onClick={() => openPlayerStats(player)}
                               className="bg-primary/20 hover:bg-primary/30 text-primary px-3 py-2 rounded-lg text-xs transition-all duration-200 hover:scale-110 shadow-md hover:shadow-primary/20"
