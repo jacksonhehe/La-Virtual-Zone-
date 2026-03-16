@@ -62,7 +62,7 @@ const UserPanel = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const openFilePicker = () => fileInputRef.current?.click();
 
-  const deleteConfirmationPhrase = user?.username || user?.email || 'ELIMINAR';
+  const deleteConfirmationPhrase = 'ELIMINAR MI CUENTA';
   const normalizedDeleteConfirmationPhrase = deleteConfirmationPhrase.trim().toLowerCase();
   const canConfirmDeleteAccount =
     deleteAcknowledged && deleteConfirmationInput.trim().toLowerCase() === normalizedDeleteConfirmationPhrase;
